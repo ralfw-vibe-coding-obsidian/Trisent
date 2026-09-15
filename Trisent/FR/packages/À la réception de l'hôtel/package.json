@@ -1,0 +1,3214 @@
+{
+  "schemaVersion": 1,
+  "id": "fr-hotel-checkin",
+  "version": 2,
+  "title": "À la réception de l'hôtel",
+  "titleTranslation": "An der Hotelrezeption",
+  "language": "fr",
+  "glossLanguage": "de",
+  "fluentLanguage": "de",
+  "level": "A1",
+  "topics": [
+    "travel",
+    "hotel",
+    "dialogue",
+    "everyday"
+  ],
+  "paragraphs": [
+    {
+      "id": "p001",
+      "speaker": "Client",
+      "sentences": [
+        {
+          "id": "s001",
+          "source": "Bonjour, madame.",
+          "fluent": "Guten Tag, meine Dame.",
+          "units": [
+            {
+              "start": 0,
+              "end": 7,
+              "surface": "Bonjour",
+              "gloss": "guten-Tag",
+              "lemma": "bonjour",
+              "partOfSpeech": "INTJ",
+              "key": "fr:bonjour:INTJ"
+            },
+            {
+              "start": 9,
+              "end": 15,
+              "surface": "madame",
+              "gloss": "Dame",
+              "lemma": "madame",
+              "partOfSpeech": "NOUN",
+              "key": "fr:madame:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s002",
+          "source": "Je voudrais une chambre, s'il vous plaît.",
+          "fluent": "Ich hätte gern ein Zimmer, bitte.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 3,
+              "end": 11,
+              "surface": "voudrais",
+              "gloss": "wollen",
+              "lemma": "vouloir",
+              "partOfSpeech": "VERB",
+              "key": "fr:vouloir:VERB"
+            },
+            {
+              "start": 12,
+              "end": 15,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 16,
+              "end": 23,
+              "surface": "chambre",
+              "gloss": "Zimmer",
+              "lemma": "chambre",
+              "partOfSpeech": "NOUN",
+              "key": "fr:chambre:NOUN"
+            },
+            {
+              "start": 25,
+              "end": 27,
+              "surface": "s'",
+              "gloss": "wenn",
+              "lemma": "si",
+              "partOfSpeech": "SCONJ",
+              "key": "fr:si:SCONJ"
+            },
+            {
+              "start": 27,
+              "end": 29,
+              "surface": "il",
+              "gloss": "es",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 30,
+              "end": 34,
+              "surface": "vous",
+              "gloss": "Ihnen",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 35,
+              "end": 40,
+              "surface": "plaît",
+              "gloss": "gefallen",
+              "lemma": "plaire",
+              "partOfSpeech": "VERB",
+              "key": "fr:plaire:VERB"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 11,
+              "surface": "Je voudrais",
+              "gloss": "ich hätte gern",
+              "lemma": "je voudrais",
+              "key": "fr:je voudrais:PHRASE"
+            },
+            {
+              "start": 25,
+              "end": 40,
+              "surface": "s'il vous plaît",
+              "gloss": "bitte",
+              "lemma": "s'il vous plaît",
+              "key": "fr:s'il vous plaît:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p002",
+      "speaker": "Réceptionniste",
+      "sentences": [
+        {
+          "id": "s003",
+          "source": "Bonjour, monsieur.",
+          "fluent": "Guten Tag, mein Herr.",
+          "units": [
+            {
+              "start": 0,
+              "end": 7,
+              "surface": "Bonjour",
+              "gloss": "guten-Tag",
+              "lemma": "bonjour",
+              "partOfSpeech": "INTJ",
+              "key": "fr:bonjour:INTJ"
+            },
+            {
+              "start": 9,
+              "end": 17,
+              "surface": "monsieur",
+              "gloss": "Herr",
+              "lemma": "monsieur",
+              "partOfSpeech": "NOUN",
+              "key": "fr:monsieur:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s004",
+          "source": "Bienvenue à l'hôtel Bellevue.",
+          "fluent": "Willkommen im Hotel Bellevue.",
+          "units": [
+            {
+              "start": 0,
+              "end": 9,
+              "surface": "Bienvenue",
+              "gloss": "Willkommen",
+              "lemma": "bienvenue",
+              "partOfSpeech": "NOUN",
+              "key": "fr:bienvenue:NOUN"
+            },
+            {
+              "start": 10,
+              "end": 11,
+              "surface": "à",
+              "gloss": "zu",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 12,
+              "end": 14,
+              "surface": "l'",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 14,
+              "end": 19,
+              "surface": "hôtel",
+              "gloss": "Hotel",
+              "lemma": "hôtel",
+              "partOfSpeech": "NOUN",
+              "key": "fr:hôtel:NOUN"
+            },
+            {
+              "start": 20,
+              "end": 28,
+              "surface": "Bellevue",
+              "gloss": "Bellevue",
+              "lemma": "Bellevue",
+              "partOfSpeech": "PROPN",
+              "key": "fr:bellevue:PROPN"
+            }
+          ]
+        },
+        {
+          "id": "s005",
+          "source": "Vous avez une réservation ?",
+          "fluent": "Haben Sie eine Reservierung?",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Vous",
+              "gloss": "Sie",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 5,
+              "end": 9,
+              "surface": "avez",
+              "gloss": "haben",
+              "lemma": "avoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:avoir:VERB"
+            },
+            {
+              "start": 10,
+              "end": 13,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 14,
+              "end": 25,
+              "surface": "réservation",
+              "gloss": "Reservierung",
+              "lemma": "réservation",
+              "partOfSpeech": "NOUN",
+              "key": "fr:réservation:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p003",
+      "speaker": "Client",
+      "sentences": [
+        {
+          "id": "s006",
+          "source": "Oui, j'ai une réservation.",
+          "fluent": "Ja, ich habe eine Reservierung.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Oui",
+              "gloss": "ja",
+              "lemma": "oui",
+              "partOfSpeech": "INTJ",
+              "key": "fr:oui:INTJ"
+            },
+            {
+              "start": 5,
+              "end": 7,
+              "surface": "j'",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 7,
+              "end": 9,
+              "surface": "ai",
+              "gloss": "haben",
+              "lemma": "avoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:avoir:VERB"
+            },
+            {
+              "start": 10,
+              "end": 13,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 14,
+              "end": 25,
+              "surface": "réservation",
+              "gloss": "Reservierung",
+              "lemma": "réservation",
+              "partOfSpeech": "NOUN",
+              "key": "fr:réservation:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s007",
+          "source": "Je m'appelle Thomas Berger.",
+          "fluent": "Ich heiße Thomas Berger.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 3,
+              "end": 5,
+              "surface": "m'",
+              "gloss": "mich",
+              "lemma": "me",
+              "partOfSpeech": "PRON",
+              "key": "fr:me:PRON"
+            },
+            {
+              "start": 5,
+              "end": 12,
+              "surface": "appelle",
+              "gloss": "nennen",
+              "lemma": "appeler",
+              "partOfSpeech": "VERB",
+              "key": "fr:appeler:VERB"
+            },
+            {
+              "start": 13,
+              "end": 19,
+              "surface": "Thomas",
+              "gloss": "Thomas",
+              "lemma": "Thomas",
+              "partOfSpeech": "PROPN",
+              "key": "fr:thomas:PROPN"
+            },
+            {
+              "start": 20,
+              "end": 26,
+              "surface": "Berger",
+              "gloss": "Berger",
+              "lemma": "Berger",
+              "partOfSpeech": "PROPN",
+              "key": "fr:berger:PROPN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 12,
+              "surface": "Je m'appelle",
+              "gloss": "ich heiße",
+              "lemma": "je m'appelle",
+              "key": "fr:je m'appelle:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p004",
+      "speaker": "Réceptionniste",
+      "sentences": [
+        {
+          "id": "s008",
+          "source": "Un moment, s'il vous plaît.",
+          "fluent": "Einen Moment, bitte.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 3,
+              "end": 9,
+              "surface": "moment",
+              "gloss": "Moment",
+              "lemma": "moment",
+              "partOfSpeech": "NOUN",
+              "key": "fr:moment:NOUN"
+            },
+            {
+              "start": 11,
+              "end": 13,
+              "surface": "s'",
+              "gloss": "wenn",
+              "lemma": "si",
+              "partOfSpeech": "SCONJ",
+              "key": "fr:si:SCONJ"
+            },
+            {
+              "start": 13,
+              "end": 15,
+              "surface": "il",
+              "gloss": "es",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 16,
+              "end": 20,
+              "surface": "vous",
+              "gloss": "Ihnen",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 21,
+              "end": 26,
+              "surface": "plaît",
+              "gloss": "gefallen",
+              "lemma": "plaire",
+              "partOfSpeech": "VERB",
+              "key": "fr:plaire:VERB"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 11,
+              "end": 26,
+              "surface": "s'il vous plaît",
+              "gloss": "bitte",
+              "lemma": "s'il vous plaît",
+              "key": "fr:s'il vous plaît:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s009",
+          "source": "Ah oui, je vois votre nom.",
+          "fluent": "Ah ja, ich sehe Ihren Namen.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Ah",
+              "gloss": "ah",
+              "lemma": "ah",
+              "partOfSpeech": "INTJ",
+              "key": "fr:ah:INTJ"
+            },
+            {
+              "start": 3,
+              "end": 6,
+              "surface": "oui",
+              "gloss": "ja",
+              "lemma": "oui",
+              "partOfSpeech": "INTJ",
+              "key": "fr:oui:INTJ"
+            },
+            {
+              "start": 8,
+              "end": 10,
+              "surface": "je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 11,
+              "end": 15,
+              "surface": "vois",
+              "gloss": "sehen",
+              "lemma": "voir",
+              "partOfSpeech": "VERB",
+              "key": "fr:voir:VERB"
+            },
+            {
+              "start": 16,
+              "end": 21,
+              "surface": "votre",
+              "gloss": "Ihr",
+              "lemma": "votre",
+              "partOfSpeech": "DET",
+              "key": "fr:votre:DET"
+            },
+            {
+              "start": 22,
+              "end": 25,
+              "surface": "nom",
+              "gloss": "Name",
+              "lemma": "nom",
+              "partOfSpeech": "NOUN",
+              "key": "fr:nom:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s010",
+          "source": "Vous restez trois nuits ?",
+          "fluent": "Bleiben Sie drei Nächte?",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Vous",
+              "gloss": "Sie",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 5,
+              "end": 11,
+              "surface": "restez",
+              "gloss": "bleiben",
+              "lemma": "rester",
+              "partOfSpeech": "VERB",
+              "key": "fr:rester:VERB"
+            },
+            {
+              "start": 12,
+              "end": 17,
+              "surface": "trois",
+              "gloss": "drei",
+              "lemma": "trois",
+              "partOfSpeech": "NUM",
+              "key": "fr:trois:NUM"
+            },
+            {
+              "start": 18,
+              "end": 23,
+              "surface": "nuits",
+              "gloss": "Nächte",
+              "lemma": "nuit",
+              "partOfSpeech": "NOUN",
+              "key": "fr:nuit:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p005",
+      "speaker": "Client",
+      "sentences": [
+        {
+          "id": "s011",
+          "source": "Oui, c'est ça.",
+          "fluent": "Ja, genau.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Oui",
+              "gloss": "ja",
+              "lemma": "oui",
+              "partOfSpeech": "INTJ",
+              "key": "fr:oui:INTJ"
+            },
+            {
+              "start": 5,
+              "end": 7,
+              "surface": "c'",
+              "gloss": "das",
+              "lemma": "ce",
+              "partOfSpeech": "PRON",
+              "key": "fr:ce:PRON"
+            },
+            {
+              "start": 7,
+              "end": 10,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 11,
+              "end": 13,
+              "surface": "ça",
+              "gloss": "das",
+              "lemma": "ça",
+              "partOfSpeech": "PRON",
+              "key": "fr:ça:PRON"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 5,
+              "end": 13,
+              "surface": "c'est ça",
+              "gloss": "genau",
+              "lemma": "c'est ça",
+              "key": "fr:c'est ça:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s012",
+          "source": "Je pars samedi matin.",
+          "fluent": "Ich reise Samstagmorgen ab.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 3,
+              "end": 7,
+              "surface": "pars",
+              "gloss": "abfahren",
+              "lemma": "partir",
+              "partOfSpeech": "VERB",
+              "key": "fr:partir:VERB"
+            },
+            {
+              "start": 8,
+              "end": 14,
+              "surface": "samedi",
+              "gloss": "Samstag",
+              "lemma": "samedi",
+              "partOfSpeech": "NOUN",
+              "key": "fr:samedi:NOUN"
+            },
+            {
+              "start": 15,
+              "end": 20,
+              "surface": "matin",
+              "gloss": "Morgen",
+              "lemma": "matin",
+              "partOfSpeech": "NOUN",
+              "key": "fr:matin:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p006",
+      "speaker": "Réceptionniste",
+      "sentences": [
+        {
+          "id": "s013",
+          "source": "Vous voulez une chambre simple ou une chambre double ?",
+          "fluent": "Möchten Sie ein Einzelzimmer oder ein Doppelzimmer?",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Vous",
+              "gloss": "Sie",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 5,
+              "end": 11,
+              "surface": "voulez",
+              "gloss": "wollen",
+              "lemma": "vouloir",
+              "partOfSpeech": "VERB",
+              "key": "fr:vouloir:VERB"
+            },
+            {
+              "start": 12,
+              "end": 15,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 16,
+              "end": 23,
+              "surface": "chambre",
+              "gloss": "Zimmer",
+              "lemma": "chambre",
+              "partOfSpeech": "NOUN",
+              "key": "fr:chambre:NOUN"
+            },
+            {
+              "start": 24,
+              "end": 30,
+              "surface": "simple",
+              "gloss": "einfach",
+              "lemma": "simple",
+              "partOfSpeech": "ADJ",
+              "key": "fr:simple:ADJ"
+            },
+            {
+              "start": 31,
+              "end": 33,
+              "surface": "ou",
+              "gloss": "oder",
+              "lemma": "ou",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:ou:CCONJ"
+            },
+            {
+              "start": 34,
+              "end": 37,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 38,
+              "end": 45,
+              "surface": "chambre",
+              "gloss": "Zimmer",
+              "lemma": "chambre",
+              "partOfSpeech": "NOUN",
+              "key": "fr:chambre:NOUN"
+            },
+            {
+              "start": 46,
+              "end": 52,
+              "surface": "double",
+              "gloss": "doppelt",
+              "lemma": "double",
+              "partOfSpeech": "ADJ",
+              "key": "fr:double:ADJ"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p007",
+      "speaker": "Client",
+      "sentences": [
+        {
+          "id": "s014",
+          "source": "Une chambre simple, s'il vous plaît.",
+          "fluent": "Ein Einzelzimmer, bitte.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 4,
+              "end": 11,
+              "surface": "chambre",
+              "gloss": "Zimmer",
+              "lemma": "chambre",
+              "partOfSpeech": "NOUN",
+              "key": "fr:chambre:NOUN"
+            },
+            {
+              "start": 12,
+              "end": 18,
+              "surface": "simple",
+              "gloss": "einfach",
+              "lemma": "simple",
+              "partOfSpeech": "ADJ",
+              "key": "fr:simple:ADJ"
+            },
+            {
+              "start": 20,
+              "end": 22,
+              "surface": "s'",
+              "gloss": "wenn",
+              "lemma": "si",
+              "partOfSpeech": "SCONJ",
+              "key": "fr:si:SCONJ"
+            },
+            {
+              "start": 22,
+              "end": 24,
+              "surface": "il",
+              "gloss": "es",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 25,
+              "end": 29,
+              "surface": "vous",
+              "gloss": "Ihnen",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 30,
+              "end": 35,
+              "surface": "plaît",
+              "gloss": "gefallen",
+              "lemma": "plaire",
+              "partOfSpeech": "VERB",
+              "key": "fr:plaire:VERB"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 20,
+              "end": 35,
+              "surface": "s'il vous plaît",
+              "gloss": "bitte",
+              "lemma": "s'il vous plaît",
+              "key": "fr:s'il vous plaît:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s015",
+          "source": "Je voyage seul.",
+          "fluent": "Ich reise allein.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 3,
+              "end": 9,
+              "surface": "voyage",
+              "gloss": "reisen",
+              "lemma": "voyager",
+              "partOfSpeech": "VERB",
+              "key": "fr:voyager:VERB"
+            },
+            {
+              "start": 10,
+              "end": 14,
+              "surface": "seul",
+              "gloss": "allein",
+              "lemma": "seul",
+              "partOfSpeech": "ADJ",
+              "key": "fr:seul:ADJ"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p008",
+      "speaker": "Réceptionniste",
+      "sentences": [
+        {
+          "id": "s016",
+          "source": "D'accord.",
+          "fluent": "Einverstanden.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "D'",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 2,
+              "end": 8,
+              "surface": "accord",
+              "gloss": "Einverständnis",
+              "lemma": "accord",
+              "partOfSpeech": "NOUN",
+              "key": "fr:accord:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 8,
+              "surface": "D'accord",
+              "gloss": "einverstanden",
+              "lemma": "d'accord",
+              "key": "fr:d'accord:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s017",
+          "source": "Votre passeport, s'il vous plaît.",
+          "fluent": "Ihren Pass, bitte.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Votre",
+              "gloss": "Ihr",
+              "lemma": "votre",
+              "partOfSpeech": "DET",
+              "key": "fr:votre:DET"
+            },
+            {
+              "start": 6,
+              "end": 15,
+              "surface": "passeport",
+              "gloss": "Pass",
+              "lemma": "passeport",
+              "partOfSpeech": "NOUN",
+              "key": "fr:passeport:NOUN"
+            },
+            {
+              "start": 17,
+              "end": 19,
+              "surface": "s'",
+              "gloss": "wenn",
+              "lemma": "si",
+              "partOfSpeech": "SCONJ",
+              "key": "fr:si:SCONJ"
+            },
+            {
+              "start": 19,
+              "end": 21,
+              "surface": "il",
+              "gloss": "es",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 22,
+              "end": 26,
+              "surface": "vous",
+              "gloss": "Ihnen",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 27,
+              "end": 32,
+              "surface": "plaît",
+              "gloss": "gefallen",
+              "lemma": "plaire",
+              "partOfSpeech": "VERB",
+              "key": "fr:plaire:VERB"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 17,
+              "end": 32,
+              "surface": "s'il vous plaît",
+              "gloss": "bitte",
+              "lemma": "s'il vous plaît",
+              "key": "fr:s'il vous plaît:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p009",
+      "speaker": "Client",
+      "sentences": [
+        {
+          "id": "s018",
+          "source": "Voilà mon passeport.",
+          "fluent": "Hier ist mein Pass.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Voilà",
+              "gloss": "da-ist",
+              "lemma": "voilà",
+              "partOfSpeech": "PART",
+              "key": "fr:voilà:PART"
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "surface": "mon",
+              "gloss": "mein",
+              "lemma": "mon",
+              "partOfSpeech": "DET",
+              "key": "fr:mon:DET"
+            },
+            {
+              "start": 10,
+              "end": 19,
+              "surface": "passeport",
+              "gloss": "Pass",
+              "lemma": "passeport",
+              "partOfSpeech": "NOUN",
+              "key": "fr:passeport:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p010",
+      "speaker": "Réceptionniste",
+      "sentences": [
+        {
+          "id": "s019",
+          "source": "Merci beaucoup.",
+          "fluent": "Vielen Dank.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Merci",
+              "gloss": "danke",
+              "lemma": "merci",
+              "partOfSpeech": "INTJ",
+              "key": "fr:merci:INTJ"
+            },
+            {
+              "start": 6,
+              "end": 14,
+              "surface": "beaucoup",
+              "gloss": "sehr",
+              "lemma": "beaucoup",
+              "partOfSpeech": "ADV",
+              "key": "fr:beaucoup:ADV"
+            }
+          ]
+        },
+        {
+          "id": "s020",
+          "source": "La chambre coûte quatre-vingts euros par nuit.",
+          "fluent": "Das Zimmer kostet achtzig Euro pro Nacht.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "La",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 10,
+              "surface": "chambre",
+              "gloss": "Zimmer",
+              "lemma": "chambre",
+              "partOfSpeech": "NOUN",
+              "key": "fr:chambre:NOUN"
+            },
+            {
+              "start": 11,
+              "end": 16,
+              "surface": "coûte",
+              "gloss": "kosten",
+              "lemma": "coûter",
+              "partOfSpeech": "VERB",
+              "key": "fr:coûter:VERB"
+            },
+            {
+              "start": 17,
+              "end": 23,
+              "surface": "quatre",
+              "gloss": "vier",
+              "lemma": "quatre",
+              "partOfSpeech": "NUM",
+              "key": "fr:quatre:NUM"
+            },
+            {
+              "start": 24,
+              "end": 30,
+              "surface": "vingts",
+              "gloss": "zwanzig",
+              "lemma": "vingt",
+              "partOfSpeech": "NUM",
+              "key": "fr:vingt:NUM"
+            },
+            {
+              "start": 31,
+              "end": 36,
+              "surface": "euros",
+              "gloss": "Euro",
+              "lemma": "euro",
+              "partOfSpeech": "NOUN",
+              "key": "fr:euro:NOUN"
+            },
+            {
+              "start": 37,
+              "end": 40,
+              "surface": "par",
+              "gloss": "pro",
+              "lemma": "par",
+              "partOfSpeech": "ADP",
+              "key": "fr:par:ADP"
+            },
+            {
+              "start": 41,
+              "end": 45,
+              "surface": "nuit",
+              "gloss": "Nacht",
+              "lemma": "nuit",
+              "partOfSpeech": "NOUN",
+              "key": "fr:nuit:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 17,
+              "end": 30,
+              "surface": "quatre-vingts",
+              "gloss": "achtzig",
+              "lemma": "quatre-vingts",
+              "key": "fr:quatre-vingts:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s021",
+          "source": "Le petit déjeuner est inclus.",
+          "fluent": "Das Frühstück ist inbegriffen.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 8,
+              "surface": "petit",
+              "gloss": "klein",
+              "lemma": "petit",
+              "partOfSpeech": "ADJ",
+              "key": "fr:petit:ADJ"
+            },
+            {
+              "start": 9,
+              "end": 17,
+              "surface": "déjeuner",
+              "gloss": "Mittagessen",
+              "lemma": "déjeuner",
+              "partOfSpeech": "NOUN",
+              "key": "fr:déjeuner:NOUN"
+            },
+            {
+              "start": 18,
+              "end": 21,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 22,
+              "end": 28,
+              "surface": "inclus",
+              "gloss": "eingeschlossen",
+              "lemma": "inclus",
+              "partOfSpeech": "ADJ",
+              "key": "fr:inclus:ADJ"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 17,
+              "surface": "petit déjeuner",
+              "gloss": "Frühstück",
+              "lemma": "petit déjeuner",
+              "key": "fr:petit déjeuner:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p011",
+      "speaker": "Client",
+      "sentences": [
+        {
+          "id": "s022",
+          "source": "Le petit déjeuner est à quelle heure ?",
+          "fluent": "Um wie viel Uhr gibt es Frühstück?",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 8,
+              "surface": "petit",
+              "gloss": "klein",
+              "lemma": "petit",
+              "partOfSpeech": "ADJ",
+              "key": "fr:petit:ADJ"
+            },
+            {
+              "start": 9,
+              "end": 17,
+              "surface": "déjeuner",
+              "gloss": "Mittagessen",
+              "lemma": "déjeuner",
+              "partOfSpeech": "NOUN",
+              "key": "fr:déjeuner:NOUN"
+            },
+            {
+              "start": 18,
+              "end": 21,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 22,
+              "end": 23,
+              "surface": "à",
+              "gloss": "zu",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 24,
+              "end": 30,
+              "surface": "quelle",
+              "gloss": "welche",
+              "lemma": "quel",
+              "partOfSpeech": "DET",
+              "key": "fr:quel:DET"
+            },
+            {
+              "start": 31,
+              "end": 36,
+              "surface": "heure",
+              "gloss": "Stunde",
+              "lemma": "heure",
+              "partOfSpeech": "NOUN",
+              "key": "fr:heure:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 17,
+              "surface": "petit déjeuner",
+              "gloss": "Frühstück",
+              "lemma": "petit déjeuner",
+              "key": "fr:petit déjeuner:PHRASE"
+            },
+            {
+              "start": 22,
+              "end": 36,
+              "surface": "à quelle heure",
+              "gloss": "um wie viel Uhr",
+              "lemma": "à quelle heure",
+              "key": "fr:à quelle heure:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p012",
+      "speaker": "Réceptionniste",
+      "sentences": [
+        {
+          "id": "s023",
+          "source": "Le petit déjeuner est de sept heures à dix heures.",
+          "fluent": "Das Frühstück gibt es von sieben bis zehn Uhr.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 8,
+              "surface": "petit",
+              "gloss": "klein",
+              "lemma": "petit",
+              "partOfSpeech": "ADJ",
+              "key": "fr:petit:ADJ"
+            },
+            {
+              "start": 9,
+              "end": 17,
+              "surface": "déjeuner",
+              "gloss": "Mittagessen",
+              "lemma": "déjeuner",
+              "partOfSpeech": "NOUN",
+              "key": "fr:déjeuner:NOUN"
+            },
+            {
+              "start": 18,
+              "end": 21,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 22,
+              "end": 24,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 25,
+              "end": 29,
+              "surface": "sept",
+              "gloss": "sieben",
+              "lemma": "sept",
+              "partOfSpeech": "NUM",
+              "key": "fr:sept:NUM"
+            },
+            {
+              "start": 30,
+              "end": 36,
+              "surface": "heures",
+              "gloss": "Stunden",
+              "lemma": "heure",
+              "partOfSpeech": "NOUN",
+              "key": "fr:heure:NOUN"
+            },
+            {
+              "start": 37,
+              "end": 38,
+              "surface": "à",
+              "gloss": "bis",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 39,
+              "end": 42,
+              "surface": "dix",
+              "gloss": "zehn",
+              "lemma": "dix",
+              "partOfSpeech": "NUM",
+              "key": "fr:dix:NUM"
+            },
+            {
+              "start": 43,
+              "end": 49,
+              "surface": "heures",
+              "gloss": "Stunden",
+              "lemma": "heure",
+              "partOfSpeech": "NOUN",
+              "key": "fr:heure:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 17,
+              "surface": "petit déjeuner",
+              "gloss": "Frühstück",
+              "lemma": "petit déjeuner",
+              "key": "fr:petit déjeuner:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s024",
+          "source": "Le restaurant est au premier étage.",
+          "fluent": "Das Restaurant ist im ersten Stock.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 13,
+              "surface": "restaurant",
+              "gloss": "Restaurant",
+              "lemma": "restaurant",
+              "partOfSpeech": "NOUN",
+              "key": "fr:restaurant:NOUN"
+            },
+            {
+              "start": 14,
+              "end": 17,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 18,
+              "end": 20,
+              "surface": "au",
+              "gloss": "zu dem",
+              "lemma": "au",
+              "partOfSpeech": "ADP",
+              "key": "fr:au:ADP"
+            },
+            {
+              "start": 21,
+              "end": 28,
+              "surface": "premier",
+              "gloss": "erst",
+              "lemma": "premier",
+              "partOfSpeech": "ADJ",
+              "key": "fr:premier:ADJ"
+            },
+            {
+              "start": 29,
+              "end": 34,
+              "surface": "étage",
+              "gloss": "Stock",
+              "lemma": "étage",
+              "partOfSpeech": "NOUN",
+              "key": "fr:étage:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p013",
+      "speaker": "Client",
+      "sentences": [
+        {
+          "id": "s025",
+          "source": "Quel est le numéro de ma chambre ?",
+          "fluent": "Welche Nummer hat mein Zimmer?",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Quel",
+              "gloss": "welcher",
+              "lemma": "quel",
+              "partOfSpeech": "DET",
+              "key": "fr:quel:DET"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "surface": "le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 12,
+              "end": 18,
+              "surface": "numéro",
+              "gloss": "Nummer",
+              "lemma": "numéro",
+              "partOfSpeech": "NOUN",
+              "key": "fr:numéro:NOUN"
+            },
+            {
+              "start": 19,
+              "end": 21,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 22,
+              "end": 24,
+              "surface": "ma",
+              "gloss": "meine",
+              "lemma": "mon",
+              "partOfSpeech": "DET",
+              "key": "fr:mon:DET"
+            },
+            {
+              "start": 25,
+              "end": 32,
+              "surface": "chambre",
+              "gloss": "Zimmer",
+              "lemma": "chambre",
+              "partOfSpeech": "NOUN",
+              "key": "fr:chambre:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p014",
+      "speaker": "Réceptionniste",
+      "sentences": [
+        {
+          "id": "s026",
+          "source": "Vous avez la chambre douze.",
+          "fluent": "Sie haben Zimmer zwölf.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Vous",
+              "gloss": "Sie",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 5,
+              "end": 9,
+              "surface": "avez",
+              "gloss": "haben",
+              "lemma": "avoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:avoir:VERB"
+            },
+            {
+              "start": 10,
+              "end": 12,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 13,
+              "end": 20,
+              "surface": "chambre",
+              "gloss": "Zimmer",
+              "lemma": "chambre",
+              "partOfSpeech": "NOUN",
+              "key": "fr:chambre:NOUN"
+            },
+            {
+              "start": 21,
+              "end": 26,
+              "surface": "douze",
+              "gloss": "zwölf",
+              "lemma": "douze",
+              "partOfSpeech": "NUM",
+              "key": "fr:douze:NUM"
+            }
+          ]
+        },
+        {
+          "id": "s027",
+          "source": "Elle est au deuxième étage.",
+          "fluent": "Es ist im zweiten Stock.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Elle",
+              "gloss": "sie",
+              "lemma": "elle",
+              "partOfSpeech": "PRON",
+              "key": "fr:elle:PRON"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "surface": "au",
+              "gloss": "zu dem",
+              "lemma": "au",
+              "partOfSpeech": "ADP",
+              "key": "fr:au:ADP"
+            },
+            {
+              "start": 12,
+              "end": 20,
+              "surface": "deuxième",
+              "gloss": "zweit",
+              "lemma": "deuxième",
+              "partOfSpeech": "ADJ",
+              "key": "fr:deuxième:ADJ"
+            },
+            {
+              "start": 21,
+              "end": 26,
+              "surface": "étage",
+              "gloss": "Stock",
+              "lemma": "étage",
+              "partOfSpeech": "NOUN",
+              "key": "fr:étage:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s028",
+          "source": "L'ascenseur est à droite, près des escaliers.",
+          "fluent": "Der Aufzug ist rechts, neben der Treppe.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "L'",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 2,
+              "end": 11,
+              "surface": "ascenseur",
+              "gloss": "Aufzug",
+              "lemma": "ascenseur",
+              "partOfSpeech": "NOUN",
+              "key": "fr:ascenseur:NOUN"
+            },
+            {
+              "start": 12,
+              "end": 15,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 16,
+              "end": 17,
+              "surface": "à",
+              "gloss": "zu",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 18,
+              "end": 24,
+              "surface": "droite",
+              "gloss": "Rechte",
+              "lemma": "droite",
+              "partOfSpeech": "NOUN",
+              "key": "fr:droite:NOUN"
+            },
+            {
+              "start": 26,
+              "end": 30,
+              "surface": "près",
+              "gloss": "nahe",
+              "lemma": "près",
+              "partOfSpeech": "ADV",
+              "key": "fr:près:ADV"
+            },
+            {
+              "start": 31,
+              "end": 34,
+              "surface": "des",
+              "gloss": "von den",
+              "lemma": "des",
+              "partOfSpeech": "ADP",
+              "key": "fr:des:ADP"
+            },
+            {
+              "start": 35,
+              "end": 44,
+              "surface": "escaliers",
+              "gloss": "Treppen",
+              "lemma": "escalier",
+              "partOfSpeech": "NOUN",
+              "key": "fr:escalier:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 16,
+              "end": 24,
+              "surface": "à droite",
+              "gloss": "rechts",
+              "lemma": "à droite",
+              "key": "fr:à droite:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p015",
+      "speaker": "Client",
+      "sentences": [
+        {
+          "id": "s029",
+          "source": "Est-ce qu'il y a du wifi dans la chambre ?",
+          "fluent": "Gibt es WLAN im Zimmer?",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 4,
+              "end": 6,
+              "surface": "ce",
+              "gloss": "das",
+              "lemma": "ce",
+              "partOfSpeech": "PRON",
+              "key": "fr:ce:PRON"
+            },
+            {
+              "start": 7,
+              "end": 10,
+              "surface": "qu'",
+              "gloss": "dass",
+              "lemma": "que",
+              "partOfSpeech": "SCONJ",
+              "key": "fr:que:SCONJ"
+            },
+            {
+              "start": 10,
+              "end": 12,
+              "surface": "il",
+              "gloss": "es",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 13,
+              "end": 14,
+              "surface": "y",
+              "gloss": "da",
+              "lemma": "y",
+              "partOfSpeech": "PRON",
+              "key": "fr:y:PRON"
+            },
+            {
+              "start": 15,
+              "end": 16,
+              "surface": "a",
+              "gloss": "haben",
+              "lemma": "avoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:avoir:VERB"
+            },
+            {
+              "start": 17,
+              "end": 19,
+              "surface": "du",
+              "gloss": "von dem",
+              "lemma": "du",
+              "partOfSpeech": "ADP",
+              "key": "fr:du:ADP"
+            },
+            {
+              "start": 20,
+              "end": 24,
+              "surface": "wifi",
+              "gloss": "WLAN",
+              "lemma": "wifi",
+              "partOfSpeech": "NOUN",
+              "key": "fr:wifi:NOUN"
+            },
+            {
+              "start": 25,
+              "end": 29,
+              "surface": "dans",
+              "gloss": "in",
+              "lemma": "dans",
+              "partOfSpeech": "ADP",
+              "key": "fr:dans:ADP"
+            },
+            {
+              "start": 30,
+              "end": 32,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 33,
+              "end": 40,
+              "surface": "chambre",
+              "gloss": "Zimmer",
+              "lemma": "chambre",
+              "partOfSpeech": "NOUN",
+              "key": "fr:chambre:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 10,
+              "surface": "Est-ce qu'",
+              "gloss": "(Frage)",
+              "lemma": "est-ce que",
+              "key": "fr:est-ce que:PHRASE"
+            },
+            {
+              "start": 10,
+              "end": 16,
+              "surface": "il y a",
+              "gloss": "es gibt",
+              "lemma": "il y a",
+              "key": "fr:il y a:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p016",
+      "speaker": "Réceptionniste",
+      "sentences": [
+        {
+          "id": "s030",
+          "source": "Oui, le wifi est gratuit dans tout l'hôtel.",
+          "fluent": "Ja, das WLAN ist im ganzen Hotel kostenlos.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Oui",
+              "gloss": "ja",
+              "lemma": "oui",
+              "partOfSpeech": "INTJ",
+              "key": "fr:oui:INTJ"
+            },
+            {
+              "start": 5,
+              "end": 7,
+              "surface": "le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 8,
+              "end": 12,
+              "surface": "wifi",
+              "gloss": "WLAN",
+              "lemma": "wifi",
+              "partOfSpeech": "NOUN",
+              "key": "fr:wifi:NOUN"
+            },
+            {
+              "start": 13,
+              "end": 16,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 17,
+              "end": 24,
+              "surface": "gratuit",
+              "gloss": "kostenlos",
+              "lemma": "gratuit",
+              "partOfSpeech": "ADJ",
+              "key": "fr:gratuit:ADJ"
+            },
+            {
+              "start": 25,
+              "end": 29,
+              "surface": "dans",
+              "gloss": "in",
+              "lemma": "dans",
+              "partOfSpeech": "ADP",
+              "key": "fr:dans:ADP"
+            },
+            {
+              "start": 30,
+              "end": 34,
+              "surface": "tout",
+              "gloss": "ganz",
+              "lemma": "tout",
+              "partOfSpeech": "DET",
+              "key": "fr:tout:DET"
+            },
+            {
+              "start": 35,
+              "end": 37,
+              "surface": "l'",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 37,
+              "end": 42,
+              "surface": "hôtel",
+              "gloss": "Hotel",
+              "lemma": "hôtel",
+              "partOfSpeech": "NOUN",
+              "key": "fr:hôtel:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s031",
+          "source": "Voici votre carte.",
+          "fluent": "Hier ist Ihre Karte.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Voici",
+              "gloss": "hier-ist",
+              "lemma": "voici",
+              "partOfSpeech": "PART",
+              "key": "fr:voici:PART"
+            },
+            {
+              "start": 6,
+              "end": 11,
+              "surface": "votre",
+              "gloss": "Ihr",
+              "lemma": "votre",
+              "partOfSpeech": "DET",
+              "key": "fr:votre:DET"
+            },
+            {
+              "start": 12,
+              "end": 17,
+              "surface": "carte",
+              "gloss": "Karte",
+              "lemma": "carte",
+              "partOfSpeech": "NOUN",
+              "key": "fr:carte:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s032",
+          "source": "Le mot de passe est sur la carte.",
+          "fluent": "Das Passwort steht auf der Karte.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 6,
+              "surface": "mot",
+              "gloss": "Wort",
+              "lemma": "mot",
+              "partOfSpeech": "NOUN",
+              "key": "fr:mot:NOUN"
+            },
+            {
+              "start": 7,
+              "end": 9,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 10,
+              "end": 15,
+              "surface": "passe",
+              "gloss": "Durchgang",
+              "lemma": "passe",
+              "partOfSpeech": "NOUN",
+              "key": "fr:passe:NOUN"
+            },
+            {
+              "start": 16,
+              "end": 19,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 20,
+              "end": 23,
+              "surface": "sur",
+              "gloss": "auf",
+              "lemma": "sur",
+              "partOfSpeech": "ADP",
+              "key": "fr:sur:ADP"
+            },
+            {
+              "start": 24,
+              "end": 26,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 27,
+              "end": 32,
+              "surface": "carte",
+              "gloss": "Karte",
+              "lemma": "carte",
+              "partOfSpeech": "NOUN",
+              "key": "fr:carte:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 3,
+              "end": 15,
+              "surface": "mot de passe",
+              "gloss": "Passwort",
+              "lemma": "mot de passe",
+              "key": "fr:mot de passe:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p017",
+      "speaker": "Client",
+      "sentences": [
+        {
+          "id": "s033",
+          "source": "Merci beaucoup, madame.",
+          "fluent": "Vielen Dank, meine Dame.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Merci",
+              "gloss": "danke",
+              "lemma": "merci",
+              "partOfSpeech": "INTJ",
+              "key": "fr:merci:INTJ"
+            },
+            {
+              "start": 6,
+              "end": 14,
+              "surface": "beaucoup",
+              "gloss": "sehr",
+              "lemma": "beaucoup",
+              "partOfSpeech": "ADV",
+              "key": "fr:beaucoup:ADV"
+            },
+            {
+              "start": 16,
+              "end": 22,
+              "surface": "madame",
+              "gloss": "Dame",
+              "lemma": "madame",
+              "partOfSpeech": "NOUN",
+              "key": "fr:madame:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p018",
+      "speaker": "Réceptionniste",
+      "sentences": [
+        {
+          "id": "s034",
+          "source": "Je vous en prie, monsieur.",
+          "fluent": "Gern geschehen, mein Herr.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 3,
+              "end": 7,
+              "surface": "vous",
+              "gloss": "Ihnen",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 8,
+              "end": 10,
+              "surface": "en",
+              "gloss": "davon",
+              "lemma": "en",
+              "partOfSpeech": "PRON",
+              "key": "fr:en:PRON"
+            },
+            {
+              "start": 11,
+              "end": 15,
+              "surface": "prie",
+              "gloss": "bitten",
+              "lemma": "prier",
+              "partOfSpeech": "VERB",
+              "key": "fr:prier:VERB"
+            },
+            {
+              "start": 17,
+              "end": 25,
+              "surface": "monsieur",
+              "gloss": "Herr",
+              "lemma": "monsieur",
+              "partOfSpeech": "NOUN",
+              "key": "fr:monsieur:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 15,
+              "surface": "Je vous en prie",
+              "gloss": "gern geschehen",
+              "lemma": "je vous en prie",
+              "key": "fr:je vous en prie:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s035",
+          "source": "Bon séjour !",
+          "fluent": "Einen schönen Aufenthalt!",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Bon",
+              "gloss": "gut",
+              "lemma": "bon",
+              "partOfSpeech": "ADJ",
+              "key": "fr:bon:ADJ"
+            },
+            {
+              "start": 4,
+              "end": 10,
+              "surface": "séjour",
+              "gloss": "Aufenthalt",
+              "lemma": "séjour",
+              "partOfSpeech": "NOUN",
+              "key": "fr:séjour:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 10,
+              "surface": "Bon séjour",
+              "gloss": "schönen Aufenthalt",
+              "lemma": "bon séjour",
+              "key": "fr:bon séjour:PHRASE"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "dictionary": {
+    "fr:accord:NOUN": {
+      "lemma": "accord",
+      "partOfSpeech": "NOUN",
+      "gloss": "Einverständnis, Übereinkunft",
+      "forms": [
+        "accord"
+      ],
+      "grammar": "Männlich: un accord. D'accord ist die übliche Art, „einverstanden“ zu sagen."
+    },
+    "fr:ah:INTJ": {
+      "lemma": "ah",
+      "partOfSpeech": "INTJ",
+      "gloss": "ah, ach",
+      "forms": [
+        "ah"
+      ],
+      "grammar": "Ausruf des Erkennens oder Überraschens."
+    },
+    "fr:appeler:VERB": {
+      "lemma": "appeler",
+      "partOfSpeech": "VERB",
+      "gloss": "nennen, rufen",
+      "forms": [
+        "appelle"
+      ],
+      "grammar": "Mit Reflexivpronomen heißt es „heißen“: je m'appelle, tu t'appelles, il s'appelle. Das l verdoppelt sich."
+    },
+    "fr:ascenseur:NOUN": {
+      "lemma": "ascenseur",
+      "partOfSpeech": "NOUN",
+      "gloss": "Aufzug, Fahrstuhl",
+      "forms": [
+        "ascenseur"
+      ],
+      "grammar": "Männlich, beginnt mit Vokal: l'ascenseur, un ascenseur."
+    },
+    "fr:au:ADP": {
+      "lemma": "au",
+      "partOfSpeech": "ADP",
+      "gloss": "zu dem, im",
+      "forms": [
+        "au"
+      ],
+      "grammar": "Verschmelzung von à + le. Vor weiblichen Wörtern bleibt es getrennt (à la), vor Vokal à l', im Plural aux."
+    },
+    "fr:avoir:VERB": {
+      "lemma": "avoir",
+      "partOfSpeech": "VERB",
+      "gloss": "haben",
+      "forms": [
+        "avez",
+        "ai",
+        "a"
+      ],
+      "grammar": "Das wichtigste unregelmäßige Verb: j'ai, tu as, il a, nous avons, vous avez, ils ont."
+    },
+    "fr:beaucoup:ADV": {
+      "lemma": "beaucoup",
+      "partOfSpeech": "ADV",
+      "gloss": "viel, sehr",
+      "forms": [
+        "beaucoup"
+      ],
+      "grammar": "Steht hinter dem Wort, das es verstärkt: merci beaucoup."
+    },
+    "fr:bellevue:PROPN": {
+      "lemma": "Bellevue",
+      "partOfSpeech": "PROPN",
+      "gloss": "Bellevue (Hotelname)",
+      "forms": [
+        "Bellevue"
+      ],
+      "grammar": "Eigenname, wörtlich „schöne Aussicht“. Bleibt unverändert."
+    },
+    "fr:berger:PROPN": {
+      "lemma": "Berger",
+      "partOfSpeech": "PROPN",
+      "gloss": "Berger (Nachname)",
+      "forms": [
+        "Berger"
+      ],
+      "grammar": "Eigenname des Gastes."
+    },
+    "fr:bienvenue:NOUN": {
+      "lemma": "bienvenue",
+      "partOfSpeech": "NOUN",
+      "gloss": "Willkommen",
+      "forms": [
+        "bienvenue"
+      ],
+      "grammar": "Wörtlich „gut angekommen“. Als Begrüßung steht es allein: bienvenue à Paris."
+    },
+    "fr:bon:ADJ": {
+      "lemma": "bon",
+      "partOfSpeech": "ADJ",
+      "gloss": "gut",
+      "forms": [
+        "bon"
+      ],
+      "grammar": "Steht vor dem Substantiv. Weiblich: bonne. In Wunschformeln fällt der Artikel weg: bon séjour, bonne journée."
+    },
+    "fr:bonjour:INTJ": {
+      "lemma": "bonjour",
+      "partOfSpeech": "INTJ",
+      "gloss": "guten Tag, hallo",
+      "forms": [
+        "bonjour"
+      ],
+      "grammar": "Wörtlich „guter Tag“ (bon + jour). Ab dem frühen Abend sagt man bonsoir."
+    },
+    "fr:carte:NOUN": {
+      "lemma": "carte",
+      "partOfSpeech": "NOUN",
+      "gloss": "Karte",
+      "forms": [
+        "carte"
+      ],
+      "grammar": "Weiblich: la carte. Meint hier die Zimmerkarte, sonst auch Speisekarte oder Ausweis."
+    },
+    "fr:ce:PRON": {
+      "lemma": "ce",
+      "partOfSpeech": "PRON",
+      "gloss": "das, dies",
+      "forms": [
+        "c'",
+        "ce"
+      ],
+      "grammar": "Vor est wird es zu c': c'est. In der Frageformel est-ce que steht es unverändert."
+    },
+    "fr:chambre:NOUN": {
+      "lemma": "chambre",
+      "partOfSpeech": "NOUN",
+      "gloss": "Zimmer",
+      "forms": [
+        "chambre"
+      ],
+      "grammar": "Weiblich: la chambre, une chambre. Eine chambre simple ist ein Einzelzimmer, eine chambre double ein Doppelzimmer."
+    },
+    "fr:coûter:VERB": {
+      "lemma": "coûter",
+      "partOfSpeech": "VERB",
+      "gloss": "kosten",
+      "forms": [
+        "coûte"
+      ],
+      "grammar": "Regelmäßig auf -er: ça coûte combien? – was kostet das?"
+    },
+    "fr:dans:ADP": {
+      "lemma": "dans",
+      "partOfSpeech": "ADP",
+      "gloss": "in",
+      "forms": [
+        "dans"
+      ],
+      "grammar": "Räumlich „innerhalb von“: dans la chambre, dans l'hôtel."
+    },
+    "fr:de:ADP": {
+      "lemma": "de",
+      "partOfSpeech": "ADP",
+      "gloss": "von, aus",
+      "forms": [
+        "d'",
+        "de"
+      ],
+      "grammar": "Zeigt Herkunft und Zugehörigkeit. Vor Vokal wird es zu d', mit le verschmilzt es zu du, mit les zu des."
+    },
+    "fr:des:ADP": {
+      "lemma": "des",
+      "partOfSpeech": "ADP",
+      "gloss": "von den",
+      "forms": [
+        "des"
+      ],
+      "grammar": "Verschmelzung von de + les. Hier gehört es zu près de, „in der Nähe von“."
+    },
+    "fr:deuxième:ADJ": {
+      "lemma": "deuxième",
+      "partOfSpeech": "ADJ",
+      "gloss": "zweiter",
+      "forms": [
+        "deuxième"
+      ],
+      "grammar": "Gebildet aus deux + -ième. Für beide Geschlechter gleich."
+    },
+    "fr:dix:NUM": {
+      "lemma": "dix",
+      "partOfSpeech": "NUM",
+      "gloss": "zehn",
+      "forms": [
+        "dix"
+      ],
+      "grammar": "Allein stehend klingt das x wie ss, vor einem Vokal wie z: dix heures."
+    },
+    "fr:double:ADJ": {
+      "lemma": "double",
+      "partOfSpeech": "ADJ",
+      "gloss": "doppelt",
+      "forms": [
+        "double"
+      ],
+      "grammar": "Une chambre double ist ein Doppelzimmer. Für beide Geschlechter gleich."
+    },
+    "fr:douze:NUM": {
+      "lemma": "douze",
+      "partOfSpeech": "NUM",
+      "gloss": "zwölf",
+      "forms": [
+        "douze"
+      ],
+      "grammar": "Zimmernummern stehen ohne Artikel hinter dem Substantiv: la chambre douze."
+    },
+    "fr:droite:NOUN": {
+      "lemma": "droite",
+      "partOfSpeech": "NOUN",
+      "gloss": "rechte Seite",
+      "forms": [
+        "droite"
+      ],
+      "grammar": "Weiblich. À droite heißt „rechts“, à gauche „links“."
+    },
+    "fr:du:ADP": {
+      "lemma": "du",
+      "partOfSpeech": "ADP",
+      "gloss": "von dem",
+      "forms": [
+        "du"
+      ],
+      "grammar": "Verschmelzung von de + le. Vor nicht zählbaren Dingen ist es der Teilungsartikel: du wifi, du pain, du café."
+    },
+    "fr:déjeuner:NOUN": {
+      "lemma": "déjeuner",
+      "partOfSpeech": "NOUN",
+      "gloss": "Mittagessen",
+      "forms": [
+        "déjeuner"
+      ],
+      "grammar": "Männlich: le déjeuner. Mit petit davor wird daraus das Frühstück, le petit déjeuner."
+    },
+    "fr:elle:PRON": {
+      "lemma": "elle",
+      "partOfSpeech": "PRON",
+      "gloss": "sie",
+      "forms": [
+        "elle"
+      ],
+      "grammar": "Steht für jedes weibliche Wort, auch für Dinge: la chambre → elle."
+    },
+    "fr:en:PRON": {
+      "lemma": "en",
+      "partOfSpeech": "PRON",
+      "gloss": "davon",
+      "forms": [
+        "en"
+      ],
+      "grammar": "Ersetzt eine Menge oder ein Ding mit de. In je vous en prie („gern geschehen“) ist es eine feste Formel."
+    },
+    "fr:escalier:NOUN": {
+      "lemma": "escalier",
+      "partOfSpeech": "NOUN",
+      "gloss": "Treppe",
+      "forms": [
+        "escaliers"
+      ],
+      "grammar": "Männlich: l'escalier. Oft steht der Plural les escaliers, wo das Deutsche die Einzahl nimmt."
+    },
+    "fr:euro:NOUN": {
+      "lemma": "euro",
+      "partOfSpeech": "NOUN",
+      "gloss": "Euro",
+      "forms": [
+        "euros"
+      ],
+      "grammar": "Männlich: un euro. Anders als im Deutschen wird es im Plural gebeugt: quatre-vingts euros."
+    },
+    "fr:gratuit:ADJ": {
+      "lemma": "gratuit",
+      "partOfSpeech": "ADJ",
+      "gloss": "kostenlos",
+      "forms": [
+        "gratuit"
+      ],
+      "grammar": "Weiblich: gratuite. Das t am Ende bleibt in der männlichen Form stumm."
+    },
+    "fr:heure:NOUN": {
+      "lemma": "heure",
+      "partOfSpeech": "NOUN",
+      "gloss": "Stunde, Uhr",
+      "forms": [
+        "heure",
+        "heures"
+      ],
+      "grammar": "Weiblich: l'heure. À quelle heure? heißt „um wie viel Uhr?“, und Uhrzeiten sagt man mit heures: sept heures."
+    },
+    "fr:hôtel:NOUN": {
+      "lemma": "hôtel",
+      "partOfSpeech": "NOUN",
+      "gloss": "Hotel",
+      "forms": [
+        "hôtel"
+      ],
+      "grammar": "Männlich, aber das h ist stumm, deshalb l'hôtel und nicht le hôtel."
+    },
+    "fr:il:PRON": {
+      "lemma": "il",
+      "partOfSpeech": "PRON",
+      "gloss": "er, es",
+      "forms": [
+        "il"
+      ],
+      "grammar": "Steht auch als unpersönliches „es“ ohne eigene Bedeutung: il y a, s'il vous plaît."
+    },
+    "fr:inclus:ADJ": {
+      "lemma": "inclus",
+      "partOfSpeech": "ADJ",
+      "gloss": "inbegriffen, eingeschlossen",
+      "forms": [
+        "inclus"
+      ],
+      "grammar": "Weibliche Form: incluse. Das Gegenteil ist en supplément, gegen Aufpreis."
+    },
+    "fr:je:PRON": {
+      "lemma": "je",
+      "partOfSpeech": "PRON",
+      "gloss": "ich",
+      "forms": [
+        "je",
+        "j'"
+      ],
+      "grammar": "Vor einem Vokal oder stummem h wird es zu j': j'ai, j'habite."
+    },
+    "fr:le:DET": {
+      "lemma": "le",
+      "partOfSpeech": "DET",
+      "gloss": "der, die, das",
+      "forms": [
+        "l'",
+        "la",
+        "le"
+      ],
+      "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur."
+    },
+    "fr:madame:NOUN": {
+      "lemma": "madame",
+      "partOfSpeech": "NOUN",
+      "gloss": "gnädige Frau, Frau",
+      "forms": [
+        "madame"
+      ],
+      "grammar": "Höfliche Anrede für eine Frau. Ohne Namen benutzt, wo man im Deutschen gar nichts sagt. Plural: mesdames."
+    },
+    "fr:matin:NOUN": {
+      "lemma": "matin",
+      "partOfSpeech": "NOUN",
+      "gloss": "Morgen, Vormittag",
+      "forms": [
+        "matin"
+      ],
+      "grammar": "Männlich: le matin. Hinter einen Wochentag gestellt, ergibt es samedi matin, Samstagmorgen."
+    },
+    "fr:me:PRON": {
+      "lemma": "me",
+      "partOfSpeech": "PRON",
+      "gloss": "mich, mir",
+      "forms": [
+        "m'"
+      ],
+      "grammar": "Reflexiv- und Objektpronomen. Steht vor dem Verb und wird vor Vokal zu m': je m'appelle."
+    },
+    "fr:merci:INTJ": {
+      "lemma": "merci",
+      "partOfSpeech": "INTJ",
+      "gloss": "danke",
+      "forms": [
+        "merci"
+      ],
+      "grammar": "Merci beaucoup ist „vielen Dank“. Die Antwort darauf lautet je vous en prie oder de rien."
+    },
+    "fr:moment:NOUN": {
+      "lemma": "moment",
+      "partOfSpeech": "NOUN",
+      "gloss": "Moment, Augenblick",
+      "forms": [
+        "moment"
+      ],
+      "grammar": "Männlich: un moment. Un moment, s'il vous plaît ist die Standardformel für „einen Moment bitte“."
+    },
+    "fr:mon:DET": {
+      "lemma": "mon",
+      "partOfSpeech": "DET",
+      "gloss": "mein",
+      "forms": [
+        "mon",
+        "ma"
+      ],
+      "grammar": "Richtet sich nach dem besessenen Ding, nicht nach dem Besitzer: mon passeport (m), ma chambre (f), mes clés (Pl.)."
+    },
+    "fr:monsieur:NOUN": {
+      "lemma": "monsieur",
+      "partOfSpeech": "NOUN",
+      "gloss": "mein Herr, Herr",
+      "forms": [
+        "monsieur"
+      ],
+      "grammar": "Höfliche Anrede für einen Mann. Gesprochen „mösjö“ – das r bleibt stumm. Plural: messieurs."
+    },
+    "fr:mot:NOUN": {
+      "lemma": "mot",
+      "partOfSpeech": "NOUN",
+      "gloss": "Wort",
+      "forms": [
+        "mot"
+      ],
+      "grammar": "Männlich: le mot. Das t am Ende bleibt stumm."
+    },
+    "fr:nom:NOUN": {
+      "lemma": "nom",
+      "partOfSpeech": "NOUN",
+      "gloss": "Name, Nachname",
+      "forms": [
+        "nom"
+      ],
+      "grammar": "Männlich: le nom. Der Vorname heißt prénom."
+    },
+    "fr:nuit:NOUN": {
+      "lemma": "nuit",
+      "partOfSpeech": "NOUN",
+      "gloss": "Nacht",
+      "forms": [
+        "nuits",
+        "nuit"
+      ],
+      "grammar": "Weiblich: la nuit. Die Mehrzahl bekommt nur ein stummes -s: nuits. Ein Hotelpreis gilt par nuit, pro Nacht."
+    },
+    "fr:numéro:NOUN": {
+      "lemma": "numéro",
+      "partOfSpeech": "NOUN",
+      "gloss": "Nummer",
+      "forms": [
+        "numéro"
+      ],
+      "grammar": "Männlich: le numéro. Abgekürzt n°."
+    },
+    "fr:ou:CCONJ": {
+      "lemma": "ou",
+      "partOfSpeech": "CCONJ",
+      "gloss": "oder",
+      "forms": [
+        "ou"
+      ],
+      "grammar": "Ohne Akzent heißt es „oder“, mit Akzent (où) „wo“."
+    },
+    "fr:oui:INTJ": {
+      "lemma": "oui",
+      "partOfSpeech": "INTJ",
+      "gloss": "ja",
+      "forms": [
+        "oui"
+      ],
+      "grammar": "Auf eine verneinte Frage antwortet man stattdessen mit si."
+    },
+    "fr:par:ADP": {
+      "lemma": "par",
+      "partOfSpeech": "ADP",
+      "gloss": "pro, durch",
+      "forms": [
+        "par"
+      ],
+      "grammar": "Bei Preisen und Mengen heißt es „pro“: par nuit, par personne."
+    },
+    "fr:partir:VERB": {
+      "lemma": "partir",
+      "partOfSpeech": "VERB",
+      "gloss": "abfahren, losfahren",
+      "forms": [
+        "pars"
+      ],
+      "grammar": "Unregelmäßig: je pars, tu pars, il part, nous partons, vous partez, ils partent."
+    },
+    "fr:passe:NOUN": {
+      "lemma": "passe",
+      "partOfSpeech": "NOUN",
+      "gloss": "Durchgang, Passieren",
+      "forms": [
+        "passe"
+      ],
+      "grammar": "Kommt fast nur in le mot de passe vor – wörtlich „das Wort zum Durchgehen“, also das Passwort."
+    },
+    "fr:passeport:NOUN": {
+      "lemma": "passeport",
+      "partOfSpeech": "NOUN",
+      "gloss": "Reisepass",
+      "forms": [
+        "passeport"
+      ],
+      "grammar": "Männlich: le passeport. Der Personalausweis heißt la carte d'identité."
+    },
+    "fr:petit:ADJ": {
+      "lemma": "petit",
+      "partOfSpeech": "ADJ",
+      "gloss": "klein",
+      "forms": [
+        "petit"
+      ],
+      "grammar": "Eines der wenigen Adjektive, die vor dem Substantiv stehen. Weiblich: petite. Le petit déjeuner ist wörtlich „das kleine Mittagessen“ – das Frühstück."
+    },
+    "fr:plaire:VERB": {
+      "lemma": "plaire",
+      "partOfSpeech": "VERB",
+      "gloss": "gefallen",
+      "forms": [
+        "plaît"
+      ],
+      "grammar": "Unregelmäßig. Im Alltag begegnet es fast nur in s'il vous plaît („bitte“) und ça me plaît („das gefällt mir“)."
+    },
+    "fr:premier:ADJ": {
+      "lemma": "premier",
+      "partOfSpeech": "ADJ",
+      "gloss": "erster",
+      "forms": [
+        "premier"
+      ],
+      "grammar": "Weiblich: première. Nur die Eins hat eine eigene Ordnungszahl; ab zwei hängt man -ième an."
+    },
+    "fr:prier:VERB": {
+      "lemma": "prier",
+      "partOfSpeech": "VERB",
+      "gloss": "bitten",
+      "forms": [
+        "prie"
+      ],
+      "grammar": "Regelmäßig auf -er. Je vous en prie ist die höfliche Antwort auf merci."
+    },
+    "fr:près:ADV": {
+      "lemma": "près",
+      "partOfSpeech": "ADV",
+      "gloss": "nahe, in der Nähe",
+      "forms": [
+        "près"
+      ],
+      "grammar": "Mit einem Anschluss wird daraus près de: près de la porte, près des escaliers."
+    },
+    "fr:quatre:NUM": {
+      "lemma": "quatre",
+      "partOfSpeech": "NUM",
+      "gloss": "vier",
+      "forms": [
+        "quatre"
+      ],
+      "grammar": "In quatre-vingts steckt die alte Zwanzigerzählung: vier mal zwanzig ergibt achtzig."
+    },
+    "fr:que:SCONJ": {
+      "lemma": "que",
+      "partOfSpeech": "SCONJ",
+      "gloss": "dass",
+      "forms": [
+        "qu'"
+      ],
+      "grammar": "Vor einem Vokal wird es zu qu'. In est-ce que macht es aus einer Aussage eine Frage, ohne selbst übersetzt zu werden."
+    },
+    "fr:quel:DET": {
+      "lemma": "quel",
+      "partOfSpeech": "DET",
+      "gloss": "welcher, welche",
+      "forms": [
+        "quelle",
+        "quel"
+      ],
+      "grammar": "Fragewort, das sich anpasst: quel (m), quelle (f), quels, quelles. Alle vier klingen gleich."
+    },
+    "fr:restaurant:NOUN": {
+      "lemma": "restaurant",
+      "partOfSpeech": "NOUN",
+      "gloss": "Restaurant",
+      "forms": [
+        "restaurant"
+      ],
+      "grammar": "Männlich: le restaurant. Das t am Ende bleibt stumm."
+    },
+    "fr:rester:VERB": {
+      "lemma": "rester",
+      "partOfSpeech": "VERB",
+      "gloss": "bleiben",
+      "forms": [
+        "restez"
+      ],
+      "grammar": "Regelmäßig auf -er: je reste, tu restes, il reste, nous restons, vous restez, ils restent."
+    },
+    "fr:réservation:NOUN": {
+      "lemma": "réservation",
+      "partOfSpeech": "NOUN",
+      "gloss": "Reservierung, Buchung",
+      "forms": [
+        "réservation"
+      ],
+      "grammar": "Weiblich: une réservation. Fast alle Wörter auf -tion sind weiblich."
+    },
+    "fr:samedi:NOUN": {
+      "lemma": "samedi",
+      "partOfSpeech": "NOUN",
+      "gloss": "Samstag",
+      "forms": [
+        "samedi"
+      ],
+      "grammar": "Wochentage stehen ohne Artikel und ohne Präposition: je pars samedi."
+    },
+    "fr:sept:NUM": {
+      "lemma": "sept",
+      "partOfSpeech": "NUM",
+      "gloss": "sieben",
+      "forms": [
+        "sept"
+      ],
+      "grammar": "Das p bleibt stumm, das t wird gesprochen."
+    },
+    "fr:seul:ADJ": {
+      "lemma": "seul",
+      "partOfSpeech": "ADJ",
+      "gloss": "allein, einzig",
+      "forms": [
+        "seul"
+      ],
+      "grammar": "Weibliche Form: seule. Je voyage seul sagt ein Mann, je voyage seule eine Frau."
+    },
+    "fr:si:SCONJ": {
+      "lemma": "si",
+      "partOfSpeech": "SCONJ",
+      "gloss": "wenn, falls",
+      "forms": [
+        "s'"
+      ],
+      "grammar": "Nur vor il und ils wird si zu s' – daher s'il vous plaît, wörtlich „wenn es Ihnen gefällt“."
+    },
+    "fr:simple:ADJ": {
+      "lemma": "simple",
+      "partOfSpeech": "ADJ",
+      "gloss": "einfach, einzeln",
+      "forms": [
+        "simple"
+      ],
+      "grammar": "Steht wie die meisten Adjektive hinter dem Substantiv: une chambre simple. Die Form ist für beide Geschlechter gleich."
+    },
+    "fr:sur:ADP": {
+      "lemma": "sur",
+      "partOfSpeech": "ADP",
+      "gloss": "auf",
+      "forms": [
+        "sur"
+      ],
+      "grammar": "Nicht mit sûr („sicher“) verwechseln; dort steht ein Akzent."
+    },
+    "fr:séjour:NOUN": {
+      "lemma": "séjour",
+      "partOfSpeech": "NOUN",
+      "gloss": "Aufenthalt",
+      "forms": [
+        "séjour"
+      ],
+      "grammar": "Männlich: le séjour. Bon séjour! wünscht man Gästen beim Einchecken."
+    },
+    "fr:thomas:PROPN": {
+      "lemma": "Thomas",
+      "partOfSpeech": "PROPN",
+      "gloss": "Thomas (Vorname)",
+      "forms": [
+        "Thomas"
+      ],
+      "grammar": "Eigenname. Das s am Ende bleibt stumm."
+    },
+    "fr:tout:DET": {
+      "lemma": "tout",
+      "partOfSpeech": "DET",
+      "gloss": "ganz, all",
+      "forms": [
+        "tout"
+      ],
+      "grammar": "Formen: tout (m), toute (f), tous, toutes. Tout l'hôtel heißt „das ganze Hotel“."
+    },
+    "fr:trois:NUM": {
+      "lemma": "trois",
+      "partOfSpeech": "NUM",
+      "gloss": "drei",
+      "forms": [
+        "trois"
+      ],
+      "grammar": "Das s bleibt normalerweise stumm, klingt aber vor einem Vokal wie ein z: trois euros."
+    },
+    "fr:un:DET": {
+      "lemma": "un",
+      "partOfSpeech": "DET",
+      "gloss": "ein, eine",
+      "forms": [
+        "une",
+        "un"
+      ],
+      "grammar": "Unbestimmter Artikel: un vor männlichen, une vor weiblichen Wörtern. Man sieht also am Artikel das Geschlecht."
+    },
+    "fr:vingt:NUM": {
+      "lemma": "vingt",
+      "partOfSpeech": "NUM",
+      "gloss": "zwanzig",
+      "forms": [
+        "vingts"
+      ],
+      "grammar": "In quatre-vingts bekommt vingt ein s, in quatre-vingt-un dagegen nicht."
+    },
+    "fr:voici:PART": {
+      "lemma": "voici",
+      "partOfSpeech": "PART",
+      "gloss": "hier ist",
+      "forms": [
+        "voici"
+      ],
+      "grammar": "Wird benutzt, wenn man etwas überreicht oder zeigt. Gegenstück zu voilà."
+    },
+    "fr:voilà:PART": {
+      "lemma": "voilà",
+      "partOfSpeech": "PART",
+      "gloss": "da ist, hier",
+      "forms": [
+        "voilà"
+      ],
+      "grammar": "Zeigt auf etwas, das man gerade übergibt oder hinstellt. Voici zeigt auf Nahes, voilà eher auf Entfernteres – im Alltag werden beide gemischt."
+    },
+    "fr:voir:VERB": {
+      "lemma": "voir",
+      "partOfSpeech": "VERB",
+      "gloss": "sehen",
+      "forms": [
+        "vois"
+      ],
+      "grammar": "Unregelmäßig: je vois, tu vois, il voit, nous voyons, vous voyez, ils voient."
+    },
+    "fr:votre:DET": {
+      "lemma": "votre",
+      "partOfSpeech": "DET",
+      "gloss": "Ihr, euer",
+      "forms": [
+        "votre"
+      ],
+      "grammar": "Besitzanzeigend zu vous. Im Singular für beide Geschlechter gleich, im Plural vos."
+    },
+    "fr:vouloir:VERB": {
+      "lemma": "vouloir",
+      "partOfSpeech": "VERB",
+      "gloss": "wollen, möchten",
+      "forms": [
+        "voudrais",
+        "voulez"
+      ],
+      "grammar": "Unregelmäßig: je veux, tu veux, il veut, nous voulons, vous voulez, ils veulent. Die höfliche Form je voudrais heißt „ich hätte gern“."
+    },
+    "fr:vous:PRON": {
+      "lemma": "vous",
+      "partOfSpeech": "PRON",
+      "gloss": "Sie, Ihnen, euch",
+      "forms": [
+        "vous"
+      ],
+      "grammar": "Die höfliche Anrede und zugleich die 2. Person Plural. Im Hotel spricht man sich immer mit vous an."
+    },
+    "fr:voyager:VERB": {
+      "lemma": "voyager",
+      "partOfSpeech": "VERB",
+      "gloss": "reisen",
+      "forms": [
+        "voyage"
+      ],
+      "grammar": "Regelmäßig auf -er. Die Reise selbst heißt le voyage."
+    },
+    "fr:wifi:NOUN": {
+      "lemma": "wifi",
+      "partOfSpeech": "NOUN",
+      "gloss": "WLAN",
+      "forms": [
+        "wifi"
+      ],
+      "grammar": "Männlich: le wifi, du wifi. Französisch ausgesprochen, etwa „wi-fi“ mit langem i."
+    },
+    "fr:y:PRON": {
+      "lemma": "y",
+      "partOfSpeech": "PRON",
+      "gloss": "da, dorthin",
+      "forms": [
+        "y"
+      ],
+      "grammar": "Steht vor dem Verb. Il y a heißt wörtlich „es hat da“ und bedeutet „es gibt“."
+    },
+    "fr:à:ADP": {
+      "lemma": "à",
+      "partOfSpeech": "ADP",
+      "gloss": "zu, in, an, bis",
+      "forms": [
+        "à"
+      ],
+      "grammar": "Sehr vielseitig. Mit le verschmilzt es zu au, mit les zu aux."
+    },
+    "fr:ça:PRON": {
+      "lemma": "ça",
+      "partOfSpeech": "PRON",
+      "gloss": "das",
+      "forms": [
+        "ça"
+      ],
+      "grammar": "Umgangssprachliche Kurzform von cela. C'est ça heißt „genau so ist es“."
+    },
+    "fr:étage:NOUN": {
+      "lemma": "étage",
+      "partOfSpeech": "NOUN",
+      "gloss": "Stockwerk",
+      "forms": [
+        "étage"
+      ],
+      "grammar": "Männlich: l'étage. Achtung: le premier étage ist der erste Stock über dem Erdgeschoss, das rez-de-chaussée heißt."
+    },
+    "fr:être:AUX": {
+      "lemma": "être",
+      "partOfSpeech": "AUX",
+      "gloss": "sein",
+      "forms": [
+        "est"
+      ],
+      "grammar": "Das unregelmäßigste Verb: je suis, tu es, il est, nous sommes, vous êtes, ils sont."
+    },
+    "fr:je voudrais:PHRASE": {
+      "lemma": "je voudrais",
+      "partOfSpeech": "PHRASE",
+      "gloss": "ich hätte gern",
+      "forms": [
+        "Je voudrais",
+        "je voudrais"
+      ],
+      "grammar": "Wörtlich 'ich wollte' – der Konditional von 'vouloir'. Die höfliche Art, einen Wunsch zu äußern; 'je veux' klingt fordernd."
+    },
+    "fr:s'il vous plaît:PHRASE": {
+      "lemma": "s'il vous plaît",
+      "partOfSpeech": "PHRASE",
+      "gloss": "bitte",
+      "forms": [
+        "s'il vous plaît"
+      ],
+      "grammar": "Wörtlich 'wenn es Ihnen gefällt'. Die höfliche Standardform von 'bitte' beim Siezen; beim Duzen 's'il te plaît'."
+    },
+    "fr:je m'appelle:PHRASE": {
+      "lemma": "je m'appelle",
+      "partOfSpeech": "PHRASE",
+      "gloss": "ich heiße",
+      "forms": [
+        "Je m'appelle",
+        "je m'appelle"
+      ],
+      "grammar": "Wörtlich 'ich rufe mich'. So nennt man seinen Namen. Gefragt wird mit 'Comment vous appelez-vous ?'"
+    },
+    "fr:c'est ça:PHRASE": {
+      "lemma": "c'est ça",
+      "partOfSpeech": "PHRASE",
+      "gloss": "genau",
+      "forms": [
+        "c'est ça"
+      ],
+      "grammar": "Wörtlich 'das ist das'. Bestätigung auf eine Rückfrage, wie deutsch 'genau' oder 'stimmt'."
+    },
+    "fr:d'accord:PHRASE": {
+      "lemma": "d'accord",
+      "partOfSpeech": "PHRASE",
+      "gloss": "einverstanden",
+      "forms": [
+        "D'accord",
+        "d'accord"
+      ],
+      "grammar": "Wörtlich 'von Einverständnis'. Steht allein als 'einverstanden, in Ordnung'; mit 'être' bedeutet 'être d'accord' 'einverstanden sein'."
+    },
+    "fr:quatre-vingts:PHRASE": {
+      "lemma": "quatre-vingts",
+      "partOfSpeech": "PHRASE",
+      "gloss": "achtzig",
+      "forms": [
+        "quatre-vingts"
+      ],
+      "grammar": "Wörtlich 'vier-zwanzig'. Französisch zählt ab 80 in Zwanzigerschritten. Das -s fällt weg, sobald eine weitere Zahl folgt: 'quatre-vingt-un' (81)."
+    },
+    "fr:petit déjeuner:PHRASE": {
+      "lemma": "petit déjeuner",
+      "partOfSpeech": "PHRASE",
+      "gloss": "Frühstück",
+      "forms": [
+        "petit déjeuner"
+      ],
+      "grammar": "Wörtlich 'kleines Mittagessen'. Bezeichnet das Frühstück; das Mittagessen allein heißt 'déjeuner', das Abendessen 'dîner'."
+    },
+    "fr:à quelle heure:PHRASE": {
+      "lemma": "à quelle heure",
+      "partOfSpeech": "PHRASE",
+      "gloss": "um wie viel Uhr",
+      "forms": [
+        "à quelle heure"
+      ],
+      "grammar": "Wörtlich 'zu welcher Stunde'. Die feste Frage nach der Uhrzeit eines Termins."
+    },
+    "fr:à droite:PHRASE": {
+      "lemma": "à droite",
+      "partOfSpeech": "PHRASE",
+      "gloss": "rechts",
+      "forms": [
+        "à droite"
+      ],
+      "grammar": "Wörtlich 'zur Rechten'. Feste Ortsangabe 'rechts'; das Gegenstück ist 'à gauche'."
+    },
+    "fr:est-ce que:PHRASE": {
+      "lemma": "est-ce que",
+      "partOfSpeech": "PHRASE",
+      "gloss": "(Frage)",
+      "forms": [
+        "Est-ce qu'",
+        "est-ce que"
+      ],
+      "grammar": "Wörtlich 'ist es, dass'. Wird einer Aussage vorangestellt und macht daraus eine Frage, ohne dass sich die Wortstellung ändert. Vor einem Vokal verkürzt zu 'est-ce qu''."
+    },
+    "fr:il y a:PHRASE": {
+      "lemma": "il y a",
+      "partOfSpeech": "PHRASE",
+      "gloss": "es gibt",
+      "forms": [
+        "il y a"
+      ],
+      "grammar": "Wörtlich 'es hat da'. Entspricht dem deutschen 'es gibt', im Singular wie im Plural. In der Vergangenheit: 'il y avait'."
+    },
+    "fr:mot de passe:PHRASE": {
+      "lemma": "mot de passe",
+      "partOfSpeech": "PHRASE",
+      "gloss": "Passwort",
+      "forms": [
+        "mot de passe"
+      ],
+      "grammar": "Wörtlich 'Wort des Durchgangs'. Das Passwort – für das WLAN ebenso wie für ein Konto."
+    },
+    "fr:je vous en prie:PHRASE": {
+      "lemma": "je vous en prie",
+      "partOfSpeech": "PHRASE",
+      "gloss": "gern geschehen",
+      "forms": [
+        "Je vous en prie",
+        "je vous en prie"
+      ],
+      "grammar": "Wörtlich 'ich bitte Sie darum'. Die höfliche Antwort auf 'merci'; je nach Lage auch 'bitte sehr, nur zu'. Beim Duzen 'je t'en prie'."
+    },
+    "fr:bon séjour:PHRASE": {
+      "lemma": "bon séjour",
+      "partOfSpeech": "PHRASE",
+      "gloss": "schönen Aufenthalt",
+      "forms": [
+        "Bon séjour",
+        "bon séjour"
+      ],
+      "grammar": "Wörtlich 'guten Aufenthalt'. Abschiedswunsch an Gäste, gebaut wie 'bonne journée' oder 'bon voyage'."
+    }
+  }
+}

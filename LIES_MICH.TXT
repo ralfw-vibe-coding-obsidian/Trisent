@@ -1,0 +1,77 @@
+==========================================================
+  MY VAULT APP  -  bitte zuerst lesen
+==========================================================
+
+Du hast gerade den Bausatz fuer deine eigene kleine App
+ausgepackt. Drei Schritte, dann laeuft sie.
+
+
+SCHRITT 1  -  Diesen Ordner umbenennen
+------------------------------------------------------
+
+Der Ordner heisst gerade "my-vault-app". Benenne ihn um in
+das, was deine App werden soll - zum Beispiel "Mein Kochbuch"
+oder "Projekte". Der Ordnername wird spaeter der Name
+deiner App.
+
+Und schieb ihn an eine Stelle, wo du ihn wiederfindest.
+Im Download-Ordner geht er irgendwann verloren.
+
+
+SCHRITT 2  -  In Obsidian oeffnen
+------------------------------------------------------
+
+Obsidian starten. Dann:
+
+  "Ordner als Vault oeffnen"
+  ("Open folder as vault")
+
+und diesen Ordner auswaehlen.
+
+Wenn Obsidian fragt, ob es Community-Plugins bzw. Plugins
+von Drittanbietern erlauben soll: JA. Ohne das bleibt der
+Bausatz aus und du siehst nur ein leeres Obsidian.
+
+Wenn alles stimmt, begruesst dich deine App von selbst.
+
+
+SCHRITT 3  -  Claude dazuholen
+------------------------------------------------------
+
+Claude oeffnen und ihm diesen Ordner geben - das ist der
+Ordner, den du in Schritt 1 umbenannt hast.
+
+Dann sagst du einfach, was deine App koennen soll.
+Claude wird dir erst sagen, was er verstanden hat, und
+vielleicht etwas nachfragen. Passt alles, sagst du "los".
+
+
+------------------------------------------------------
+Alles Weitere
+------------------------------------------------------
+
+In der Vault liegt eine Notiz namens "Anleitung".
+Darin steht, wie du deine App aufrufst, wie du sie neu
+laedst und wie die Zusammenarbeit mit Claude laeuft.
+Die Notiz bleibt liegen - dort kannst du immer
+nachschlagen.
+
+
+------------------------------------------------------
+Es passiert nichts?
+------------------------------------------------------
+
+Du siehst ein leeres Obsidian, keine Begruessung:
+
+  Einstellungen -> Community-Plugins
+  Eingeschraenkten Modus ausschalten
+  ("Restricted mode" / "Turn on community plugins")
+
+Danach Obsidian neu laden. Und zwar so:
+
+  Strg+P druecken (auf dem Mac Cmd+P)
+  "neu laden" tippen
+  "Anwendung neu laden ohne zu speichern" waehlen
+
+Dein Plugin heisst in der Liste erst einmal
+"My Vault App" - bis du ihm einen Namen gibst.

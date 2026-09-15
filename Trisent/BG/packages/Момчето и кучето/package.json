@@ -1,0 +1,1532 @@
+{
+  "schemaVersion": 1,
+  "id": "bg-boy-and-dog",
+  "version": 2,
+  "title": "Момчето и кучето",
+  "titleTranslation": "Der Junge und der Hund",
+  "language": "bg",
+  "glossLanguage": "de",
+  "fluentLanguage": "de",
+  "level": "A1",
+  "topics": [
+    "animals",
+    "friendship",
+    "family"
+  ],
+  "paragraphs": [
+    {
+      "id": "p001",
+      "sentences": [
+        {
+          "id": "s001",
+          "source": "Иван е малко момче.",
+          "fluent": "Iwan ist ein kleiner Junge.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Иван",
+              "gloss": "Iwan",
+              "lemma": "Иван",
+              "partOfSpeech": "PROPN",
+              "key": "bg:иван:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 6,
+              "surface": "е",
+              "gloss": "sein",
+              "lemma": "съм",
+              "partOfSpeech": "AUX",
+              "key": "bg:съм:AUX"
+            },
+            {
+              "start": 7,
+              "end": 12,
+              "surface": "малко",
+              "gloss": "klein",
+              "lemma": "малък",
+              "partOfSpeech": "ADJ",
+              "key": "bg:малък:ADJ"
+            },
+            {
+              "start": 13,
+              "end": 18,
+              "surface": "момче",
+              "gloss": "Junge",
+              "lemma": "момче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:момче:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s002",
+          "source": "Той живее в един малък град.",
+          "fluent": "Er wohnt in einer kleinen Stadt.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Той",
+              "gloss": "er",
+              "lemma": "той",
+              "partOfSpeech": "PRON",
+              "key": "bg:той:PRON"
+            },
+            {
+              "start": 4,
+              "end": 9,
+              "surface": "живее",
+              "gloss": "wohnen",
+              "lemma": "живея",
+              "partOfSpeech": "VERB",
+              "key": "bg:живея:VERB"
+            },
+            {
+              "start": 10,
+              "end": 11,
+              "surface": "в",
+              "gloss": "in",
+              "lemma": "в",
+              "partOfSpeech": "ADP",
+              "key": "bg:в:ADP"
+            },
+            {
+              "start": 12,
+              "end": 16,
+              "surface": "един",
+              "gloss": "ein",
+              "lemma": "един",
+              "partOfSpeech": "DET",
+              "key": "bg:един:DET"
+            },
+            {
+              "start": 17,
+              "end": 22,
+              "surface": "малък",
+              "gloss": "klein",
+              "lemma": "малък",
+              "partOfSpeech": "ADJ",
+              "key": "bg:малък:ADJ"
+            },
+            {
+              "start": 23,
+              "end": 27,
+              "surface": "град",
+              "gloss": "Stadt",
+              "lemma": "град",
+              "partOfSpeech": "NOUN",
+              "key": "bg:град:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s003",
+          "source": "Иван обича животните.",
+          "fluent": "Iwan liebt Tiere.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Иван",
+              "gloss": "Iwan",
+              "lemma": "Иван",
+              "partOfSpeech": "PROPN",
+              "key": "bg:иван:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 10,
+              "surface": "обича",
+              "gloss": "lieben",
+              "lemma": "обичам",
+              "partOfSpeech": "VERB",
+              "key": "bg:обичам:VERB"
+            },
+            {
+              "start": 11,
+              "end": 20,
+              "surface": "животните",
+              "gloss": "die Tiere",
+              "lemma": "животно",
+              "partOfSpeech": "NOUN",
+              "key": "bg:животно:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s004",
+          "source": "Но той няма куче.",
+          "fluent": "Aber er hat keinen Hund.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Но",
+              "gloss": "aber",
+              "lemma": "но",
+              "partOfSpeech": "CCONJ",
+              "key": "bg:но:CCONJ"
+            },
+            {
+              "start": 3,
+              "end": 6,
+              "surface": "той",
+              "gloss": "er",
+              "lemma": "той",
+              "partOfSpeech": "PRON",
+              "key": "bg:той:PRON"
+            },
+            {
+              "start": 7,
+              "end": 11,
+              "surface": "няма",
+              "gloss": "nicht-haben",
+              "lemma": "нямам",
+              "partOfSpeech": "VERB",
+              "key": "bg:нямам:VERB"
+            },
+            {
+              "start": 12,
+              "end": 16,
+              "surface": "куче",
+              "gloss": "Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p002",
+      "sentences": [
+        {
+          "id": "s005",
+          "source": "Днес Иван върви по улицата.",
+          "fluent": "Heute geht Iwan die Straße entlang.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Днес",
+              "gloss": "heute",
+              "lemma": "днес",
+              "partOfSpeech": "ADV",
+              "key": "bg:днес:ADV"
+            },
+            {
+              "start": 5,
+              "end": 9,
+              "surface": "Иван",
+              "gloss": "Iwan",
+              "lemma": "Иван",
+              "partOfSpeech": "PROPN",
+              "key": "bg:иван:PROPN"
+            },
+            {
+              "start": 10,
+              "end": 15,
+              "surface": "върви",
+              "gloss": "gehen",
+              "lemma": "вървя",
+              "partOfSpeech": "VERB",
+              "key": "bg:вървя:VERB"
+            },
+            {
+              "start": 16,
+              "end": 18,
+              "surface": "по",
+              "gloss": "entlang",
+              "lemma": "по",
+              "partOfSpeech": "ADP",
+              "key": "bg:по:ADP"
+            },
+            {
+              "start": 19,
+              "end": 26,
+              "surface": "улицата",
+              "gloss": "die Straße",
+              "lemma": "улица",
+              "partOfSpeech": "NOUN",
+              "key": "bg:улица:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s006",
+          "source": "До едно дърво седи куче.",
+          "fluent": "Bei einem Baum sitzt ein Hund.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "До",
+              "gloss": "bei",
+              "lemma": "до",
+              "partOfSpeech": "ADP",
+              "key": "bg:до:ADP"
+            },
+            {
+              "start": 3,
+              "end": 7,
+              "surface": "едно",
+              "gloss": "ein",
+              "lemma": "един",
+              "partOfSpeech": "DET",
+              "key": "bg:един:DET"
+            },
+            {
+              "start": 8,
+              "end": 13,
+              "surface": "дърво",
+              "gloss": "Baum",
+              "lemma": "дърво",
+              "partOfSpeech": "NOUN",
+              "key": "bg:дърво:NOUN"
+            },
+            {
+              "start": 14,
+              "end": 18,
+              "surface": "седи",
+              "gloss": "sitzen",
+              "lemma": "седя",
+              "partOfSpeech": "VERB",
+              "key": "bg:седя:VERB"
+            },
+            {
+              "start": 19,
+              "end": 23,
+              "surface": "куче",
+              "gloss": "Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s007",
+          "source": "Кучето е кафяво и мръсно.",
+          "fluent": "Der Hund ist braun und schmutzig.",
+          "units": [
+            {
+              "start": 0,
+              "end": 6,
+              "surface": "Кучето",
+              "gloss": "der Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            },
+            {
+              "start": 7,
+              "end": 8,
+              "surface": "е",
+              "gloss": "sein",
+              "lemma": "съм",
+              "partOfSpeech": "AUX",
+              "key": "bg:съм:AUX"
+            },
+            {
+              "start": 9,
+              "end": 15,
+              "surface": "кафяво",
+              "gloss": "braun",
+              "lemma": "кафяв",
+              "partOfSpeech": "ADJ",
+              "key": "bg:кафяв:ADJ"
+            },
+            {
+              "start": 16,
+              "end": 17,
+              "surface": "и",
+              "gloss": "und",
+              "lemma": "и",
+              "partOfSpeech": "CCONJ",
+              "key": "bg:и:CCONJ"
+            },
+            {
+              "start": 18,
+              "end": 24,
+              "surface": "мръсно",
+              "gloss": "schmutzig",
+              "lemma": "мръсен",
+              "partOfSpeech": "ADJ",
+              "key": "bg:мръсен:ADJ"
+            }
+          ]
+        },
+        {
+          "id": "s008",
+          "source": "То няма дом.",
+          "fluent": "Er hat kein Zuhause.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "То",
+              "gloss": "es",
+              "lemma": "то",
+              "partOfSpeech": "PRON",
+              "key": "bg:то:PRON"
+            },
+            {
+              "start": 3,
+              "end": 7,
+              "surface": "няма",
+              "gloss": "nicht-haben",
+              "lemma": "нямам",
+              "partOfSpeech": "VERB",
+              "key": "bg:нямам:VERB"
+            },
+            {
+              "start": 8,
+              "end": 11,
+              "surface": "дом",
+              "gloss": "Zuhause",
+              "lemma": "дом",
+              "partOfSpeech": "NOUN",
+              "key": "bg:дом:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p003",
+      "sentences": [
+        {
+          "id": "s009",
+          "source": "Иван гледа кучето и се усмихва.",
+          "fluent": "Iwan schaut den Hund an und lächelt.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Иван",
+              "gloss": "Iwan",
+              "lemma": "Иван",
+              "partOfSpeech": "PROPN",
+              "key": "bg:иван:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 10,
+              "surface": "гледа",
+              "gloss": "schauen",
+              "lemma": "гледам",
+              "partOfSpeech": "VERB",
+              "key": "bg:гледам:VERB"
+            },
+            {
+              "start": 11,
+              "end": 17,
+              "surface": "кучето",
+              "gloss": "der Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            },
+            {
+              "start": 18,
+              "end": 19,
+              "surface": "и",
+              "gloss": "und",
+              "lemma": "и",
+              "partOfSpeech": "CCONJ",
+              "key": "bg:и:CCONJ"
+            },
+            {
+              "start": 20,
+              "end": 22,
+              "surface": "се",
+              "gloss": "sich",
+              "lemma": "се",
+              "partOfSpeech": "PRON",
+              "key": "bg:се:PRON"
+            },
+            {
+              "start": 23,
+              "end": 30,
+              "surface": "усмихва",
+              "gloss": "lächeln",
+              "lemma": "усмихвам",
+              "partOfSpeech": "VERB",
+              "key": "bg:усмихвам:VERB"
+            }
+          ]
+        },
+        {
+          "id": "s010",
+          "source": "Кучето маха с опашка.",
+          "fluent": "Der Hund wedelt mit dem Schwanz.",
+          "units": [
+            {
+              "start": 0,
+              "end": 6,
+              "surface": "Кучето",
+              "gloss": "der Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            },
+            {
+              "start": 7,
+              "end": 11,
+              "surface": "маха",
+              "gloss": "wedeln",
+              "lemma": "махам",
+              "partOfSpeech": "VERB",
+              "key": "bg:махам:VERB"
+            },
+            {
+              "start": 12,
+              "end": 13,
+              "surface": "с",
+              "gloss": "mit",
+              "lemma": "с",
+              "partOfSpeech": "ADP",
+              "key": "bg:с:ADP"
+            },
+            {
+              "start": 14,
+              "end": 20,
+              "surface": "опашка",
+              "gloss": "Schwanz",
+              "lemma": "опашка",
+              "partOfSpeech": "NOUN",
+              "key": "bg:опашка:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s011",
+          "source": "Момчето дава хляб на кучето.",
+          "fluent": "Der Junge gibt dem Hund Brot.",
+          "units": [
+            {
+              "start": 0,
+              "end": 7,
+              "surface": "Момчето",
+              "gloss": "der Junge",
+              "lemma": "момче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:момче:NOUN"
+            },
+            {
+              "start": 8,
+              "end": 12,
+              "surface": "дава",
+              "gloss": "geben",
+              "lemma": "давам",
+              "partOfSpeech": "VERB",
+              "key": "bg:давам:VERB"
+            },
+            {
+              "start": 13,
+              "end": 17,
+              "surface": "хляб",
+              "gloss": "Brot",
+              "lemma": "хляб",
+              "partOfSpeech": "NOUN",
+              "key": "bg:хляб:NOUN"
+            },
+            {
+              "start": 18,
+              "end": 20,
+              "surface": "на",
+              "gloss": "zu",
+              "lemma": "на",
+              "partOfSpeech": "ADP",
+              "key": "bg:на:ADP"
+            },
+            {
+              "start": 21,
+              "end": 27,
+              "surface": "кучето",
+              "gloss": "der Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s012",
+          "source": "Кучето яде бързо.",
+          "fluent": "Der Hund frisst schnell.",
+          "units": [
+            {
+              "start": 0,
+              "end": 6,
+              "surface": "Кучето",
+              "gloss": "der Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            },
+            {
+              "start": 7,
+              "end": 10,
+              "surface": "яде",
+              "gloss": "essen",
+              "lemma": "ям",
+              "partOfSpeech": "VERB",
+              "key": "bg:ям:VERB"
+            },
+            {
+              "start": 11,
+              "end": 16,
+              "surface": "бързо",
+              "gloss": "schnell",
+              "lemma": "бързо",
+              "partOfSpeech": "ADV",
+              "key": "bg:бързо:ADV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p004",
+      "sentences": [
+        {
+          "id": "s013",
+          "source": "Иван дава име на кучето.",
+          "fluent": "Iwan gibt dem Hund einen Namen.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Иван",
+              "gloss": "Iwan",
+              "lemma": "Иван",
+              "partOfSpeech": "PROPN",
+              "key": "bg:иван:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 9,
+              "surface": "дава",
+              "gloss": "geben",
+              "lemma": "давам",
+              "partOfSpeech": "VERB",
+              "key": "bg:давам:VERB"
+            },
+            {
+              "start": 10,
+              "end": 13,
+              "surface": "име",
+              "gloss": "Name",
+              "lemma": "име",
+              "partOfSpeech": "NOUN",
+              "key": "bg:име:NOUN"
+            },
+            {
+              "start": 14,
+              "end": 16,
+              "surface": "на",
+              "gloss": "zu",
+              "lemma": "на",
+              "partOfSpeech": "ADP",
+              "key": "bg:на:ADP"
+            },
+            {
+              "start": 17,
+              "end": 23,
+              "surface": "кучето",
+              "gloss": "der Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s014",
+          "source": "Кучето се казва Рекс.",
+          "fluent": "Der Hund heißt Rex.",
+          "units": [
+            {
+              "start": 0,
+              "end": 6,
+              "surface": "Кучето",
+              "gloss": "der Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            },
+            {
+              "start": 7,
+              "end": 9,
+              "surface": "се",
+              "gloss": "sich",
+              "lemma": "се",
+              "partOfSpeech": "PRON",
+              "key": "bg:се:PRON"
+            },
+            {
+              "start": 10,
+              "end": 15,
+              "surface": "казва",
+              "gloss": "nennen",
+              "lemma": "казвам",
+              "partOfSpeech": "VERB",
+              "key": "bg:казвам:VERB"
+            },
+            {
+              "start": 16,
+              "end": 20,
+              "surface": "Рекс",
+              "gloss": "Rex",
+              "lemma": "Рекс",
+              "partOfSpeech": "PROPN",
+              "key": "bg:рекс:PROPN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 7,
+              "end": 15,
+              "surface": "се казва",
+              "gloss": "heißt",
+              "lemma": "се казва",
+              "key": "bg:се казва:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s015",
+          "source": "Рекс върви след момчето.",
+          "fluent": "Rex läuft hinter dem Jungen her.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Рекс",
+              "gloss": "Rex",
+              "lemma": "Рекс",
+              "partOfSpeech": "PROPN",
+              "key": "bg:рекс:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 10,
+              "surface": "върви",
+              "gloss": "gehen",
+              "lemma": "вървя",
+              "partOfSpeech": "VERB",
+              "key": "bg:вървя:VERB"
+            },
+            {
+              "start": 11,
+              "end": 15,
+              "surface": "след",
+              "gloss": "hinter",
+              "lemma": "след",
+              "partOfSpeech": "ADP",
+              "key": "bg:след:ADP"
+            },
+            {
+              "start": 16,
+              "end": 23,
+              "surface": "момчето",
+              "gloss": "der Junge",
+              "lemma": "момче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:момче:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s016",
+          "source": "Момчето и кучето отиват вкъщи.",
+          "fluent": "Der Junge und der Hund gehen nach Hause.",
+          "units": [
+            {
+              "start": 0,
+              "end": 7,
+              "surface": "Момчето",
+              "gloss": "der Junge",
+              "lemma": "момче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:момче:NOUN"
+            },
+            {
+              "start": 8,
+              "end": 9,
+              "surface": "и",
+              "gloss": "und",
+              "lemma": "и",
+              "partOfSpeech": "CCONJ",
+              "key": "bg:и:CCONJ"
+            },
+            {
+              "start": 10,
+              "end": 16,
+              "surface": "кучето",
+              "gloss": "der Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            },
+            {
+              "start": 17,
+              "end": 23,
+              "surface": "отиват",
+              "gloss": "gehen",
+              "lemma": "отивам",
+              "partOfSpeech": "VERB",
+              "key": "bg:отивам:VERB"
+            },
+            {
+              "start": 24,
+              "end": 29,
+              "surface": "вкъщи",
+              "gloss": "nach-Hause",
+              "lemma": "вкъщи",
+              "partOfSpeech": "ADV",
+              "key": "bg:вкъщи:ADV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p005",
+      "sentences": [
+        {
+          "id": "s017",
+          "source": "Мама вижда мръсното куче.",
+          "fluent": "Mama sieht den schmutzigen Hund.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Мама",
+              "gloss": "Mama",
+              "lemma": "мама",
+              "partOfSpeech": "NOUN",
+              "key": "bg:мама:NOUN"
+            },
+            {
+              "start": 5,
+              "end": 10,
+              "surface": "вижда",
+              "gloss": "sehen",
+              "lemma": "виждам",
+              "partOfSpeech": "VERB",
+              "key": "bg:виждам:VERB"
+            },
+            {
+              "start": 11,
+              "end": 19,
+              "surface": "мръсното",
+              "gloss": "der schmutzig",
+              "lemma": "мръсен",
+              "partOfSpeech": "ADJ",
+              "key": "bg:мръсен:ADJ"
+            },
+            {
+              "start": 20,
+              "end": 24,
+              "surface": "куче",
+              "gloss": "Hund",
+              "lemma": "куче",
+              "partOfSpeech": "NOUN",
+              "key": "bg:куче:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s018",
+          "source": "Иван пита мама за Рекс.",
+          "fluent": "Iwan fragt Mama wegen Rex.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Иван",
+              "gloss": "Iwan",
+              "lemma": "Иван",
+              "partOfSpeech": "PROPN",
+              "key": "bg:иван:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 9,
+              "surface": "пита",
+              "gloss": "fragen",
+              "lemma": "питам",
+              "partOfSpeech": "VERB",
+              "key": "bg:питам:VERB"
+            },
+            {
+              "start": 10,
+              "end": 14,
+              "surface": "мама",
+              "gloss": "Mama",
+              "lemma": "мама",
+              "partOfSpeech": "NOUN",
+              "key": "bg:мама:NOUN"
+            },
+            {
+              "start": 15,
+              "end": 17,
+              "surface": "за",
+              "gloss": "nach",
+              "lemma": "за",
+              "partOfSpeech": "ADP",
+              "key": "bg:за:ADP"
+            },
+            {
+              "start": 18,
+              "end": 22,
+              "surface": "Рекс",
+              "gloss": "Rex",
+              "lemma": "Рекс",
+              "partOfSpeech": "PROPN",
+              "key": "bg:рекс:PROPN"
+            }
+          ]
+        },
+        {
+          "id": "s019",
+          "source": "Мама мисли малко и казва да.",
+          "fluent": "Mama überlegt kurz und sagt ja.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Мама",
+              "gloss": "Mama",
+              "lemma": "мама",
+              "partOfSpeech": "NOUN",
+              "key": "bg:мама:NOUN"
+            },
+            {
+              "start": 5,
+              "end": 10,
+              "surface": "мисли",
+              "gloss": "denken",
+              "lemma": "мисля",
+              "partOfSpeech": "VERB",
+              "key": "bg:мисля:VERB"
+            },
+            {
+              "start": 11,
+              "end": 16,
+              "surface": "малко",
+              "gloss": "wenig",
+              "lemma": "малко",
+              "partOfSpeech": "ADV",
+              "key": "bg:малко:ADV"
+            },
+            {
+              "start": 17,
+              "end": 18,
+              "surface": "и",
+              "gloss": "und",
+              "lemma": "и",
+              "partOfSpeech": "CCONJ",
+              "key": "bg:и:CCONJ"
+            },
+            {
+              "start": 19,
+              "end": 24,
+              "surface": "казва",
+              "gloss": "sagen",
+              "lemma": "казвам",
+              "partOfSpeech": "VERB",
+              "key": "bg:казвам:VERB"
+            },
+            {
+              "start": 25,
+              "end": 27,
+              "surface": "да",
+              "gloss": "ja",
+              "lemma": "да",
+              "partOfSpeech": "PART",
+              "key": "bg:да:PART"
+            }
+          ]
+        },
+        {
+          "id": "s020",
+          "source": "Сега Рекс има дом и Иван има приятел.",
+          "fluent": "Jetzt hat Rex ein Zuhause und Iwan hat einen Freund.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Сега",
+              "gloss": "jetzt",
+              "lemma": "сега",
+              "partOfSpeech": "ADV",
+              "key": "bg:сега:ADV"
+            },
+            {
+              "start": 5,
+              "end": 9,
+              "surface": "Рекс",
+              "gloss": "Rex",
+              "lemma": "Рекс",
+              "partOfSpeech": "PROPN",
+              "key": "bg:рекс:PROPN"
+            },
+            {
+              "start": 10,
+              "end": 13,
+              "surface": "има",
+              "gloss": "haben",
+              "lemma": "имам",
+              "partOfSpeech": "VERB",
+              "key": "bg:имам:VERB"
+            },
+            {
+              "start": 14,
+              "end": 17,
+              "surface": "дом",
+              "gloss": "Zuhause",
+              "lemma": "дом",
+              "partOfSpeech": "NOUN",
+              "key": "bg:дом:NOUN"
+            },
+            {
+              "start": 18,
+              "end": 19,
+              "surface": "и",
+              "gloss": "und",
+              "lemma": "и",
+              "partOfSpeech": "CCONJ",
+              "key": "bg:и:CCONJ"
+            },
+            {
+              "start": 20,
+              "end": 24,
+              "surface": "Иван",
+              "gloss": "Iwan",
+              "lemma": "Иван",
+              "partOfSpeech": "PROPN",
+              "key": "bg:иван:PROPN"
+            },
+            {
+              "start": 25,
+              "end": 28,
+              "surface": "има",
+              "gloss": "haben",
+              "lemma": "имам",
+              "partOfSpeech": "VERB",
+              "key": "bg:имам:VERB"
+            },
+            {
+              "start": 29,
+              "end": 36,
+              "surface": "приятел",
+              "gloss": "Freund",
+              "lemma": "приятел",
+              "partOfSpeech": "NOUN",
+              "key": "bg:приятел:NOUN"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "dictionary": {
+    "bg:бързо:ADV": {
+      "lemma": "бързо",
+      "partOfSpeech": "ADV",
+      "gloss": "schnell",
+      "forms": [
+        "бързо"
+      ],
+      "grammar": "Adverb. Es sieht aus wie die Neutrumform des Adjektivs бърз – das ist im Bulgarischen die Regel."
+    },
+    "bg:в:ADP": {
+      "lemma": "в",
+      "partOfSpeech": "ADP",
+      "gloss": "in",
+      "forms": [
+        "в"
+      ],
+      "grammar": "Vor Wörtern, die mit в oder ф beginnen, wird daraus във."
+    },
+    "bg:виждам:VERB": {
+      "lemma": "виждам",
+      "partOfSpeech": "VERB",
+      "gloss": "sehen",
+      "forms": [
+        "вижда"
+      ],
+      "grammar": "Regelmäßig auf -ам: виждам, виждаш, вижда."
+    },
+    "bg:вкъщи:ADV": {
+      "lemma": "вкъщи",
+      "partOfSpeech": "ADV",
+      "gloss": "nach Hause, zu Hause",
+      "forms": [
+        "вкъщи"
+      ],
+      "grammar": "Ein festes Adverb, zusammengeschrieben. Es steht ohne Präposition."
+    },
+    "bg:вървя:VERB": {
+      "lemma": "вървя",
+      "partOfSpeech": "VERB",
+      "gloss": "gehen, laufen",
+      "forms": [
+        "върви"
+      ],
+      "grammar": "Meint das Gehen als Bewegung, nicht das Hingehen zu einem Ziel – dafür steht отивам."
+    },
+    "bg:гледам:VERB": {
+      "lemma": "гледам",
+      "partOfSpeech": "VERB",
+      "gloss": "schauen, ansehen",
+      "forms": [
+        "гледа"
+      ],
+      "grammar": "Regelmäßig auf -ам. Braucht keine Präposition: гледам кучето."
+    },
+    "bg:град:NOUN": {
+      "lemma": "град",
+      "partOfSpeech": "NOUN",
+      "gloss": "Stadt",
+      "forms": [
+        "град"
+      ],
+      "grammar": "Maskulinum. Bestimmte Form: градът/града. Plural: градове."
+    },
+    "bg:да:PART": {
+      "lemma": "да",
+      "partOfSpeech": "PART",
+      "gloss": "ja",
+      "forms": [
+        "да"
+      ],
+      "grammar": "Als Antwortwort „ja“. Dasselbe Wort leitet auch Nebensätze ein – das ist dann eine andere Funktion."
+    },
+    "bg:давам:VERB": {
+      "lemma": "давам",
+      "partOfSpeech": "VERB",
+      "gloss": "geben",
+      "forms": [
+        "дава"
+      ],
+      "grammar": "Der Empfänger steht mit на: давам хляб на кучето."
+    },
+    "bg:днес:ADV": {
+      "lemma": "днес",
+      "partOfSpeech": "ADV",
+      "gloss": "heute",
+      "forms": [
+        "днес"
+      ],
+      "grammar": "Zeitadverb, steht gern am Satzanfang."
+    },
+    "bg:до:ADP": {
+      "lemma": "до",
+      "partOfSpeech": "ADP",
+      "gloss": "bei, neben, bis",
+      "forms": [
+        "до"
+      ],
+      "grammar": "Räumlich „dicht bei“, zeitlich „bis“."
+    },
+    "bg:дом:NOUN": {
+      "lemma": "дом",
+      "partOfSpeech": "NOUN",
+      "gloss": "Zuhause, Heim",
+      "forms": [
+        "дом"
+      ],
+      "grammar": "Maskulinum. Bestimmte Form: домът/дома. Meint das Zuhause, nicht das Gebäude (къща)."
+    },
+    "bg:дърво:NOUN": {
+      "lemma": "дърво",
+      "partOfSpeech": "NOUN",
+      "gloss": "Baum, Holz",
+      "forms": [
+        "дърво"
+      ],
+      "grammar": "Neutrum. Bestimmte Form: дървото. Plural: дървета."
+    },
+    "bg:един:DET": {
+      "lemma": "един",
+      "partOfSpeech": "DET",
+      "gloss": "ein",
+      "forms": [
+        "един",
+        "едно"
+      ],
+      "grammar": "Unbestimmter Artikel und Zahlwort zugleich: един (m), една (f), едно (n)."
+    },
+    "bg:живея:VERB": {
+      "lemma": "живея",
+      "partOfSpeech": "VERB",
+      "gloss": "wohnen, leben",
+      "forms": [
+        "живее"
+      ],
+      "grammar": "Präsens: живея, живееш, живее, живеем, живеете, живеят."
+    },
+    "bg:животно:NOUN": {
+      "lemma": "животно",
+      "partOfSpeech": "NOUN",
+      "gloss": "Tier",
+      "forms": [
+        "животните"
+      ],
+      "grammar": "Neutrum. Plural: животни. Bestimmter Plural: животните – das -те am Ende ist der Artikel."
+    },
+    "bg:за:ADP": {
+      "lemma": "за",
+      "partOfSpeech": "ADP",
+      "gloss": "für, nach, über",
+      "forms": [
+        "за"
+      ],
+      "grammar": "Nach питам bezeichnet за das Thema der Frage."
+    },
+    "bg:и:CCONJ": {
+      "lemma": "и",
+      "partOfSpeech": "CCONJ",
+      "gloss": "und",
+      "forms": [
+        "и"
+      ],
+      "grammar": "Die einfachste Verbindung zwischen Wörtern und Sätzen."
+    },
+    "bg:иван:PROPN": {
+      "lemma": "Иван",
+      "partOfSpeech": "PROPN",
+      "gloss": "Iwan (männlicher Vorname)",
+      "forms": [
+        "Иван"
+      ],
+      "grammar": "Eigenname. Bulgarische Eigennamen bekommen keinen bestimmten Artikel."
+    },
+    "bg:имам:VERB": {
+      "lemma": "имам",
+      "partOfSpeech": "VERB",
+      "gloss": "haben",
+      "forms": [
+        "има"
+      ],
+      "grammar": "Präsens: имам, имаш, има. Verneint heißt es нямам."
+    },
+    "bg:име:NOUN": {
+      "lemma": "име",
+      "partOfSpeech": "NOUN",
+      "gloss": "Name",
+      "forms": [
+        "име"
+      ],
+      "grammar": "Neutrum. Bestimmte Form: името. Plural: имена."
+    },
+    "bg:казвам:VERB": {
+      "lemma": "казвам",
+      "partOfSpeech": "VERB",
+      "gloss": "sagen; (mit се) heißen",
+      "forms": [
+        "казва"
+      ],
+      "grammar": "Mit се bedeutet es „heißen“: казвам се Иван. Ohne се heißt es schlicht „sagen“."
+    },
+    "bg:кафяв:ADJ": {
+      "lemma": "кафяв",
+      "partOfSpeech": "ADJ",
+      "gloss": "braun",
+      "forms": [
+        "кафяво"
+      ],
+      "grammar": "Formen: кафяв (m), кафява (f), кафяво (n), кафяви (Pl.)."
+    },
+    "bg:куче:NOUN": {
+      "lemma": "куче",
+      "partOfSpeech": "NOUN",
+      "gloss": "Hund",
+      "forms": [
+        "куче",
+        "кучето"
+      ],
+      "grammar": "Neutrum. Bestimmte Form: кучето. Plural: кучета. Das -то ist der nachgestellte Artikel."
+    },
+    "bg:малко:ADV": {
+      "lemma": "малко",
+      "partOfSpeech": "ADV",
+      "gloss": "ein wenig, kurz",
+      "forms": [
+        "малко"
+      ],
+      "grammar": "Geschrieben wie die Neutrumform von малък, hier aber als Adverb gebraucht: „ein bisschen“."
+    },
+    "bg:малък:ADJ": {
+      "lemma": "малък",
+      "partOfSpeech": "ADJ",
+      "gloss": "klein",
+      "forms": [
+        "малко",
+        "малък"
+      ],
+      "grammar": "Richtet sich nach dem Substantiv: малък (m), малка (f), малко (n), малки (Pl.)."
+    },
+    "bg:мама:NOUN": {
+      "lemma": "мама",
+      "partOfSpeech": "NOUN",
+      "gloss": "Mama",
+      "forms": [
+        "мама"
+      ],
+      "grammar": "Femininum. Bestimmte Form: мамата. Von der eigenen Mutter spricht man meist ohne Artikel, einfach мама."
+    },
+    "bg:махам:VERB": {
+      "lemma": "махам",
+      "partOfSpeech": "VERB",
+      "gloss": "wedeln, winken",
+      "forms": [
+        "маха"
+      ],
+      "grammar": "Mit с: махам с опашка, махам с ръка."
+    },
+    "bg:мисля:VERB": {
+      "lemma": "мисля",
+      "partOfSpeech": "VERB",
+      "gloss": "denken, nachdenken",
+      "forms": [
+        "мисли"
+      ],
+      "grammar": "Präsens: мисля, мислиш, мисли."
+    },
+    "bg:момче:NOUN": {
+      "lemma": "момче",
+      "partOfSpeech": "NOUN",
+      "gloss": "Junge",
+      "forms": [
+        "момче",
+        "момчето"
+      ],
+      "grammar": "Neutrum. Bestimmte Form: момчето. Plural: момчета. Der Artikel -то hängt hinten am Wort."
+    },
+    "bg:мръсен:ADJ": {
+      "lemma": "мръсен",
+      "partOfSpeech": "ADJ",
+      "gloss": "schmutzig",
+      "forms": [
+        "мръсно",
+        "мръсното"
+      ],
+      "grammar": "Das е fällt bei den anderen Formen weg: мръсна, мръсно, мръсни. Bestimmt: мръсният, мръсната, мръсното."
+    },
+    "bg:на:ADP": {
+      "lemma": "на",
+      "partOfSpeech": "ADP",
+      "gloss": "zu, an, von",
+      "forms": [
+        "на"
+      ],
+      "grammar": "Die häufigste Präposition. Sie zeigt sowohl den Empfänger (dem Hund) als auch die Zugehörigkeit (des Jungen)."
+    },
+    "bg:но:CCONJ": {
+      "lemma": "но",
+      "partOfSpeech": "CCONJ",
+      "gloss": "aber",
+      "forms": [
+        "но"
+      ],
+      "grammar": "Verbindet zwei Hauptsätze und stellt sie einander gegenüber."
+    },
+    "bg:нямам:VERB": {
+      "lemma": "нямам",
+      "partOfSpeech": "VERB",
+      "gloss": "nicht haben",
+      "forms": [
+        "няма"
+      ],
+      "grammar": "Die Verneinung von имам steckt schon im Wort: не + имам = нямам. Ein zweites не ist falsch."
+    },
+    "bg:обичам:VERB": {
+      "lemma": "обичам",
+      "partOfSpeech": "VERB",
+      "gloss": "lieben, mögen",
+      "forms": [
+        "обича"
+      ],
+      "grammar": "Regelmäßiges Verb auf -ам. Präsens: обичам, обичаш, обича."
+    },
+    "bg:опашка:NOUN": {
+      "lemma": "опашка",
+      "partOfSpeech": "NOUN",
+      "gloss": "Schwanz, Schlange (Warteschlange)",
+      "forms": [
+        "опашка"
+      ],
+      "grammar": "Femininum. Bestimmte Form: опашката. Plural: опашки."
+    },
+    "bg:отивам:VERB": {
+      "lemma": "отивам",
+      "partOfSpeech": "VERB",
+      "gloss": "hingehen",
+      "forms": [
+        "отиват"
+      ],
+      "grammar": "Betont das Ziel der Bewegung, anders als вървя."
+    },
+    "bg:питам:VERB": {
+      "lemma": "питам",
+      "partOfSpeech": "VERB",
+      "gloss": "fragen",
+      "forms": [
+        "пита"
+      ],
+      "grammar": "Die Person wird direkt angeschlossen (питам мама), das Thema mit за."
+    },
+    "bg:по:ADP": {
+      "lemma": "по",
+      "partOfSpeech": "ADP",
+      "gloss": "entlang, auf",
+      "forms": [
+        "по"
+      ],
+      "grammar": "Sehr vielseitige Präposition; mit Wegen und Straßen heißt sie „entlang“."
+    },
+    "bg:приятел:NOUN": {
+      "lemma": "приятел",
+      "partOfSpeech": "NOUN",
+      "gloss": "Freund",
+      "forms": [
+        "приятел"
+      ],
+      "grammar": "Maskulinum. Bestimmte Form: приятелят/приятеля. Plural: приятели. Weiblich: приятелка."
+    },
+    "bg:рекс:PROPN": {
+      "lemma": "Рекс",
+      "partOfSpeech": "PROPN",
+      "gloss": "Rex (Hundename)",
+      "forms": [
+        "Рекс"
+      ],
+      "grammar": "Eigenname. Bleibt in allen Sätzen unverändert."
+    },
+    "bg:с:ADP": {
+      "lemma": "с",
+      "partOfSpeech": "ADP",
+      "gloss": "mit",
+      "forms": [
+        "с"
+      ],
+      "grammar": "Vor Wörtern, die mit с oder з beginnen, wird daraus със."
+    },
+    "bg:се:PRON": {
+      "lemma": "се",
+      "partOfSpeech": "PRON",
+      "gloss": "sich",
+      "forms": [
+        "се"
+      ],
+      "grammar": "Reflexivteilchen. Steht vor dem Verb und bleibt für alle Personen gleich."
+    },
+    "bg:сега:ADV": {
+      "lemma": "сега",
+      "partOfSpeech": "ADV",
+      "gloss": "jetzt",
+      "forms": [
+        "сега"
+      ],
+      "grammar": "Zeitadverb, steht gern am Satzanfang."
+    },
+    "bg:седя:VERB": {
+      "lemma": "седя",
+      "partOfSpeech": "VERB",
+      "gloss": "sitzen",
+      "forms": [
+        "седи"
+      ],
+      "grammar": "Präsens: седя, седиш, седи. Beschreibt den Zustand, nicht das Hinsetzen."
+    },
+    "bg:след:ADP": {
+      "lemma": "след",
+      "partOfSpeech": "ADP",
+      "gloss": "hinter, nach",
+      "forms": [
+        "след"
+      ],
+      "grammar": "Räumlich „hinterher“, zeitlich „nach“."
+    },
+    "bg:съм:AUX": {
+      "lemma": "съм",
+      "partOfSpeech": "AUX",
+      "gloss": "sein",
+      "forms": [
+        "е"
+      ],
+      "grammar": "Unregelmäßig und das häufigste Verb überhaupt: съм, си, е, сме, сте, са. Die 3. Person Singular ist е."
+    },
+    "bg:то:PRON": {
+      "lemma": "то",
+      "partOfSpeech": "PRON",
+      "gloss": "es",
+      "forms": [
+        "то"
+      ],
+      "grammar": "Personalpronomen 3. Person Singular neutrum. Für куче (Neutrum) sagt man deshalb то, nicht той."
+    },
+    "bg:той:PRON": {
+      "lemma": "той",
+      "partOfSpeech": "PRON",
+      "gloss": "er",
+      "forms": [
+        "той"
+      ],
+      "grammar": "Personalpronomen 3. Person Singular maskulin. Steht meist nur zur Betonung, weil die Verbendung die Person schon zeigt."
+    },
+    "bg:улица:NOUN": {
+      "lemma": "улица",
+      "partOfSpeech": "NOUN",
+      "gloss": "Straße",
+      "forms": [
+        "улицата"
+      ],
+      "grammar": "Femininum. Bestimmte Form: улицата. Plural: улици."
+    },
+    "bg:усмихвам:VERB": {
+      "lemma": "усмихвам",
+      "partOfSpeech": "VERB",
+      "gloss": "lächeln",
+      "forms": [
+        "усмихва"
+      ],
+      "grammar": "Kommt fast nur mit се vor: усмихвам се, усмихваш се, усмихва се."
+    },
+    "bg:хляб:NOUN": {
+      "lemma": "хляб",
+      "partOfSpeech": "NOUN",
+      "gloss": "Brot",
+      "forms": [
+        "хляб"
+      ],
+      "grammar": "Maskulinum. Bestimmte Form: хлябът/хляба. Das я wird im Plural zu е: хлебове."
+    },
+    "bg:ям:VERB": {
+      "lemma": "ям",
+      "partOfSpeech": "VERB",
+      "gloss": "essen, fressen",
+      "forms": [
+        "яде"
+      ],
+      "grammar": "Unregelmäßig: ям, ядеш, яде, ядем, ядете, ядат."
+    },
+    "bg:се казва:PHRASE": {
+      "lemma": "се казва",
+      "partOfSpeech": "PHRASE",
+      "gloss": "heißt",
+      "forms": [
+        "се казва"
+      ],
+      "grammar": "Wörtlich 'sich nennt'. So sagt man, wie jemand oder etwas heißt – das 'се' gehört fest zum Verb und steht vor ihm. Gefragt wird: 'Как се казваш?' ('Wie heißt du?')."
+    }
+  }
+}

@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Obsidian merkt sich hier, welche Tabs gerade offen sind. Das gehört zum
+# Rechner, nicht zur App - und würde sich bei jedem Klick ändern.
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+
+# Einstellungen der App: Leseposition, zuletzt geöffneter Text, Schalter.
+# Ändert sich beim Scrollen. Beim Klonen greifen einfach die Vorgaben.
+.obsidian/plugins/my-vault-app/data.json
+
+# Testarchive für den Import. Lassen sich jederzeit neu packen.
+Import-Test-*.zip

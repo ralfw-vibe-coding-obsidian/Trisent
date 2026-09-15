@@ -1,0 +1,9 @@
+{
+  "id": "my-vault-app",
+  "name": "Trisent",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "Read foreign texts interlinearly and learn words as you go.",
+  "author": "",
+  "isDesktopOnly": false
+}
