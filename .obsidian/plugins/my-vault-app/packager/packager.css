@@ -1,15 +1,94 @@
-/*
- * Styles des Packagers.
- *
- * Gehört der anderen Sitzung. Diese Datei wird beim Start automatisch
- * geladen; sie muss nirgends angemeldet werden.
- *
- * Der eigene Datenbereich liegt in der Vault unter Trisent/packager/.
- * Der Reader sieht ihn nie - fertige Pakete wandern über den Import
- * zu ihm hinüber.
- *
- * Die Grundlagen - Farben, Schriften, Knöpfe, Marken, das Spektrum der
- * vier Lernstände - stehen in ../styles.css und gelten hier genauso.
- * Nimm sie, statt sie nachzubauen: --tri-accent, --tri-read, .trisent-chip,
- * .trisent-topbar und so weiter.
- */
+/* Der Packager.
+
+   Bewusst nüchtern: Das hier ist die Werkstatt, nicht der Lesesaal.
+   Farben und Maße kommen aus styles.css, damit beide Seiten der App
+   zusammengehören. */
+
+.trisent-pack-language {
+  margin: 1.8rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.trisent-pack-language-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.trisent-pack-code {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.trisent-pack-count,
+.trisent-pack-empty {
+  font-size: 0.8rem;
+  color: var(--text-faint);
+}
+
+.trisent-pack-text {
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+}
+
+.trisent-pack-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.trisent-pack-name {
+  font-weight: 600;
+}
+
+.trisent-pack-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Der Bericht. Was gut ging, steht in einem Satz; was schiefging,
+   steht vollständig da - eine Fehlerliste, die man kürzt, kostet eine
+   weitere Runde. */
+.trisent-pack-report {
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--background-modifier-border);
+}
+
+.trisent-pack-good {
+  font-weight: 600;
+  color: var(--tri-accent);
+}
+
+.trisent-pack-bad {
+  font-weight: 600;
+  color: var(--text-error);
+}
+
+.trisent-pack-detail {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.trisent-pack-list {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.trisent-pack-list li {
+  margin: 0.15rem 0;
+}
+
+.trisent-problem {
+  color: var(--text-error);
+  font-size: 0.9rem;
+}
