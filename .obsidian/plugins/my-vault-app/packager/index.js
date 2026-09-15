@@ -652,24 +652,33 @@ class Packager {
 
     if (!this.visible()) return;
 
+    let field = null;
     new Setting(containerEl)
       .setName('Claude command')
       .setDesc('The packager asks Claude to gloss a paragraph. If "claude" is not found, give the full path.')
-      .addText((text) =>
+      .addText((text) => {
+        field = text;
         text
           .setPlaceholder('claude')
           .setValue(this.settings.claudePath || '')
           .onChange(async (value) => {
             this.settings.claudePath = value.trim();
             await this.saveSettings();
-          })
-      )
+          });
+      })
       .addButton((button) =>
         button.setButtonText('Test').onClick(async () => {
-          button.setButtonText('Testing…');
+          button.setButtonText('Searching…');
           const result = await ai.check(this.settings.claudePath || 'claude');
           button.setButtonText('Test');
-          new Notice(result.text, 10000);
+
+          /* Gefunden, aber anderswo: gleich eintragen. */
+          if (result.path) {
+            this.settings.claudePath = result.path;
+            await this.saveSettings();
+            field.setValue(result.path);
+          }
+          new Notice(result.text, 12000);
         })
       );
   }

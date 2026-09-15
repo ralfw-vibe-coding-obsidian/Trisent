@@ -200,19 +200,79 @@ function run(command, args, options) {
   });
 }
 
-/* Läuft die CLI überhaupt? Der Testknopf in den Einstellungen. */
-async function check(command) {
-  if (!available()) return { ok: false, text: 'Not on this device - the packager needs the desktop app.' };
-
+/* Antwortet das Programm unter diesem Namen? */
+async function version(command) {
+  if (!command) return '';
   const result = await run(command, ['--version'], { timeoutMs: 20000 });
-  if (result.code === 0 && result.out.trim()) {
-    return { ok: true, text: 'Found: ' + result.out.trim().split('\n')[0] };
+  if (result.code !== 0) return '';
+  const line = result.out.trim().split('\n')[0];
+  return /\d+\.\d+/.test(line) ? line : '';
+}
+
+/* Wo die CLI liegen könnte.
+
+   Obsidian startet Programme nicht über deine Anmelde-Shell, also fehlt
+   dort alles, was in .zshrc oder .profile zum Pfad dazukommt - und genau
+   dort liegt die CLI üblicherweise. Deshalb fragen wir am Ende die Shell
+   selbst; die weiß es. */
+async function locate(preferred) {
+  const os = nodeModule('os');
+  const home = os ? os.homedir() : '';
+
+  const candidates = [preferred, 'claude'];
+  if (home) {
+    candidates.push(
+      home + '/.local/bin/claude',
+      home + '/.claude/local/claude',
+      home + '/bin/claude'
+    );
   }
-  if (result.code === -2) return { ok: false, text: 'No answer within 20 seconds.' };
+  candidates.push('/opt/homebrew/bin/claude', '/usr/local/bin/claude');
+
+  for (const candidate of candidates) {
+    if (!candidate) continue;
+    const found = await version(candidate);
+    if (found) return { path: candidate, version: found };
+  }
+
+  /* Die Anmelde-Shell fragen. Auf Windows gibt es sie so nicht. */
+  const platform = (nodeModule('process') || {}).platform ||
+    (typeof process !== 'undefined' ? process.platform : '');
+  if (platform !== 'win32') {
+    const shell = ((nodeModule('process') || {}).env || {}).SHELL || '/bin/zsh';
+    const asked = await run(shell, ['-lic', 'command -v claude'], { timeoutMs: 20000 });
+    const line = asked.out.trim().split('\n').filter((piece) => piece.startsWith('/')).pop();
+    if (line) {
+      const found = await version(line);
+      if (found) return { path: line, version: found };
+    }
+  }
+
+  return null;
+}
+
+/* Der Testknopf. Findet er das Programm woanders, trägt der Aufrufer den
+   Fund ein - besser, als die Person suchen zu schicken. */
+async function check(command) {
+  if (!available()) {
+    return { ok: false, text: 'Not on this device - the packager needs the desktop app.' };
+  }
+
+  const direct = await version(command);
+  if (direct) return { ok: true, text: 'Found: ' + direct };
+
+  const found = await locate(command);
+  if (found) {
+    return {
+      ok: true,
+      path: found.path,
+      text: 'Found at ' + found.path + ': ' + found.version + '. Filled in for you.'
+    };
+  }
 
   return {
     ok: false,
-    text: 'Not found. ' + (result.err.trim() || 'Give the full path, for example /Users/you/.local/bin/claude.')
+    text: 'Claude was not found. Open a terminal, run "which claude", and paste the path here.'
   };
 }
 
@@ -269,4 +329,4 @@ function tempDir() {
   return os ? os.tmpdir() : undefined;
 }
 
-module.exports = { available, check, prepare, instructions, tempDir, MODEL };
+module.exports = { available, check, locate, prepare, instructions, tempDir, MODEL };
