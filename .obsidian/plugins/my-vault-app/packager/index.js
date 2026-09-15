@@ -112,6 +112,17 @@ function slug(name) {
     .replace(/^-|-$/g, '') || 'text';
 }
 
+/* Woran man mit einem Text ist - in einem Satz, nicht in Kästchen. */
+function stateOf(text) {
+  if (!text.version) return 'Not packaged yet.';
+  if (!text.sent) return 'Packaged, not sent to your library yet.';
+  if (text.sent < text.version) {
+    return 'Changed since you sent it — version ' + text.version +
+           ' here, version ' + text.sent + ' in your library.';
+  }
+  return 'In your library, version ' + text.version + '.';
+}
+
 /* Wörter eines Textes. Grob gezählt - es geht um die Größenordnung,
    nicht um Genauigkeit: Wie lang ist dieser Text, verglichen mit dem
    daneben. */
@@ -314,15 +325,10 @@ class PackagerView extends ItemView {
     if (text.words > 0) {
       title.createSpan({ cls: 'trisent-pack-size', text: '(' + text.words + ' words)' });
     }
-    if (text.version) {
-      title.createSpan({ cls: 'trisent-chip', text: 'version ' + text.version });
-      /* "built" heißt nur: die Datei liegt da. "sent" heißt: diese
-         Fassung ist durch den Import in der Bibliothek angekommen. */
-      title.createSpan({
-        cls: 'trisent-chip is-level',
-        text: text.sent === text.version ? 'sent' : 'built'
-      });
-    }
+    /* Der Zustand in einem Satz. Vorher standen hier zwei Kästchen und
+       eine wechselnde Knopfbeschriftung - drei Teile, aus denen man sich
+       selbst zusammenreimen musste, woran man ist. */
+    row.createDiv({ cls: 'trisent-pack-state', text: stateOf(text) });
 
     const actions = row.createDiv({ cls: 'trisent-pack-actions' });
 
@@ -331,10 +337,7 @@ class PackagerView extends ItemView {
        solange es kein Paket gibt, lautet das Ziel "Paket machen", ganz
        gleich, wie weit die Aufbereitung schon ist. */
     if (text.work || (this.packager.canPrepare() && text.total > 0)) {
-      const make = actions.createEl('button', {
-        cls: 'mod-cta',
-        text: text.version ? 'Build again' : 'Make package'
-      });
+      const make = actions.createEl('button', { cls: 'mod-cta', text: 'Make package' });
       make.addEventListener('click', () => this.make(text, make));
     }
 

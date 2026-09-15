@@ -58,6 +58,14 @@
   gap: 0.5rem;
 }
 
+/* Der Zustand in Worten. Ruhig gesetzt - man liest ihn beim Vorbeigehen,
+   man arbeitet nicht damit. */
+.trisent-pack-state {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: -0.3rem 0 0.75rem;
+}
+
 /* Der Bericht. Was gut ging, steht in einem Satz; was schiefging,
    steht vollständig da - eine Fehlerliste, die man kürzt, kostet eine
    weitere Runde. */
