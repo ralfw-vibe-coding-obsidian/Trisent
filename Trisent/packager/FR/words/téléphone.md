@@ -1,0 +1,13 @@
+---
+type: packager-word
+language: fr
+lemma: téléphone
+partOfSpeech: NOUN
+key: "fr:téléphone:NOUN"
+gloss: die Telefon
+forms: [téléphone]
+---
+
+## Grammar
+
+Männlich: `le téléphone`, Plural `les téléphones`. Fürs Handy sagt man `le téléphone portable` oder kurz `le portable`. Das Verb dazu ist `téléphoner (à qn)` „jemanden anrufen", mit `à` vor der Person.

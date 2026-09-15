@@ -193,7 +193,7 @@ class NewTextModal extends Modal {
     const actions = contentEl.createDiv({ cls: 'trisent-newtext-actions' });
     actions.createEl('button', { text: 'Cancel' })
       .addEventListener('click', () => this.close());
-    const start = actions.createEl('button', { cls: 'mod-cta', text: 'Add and make package' });
+    const start = actions.createEl('button', { cls: 'mod-cta', text: 'Add text' });
     start.addEventListener('click', () => this.submit(start));
 
     window.setTimeout(() => titleInput.focus(), 0);
@@ -221,7 +221,7 @@ class NewTextModal extends Modal {
     } catch (error) {
       console.error('Trisent packager', error);
       button.disabled = false;
-      button.setText('Add and make package');
+      button.setText('Add text');
       new Notice(String(error.message || error), 10000);
     }
   }
@@ -244,6 +244,10 @@ class PackagerView extends ItemView {
     /* Was in der Werkstatt liegt. Wird gelesen, bevor gezeichnet wird -
        die Fassung eines Pakets steht in einer Datei, und Lesen dauert. */
     this.model = [];
+    /* Texte, an denen gerade gearbeitet wird, mit ihrem Zwischenstand.
+       Ohne das entstünde der Knopf beim nächsten Neuzeichnen wieder
+       anklickbar - und ein zweiter Lauf hängte alles ein zweites Mal an. */
+    this.running = new Map();
   }
 
   getViewType() { return VIEW_TYPE; }
@@ -266,16 +270,23 @@ class PackagerView extends ItemView {
      stünde die Person vor einer Ansicht, über die sie nichts sagen kann. */
   render() {
     const root = this.contentEl;
+    /* Wo die Person gerade liest, bleibt erhalten. Sonst springt die
+       Ansicht bei jedem Zwischenstand an den Anfang zurück. */
+    const at = this.scrollEl ? this.scrollEl.scrollTop : 0;
+
     root.empty();
     root.addClass('trisent-view');
 
-    const page = root.createDiv({ cls: 'trisent-scroll' }).createDiv({ cls: 'trisent-page' });
+    this.scrollEl = root.createDiv({ cls: 'trisent-scroll' });
+    const page = this.scrollEl.createDiv({ cls: 'trisent-page' });
     try {
       this.renderBody(page);
     } catch (error) {
       console.error('Trisent packager', error);
       page.createDiv({ cls: 'trisent-problem', text: String(error.message || error) });
     }
+
+    if (at > 0) this.scrollEl.scrollTop = at;
   }
 
   renderBody(page) {
@@ -340,12 +351,17 @@ class PackagerView extends ItemView {
        beschreiben, bauen. Er heißt nach dem Ziel, nicht nach dem Schritt -
        solange es kein Paket gibt, lautet das Ziel "Paket machen", ganz
        gleich, wie weit die Aufbereitung schon ist. */
+    const busy = this.running.get(text.folder.path);
     if (text.work || (this.packager.canPrepare() && text.total > 0)) {
-      const make = actions.createEl('button', { cls: 'mod-cta', text: 'Make package' });
-      make.addEventListener('click', () => this.make(text, make));
+      const make = actions.createEl('button', {
+        cls: 'mod-cta',
+        text: busy || 'Make package'
+      });
+      if (busy) make.disabled = true;
+      else make.addEventListener('click', () => this.make(text));
     }
 
-    if (text.version) {
+    if (text.version && !busy) {
       /* Zweite Handlung, nicht zweitrangige: eigener Rahmen in der
          Akzentfarbe, damit sie nicht wie abgeschaltet aussieht. */
       const send = actions.createEl('button', { cls: 'trisent-pack-second', text: 'Send to library' });
@@ -373,26 +389,29 @@ class PackagerView extends ItemView {
     }
   }
 
-  /* Neuer Text: Dialog auf, und wenn er zu ist, läuft es gleich weiter -
-     danach hat die Person ja nichts mehr zu entscheiden. */
+  /* Neuer Text: Dialog auf, Text ablegen, Übersicht auffrischen. Das
+     Paketieren stößt die Person selbst an - dann sieht sie auch, an
+     welchem Text gearbeitet wird. */
   newText() {
-    new NewTextModal(this.app, this.packager, async (path) => {
+    new NewTextModal(this.app, this.packager, async () => {
       await this.refresh();
-      const text = this.model
-        .reduce((all, language) => all.concat(language.texts), [])
-        .find((entry) => entry.folder.path === path);
-      if (text) await this.make(text, null);
     }).open();
   }
 
   /* Ein langer Text braucht einige Minuten. Solange muss auf dem Knopf
      stehen, woran gerade gearbeitet wird - sonst sitzt die Person vor
      einer Ansicht, die nichts tut. */
-  async make(text, button) {
-    if (button) button.disabled = true;
+  async make(text) {
+    const path = text.folder.path;
+    if (this.running.has(path)) return;
+
+    this.running.set(path, 'Starting…');
+    this.reports.delete(path);
+    this.render();
+
     const step = (what) => {
-      if (button) button.setText(what);
-      else this.progress(text, what);
+      this.running.set(path, what);
+      this.render();
     };
 
     try {
@@ -404,14 +423,8 @@ class PackagerView extends ItemView {
         lines: [String(error.message || error)], more: 0
       });
     }
+    this.running.delete(path);
     await this.refresh();
-  }
-
-  /* Ohne Knopf - etwa direkt nach dem Dialog - steht der Stand im
-     Bericht des Textes. */
-  progress(text, what) {
-    this.reports.set(text.folder.path, { kind: 'ok', headline: what, detail: '' });
-    this.render();
   }
 
   async send(text) {
@@ -934,6 +947,13 @@ class Packager {
     }
 
     const current = await this.app.vault.read(text.work);
+
+    /* Sicherheitsnetz gegen doppeltes Anhängen: Enthält die Werkbank schon
+       so viele Absätze wie der Rohtext, ist hier nichts mehr zu tun. Ein
+       zweiter Lauf hat den Text sonst still verdoppelt, und das fällt erst
+       beim Bauen auf - mit einer langen, ratlosen Fehlerliste. */
+    if (text.total > 0 && parseWork(current).paragraphs.length >= text.total) return;
+
     const joined = current.replace(/\s+$/, '') + '\n\n---\n\n' + block + '\n';
     await this.app.vault.modify(text.work, joined);
   }
