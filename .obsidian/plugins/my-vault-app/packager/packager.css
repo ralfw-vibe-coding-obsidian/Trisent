@@ -1,0 +1,15 @@
+/*
+ * Styles des Packagers.
+ *
+ * Gehört der anderen Sitzung. Diese Datei wird beim Start automatisch
+ * geladen; sie muss nirgends angemeldet werden.
+ *
+ * Der eigene Datenbereich liegt in der Vault unter Trisent/packager/.
+ * Der Reader sieht ihn nie - fertige Pakete wandern über den Import
+ * zu ihm hinüber.
+ *
+ * Die Grundlagen - Farben, Schriften, Knöpfe, Marken, das Spektrum der
+ * vier Lernstände - stehen in ../styles.css und gelten hier genauso.
+ * Nimm sie, statt sie nachzubauen: --tri-accent, --tri-read, .trisent-chip,
+ * .trisent-topbar und so weiter.
+ */

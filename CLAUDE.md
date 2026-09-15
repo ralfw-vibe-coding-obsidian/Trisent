@@ -125,20 +125,115 @@ Beschreibung der Aufgabe als normaler Text.
 
 Die `data.json` des Plugins ist **nur für Einstellungen** da – für Dinge, die
 Konfiguration sind und keine Daten (der Name der Person, eine Voreinstellung,
-eine Fensterbreite). Niemals für die eigentlichen Inhalte der App.
+eine Fensterbreite). Niemals für die eigentlichen Inhalte der App. Jedes Modul
+hat dort seinen eigenen Bereich (`reader`, `packager`).
+
+### Getrennte Bereiche in der Vault
+
+Die beiden Module haben **getrennte Datenbereiche**, und zwar vollständig
+getrennt:
+
+```text
+Trisent/                  einstellbar, Vorgabe: Trisent
+├── reader/               nur der Reader
+│   ├── BG/
+│   │   ├── language.md
+│   │   ├── dictionary/   der Lernstand der Person, eine Notiz je Wort
+│   │   └── packages/     die Lerntexte
+│   └── FR/
+└── packager/             nur der Packager
+```
+
+**Der Packager schreibt nie in den Bereich des Readers.** Ein fertiges Paket
+kommt dort ausschließlich über den **Import** an – und damit ausschließlich
+durch `validatePackage()`. Das ist keine Formsache: Es gibt dadurch genau eine
+Tür in die Bibliothek der Person, und die ist geprüft. Ein halbfertiges oder
+fehlerhaftes Paket kann gar nicht dort landen, auch nicht aus Versehen, auch
+nicht vom Schreibtisch nebenan.
+
+Technisch bekommt jedes Modul dafür eine eigene `Library` mit seinem Bereich:
+`new Library(app, plugin, 'reader')` bzw. `'packager'`. Beide benutzen denselben
+Code, sehen aber nur ihren eigenen Ordner.
 
 Wenn ein Wunsch dieses Muster wirklich sprengt, sprich es an, statt es still
 anders zu machen.
 
 ## Aufbau des Codes
 
-Alles bleibt in `main.js`, solange die Datei überschaubar ist. Erst wenn sie
-wirklich unhandlich wird, aufteilen – und dann mit `require('./name.js')`
-relativ zum Plugin-Ordner, nicht mit `import`.
+An dieser App arbeiten **zwei Sitzungen parallel**: eine am Reader, eine am
+Packager. Deshalb ist der Code aufgeteilt, und die Aufteilung ist keine
+Empfehlung, sondern eine Abmachung.
 
-Ansonsten: schreib den Code so, wie das Skelett geschrieben ist. Schlicht,
+```text
+.obsidian/plugins/my-vault-app/
+├── main.js              nur Integration - Module anmelden, Einstellungen
+├── styles.css           gemeinsame Grundlage: Farben, Schriften, Knöpfe
+├── core/                GEMEINSAM
+│   ├── package.js       das Paketformat: Prüfregeln, Schlüsselbildung
+│   ├── library.js       Ordnerstruktur, Pakete, Wortnotizen
+│   └── zip.js           ZIP lesen
+├── reader/              Lesen und Lernen
+│   ├── index.js  view.js  card.js  reader.css
+└── packager/            Texte zu Paketen schnüren
+    └── index.js  packager.css
+```
+
+**Wem was gehört:**
+
+| Ort | Wer ändert |
+|---|---|
+| `reader/` | nur die Reader-Sitzung |
+| `packager/` | nur die Packager-Sitzung |
+| `core/`, `main.js`, `styles.css`, `konzept/paketformat.md` | **beide - nur im Einvernehmen** |
+| `Trisent/reader/` in der Vault | nur der Reader |
+| `Trisent/packager/` in der Vault | nur der Packager |
+
+Bevor du etwas in `core/`, `main.js` oder `styles.css` änderst, sag es der
+Person. Sie gibt es an die andere Sitzung weiter. Änderst du dort still etwas,
+merkt es die andere Seite erst, wenn etwas kaputt ist.
+
+**`core/package.js` ist der Vertrag.** Dort steht, wie ein Wissensschlüssel
+gebildet wird und was ein gültiges Paket ausmacht - beschrieben in
+`konzept/paketformat.md`. Der Reader liest Pakete nach diesen Regeln, der
+Packager schreibt sie danach. Wenn beide Seiten das unterschiedlich machen,
+zerfällt der Lernstand der Person unbemerkt in zwei Hälften. `validatePackage()`
+ist deshalb für beide da: Der Packager prüft damit, was er baut, bevor er es
+ausliefert.
+
+**Wie die Dateien geladen werden.** Obsidian lädt von sich aus nur `main.js`
+und `styles.css`. Alles Weitere liest `main.js` selbst aus dem Plugin-Ordner
+und führt es als Modul aus – siehe `loadModules()` dort. Innerhalb der Dateien
+gilt dann ganz normal `require('./name.js')` bzw. `require('../core/name.js')`,
+und `require('obsidian')` funktioniert wie gewohnt.
+
+**Achtung, hier ist schon einmal jemand hineingelaufen:** Verlass dich NICHT
+darauf, dass ein relatives `require` direkt in `main.js` funktioniert. Wie
+Obsidian dort relative Pfade auflöst, ist nicht zugesichert. Geht es daneben,
+schaltet Obsidian das Plugin ab – und danach bleibt die Konsole beim Neuladen
+still, weil gar kein Code mehr läuft. Man sucht dann einen Fehler, den es nicht
+mehr gibt. Deshalb der Umweg über `loadModules()`.
+
+Eine neue Datei muss in zwei Listen in `main.js` eingetragen werden: `MODULES`
+(Code, in Ladereihenfolge) und `MODULE_STYLES` (Stilvorlagen). Das sind die
+einzigen Stellen, an denen ein Modul `main.js` anfassen muss – und selbst das
+sagt man der anderen Seite.
+
+**Einstellungen.** In `data.json` hat jedes Modul seinen eigenen Bereich
+(`reader`, `packager`). Gemeinsames steht oben (`libraryFolder`,
+`hideLibraryFolder`). Nie in den Bereich der anderen Seite schreiben.
+
+**Styles.** In `styles.css` steht nur, was beide brauchen: die Farbvariablen
+(`--tri-accent`, die vier Lernstände, `--tri-read`), das Aussehen von Knöpfen,
+das Gerüst einer Ansicht, Kopfleiste, Marken, Spektrum. Alles Eigene gehört in
+die eigene `.css`. Benutze die Variablen und die gemeinsamen Klassen, statt sie
+nachzubauen.
+
+**Git.** Beide Sitzungen arbeiten im selben Repo. Committe klein und oft.
+Solange jeder in seinem Verzeichnis bleibt, gibt es keine Konflikte.
+
+Ansonsten: schreib den Code so, wie der vorhandene geschrieben ist. Schlicht,
 lesbar, deutschsprachige Kommentare an den Stellen, wo eine Entscheidung
-dahintersteckt.
+dahintersteckt. Englische Bezeichner, englische Oberfläche.
 
 ## Offene Personalisierungen
 

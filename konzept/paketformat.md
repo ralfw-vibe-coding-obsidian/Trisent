@@ -8,15 +8,21 @@ sind deutsch.
 
 ```text
 Trisent/                      ← einstellbar, Vorgabe: Trisent
-└── BG/                       ← Sprachordner, erkennbar an language.md
-    ├── language.md
-    ├── dictionary/           ← Wortnotizen, gehören der Person
-    └── packages/
-        └── Beliebig/Tief/Verschachtelt/
-            └── Der Junge und der Hund/
-                ├── package.json
-                └── audio/            ← optional
+├── reader/                   ← Bereich des Readers
+│   └── BG/                   ← Sprachordner, erkennbar an language.md
+│       ├── language.md
+│       ├── dictionary/       ← Wortnotizen, gehören der Person
+│       └── packages/
+│           └── Beliebig/Tief/Verschachtelt/
+│               └── Der Junge und der Hund/
+│                   ├── package.json
+│                   └── audio/            ← optional
+└── packager/                 ← Bereich des Packagers
 ```
+
+Die beiden Bereiche sind getrennt. **Ein Paket gelangt nur über den Import in
+den Bereich des Readers** – und damit nur, wenn es die Prüfregeln am Ende
+dieses Dokuments besteht. Auch ein Paket vom Packager nimmt diesen Weg.
 
 Ein Ordner **ist** ein Lernpaket, genau dann wenn eine `package.json` direkt
 darin liegt. Ein Paket enthält keine weiteren Pakete. Der Ordnername ist frei

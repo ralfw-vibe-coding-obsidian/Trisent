@@ -1,0 +1,761 @@
+/*
+ * Der Reader - Übersicht, Weiterlesen, Textliste, der Text selbst,
+ * die vier Lernstände und die Wortkarte.
+ *
+ * Gehört dieser Sitzung. Wird beim Start automatisch geladen und muss
+ * nirgends angemeldet werden.
+ *
+ * Die Grundlagen - Farben, Schriften, Knöpfe, Marken, Spektrum - stehen
+ * in ../styles.css und gelten hier genauso.
+ */
+
+
+/* Lesefortschritt, ganz rechts in der Leiste. */
+
+.trisent-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.trisent-track {
+  width: 3.4rem;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--background-modifier-border);
+  overflow: hidden;
+}
+
+.trisent-track-fill {
+  height: 100%;
+  background: var(--tri-accent);
+}
+
+/* Die Ebenenschalter als ein zusammenhängendes Feld. */
+
+.trisent-switches {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--background-modifier-border);
+  border-radius: 9px;
+}
+
+.trisent-view .trisent-switch,
+.trisent-card-view .trisent-switch {
+  min-width: 1.9rem;
+  height: 1.75rem;
+  padding: 0 0.5rem;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-faint);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-switch:hover,
+.trisent-card-view .trisent-switch:hover {
+  color: var(--text-normal);
+}
+
+.trisent-view .trisent-switch.is-on,
+.trisent-card-view .trisent-switch.is-on {
+  background: var(--background-primary);
+  color: var(--text-normal);
+  box-shadow: 0 1px 2px #0000001f;
+}
+
+.trisent-switch-icon svg {
+  width: 1.05em;
+  height: 1.05em;
+}
+
+/* ---------------------------------------------------------------- */
+/* Übersicht                                                         */
+/* ---------------------------------------------------------------- */
+
+.trisent-dashboard-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.trisent-dashboard-head h1 {
+  margin-bottom: 0;
+  margin-right: auto;
+}
+
+/* Weiterlesen. Die Frage beim Öffnen ist nie "welche Sprachen habe
+   ich", sondern "wo war ich?". */
+
+.trisent-resume {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin: 1.75rem 0 0;
+  padding: 1.35rem 1.4rem;
+  border: 1px solid var(--background-modifier-border);
+  border-left: 3px solid var(--tri-accent);
+  border-radius: 12px;
+  background: var(--background-secondary);
+}
+
+.trisent-resume-main {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.trisent-resume-label {
+  font-size: 0.67rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tri-accent);
+  margin-bottom: 0.3rem;
+}
+
+.trisent-resume-title {
+  font-family: var(--tri-read);
+  font-size: 1.2rem;
+  font-weight: var(--tri-read-weight);
+  letter-spacing: -0.01em;
+}
+
+.trisent-resume-meta {
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.2rem;
+}
+
+.trisent-view .trisent-cta,
+.trisent-card-view .trisent-cta {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.55rem 1.15rem;
+  border: 0;
+  border-radius: 9px;
+  background: var(--tri-accent);
+  color: #FFFFFF;
+  box-shadow: none;
+}
+
+.trisent-view .trisent-cta:hover,
+.trisent-card-view .trisent-cta:hover {
+  filter: brightness(1.08);
+}
+
+.trisent-language-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.75rem;
+}
+
+.trisent-view .trisent-tile,
+.trisent-card-view .trisent-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.85rem;
+  width: 100%;
+  height: auto;
+  padding: 1.25rem;
+  text-align: left;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-primary);
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.trisent-view .trisent-tile:hover,
+.trisent-card-view .trisent-tile:hover {
+  border-color: var(--tri-accent);
+  background: var(--background-modifier-hover);
+}
+
+.trisent-tile-top {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.trisent-flag {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.trisent-tile-name {
+  font-family: var(--tri-read);
+  font-size: 1.08rem;
+  font-weight: var(--tri-read-weight);
+  color: var(--text-normal);
+}
+
+.trisent-big {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.trisent-big-num {
+  font-family: var(--tri-read);
+  font-size: 1.9rem;
+  font-weight: var(--tri-read-weight);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-normal);
+}
+
+.trisent-big-unit {
+  font-size: 0.74rem;
+  color: var(--text-faint);
+}
+
+.trisent-tile-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- */
+/* Textliste                                                         */
+/* ---------------------------------------------------------------- */
+
+.trisent-package-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.trisent-view .trisent-text-row,
+.trisent-card-view .trisent-text-row {
+  display: flex;
+  gap: 1.75rem;
+  align-items: flex-start;
+  width: 100%;
+  height: auto;
+  text-align: left;
+  padding: 1.3rem 1.4rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-primary);
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.trisent-view .trisent-text-row:hover,
+.trisent-card-view .trisent-text-row:hover {
+  border-color: var(--tri-accent);
+  background: var(--background-modifier-hover);
+}
+
+.trisent-view .trisent-text-row.is-current,
+.trisent-card-view .trisent-text-row.is-current {
+  border-color: var(--tri-accent);
+}
+
+.trisent-t-left {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.trisent-t-title {
+  font-family: var(--tri-read);
+  font-size: 1.16rem;
+  font-weight: var(--tri-read-weight);
+  letter-spacing: -0.01em;
+  color: var(--text-normal);
+}
+
+.trisent-t-sub {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+.trisent-t-right {
+  flex: 0 0 9.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+}
+
+.trisent-t-pct {
+  font-family: var(--tri-read);
+  font-size: 1.5rem;
+  font-weight: var(--tri-read-weight);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-normal);
+}
+
+.trisent-t-note {
+  font-size: 0.71rem;
+  line-height: 1.5;
+  color: var(--text-faint);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.trisent-t-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: var(--tri-accent);
+  font-weight: 600;
+}
+
+.trisent-t-mark svg {
+  width: 0.85em;
+  height: 0.85em;
+}
+
+.trisent-view .trisent-text-row.is-broken,
+.trisent-card-view .trisent-text-row.is-broken {
+  border-color: var(--text-error, var(--background-modifier-border));
+  cursor: default;
+}
+
+.trisent-t-error {
+  font-size: 0.78rem;
+  color: var(--text-error, var(--text-muted));
+  margin-top: 0.25rem;
+}
+
+/* ---------------------------------------------------------------- */
+/* Der Text                                                          */
+/* ---------------------------------------------------------------- */
+
+.trisent-paragraph {
+  margin-bottom: 2.4rem;
+}
+
+.trisent-speaker {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.6rem;
+}
+
+.trisent-sentence {
+  margin-bottom: 1.4rem;
+}
+
+/* F und G in ausgerichteten Spalten. Zwischen den Spalten gibt es KEINE
+   Lücke - der Abstand steckt als Innenabstand in F und G. Sonst würde
+   die Wendungsklammer an jeder Lücke abreißen. */
+.trisent-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  column-gap: 0;
+  row-gap: 0.4em;
+}
+
+/* Eine Gruppe ist, was im Original ohne Leerzeichen zusammenhängt
+   ("s'il", "quatre-vingts"). Darin wird nicht umgebrochen. */
+.trisent-group {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.trisent-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.trisent-column.is-spaced .trisent-f,
+.trisent-column.is-spaced .trisent-g {
+  padding-right: 0.42em;
+}
+
+.trisent-text.is-gloss .trisent-column.is-tight .trisent-f,
+.trisent-text.is-gloss .trisent-column.is-tight .trisent-g {
+  padding-right: 0.28em;
+}
+
+.trisent-f {
+  font-family: var(--tri-read);
+  font-weight: 400;
+  font-size: 1.22rem;
+  line-height: 1.55;
+  letter-spacing: 0;
+  color: var(--text-normal);
+}
+
+.trisent-column.is-punctuation .trisent-f {
+  color: var(--text-faint);
+}
+
+/* Auch leere Glossen halten ihre Höhe - sonst springt die Zeile,
+   sobald eine Glosse verschwindet. */
+.trisent-g {
+  font-family: var(--tri-ui);
+  font-weight: 400;
+  font-size: 0.73rem;
+  line-height: 1.55;
+  min-height: 1.55em;
+  letter-spacing: 0.01em;
+  color: var(--text-faint);
+}
+
+.trisent-t {
+  font-family: var(--tri-read);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.97rem;
+  line-height: 1.55;
+  color: var(--text-faint);
+  margin-top: 0.4rem;
+}
+
+/* ---------------------------------------------------------------- */
+/* Die vier Lernstände                                               */
+/* ---------------------------------------------------------------- */
+
+/* Der Stand wird semantisch gespeichert, nie als Farbe. Hier - und nur
+   hier - wird aus einem Stand ein Aussehen.
+
+   Ein Strich unter dem Wort statt einer Fläche dahinter: Der Text
+   bleibt eine Lesefläche, und der Strich wird dünner, je besser das
+   Wort sitzt. Bei "known" bleibt nichts. Die Seite wird beim Lernen
+   still - das ist der Punkt der ganzen App. */
+
+.trisent-word {
+  cursor: pointer;
+  border-radius: 2px;
+  padding-bottom: 1px;
+}
+
+.trisent-text.is-colored .trisent-word.is-unknown {
+  box-shadow: inset 0 -2px 0 var(--tri-unknown);
+}
+
+.trisent-text.is-colored .trisent-word.is-learning {
+  box-shadow: inset 0 -2px 0 var(--tri-learning);
+}
+
+.trisent-text.is-colored .trisent-word.is-familiar {
+  box-shadow: inset 0 -1px 0 var(--tri-familiar);
+}
+
+/* "known" bekommt bewusst gar nichts - das Wort steht da wie in einem
+   normalen Text. Darauf läuft die ganze App hinaus. */
+.trisent-text.is-colored .trisent-word.is-known {
+  box-shadow: none;
+}
+
+.trisent-text.is-colored .trisent-word:hover {
+  background: var(--background-modifier-hover);
+}
+
+/* Die Wendungsklammer. Jede beteiligte Spalte trägt ein Stück der
+   Oberkante; zusammen ergeben sie eine durchgehende Linie, auch über
+   Gruppengrenzen und einen Zeilenumbruch hinweg. Die Häkchen an den
+   Enden trennen zwei Wendungen, die aneinandergrenzen. */
+
+.trisent-p {
+  position: relative;
+  height: 1.2em;
+  margin-top: 0.2rem;
+  cursor: pointer;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.trisent-p.is-first { border-left: 1px solid var(--background-modifier-border); }
+.trisent-p.is-last { border-right: 1px solid var(--background-modifier-border); }
+
+.trisent-column.is-spaced .trisent-p.is-last { margin-right: 0.42em; }
+.trisent-text.is-gloss .trisent-column.is-tight .trisent-p.is-last { margin-right: 0.28em; }
+
+.trisent-text.is-colored .trisent-p.is-unknown { border-color: var(--tri-unknown); }
+.trisent-text.is-colored .trisent-p.is-learning { border-color: var(--tri-learning); }
+.trisent-text.is-colored .trisent-p.is-familiar { border-color: var(--tri-familiar); }
+
+/* Bekannte Wendung: die Klammer verschwindet, wie die Glosse eines
+   bekannten Wortes. Sie kommt zurück, sobald man den Satz überfährt -
+   sonst käme man nie wieder an sie heran. */
+.trisent-p.is-known { opacity: 0; }
+.trisent-sentence:hover .trisent-p.is-known { opacity: 0.4; }
+
+.trisent-p-label {
+  position: absolute;
+  top: 0.1rem;
+  left: 0.3em;
+  white-space: nowrap;
+  font-size: 0.7rem;
+  line-height: 1;
+  color: var(--text-faint);
+  /* Deckt eine nachfolgende Beschriftung zu, statt sich mit ihr zu
+     überlagern, falls eine Wendungsglosse einmal sehr lang ist. */
+  background: var(--background-primary);
+  padding-right: 0.3em;
+}
+
+/* Ein Satz, der sich nicht zeichnen ließ. Der Originaltext steht
+   trotzdem da, und darunter läuft der Text weiter. */
+
+.trisent-sentence-broken {
+  border-left: 2px solid var(--text-error, var(--background-modifier-border));
+  padding-left: 0.7rem;
+}
+
+.trisent-sentence-broken-note {
+  font-size: 0.74rem;
+  color: var(--text-error, var(--text-faint));
+  margin-top: 0.2rem;
+}
+
+.trisent-footnote {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--background-modifier-border);
+  font-size: 0.78rem;
+  color: var(--text-faint);
+}
+
+/* ---------------------------------------------------------------- */
+/* Die Wortkarte                                                     */
+/* ---------------------------------------------------------------- */
+
+.trisent-card-view {
+  padding: 1.25rem 1rem 3rem;
+  overflow-y: auto;
+  font-family: var(--tri-ui);
+  background: var(--background-secondary);
+}
+
+.trisent-card-hint {
+  color: var(--text-faint);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  padding: 1rem 0;
+}
+
+.trisent-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.trisent-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.trisent-card-lemma {
+  font-family: var(--tri-read);
+  font-size: 1.9rem;
+  font-weight: var(--tri-read-weight);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  word-break: break-word;
+  color: var(--text-normal);
+}
+
+.trisent-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.trisent-card-form {
+  font-size: 0.71rem;
+  color: var(--text-faint);
+}
+
+.trisent-card-gloss {
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+  color: var(--text-normal);
+}
+
+/* Der Stand als ein einzelner Chip. Die Farbe steht als Punkt davor -
+   dieselbe Sprache wie die Unterstreichung im Text. */
+
+.trisent-card-state {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.trisent-view .trisent-status,
+.trisent-card-view .trisent-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem 0.3rem 0.6rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-status:hover,
+.trisent-card-view .trisent-status:hover {
+  border-color: var(--tri-accent);
+}
+
+.trisent-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--background-modifier-border);
+}
+
+.trisent-status.is-unknown .trisent-status-dot { background: var(--tri-unknown); }
+.trisent-status.is-learning .trisent-status-dot { background: var(--tri-learning); }
+.trisent-status.is-familiar .trisent-status-dot { background: var(--tri-familiar); }
+.trisent-status.is-known .trisent-status-dot { background: var(--tri-accent); }
+
+.trisent-status-hint {
+  font-size: 0.7rem;
+  color: var(--text-faint);
+}
+
+.trisent-card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.trisent-card-section-title {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.trisent-card-text {
+  font-size: 0.83rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.trisent-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.trisent-topic {
+  font-family: var(--tri-read);
+  font-size: 0.82rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  color: var(--text-normal);
+}
+
+.trisent-view .trisent-card-phrase,
+.trisent-card-view .trisent-card-phrase {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.05rem;
+  width: 100%;
+  height: auto;
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 9px;
+  background: var(--background-primary);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-card-phrase:hover,
+.trisent-card-view .trisent-card-phrase:hover {
+  border-color: var(--tri-accent);
+}
+
+.trisent-card-phrase-surface {
+  font-family: var(--tri-read);
+  font-size: 0.92rem;
+  color: var(--text-normal);
+}
+
+.trisent-card-phrase-gloss {
+  font-size: 0.73rem;
+  color: var(--text-faint);
+}
+
+/* Alle Stellen, an denen das Wort vorkommt. */
+
+.trisent-occurrence {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.trisent-occurrence:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.trisent-occurrence-source {
+  font-family: var(--tri-read);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text-normal);
+}
+
+.trisent-occurrence-hit {
+  box-shadow: inset 0 -2px 0 var(--tri-accent);
+}
+
+.trisent-occurrence-fluent {
+  font-family: var(--tri-read);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--text-faint);
+  line-height: 1.5;
+  margin-top: 0.2rem;
+}
+
+.trisent-card-foot {
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.trisent-view .trisent-card-open,
+.trisent-card-view .trisent-card-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.trisent-card-open svg {
+  width: 1em;
+  height: 1em;
+}
