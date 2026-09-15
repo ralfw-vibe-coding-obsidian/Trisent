@@ -142,7 +142,7 @@ function instructions(rules, example, languageFolder) {
     '',
     'Danach, außerhalb der Marken, in höchstens fünf Zeilen: welche',
     'Entscheidungen du treffen musstest, die NICHT aus dem Wortvorrat kamen.',
-    'Kurz, für einen Menschen, der kein Französisch kann.'
+    'Kurz, für einen Menschen, der die Fremdsprache nicht kann.'
   );
 
   return parts.join('\n');

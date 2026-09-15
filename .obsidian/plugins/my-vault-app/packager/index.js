@@ -16,7 +16,7 @@
  * Was hier nicht durchkommt, käme beim Empfänger auch nicht durch.
  */
 
-const { ItemView, Notice, Setting, TFile, TFolder, normalizePath } = require('obsidian');
+const { ItemView, Notice, Platform, Setting, TFile, TFolder, normalizePath } = require('obsidian');
 const { parseWork, parseWordNote, splitNote, buildPackage } = require('./build.js');
 const ai = require('./ai.js');
 
@@ -34,7 +34,7 @@ const RULES_FILE = 'rules.md';
    "sent" hält fest, welche Fassung eines Textes schon in der Bibliothek
    angekommen ist. Das kann der Packager nicht selbst nachsehen - dort
    drüben schaut er nicht hinein. */
-const DEFAULTS = { sent: {}, claudePath: 'claude' };
+const DEFAULTS = { enabled: true, sent: {}, claudePath: 'claude' };
 
 /* Aus einem Ordnernamen eine Kennung machen: klein, ohne Sonderzeichen. */
 function slug(name) {
@@ -260,6 +260,11 @@ class Packager {
     this.plugin = plugin;
     this.app = plugin.app;
 
+    /* Der Packager ist Werkstatt, nicht Lesesaal. Wer nur liest, soll
+       ihn gar nicht erst sehen - und auf dem Handy kann er ohnehin nicht
+       arbeiten, weil er dort kein Programm starten kann. */
+    if (!this.visible()) return;
+
     plugin.registerView(VIEW_TYPE, (leaf) => new PackagerView(leaf, this));
     plugin.addRibbonIcon(RIBBON_ICON, 'Open Trisent packager', () => this.open());
     plugin.addCommand({
@@ -267,6 +272,14 @@ class Packager {
       name: 'Open packager',
       callback: () => this.open()
     });
+  }
+
+  /* Auf dem Handy immer aus - unabhängig vom Schalter. Der steht in den
+     Einstellungen und wandert damit über die Geräte hinweg mit; ihn dort
+     umzulegen, würde sonst auch den Rechner treffen. */
+  visible() {
+    if (Platform.isMobile) return false;
+    return this.settings.enabled !== false;
   }
 
   get settings() { return this.plugin.settings.packager; }
@@ -621,6 +634,24 @@ class Packager {
   }
 
   addSettings(containerEl) {
+    new Setting(containerEl)
+      .setName('Packager')
+      .setDesc(
+        'The workshop that turns texts into packages. Reading works without it. ' +
+        'It needs a desktop and is always off on phones and tablets. Takes effect after a reload.'
+      )
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.settings.enabled !== false)
+          .onChange(async (value) => {
+            this.settings.enabled = value;
+            await this.saveSettings();
+            new Notice('Reload Obsidian to ' + (value ? 'show' : 'hide') + ' the packager.', 8000);
+          })
+      );
+
+    if (!this.visible()) return;
+
     new Setting(containerEl)
       .setName('Claude command')
       .setDesc('The packager asks Claude to gloss a paragraph. If "claude" is not found, give the full path.')
