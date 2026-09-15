@@ -327,19 +327,21 @@ class PackagerView extends ItemView {
     const actions = row.createDiv({ cls: 'trisent-pack-actions' });
 
     /* Ein Knopf für den ganzen Weg: aufbereiten, fehlende Wörter
-       beschreiben, bauen. Zwischenstände interessieren nur, solange
-       etwas läuft - dann stehen sie auf dem Knopf. */
-    const open = text.total > text.done;
+       beschreiben, bauen. Er heißt nach dem Ziel, nicht nach dem Schritt -
+       solange es kein Paket gibt, lautet das Ziel "Paket machen", ganz
+       gleich, wie weit die Aufbereitung schon ist. */
     if (text.work || (this.packager.canPrepare() && text.total > 0)) {
       const make = actions.createEl('button', {
         cls: 'mod-cta',
-        text: open ? 'Make package' : 'Build again'
+        text: text.version ? 'Build again' : 'Make package'
       });
       make.addEventListener('click', () => this.make(text, make));
     }
 
     if (text.version) {
-      const send = actions.createEl('button', { text: 'Send to library' });
+      /* Zweite Handlung, nicht zweitrangige: eigener Rahmen in der
+         Akzentfarbe, damit sie nicht wie abgeschaltet aussieht. */
+      const send = actions.createEl('button', { cls: 'trisent-pack-second', text: 'Send to library' });
       send.addEventListener('click', () => this.send(text));
     }
 

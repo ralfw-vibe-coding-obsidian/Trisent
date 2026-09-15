@@ -199,3 +199,20 @@
   gap: 0.55rem;
   margin-top: 1.5rem;
 }
+
+/* Die zweite Handlung an einem Text. Obsidians Grundknopf ist grau und
+   liest sich wie abgeschaltet - hier steht aber etwas zur Wahl. */
+.trisent-pack-second {
+  background: transparent;
+  color: var(--tri-accent);
+  border: 1px solid color-mix(in srgb, var(--tri-accent) 45%, transparent);
+  box-shadow: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.trisent-pack-second:hover {
+  background: color-mix(in srgb, var(--tri-accent) 10%, transparent);
+  border-color: var(--tri-accent);
+  color: var(--tri-accent);
+}
