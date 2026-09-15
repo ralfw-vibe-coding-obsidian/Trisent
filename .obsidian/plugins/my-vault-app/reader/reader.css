@@ -759,3 +759,86 @@
   width: 1em;
   height: 1em;
 }
+
+/* Fundstellen in anderen Texten. Der gerade gelesene Text steht ohne
+   Titel oben; die übrigen tragen ihren Titel und sind anklickbar. */
+
+.trisent-view .trisent-occurrence-text,
+.trisent-card-view .trisent-occurrence-text {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  height: auto;
+  text-align: left;
+  margin: 0.9rem 0 0.35rem;
+  padding: 0.3rem 0.4rem;
+  cursor: pointer;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+  font-family: var(--tri-read);
+  font-size: 0.86rem;
+  color: var(--text-muted);
+}
+
+.trisent-view .trisent-occurrence-text:hover,
+.trisent-card-view .trisent-occurrence-text:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.trisent-occurrence-icon {
+  display: inline-flex;
+  color: var(--tri-accent);
+}
+
+.trisent-occurrence-icon svg {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.trisent-occurrence.is-clickable {
+  cursor: pointer;
+  border-radius: 7px;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+  margin-left: -0.4rem;
+  margin-right: -0.4rem;
+}
+
+.trisent-occurrence.is-clickable:hover {
+  background: var(--background-modifier-hover);
+}
+
+.trisent-occurrence-searching {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  padding-top: 0.6rem;
+}
+
+/* Wo man nach einem Sprung gelandet ist - kurz, dann wieder ruhig. */
+.trisent-sentence.is-arrived {
+  animation: trisent-arrive 1.6s ease-out;
+  border-radius: 6px;
+}
+
+@keyframes trisent-arrive {
+  from { background: var(--background-modifier-hover); }
+  to { background: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trisent-sentence.is-arrived { animation: none; }
+}
+
+/* Sagt, wonach die Liste geordnet ist - sonst wirkt die Reihenfolge
+   willkürlich, sobald sie nicht mehr alphabetisch ist. */
+.trisent-order {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.15rem;
+}

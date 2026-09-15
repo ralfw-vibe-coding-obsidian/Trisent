@@ -3,11 +3,12 @@ type: word
 language: fr
 lemma: voir
 partOfSpeech: VERB
-key: "fr:voir:VERB"
+key: fr:voir:VERB
 gloss: sehen
-forms: [vois]
-status: learning
-updatedAt: 2026-09-14
+forms:
+  - vois
+status: familiar
+updatedAt: 2026-09-15
 ---
 
 ## Grammar

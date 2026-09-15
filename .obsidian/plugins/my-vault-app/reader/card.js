@@ -114,21 +114,7 @@ class WordCardView extends ItemView {
       }
     }
 
-    /* Alle Stellen in diesem Text. Die Form im Satz ist hervorgehoben. */
-    if (card.occurrences && card.occurrences.length > 0) {
-      const section = this.section(
-        page,
-        card.occurrences.length + (card.occurrences.length === 1 ? ' place in this text' : ' places in this text')
-      );
-      for (const occurrence of card.occurrences) {
-        const row = section.createDiv({ cls: 'trisent-occurrence' });
-        const line = row.createDiv({ cls: 'trisent-occurrence-source' });
-        line.createSpan({ text: occurrence.before });
-        line.createSpan({ cls: 'trisent-occurrence-hit', text: occurrence.hit });
-        line.createSpan({ text: occurrence.after });
-        row.createDiv({ cls: 'trisent-occurrence-fluent', text: occurrence.fluent });
-      }
-    }
+    this.renderOccurrences(page, card);
 
     /* Der Weg in die eigene Notiz - dort ist Platz für alles Eigene. */
     const foot = page.createDiv({ cls: 'trisent-card-foot' });
@@ -136,6 +122,68 @@ class WordCardView extends ItemView {
     setIcon(open.createSpan(), 'file-text');
     open.createSpan({ text: card.file ? 'Open note' : 'Create note' });
     open.addEventListener('click', () => this.reader.openWordNote(card));
+  }
+
+  /* Alle Stellen, an denen das Wort vorkommt - nach Text gruppiert, der
+     gerade gelesene zuerst. Das ist der Moment, in dem aus einzelnen
+     Texten ein Netz wird. */
+  renderOccurrences(page, card) {
+    const groups = [];
+    const byPath = new Map();
+
+    for (const occurrence of card.occurrences || []) {
+      let group = byPath.get(occurrence.path);
+      if (!group) {
+        group = { title: occurrence.title, path: occurrence.path, items: [] };
+        byPath.set(occurrence.path, group);
+        groups.push(group);
+      }
+      group.items.push(occurrence);
+    }
+
+    if (groups.length === 0 && !card.searching) return;
+
+    const total = (card.occurrences || []).length;
+    const elsewhere = groups.filter((g) => g.title).length;
+
+    let title = total + (total === 1 ? ' place' : ' places');
+    if (elsewhere > 0) {
+      title += ' · ' + (elsewhere + 1) + ' texts';
+    }
+    const section = this.section(page, title);
+
+    for (const group of groups) {
+      /* Der gerade gelesene Text trägt keinen Titel - man weiß ja, wo man
+         ist. Die anderen schon, und sie sind anklickbar. */
+      if (group.title) {
+        const head = section.createEl('button', { cls: 'trisent-occurrence-text' });
+        setIcon(head.createSpan({ cls: 'trisent-occurrence-icon' }), 'corner-down-right');
+        head.createSpan({ text: group.title });
+        head.addEventListener('click', () =>
+          this.reader.goTo(card.language.code, group.path, group.items[0].sentence)
+        );
+      }
+
+      for (const occurrence of group.items) {
+        const row = section.createDiv({ cls: 'trisent-occurrence' });
+        const line = row.createDiv({ cls: 'trisent-occurrence-source' });
+        line.createSpan({ text: occurrence.before });
+        line.createSpan({ cls: 'trisent-occurrence-hit', text: occurrence.hit });
+        line.createSpan({ text: occurrence.after });
+        row.createDiv({ cls: 'trisent-occurrence-fluent', text: occurrence.fluent });
+
+        if (group.title) {
+          row.addClass('is-clickable');
+          row.addEventListener('click', () =>
+            this.reader.goTo(card.language.code, group.path, occurrence.sentence)
+          );
+        }
+      }
+    }
+
+    if (card.searching) {
+      section.createDiv({ cls: 'trisent-occurrence-searching', text: 'Looking in your other texts…' });
+    }
   }
 
   section(page, title) {

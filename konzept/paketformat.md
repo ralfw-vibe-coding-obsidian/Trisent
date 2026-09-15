@@ -217,9 +217,16 @@ wann man es benutzt.
 | `forms` | nein | Formen, die im Paket vorkommen oder häufig sind. |
 | `grammar` | nein | Deutsche Grammatiknotiz, ein bis drei Sätze. Genau das, was man beim Lernen wissen will. |
 
-Beim Import legt das Plugin daraus Wortnotizen in `dictionary/` an. Kennt es
-einen Schlüssel schon, ergänzt es nur fehlende Angaben – **Lernstand und eigene
-Notizen der Person werden nie überschrieben.**
+Der Reader zeigt diese Angaben auf der Wortkarte direkt aus dem Paket. Eine
+Wortnotiz in `dictionary/` entsteht erst, wenn die Person das Wort zum ersten
+Mal antippt – der Ordner enthält also die Wörter, mit denen sie sich befasst
+hat, nicht alle, die vorkommen.
+
+**Vorhandene Wortnotizen werden beim Import nicht verändert.** Auch nicht
+ergänzt. Das ist Absicht und zurückgestellt: Solange es kein Regelwerk dafür
+gibt, was in einer `grammar`-Notiz je Wortart und je Sprache zu stehen hat,
+würde ein späteres Paket die Notizen der Person zufällig umschreiben – mal
+besser, mal anders. Wenn dieses Regelwerk steht, reden wir erneut darüber.
 
 ## Audio
 

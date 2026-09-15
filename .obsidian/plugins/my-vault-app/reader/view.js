@@ -383,13 +383,35 @@ class TrisentView extends ItemView {
       }
 
       const statusMap = this.library.wordStatusMap(language);
-      for (const entry of entries) {
-        this.renderPackageRow(list, entry, statusMap);
+
+      /* Die Frage vor der Liste ist nie "wie heißt der Text", sondern
+         "was kann ich jetzt lesen?". Also steht oben, was sich am
+         leichtesten liest - und die Reihenfolge ändert sich beim Lernen
+         von selbst mit. */
+      const rows = entries.map((entry) => ({
+        entry: entry,
+        stats: entry.ok ? this.library.packageStats(entry.data, statusMap) : null
+      }));
+
+      rows.sort((a, b) => {
+        /* Kaputte Pakete nach unten - dort stören sie nicht beim Aussuchen. */
+        if (!a.stats || !b.stats) return a.stats ? -1 : b.stats ? 1 : 0;
+        if (b.stats.coverage !== a.stats.coverage) return b.stats.coverage - a.stats.coverage;
+        if (a.stats.fresh !== b.stats.fresh) return a.stats.fresh - b.stats.fresh;
+        return this.library.titleOf(a.entry).localeCompare(this.library.titleOf(b.entry));
+      });
+
+      if (rows.length > 1) {
+        list.createDiv({ cls: 'trisent-order', text: 'Easiest for you first' });
+      }
+
+      for (const row of rows) {
+        this.renderPackageRow(list, row.entry, statusMap, row.stats);
       }
     });
   }
 
-  renderPackageRow(list, entry, statusMap) {
+  renderPackageRow(list, entry, statusMap, stats) {
     if (!entry.ok) {
       const broken = list.createDiv({ cls: 'trisent-text-row is-broken' });
       broken.createDiv({ cls: 'trisent-t-title', text: entry.folder.name });
@@ -398,7 +420,6 @@ class TrisentView extends ItemView {
     }
 
     const data = entry.data;
-    const stats = this.library.packageStats(data, statusMap);
     const mark = this.readingMark(entry, stats.sentences);
 
     const row = list.createEl('button', {
@@ -873,13 +894,24 @@ class TrisentView extends ItemView {
   }
 
   restoreReadingPosition(textEl) {
-    const stored = this.readingPosition();
+    /* Ein Sprung von der Wortkarte schlägt die gemerkte Stelle. */
+    const jump = this.jumpTo;
+    this.jumpTo = null;
+
+    const stored = jump ? { sentence: jump, offset: 0 } : this.readingPosition();
     if (!stored || !stored.sentence) return;
 
     const target = textEl.querySelector(
       '.trisent-sentence[data-sentence="' + stored.sentence + '"]'
     );
     if (!target) return;
+
+    if (jump) {
+      /* Kurz aufleuchten lassen, sonst sucht man auf der Seite, wo man
+         eigentlich gelandet ist. */
+      target.addClass('is-arrived');
+      window.setTimeout(() => target.removeClass('is-arrived'), 1600);
+    }
 
     /* Erst nach dem Zeichnen, sonst stehen die Maße noch nicht fest. */
     this.restoring = true;
@@ -964,7 +996,11 @@ class TrisentView extends ItemView {
     });
   }
 
-  /* Trägt alles zusammen, was über ein Wort im aktuellen Text bekannt ist. */
+  /* Trägt zusammen, was über ein Wort bekannt ist.
+
+     Der aktuelle Text steht sofort da, die übrigen Texte werden danach
+     durchsucht - das Lesen der Pakete dauert, und die Karte soll nicht
+     darauf warten. */
   openCard(key, unit) {
     const entry = this.dictionary[key] || {};
     const card = {
@@ -979,17 +1015,18 @@ class TrisentView extends ItemView {
       surface: unit ? unit.surface : '',
       status: this.statusMap.get(key) || 'unknown',
       phrases: [],
-      occurrences: []
+      occurrences: [],
+      searching: true
     };
 
     const seenPhrases = new Set();
     for (const paragraph of this.packageData.paragraphs || []) {
       for (const sentence of paragraph.sentences || []) {
         for (const item of sentence.units || []) {
-          if (item.key === key) this.pushOccurrence(card, sentence, item);
+          if (item.key === key) this.pushOccurrence(card, sentence, item, null);
         }
         for (const phrase of sentence.phrases || []) {
-          if (phrase.key === key) this.pushOccurrence(card, sentence, phrase);
+          if (phrase.key === key) this.pushOccurrence(card, sentence, phrase, null);
           /* Wendungen, in denen dieses Wort steckt. */
           if (seenPhrases.has(phrase.key)) continue;
           const inside = (sentence.units || []).some(
@@ -1011,16 +1048,56 @@ class TrisentView extends ItemView {
 
     card.file = this.library.wordFileFor(this.language, key);
     this.reader.showCard(card);
+    this.collectOccurrences(card);
   }
 
-  pushOccurrence(card, sentence, item) {
+  /* Dieselbe Stelle in allen anderen Texten der Sprache. Erst hier wird
+     aus einzelnen Texten ein Netz: Man sieht, in wie vielen Zusammenhängen
+     einem dasselbe Wort schon begegnet ist. */
+  async collectOccurrences(card) {
+    const folders = this.library.packagesOf(card.language);
+
+    for (const folder of folders) {
+      if (folder.path === this.packagePath) continue;
+
+      const entry = await this.library.loadPackage(folder);
+      if (!entry || !entry.ok) continue;
+
+      const where = { title: entry.data.title || folder.name, path: folder.path };
+      for (const paragraph of entry.data.paragraphs || []) {
+        for (const sentence of paragraph.sentences || []) {
+          for (const item of sentence.units || []) {
+            if (item.key === card.key) this.pushOccurrence(card, sentence, item, where);
+          }
+          for (const phrase of sentence.phrases || []) {
+            if (phrase.key === card.key) this.pushOccurrence(card, sentence, phrase, where);
+          }
+        }
+      }
+    }
+
+    card.searching = false;
+    this.reader.updateCard(card);
+  }
+
+  pushOccurrence(card, sentence, item, where) {
     const source = sentence.source || '';
     card.occurrences.push({
       before: source.slice(0, item.start),
       hit: source.slice(item.start, item.end),
       after: source.slice(item.end),
-      fluent: sentence.fluent || ''
+      fluent: sentence.fluent || '',
+      sentence: sentence.id,
+      title: where ? where.title : null,
+      path: where ? where.path : this.packagePath
     });
+  }
+
+  /* Von einer Fundstelle in einem anderen Text dorthin springen. */
+  goTo(languageCode, path, sentenceId) {
+    this.languageCode = languageCode;
+    this.jumpTo = sentenceId;
+    this.openText(path);
   }
 
   registerOccurrence(key, parts) {

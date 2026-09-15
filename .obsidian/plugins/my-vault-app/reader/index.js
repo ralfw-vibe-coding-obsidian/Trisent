@@ -99,6 +99,27 @@ class Reader {
     if (leaf.view instanceof WordCardView) leaf.view.show(card);
   }
 
+  /* Nachgereichte Fundstellen in die offene Karte nachtragen, ohne sie
+     erneut in den Vordergrund zu holen. */
+  updateCard(card) {
+    const leaf = this.app.workspace.getLeavesOfType(CARD_VIEW_TYPE)[0];
+    if (!leaf || !(leaf.view instanceof WordCardView)) return;
+    if (!leaf.view.card || leaf.view.card.key !== card.key) return;
+    leaf.view.show(card);
+  }
+
+  /* Zu einer Fundstelle in einem anderen Text springen. */
+  goTo(languageCode, path, sentenceId) {
+    const view = this.mainView();
+    if (!view) return;
+    view.goTo(languageCode, path, sentenceId);
+  }
+
+  mainView() {
+    const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0];
+    return leaf && leaf.view instanceof TrisentView ? leaf.view : null;
+  }
+
   /* Von der Wortkarte aus zu einer Wendung springen, in der das Wort steckt. */
   openCardFor(key) {
     const reader = this.readerView();
