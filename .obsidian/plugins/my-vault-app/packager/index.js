@@ -31,6 +31,24 @@ const PACKAGE_FILE = 'package.json';
 const WORDS_DIR = 'words';
 const RULES_FILE = 'rules.md';
 
+/* Wie viele Absätze gleichzeitig aufbereitet werden.
+
+   Nebeneinander statt nacheinander ändert an der Qualität nichts: Jeder
+   Absatz bekommt denselben Aufruf mit demselben Wortvorrat, denselben
+   Hausregeln und derselben Nachprüfung. Was sich ändert, ist allein die
+   Wartezeit.
+
+   Warum nicht alle auf einmal: Jeder Aufruf ist ein eigenes Programm mit
+   eigenem Speicher, und der Dienst dahinter nimmt nicht beliebig viele
+   Anfragen gleichzeitig an. Bei zwanzig Absätzen gleichzeitig kämen die
+   ersten Absagen zurück, statt dass es schneller würde. Acht ist die
+   Grenze, an der die Wartezeit noch spürbar sinkt und nichts kippt. */
+const AT_ONCE = 8;
+
+/* Wie lange nach einer Absage gewartet wird, bevor es noch einmal
+   versucht wird. */
+const RETRY_MS = 4000;
+
 /* Was der Packager sich merkt. Liegt in data.json unter "packager".
 
    "sent" hält fest, welche Fassung eines Textes schon in der Bibliothek
@@ -626,11 +644,20 @@ class Packager {
         throw new Error('The text is not prepared yet, and Claude was not found. Check the settings.');
       }
       const paragraphs = paragraphsOf(await this.app.vault.read(text.text));
-      while (done < paragraphs.length) {
-        step('Preparing… ' + Math.round((done / paragraphs.length) * 100) + '%');
-        const block = await this.prepareParagraph(text, paragraphs[done]);
+      const open = paragraphs.slice(done);
+      const blocks = await this.prepareAll(text, open, step);
+
+      /* Geschrieben wird nur die lückenlose Reihe von vorn. Ein Absatz,
+         der nicht durchkam, beendet sie - beim nächsten Klick geht es
+         genau dort weiter, statt von vorn. */
+      for (const block of blocks.done) {
         await this.appendToWork(text, block, done === 0);
         done += 1;
+      }
+      if (blocks.error) {
+        text.work = this.file(text.folder.path + '/' + WORK_FILE);
+        text.done = done;
+        throw blocks.error;
       }
       /* Die Werkbank gibt es jetzt - und der weitere Weg liest aus ihr. */
       text.work = this.file(text.folder.path + '/' + WORK_FILE);
@@ -668,6 +695,55 @@ class Packager {
     return result;
   }
 
+  /* Laufen viele Aufrufe nebeneinander, kommt gelegentlich einer gar
+     nicht durch - der Dienst war gerade voll. Das ist keine Aussage über
+     den Absatz, also einmal kurz warten und noch einmal fragen. */
+  async ask(call) {
+    try {
+      return await call();
+    } catch (error) {
+      await new Promise((done) => window.setTimeout(done, RETRY_MS));
+      return call();
+    }
+  }
+
+  /* Mehrere Absätze nebeneinander. Fällt einer durch, hören die anderen
+     auf - was hinter der Lücke läge, ließe sich ohnehin nicht anhängen. */
+  async prepareAll(text, paragraphs, step) {
+    const blocks = new Array(paragraphs.length).fill(null);
+    let next = 0;
+    let finished = 0;
+    let error = null;
+
+    const worker = async () => {
+      for (;;) {
+        const at = next;
+        next += 1;
+        if (at >= paragraphs.length || error) return;
+
+        try {
+          blocks[at] = await this.prepareParagraph(text, paragraphs[at]);
+        } catch (problem) {
+          if (!error) error = problem;
+          return;
+        }
+        finished += 1;
+        step('Preparing… ' + Math.round((finished / paragraphs.length) * 100) + '%');
+      }
+    };
+
+    const workers = [];
+    for (let n = 0; n < Math.min(AT_ONCE, paragraphs.length); n++) workers.push(worker());
+    await Promise.all(workers);
+
+    const inOrder = [];
+    for (const block of blocks) {
+      if (!block) break;
+      inOrder.push(block);
+    }
+    return { done: inOrder, error: error };
+  }
+
   /* Einen Absatz aufbereiten lassen und nachrechnen. */
   async prepareParagraph(text, paragraph) {
     const languageFolder = this.basePath() + '/' + this.rootPath + '/' + text.code.toUpperCase();
@@ -682,7 +758,7 @@ class Packager {
     let answer = null;
     let problems = [];
     for (let attempt = 1; attempt <= 2; attempt++) {
-      answer = await ai.prepare({
+      answer = await this.ask(() => ai.prepare({
         command: this.settings.claudePath || 'claude',
         temp: ai.tempDir(),
         folder: languageFolder,
@@ -692,7 +768,7 @@ class Packager {
           ? paragraph
           : paragraph + '\n\nDein voriger Versuch hatte diese Fehler:\n- ' +
             problems.slice(0, 10).join('\n- ')
-      });
+      }));
 
       problems = this.checkBlock(answer.block, paragraph, text.code);
       if (problems.length === 0) break;
@@ -718,23 +794,35 @@ class Packager {
     const rules = await this.readIfThere(this.rootPath + '/' + code + '/' + RULES_FILE);
     const folder = await this.ensureWordsFolder(code);
 
-    let written = 0;
     const size = 8;
-    for (let at = 0; at < entries.length; at += size) {
-      const batch = entries.slice(at, at + size);
-      step('Looking up words… ' + Math.round((at / entries.length) * 100) + '%');
+    const batches = [];
+    for (let at = 0; at < entries.length; at += size) batches.push(entries.slice(at, at + size));
 
-      const answers = await ai.words({
-        command: this.settings.claudePath || 'claude',
-        temp: ai.tempDir(),
-        folder: languageFolder,
-        rules: rules,
-        entries: batch
-      });
+    /* Auch hier nebeneinander - und geschrieben wird erst danach, damit
+       sich zwei Läufe nicht um denselben Dateinamen streiten. */
+    let finished = 0;
+    const answers = [];
+    for (let from = 0; from < batches.length; from += AT_ONCE) {
+      const round = await Promise.all(
+        batches.slice(from, from + AT_ONCE).map(async (batch) => {
+          const result = await this.ask(() => ai.words({
+            command: this.settings.claudePath || 'claude',
+            temp: ai.tempDir(),
+            folder: languageFolder,
+            rules: rules,
+            entries: batch
+          }));
+          finished += 1;
+          step('Looking up words… ' + Math.round((finished / batches.length) * 100) + '%');
+          return result;
+        })
+      );
+      for (const one of round) answers.push(one);
+    }
 
-      for (const answer of answers) {
-        if (await this.writeWordNote(folder, text.code, answer)) written += 1;
-      }
+    let written = 0;
+    for (const answer of [].concat.apply([], answers)) {
+      if (await this.writeWordNote(folder, text.code, answer)) written += 1;
     }
     return written;
   }
