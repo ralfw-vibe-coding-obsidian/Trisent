@@ -93,49 +93,106 @@
   font-size: 0.9rem;
 }
 
-/* Der Dialog für einen neuen Text. Breit genug, dass man den Titel beim
-   Tippen lesen kann, und das Textfeld nimmt ganze Geschichten auf. */
+/* Der Dialog für einen neuen Text.
+
+   Zwei Dinge, die hier leicht schiefgehen: Ein Feld mit width:100% wird
+   um seinen eigenen Rahmen zu breit und stößt über den Fensterrand - und
+   bei einem langen Text rutschen die Knöpfe nach unten aus dem Bild.
+   Deshalb border-box für alle Felder, und die Knöpfe stehen außerhalb
+   des rollenden Bereichs. */
+
 .trisent-modal {
   width: min(44rem, 92vw);
 }
 
+.trisent-modal .modal-content {
+  display: flex;
+  flex-direction: column;
+  max-height: min(42rem, 80vh);
+}
+
+.trisent-modal-title {
+  margin: 0 0 1.2rem;
+  font-size: 1.3rem;
+  letter-spacing: -0.01em;
+}
+
+.trisent-form {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2px;
+  margin: -2px;
+}
+
 .trisent-field {
-  margin-bottom: 1.1rem;
+  margin-bottom: 1.3rem;
 }
 
 .trisent-field-label {
   display: block;
+  font-size: 0.82rem;
   font-weight: 600;
-  margin-bottom: 0.15rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
 }
 
 .trisent-field-hint {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--text-faint);
+  margin-bottom: 0.45rem;
 }
 
 .trisent-field-input {
+  box-sizing: border-box;
   width: 100%;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.95rem;
+  color: var(--text-normal);
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 7px;
+  box-shadow: none;
+  transition: border-color 120ms ease;
+}
+
+.trisent-field-input:hover {
+  border-color: var(--background-modifier-border-hover);
+}
+
+.trisent-field-input:focus,
+.trisent-field-input:focus-visible {
+  outline: none;
+  border-color: var(--tri-accent, var(--interactive-accent));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tri-accent, var(--interactive-accent)) 22%, transparent);
+}
+
+/* Die Sprachwahl soll aussehen wie die anderen Felder, nicht wie ein
+   grauer Knopf. Der Pfeil wird deshalb selbst gezeichnet. */
+.trisent-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.2rem;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+                    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 1.05rem center, right 0.8rem center;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.trisent-pack-input {
+  min-height: 11rem;
+  font-family: var(--font-text);
+  line-height: 1.6;
+  resize: vertical;
 }
 
 .trisent-pack-actions.is-right {
   justify-content: flex-end;
-  margin-top: 1.4rem;
-}
-
-.trisent-pack-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.trisent-pack-input {
-  min-height: 14rem;
-  margin: 0.4rem 0 1rem;
-  font-family: var(--font-text);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  resize: vertical;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--background-modifier-border);
 }
