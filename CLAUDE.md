@@ -228,6 +228,13 @@ das Gerüst einer Ansicht, Kopfleiste, Marken, Spektrum. Alles Eigene gehört in
 die eigene `.css`. Benutze die Variablen und die gemeinsamen Klassen, statt sie
 nachzubauen.
 
+**Audio.** Der Ton entsteht beim Verpacken, nicht beim Lesen: Der Packager
+schickt den Text an den Sprachdienst, legt die Dateien in den Paketordner und
+trägt sie in die Sätze ein. Der Reader spielt nur ab, was im Paket liegt. So
+kostet das Lesen nichts, funktioniert ohne Netz und auch in Jahren noch. Der
+Zugangsschlüssel des Dienstes bleibt in den Packager-Einstellungen und wandert
+**nie** in ein Paket – ein Paket geht an Fremde.
+
 **Miteinander reden.** In `agent_communication/` liegen Nachrichten zwischen den
 beiden Sitzungen, benannt als `JJJJ-MM-TT-absender-an-empfaenger.md`. Schau dort
 hinein, wenn die Person sagt, dass etwas für dich da ist – von selbst bekommst du
