@@ -94,6 +94,15 @@ function slug(name) {
     .replace(/^-|-$/g, '') || 'text';
 }
 
+/* Wörter eines Textes. Grob gezählt - es geht um die Größenordnung,
+   nicht um Genauigkeit: Wie lang ist dieser Text, verglichen mit dem
+   daneben. */
+function countWords(text) {
+  const matches = String(text).match(/[^\s]+/g);
+  if (!matches) return 0;
+  return matches.filter((piece) => /[\p{L}\p{N}]/u.test(piece)).length;
+}
+
 /* Absätze eines Rohtextes: getrennt durch Leerzeilen, so wie man sie
    beim Lesen sieht. */
 function paragraphsOf(text) {
@@ -284,6 +293,9 @@ class PackagerView extends ItemView {
 
     const title = row.createDiv({ cls: 'trisent-pack-title' });
     title.createSpan({ cls: 'trisent-pack-name', text: text.title || text.folder.name });
+    if (text.words > 0) {
+      title.createSpan({ cls: 'trisent-pack-size', text: '(' + text.words + ' words)' });
+    }
     if (text.version) {
       title.createSpan({ cls: 'trisent-chip', text: 'version ' + text.version });
       /* "built" heißt nur: die Datei liegt da. "sent" heißt: diese
@@ -480,6 +492,7 @@ class Packager {
       const built = this.file(child.path + '/' + PACKAGE_FILE);
       const front = work ? this.app.metadataCache.getFileCache(work)?.frontmatter : null;
       const source = this.file(child.path + '/' + TEXT_FILE);
+      const raw = source ? await this.app.vault.cachedRead(source) : '';
 
       result.push({
         folder: child,
@@ -490,7 +503,8 @@ class Packager {
         version: built ? await this.versionOf(built) : 0,
         sent: this.sentVersion(child.path),
         done: work ? parseWork(await this.app.vault.cachedRead(work)).paragraphs.length : 0,
-        total: source ? paragraphsOf(await this.app.vault.cachedRead(source)).length : 0,
+        total: source ? paragraphsOf(raw).length : 0,
+        words: countWords(raw),
         code: languageFolder.name.toLowerCase()
       });
     }
@@ -613,7 +627,7 @@ class Packager {
       }
       const paragraphs = paragraphsOf(await this.app.vault.read(text.text));
       while (done < paragraphs.length) {
-        step('Paragraph ' + (done + 1) + ' of ' + paragraphs.length + '…');
+        step('Preparing… ' + Math.round((done / paragraphs.length) * 100) + '%');
         const block = await this.prepareParagraph(text, paragraphs[done]);
         await this.appendToWork(text, block, done === 0);
         done += 1;
@@ -629,7 +643,7 @@ class Packager {
     /* Fehlende Wortnotizen sind kein Fehler, sondern der nächste Schritt.
        Also gehen wir ihn gleich mit. */
     if (result.kind === 'missing' && this.canPrepare()) {
-      step('Writing ' + result.entries.length + ' word notes…');
+      step('Looking up words…');
       const written = await this.writeWords(text, result.entries, step);
       if (written === 0) {
         return {
@@ -708,8 +722,7 @@ class Packager {
     const size = 8;
     for (let at = 0; at < entries.length; at += size) {
       const batch = entries.slice(at, at + size);
-      step('Word notes ' + (at + 1) + '–' + Math.min(at + size, entries.length) +
-           ' of ' + entries.length + '…');
+      step('Looking up words… ' + Math.round((at / entries.length) * 100) + '%');
 
       const answers = await ai.words({
         command: this.settings.claudePath || 'claude',
