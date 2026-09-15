@@ -20,6 +20,15 @@ const LEVELS = [
   { id: 'fluent', short: 'T', label: 'Translation' }
 ];
 
+/* Wonach die Textliste geordnet werden kann. "easiest" ist die Vorgabe,
+   weil die Frage vor der Liste meistens "was kann ich jetzt lesen?"
+   lautet - aber wer sich fordern will, dreht es um. */
+const SORTS = [
+  { id: 'easiest', label: 'Easiest' },
+  { id: 'hardest', label: 'Hardest' },
+  { id: 'alphabetical', label: 'A–Z' }
+];
+
 class TrisentView extends ItemView {
   constructor(leaf, reader) {
     super(leaf);
@@ -363,6 +372,10 @@ class TrisentView extends ItemView {
 
     if (this.importReport) this.renderImportReport(page);
 
+    /* Die Schalter hängen nicht an den Paketdateien, nur an ihrer Zahl -
+       die steht sofort fest, also stehen sie auch sofort da. */
+    if (this.library.packagesOf(language).length > 1) this.renderSortSwitches(page);
+
     const list = page.createDiv({ cls: 'trisent-package-list' });
     list.createDiv({ cls: 'trisent-loading', text: '…' });
 
@@ -393,17 +406,7 @@ class TrisentView extends ItemView {
         stats: entry.ok ? this.library.packageStats(entry.data, statusMap) : null
       }));
 
-      rows.sort((a, b) => {
-        /* Kaputte Pakete nach unten - dort stören sie nicht beim Aussuchen. */
-        if (!a.stats || !b.stats) return a.stats ? -1 : b.stats ? 1 : 0;
-        if (b.stats.coverage !== a.stats.coverage) return b.stats.coverage - a.stats.coverage;
-        if (a.stats.fresh !== b.stats.fresh) return a.stats.fresh - b.stats.fresh;
-        return this.library.titleOf(a.entry).localeCompare(this.library.titleOf(b.entry));
-      });
-
-      if (rows.length > 1) {
-        list.createDiv({ cls: 'trisent-order', text: 'Easiest for you first' });
-      }
+      rows.sort(this.comparator());
 
       for (const row of rows) {
         this.renderPackageRow(list, row.entry, statusMap, row.stats);
@@ -615,6 +618,47 @@ class TrisentView extends ItemView {
       this.importReport = null;
       this.render();
     });
+  }
+
+  renderSortSwitches(page) {
+    const row = page.createDiv({ cls: 'trisent-sort' });
+    const current = this.reader.settings.sort || 'easiest';
+
+    for (const sort of SORTS) {
+      const button = row.createEl('button', {
+        cls: 'trisent-sort-button' + (sort.id === current ? ' is-on' : ''),
+        text: sort.label
+      });
+      button.addEventListener('click', async () => {
+        if (sort.id === current) return;
+        this.reader.settings.sort = sort.id;
+        await this.reader.saveSettings();
+        this.render();
+      });
+    }
+  }
+
+  /* Die Reihenfolge der Textliste. Kaputte Pakete stehen immer unten -
+     dort stören sie beim Aussuchen nicht. */
+  comparator() {
+    const mode = this.reader.settings.sort || 'easiest';
+    const title = (row) => this.library.titleOf(row.entry);
+
+    return (a, b) => {
+      if (!a.stats || !b.stats) return a.stats ? -1 : b.stats ? 1 : 0;
+
+      if (mode === 'alphabetical') return title(a).localeCompare(title(b));
+
+      if (mode === 'hardest') {
+        if (a.stats.coverage !== b.stats.coverage) return a.stats.coverage - b.stats.coverage;
+        if (b.stats.fresh !== a.stats.fresh) return b.stats.fresh - a.stats.fresh;
+        return title(a).localeCompare(title(b));
+      }
+
+      if (b.stats.coverage !== a.stats.coverage) return b.stats.coverage - a.stats.coverage;
+      if (a.stats.fresh !== b.stats.fresh) return a.stats.fresh - b.stats.fresh;
+      return title(a).localeCompare(title(b));
+    };
   }
 
   /* Der wievielte Satz ist die gemerkte Leseposition? */

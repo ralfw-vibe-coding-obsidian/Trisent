@@ -833,12 +833,39 @@
   .trisent-sentence.is-arrived { animation: none; }
 }
 
-/* Sagt, wonach die Liste geordnet ist - sonst wirkt die Reihenfolge
-   willkürlich, sobald sie nicht mehr alphabetisch ist. */
-.trisent-order {
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+/* Wonach die Liste geordnet ist. Steht sichtbar da, weil eine
+   Reihenfolge, die nicht alphabetisch ist, sonst willkürlich wirkt. */
+
+.trisent-sort {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+}
+
+.trisent-view .trisent-sort-button,
+.trisent-card-view .trisent-sort-button {
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.76rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: transparent;
   color: var(--text-faint);
-  margin-bottom: 0.15rem;
+  box-shadow: none;
+}
+
+.trisent-view .trisent-sort-button:hover,
+.trisent-card-view .trisent-sort-button:hover {
+  color: var(--text-normal);
+  border-color: var(--tri-accent);
+}
+
+.trisent-view .trisent-sort-button.is-on,
+.trisent-card-view .trisent-sort-button.is-on {
+  background: var(--text-normal);
+  border-color: var(--text-normal);
+  color: var(--background-primary);
 }

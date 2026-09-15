@@ -16,6 +16,8 @@ const { WordCardView, CARD_VIEW_TYPE } = require('./card.js');
 /* Alles, was der Reader sich merkt. Liegt in data.json unter "reader",
    damit der Packager daneben seinen eigenen Bereich hat. */
 const DEFAULTS = {
+  /* Wonach die Textliste geordnet ist. */
+  sort: 'easiest',
   lastLanguage: null,
   lastPackage: null,
   colors: true,
