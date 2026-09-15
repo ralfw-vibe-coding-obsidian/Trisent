@@ -116,6 +116,17 @@ function slug(name) {
     .replace(/^-|-$/g, '') || 'text';
 }
 
+/* Zwei Pakete sind dasselbe, wenn sie sich nur in der Fassungsnummer
+   unterscheiden. */
+function same(one, other) {
+  const strip = (data) => {
+    const copy = Object.assign({}, data);
+    delete copy.version;
+    return JSON.stringify(copy);
+  };
+  return strip(one) === strip(other);
+}
+
 /* Woran man mit einem Text ist - in einem Satz, nicht in Kästchen. */
 function stateOf(text) {
   if (!text.version) return 'Not packaged yet.';
@@ -969,19 +980,20 @@ class Packager {
     const language = String((work.head || {}).language || '').toLowerCase();
     const words = await this.wordsOf(language);
 
-    /* Jede neue Fassung zählt hoch - daran erkennt der Reader, dass das
-       Paket dasselbe ist und nur neuer. */
-    let version = 1;
+    /* Die Fassung steigt nur, wenn sich wirklich etwas geändert hat.
+       Stur hochzählen hieße: Deine Bibliothek meldet eine neue Fassung,
+       obwohl Wort für Wort dasselbe drinsteht. */
+    let previous = null;
     if (text.package) {
       try {
-        const previous = JSON.parse(await this.app.vault.read(text.package));
-        if (Number.isFinite(previous.version)) version = previous.version + 1;
+        previous = JSON.parse(await this.app.vault.read(text.package));
       } catch (error) {
         /* Kaputte alte Fassung - dann fangen wir eben bei 1 an. */
       }
     }
+    const held = previous && Number.isFinite(previous.version) ? previous.version : 0;
 
-    const result = buildPackage(work, original, words, version);
+    const result = buildPackage(work, original, words, held || 1);
 
     if (result.missing.length > 0) {
       return {
@@ -998,6 +1010,18 @@ class Packager {
         more: Math.max(0, result.problems.length - 12)
       };
     }
+
+    /* Unverändert? Dann bleibt alles, wie es ist - auch die Nummer. */
+    if (previous && same(previous, result.data)) {
+      return {
+        kind: 'ok',
+        headline: '"' + result.data.title + '" is up to date, version ' + held + '.',
+        detail: 'Nothing has changed since the last build.'
+      };
+    }
+
+    const version = held + 1;
+    result.data.version = version;
 
     /* Erst wenn alles stimmt, wird geschrieben. Ein halbes Paket ist
        schlimmer als keins. */
