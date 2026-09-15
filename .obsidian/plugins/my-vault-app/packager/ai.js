@@ -433,17 +433,38 @@ function parseEntries(block) {
   return entries;
 }
 
+/* Die Marken werden gelegentlich verschrieben - einmal kam WORKBANK>>>
+   statt WERKBANK>>> zurück. Daran soll ein ganzer Absatz nicht scheitern,
+   also wird großzügig gesucht: irgendein Wort in spitzen Klammern. Was
+   dabei durchrutscht, fängt die Prüfung ab. */
+const OPEN_MARK = /<<<[A-Za-z]*[^\S\n]*\r?\n/;
+const CLOSE_MARK = /\r?\n[^\S\n]*[A-Za-z]*>>>/;
+
 function between(text) {
-  const from = text.indexOf(OPEN);
-  const to = text.indexOf(CLOSE);
-  if (from < 0 || to < 0 || to < from) return '';
-  return text.slice(from + OPEN.length, to).replace(/^\r?\n/, '').replace(/\s+$/, '');
+  const open = text.match(OPEN_MARK);
+  if (!open) return '';
+
+  const rest = text.slice(open.index + open[0].length);
+  const close = rest.match(CLOSE_MARK);
+  const block = close ? rest.slice(0, close.index) : rest;
+
+  /* Sicherheitshalber: eine Zeile, die noch wie eine Marke aussieht,
+     gehört nicht zum Inhalt. */
+  return block
+    .split(/\r?\n/)
+    .filter((line) => !/^[^\S\n]*[A-Za-z]*>>>[^\S\n]*$/.test(line))
+    .join('\n')
+    .replace(/^\r?\n/, '')
+    .replace(/\s+$/, '');
 }
 
 function after(text) {
-  const to = text.indexOf(CLOSE);
-  if (to < 0) return '';
-  return text.slice(to + CLOSE.length).trim();
+  const open = text.match(OPEN_MARK);
+  if (!open) return '';
+  const rest = text.slice(open.index + open[0].length);
+  const close = rest.match(CLOSE_MARK);
+  if (!close) return '';
+  return rest.slice(close.index + close[0].length).trim();
 }
 
 /* Ein Ort außerhalb der Vault, an dem die CLI laufen kann. */

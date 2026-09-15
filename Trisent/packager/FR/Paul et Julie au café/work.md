@@ -6,23 +6,6 @@ title: Paul et Julie au café
 level: A1
 ---
 
-Julie répond : « Ça va bien, merci.
-: Julie antwortet: „Mir geht es gut, danke.
-    Julie · Julie · Julie · PROPN
-    répond · antworten · répondre · VERB
-    Ça · das · ça · PRON
-    va · gehen · aller · VERB
-    bien · gut · bien · ADV
-    merci · danke · merci · INTJ
-  + Ça va · es-geht
-
-Et toi ? »
-: Und dir?"
-    Et · und · et · CCONJ
-    toi · du · toi · PRON
-
----
-
 Paul dit : « Salut Julie !
 : Paul sagt: „Hallo Julie!
     Paul · Paul · Paul · PROPN
@@ -36,3 +19,32 @@ Comment ça va ? »
     ça · das · ça · PRON
     va · gehen · aller · VERB
   + Comment ça va · wie-geht-es
+
+---
+
+
+
+---
+
+
+
+---
+
+
+
+---
+
+Ils s’assoient à une table.
+: Sie setzen sich an einen Tisch.
+    Ils · sie · il · PRON
+    s’ · sich · se · PRON
+    assoient · setzen · asseoir · VERB
+    à · an · à · ADP
+    une · eine · un · DET
+    table · die Tisch · table · NOUN
+
+Le serveur arrive.
+: Der Kellner kommt.
+    Le · der · le · DET
+    serveur · der Kellner · serveur · NOUN
+    arrive · ankommen · arriver · VERB
