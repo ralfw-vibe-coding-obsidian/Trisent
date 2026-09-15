@@ -31,6 +31,7 @@ const MODULES = [
   'reader/view.js',
   'reader/card.js',
   'reader/index.js',
+  'packager/ai.js',
   'packager/build.js',
   'packager/index.js'
 ];
