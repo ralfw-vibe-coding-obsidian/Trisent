@@ -23,6 +23,14 @@ const LEVELS = [
 /* Wonach die Textliste geordnet werden kann. "easiest" ist die Vorgabe,
    weil die Frage vor der Liste meistens "was kann ich jetzt lesen?"
    lautet - aber wer sich fordern will, dreht es um. */
+/* Die drei Stufen der Worthervorhebung. Der Schalter beim Lesen geht
+   der Reihe nach durch. */
+const HIGHLIGHTS = [
+  { id: 'underline', icon: 'underline', label: 'Words underlined' },
+  { id: 'fill', icon: 'highlighter', label: 'Words filled' },
+  { id: 'none', icon: 'eye-off', label: 'Words unmarked' }
+];
+
 const SORTS = [
   { id: 'easiest', label: 'Easiest' },
   { id: 'hardest', label: 'Hardest' },
@@ -620,6 +628,11 @@ class TrisentView extends ItemView {
     });
   }
 
+  highlightMode() {
+    const mode = this.reader.settings.highlight;
+    return HIGHLIGHTS.some((h) => h.id === mode) ? mode : 'underline';
+  }
+
   renderSortSwitches(page) {
     const row = page.createDiv({ cls: 'trisent-sort' });
     const current = this.reader.settings.sort || 'easiest';
@@ -747,7 +760,7 @@ class TrisentView extends ItemView {
         cls:
           'trisent-text' +
           (this.reader.settings.levels.gloss !== false ? ' is-gloss' : '') +
-          (this.reader.settings.colors !== false ? ' is-colored' : '')
+          ' is-mark-' + this.highlightMode()
       });
       for (const paragraph of data.paragraphs || []) {
         const block = text.createDiv({ cls: 'trisent-paragraph' });
@@ -794,14 +807,20 @@ class TrisentView extends ItemView {
       });
     }
 
-    const colors = this.reader.settings.colors !== false;
+    /* Durch die drei Stufen schalten, ohne in die Einstellungen zu gehen -
+       beim Lesen merkt man ja erst, ob die Markierung stark genug ist. */
+    const current = this.highlightMode();
+    const at = HIGHLIGHTS.findIndex((h) => h.id === current);
+    const mark = HIGHLIGHTS[at < 0 ? 0 : at];
+
     const paint = switches.createEl('button', {
-      cls: 'trisent-switch trisent-switch-icon' + (colors ? ' is-on' : ''),
-      attr: { 'aria-label': 'Word colours', title: 'Word colours' }
+      cls: 'trisent-switch trisent-switch-icon' + (mark.id === 'none' ? '' : ' is-on'),
+      attr: { 'aria-label': mark.label, title: mark.label }
     });
-    setIcon(paint, 'palette');
+    setIcon(paint, mark.icon);
     paint.addEventListener('click', async () => {
-      this.reader.settings.colors = !colors;
+      const next = HIGHLIGHTS[(HIGHLIGHTS.indexOf(mark) + 1) % HIGHLIGHTS.length];
+      this.reader.settings.highlight = next.id;
       await this.reader.saveSettings();
       this.render();
     });

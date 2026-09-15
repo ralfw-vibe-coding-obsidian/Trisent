@@ -434,10 +434,17 @@
 /* Der Stand wird semantisch gespeichert, nie als Farbe. Hier - und nur
    hier - wird aus einem Stand ein Aussehen.
 
-   Ein Strich unter dem Wort statt einer Fläche dahinter: Der Text
-   bleibt eine Lesefläche, und der Strich wird dünner, je besser das
-   Wort sitzt. Bei "known" bleibt nichts. Die Seite wird beim Lernen
-   still - das ist der Punkt der ganzen App. */
+   Drei Stufen, umschaltbar beim Lesen und in den Einstellungen:
+
+   - underline: ein Strich unter dem Wort, der dünner wird, je besser es
+     sitzt. Ruhigste Fassung, der Text bleibt eine Lesefläche. Auf kleinen
+     Bildschirmen kann er zu fein sein.
+   - fill: eine getönte Fläche hinter dem Wort. Deutlich sichtbar, auch auf
+     dem Telefon, dafür unruhiger.
+   - none: gar nichts. Antippen geht weiter, man sieht es nur nicht.
+
+   In allen Stufen gilt: "known" bekommt nichts. Das Wort steht da wie in
+   einem normalen Text - darauf läuft die ganze App hinaus. */
 
 .trisent-word {
   cursor: pointer;
@@ -445,25 +452,44 @@
   padding-bottom: 1px;
 }
 
-.trisent-text.is-colored .trisent-word.is-unknown {
+/* Unterstrichen */
+
+.trisent-text.is-mark-underline .trisent-word.is-unknown {
   box-shadow: inset 0 -2px 0 var(--tri-unknown);
 }
 
-.trisent-text.is-colored .trisent-word.is-learning {
+.trisent-text.is-mark-underline .trisent-word.is-learning {
   box-shadow: inset 0 -2px 0 var(--tri-learning);
 }
 
-.trisent-text.is-colored .trisent-word.is-familiar {
+.trisent-text.is-mark-underline .trisent-word.is-familiar {
   box-shadow: inset 0 -1px 0 var(--tri-familiar);
 }
 
-/* "known" bekommt bewusst gar nichts - das Wort steht da wie in einem
-   normalen Text. Darauf läuft die ganze App hinaus. */
-.trisent-text.is-colored .trisent-word.is-known {
-  box-shadow: none;
+/* Unterlegt. Der Innenabstand gilt für ALLE Wörter, auch die ohne Tönung -
+   sonst stünden die markierten weiter auseinander als die übrigen. */
+
+.trisent-text.is-mark-fill .trisent-word {
+  padding: 0.06em 0.2em;
+  border-radius: 4px;
 }
 
-.trisent-text.is-colored .trisent-word:hover {
+.trisent-text.is-mark-fill .trisent-word.is-unknown {
+  background-color: rgba(206, 79, 68, 0.22);
+  background-color: color-mix(in srgb, var(--tri-unknown) 22%, transparent);
+}
+
+.trisent-text.is-mark-fill .trisent-word.is-learning {
+  background-color: rgba(190, 131, 16, 0.26);
+  background-color: color-mix(in srgb, var(--tri-learning) 26%, transparent);
+}
+
+.trisent-text.is-mark-fill .trisent-word.is-familiar {
+  background-color: rgba(151, 162, 156, 0.24);
+  background-color: color-mix(in srgb, var(--tri-familiar) 24%, transparent);
+}
+
+.trisent-word:hover {
   background: var(--background-modifier-hover);
 }
 
@@ -486,9 +512,17 @@
 .trisent-column.is-spaced .trisent-p.is-last { margin-right: 0.42em; }
 .trisent-text.is-gloss .trisent-column.is-tight .trisent-p.is-last { margin-right: 0.28em; }
 
-.trisent-text.is-colored .trisent-p.is-unknown { border-color: var(--tri-unknown); }
-.trisent-text.is-colored .trisent-p.is-learning { border-color: var(--tri-learning); }
-.trisent-text.is-colored .trisent-p.is-familiar { border-color: var(--tri-familiar); }
+/* Die Klammer folgt derselben Stufe wie die Wörter. Bei "none" bleibt sie
+   in der neutralen Rahmenfarbe stehen - sie muss sichtbar bleiben, sonst
+   sieht man nicht mehr, dass die Wörter zusammengehören. */
+.trisent-text.is-mark-underline .trisent-p.is-unknown,
+.trisent-text.is-mark-fill .trisent-p.is-unknown { border-color: var(--tri-unknown); }
+
+.trisent-text.is-mark-underline .trisent-p.is-learning,
+.trisent-text.is-mark-fill .trisent-p.is-learning { border-color: var(--tri-learning); }
+
+.trisent-text.is-mark-underline .trisent-p.is-familiar,
+.trisent-text.is-mark-fill .trisent-p.is-familiar { border-color: var(--tri-familiar); }
 
 /* Bekannte Wendung: die Klammer verschwindet, wie die Glosse eines
    bekannten Wortes. Sie kommt zurück, sobald man den Satz überfährt -

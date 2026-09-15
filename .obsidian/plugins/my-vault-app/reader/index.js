@@ -18,9 +18,10 @@ const { WordCardView, CARD_VIEW_TYPE } = require('./card.js');
 const DEFAULTS = {
   /* Wonach die Textliste geordnet ist. */
   sort: 'easiest',
+  /* Wie ein Wort zeigt, wie gut es sitzt: 'none', 'underline', 'fill'. */
+  highlight: 'underline',
   lastLanguage: null,
   lastPackage: null,
-  colors: true,
   reading: {},
   levels: { source: true, gloss: true, fluent: true }
 };
@@ -167,14 +168,19 @@ class Reader {
   /* Was der Reader zu den Einstellungen der App beisteuert. */
   addSettings(containerEl) {
     new Setting(containerEl)
-      .setName('Word colours')
-      .setDesc('Show how well you know each word while reading.')
-      .addToggle((toggle) =>
-        toggle.setValue(this.settings.colors !== false).onChange(async (value) => {
-          this.settings.colors = value;
-          await this.saveSettings();
-          this.refresh();
-        })
+      .setName('Word marking')
+      .setDesc('How a word shows what you know about it while reading.')
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption('none', 'None')
+          .addOption('underline', 'Underlined')
+          .addOption('fill', 'Filled')
+          .setValue(this.settings.highlight || 'underline')
+          .onChange(async (value) => {
+            this.settings.highlight = value;
+            await this.saveSettings();
+            this.refresh();
+          })
       );
   }
 }
