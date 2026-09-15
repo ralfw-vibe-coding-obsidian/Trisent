@@ -28,8 +28,12 @@ const PACKAGE_FILE = 'package.json';
 const WORDS_DIR = 'words';
 const RULES_FILE = 'rules.md';
 
-/* Was der Packager sich merkt. Liegt in data.json unter "packager". */
-const DEFAULTS = {};
+/* Was der Packager sich merkt. Liegt in data.json unter "packager".
+
+   "sent" hält fest, welche Fassung eines Textes schon in der Bibliothek
+   angekommen ist. Das kann der Packager nicht selbst nachsehen - dort
+   drüben schaut er nicht hinein. */
+const DEFAULTS = { sent: {} };
 
 /* ------------------------------------------------------------------ */
 /* Die Ansicht                                                         */
@@ -41,13 +45,26 @@ class PackagerView extends ItemView {
     this.packager = packager;
     /* Berichte der letzten Bauvorgänge, nach Ordnerpfad. */
     this.reports = new Map();
+    /* Was in der Werkstatt liegt. Wird gelesen, bevor gezeichnet wird -
+       die Fassung eines Pakets steht in einer Datei, und Lesen dauert. */
+    this.model = [];
   }
 
   getViewType() { return VIEW_TYPE; }
   getDisplayText() { return 'Packager'; }
   getIcon() { return RIBBON_ICON; }
 
-  async onOpen() { this.render(); }
+  async onOpen() { await this.refresh(); }
+
+  async refresh() {
+    try {
+      this.model = await this.packager.survey();
+    } catch (error) {
+      console.error('Trisent packager', error);
+      this.model = [];
+    }
+    this.render();
+  }
 
   /* Ein Fehler beim Aufbau darf keine weiße Fläche hinterlassen - dann
      stünde die Person vor einer Ansicht, über die sie nichts sagen kann. */
@@ -68,7 +85,7 @@ class PackagerView extends ItemView {
   renderBody(page) {
     page.createEl('h1', { text: 'Packager' });
 
-    const languages = this.packager.languages();
+    const languages = this.model;
     if (languages.length === 0) {
       page.createEl('p', {
         cls: 'trisent-lead',
@@ -110,14 +127,22 @@ class PackagerView extends ItemView {
 
     const title = row.createDiv({ cls: 'trisent-pack-title' });
     title.createSpan({ cls: 'trisent-pack-name', text: text.title || text.folder.name });
-    if (text.built) title.createSpan({ cls: 'trisent-chip', text: 'built' });
+    if (text.version) {
+      title.createSpan({ cls: 'trisent-chip', text: 'version ' + text.version });
+      /* "built" heißt nur: die Datei liegt da. "sent" heißt: diese
+         Fassung ist durch den Import in der Bibliothek angekommen. */
+      title.createSpan({
+        cls: 'trisent-chip is-level',
+        text: text.sent === text.version ? 'sent' : 'built'
+      });
+    }
 
     const actions = row.createDiv({ cls: 'trisent-pack-actions' });
 
     const build = actions.createEl('button', { cls: 'mod-cta', text: 'Build package' });
     build.addEventListener('click', () => this.build(text));
 
-    if (text.built) {
+    if (text.version) {
       const send = actions.createEl('button', { text: 'Send to library' });
       send.addEventListener('click', () => this.send(text));
     }
@@ -153,7 +178,7 @@ class PackagerView extends ItemView {
         lines: [String(error.message || error)], more: 0
       });
     }
-    this.render();
+    await this.refresh();
   }
 
   async send(text) {
@@ -164,7 +189,7 @@ class PackagerView extends ItemView {
       console.error('Trisent packager', error);
       new Notice(String(error.message || error), 12000);
     }
-    this.render();
+    await this.refresh();
   }
 }
 
@@ -211,7 +236,7 @@ class Packager {
 
   /* Ein Sprachordner ist ein Ordner, dessen Name ein Sprachkürzel ist.
      Darin: rules.md, words/ und je ein Ordner pro Text. */
-  languages() {
+  async survey() {
     const root = this.folder(this.rootPath);
     if (!root) return [];
 
@@ -226,41 +251,48 @@ class Packager {
         folder: child,
         rules: !!this.file(child.path + '/' + RULES_FILE),
         words: words ? words.children.filter((f) => f instanceof TFile).length : 0,
-        texts: this.textsOf(child)
+        texts: await this.textsOf(child)
       });
     }
     return result.sort((a, b) => a.code.localeCompare(b.code));
   }
 
   /* Ein Ordner mit einer work.md darin ist ein Text in Arbeit. */
-  textsOf(languageFolder) {
+  async textsOf(languageFolder) {
     const result = [];
     for (const child of languageFolder.children) {
       if (!(child instanceof TFolder)) continue;
       const work = this.file(child.path + '/' + WORK_FILE);
       if (!work) continue;
 
+      const built = this.file(child.path + '/' + PACKAGE_FILE);
+      const front = this.app.metadataCache.getFileCache(work)?.frontmatter;
+
       result.push({
         folder: child,
         work: work,
         text: this.file(child.path + '/' + TEXT_FILE),
-        package: this.file(child.path + '/' + PACKAGE_FILE),
-        title: child.name,
-        built: null
+        package: built,
+        title: (front && front.title) || child.name,
+        version: built ? await this.versionOf(built) : 0,
+        sent: this.sentVersion(child.path)
       });
     }
-    return this.decorate(result);
+    return result;
   }
 
-  /* Den Titel holen wir aus dem Metadaten-Index - die Ansicht baut
-     synchron auf, da bleibt keine Zeit zum Lesen der Datei. */
-  decorate(texts) {
-    for (const text of texts) {
-      const front = this.app.metadataCache.getFileCache(text.work)?.frontmatter;
-      if (front && front.title) text.title = front.title;
-      text.built = !!text.package;
+  /* Die Fassung steht im gebauten Paket selbst. */
+  async versionOf(file) {
+    try {
+      const data = JSON.parse(await this.app.vault.cachedRead(file));
+      return Number.isFinite(data.version) ? data.version : 0;
+    } catch (error) {
+      return 0;
     }
-    return texts;
+  }
+
+  sentVersion(folderPath) {
+    return (this.settings.sent || {})[folderPath] || 0;
   }
 
   /* ---------------------------------------------------------------- */
@@ -358,6 +390,11 @@ class Packager {
     }
 
     const result = await this.plugin.reader.library.importFiles(contents, text.folder.name);
+
+    if (!this.settings.sent) this.settings.sent = {};
+    this.settings.sent[text.folder.path] = result.version;
+    await this.saveSettings();
+
     return (result.updated ? 'Updated "' : 'Added "') + result.title + '" in ' +
            result.language.name + ' — version ' + result.version + '.';
   }
