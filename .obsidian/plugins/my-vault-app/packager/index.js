@@ -51,10 +51,14 @@ const RETRY_MS = 4000;
 
 /* Was der Packager sich merkt. Liegt in data.json unter "packager".
 
+   Von Haus aus ist er AUS. Die meisten, die Trisent benutzen, lesen nur -
+   für sie wäre die Werkstatt ein zweites Symbol in der Leiste, das sie
+   nie brauchen. Wer Texte herstellt, schaltet sie einmal ein.
+
    "sent" hält fest, welche Fassung eines Textes schon in der Bibliothek
    angekommen ist. Das kann der Packager nicht selbst nachsehen - dort
    drüben schaut er nicht hinein. */
-const DEFAULTS = { enabled: true, sent: {}, claudePath: 'claude' };
+const DEFAULTS = { enabled: false, sent: {}, claudePath: 'claude' };
 
 /* Hausregeln für eine Sprache, die es noch nicht gab.
 
@@ -1062,8 +1066,10 @@ class Packager {
     new Setting(containerEl)
       .setName('Packager')
       .setDesc(
-        'The workshop that turns texts into packages. Reading works without it. ' +
-        'It needs a desktop and is always off on phones and tablets. Takes effect after a reload.'
+        'The workshop that turns your own texts into packages. Most people only read, ' +
+        'and reading needs none of this. It runs Claude Code on this computer, so it ' +
+        'needs the desktop app and is always off on phones and tablets. ' +
+        'Takes effect after a reload.'
       )
       .addToggle((toggle) =>
         toggle
