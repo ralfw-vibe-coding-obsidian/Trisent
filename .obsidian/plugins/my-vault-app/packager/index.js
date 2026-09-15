@@ -16,8 +16,9 @@
  * Was hier nicht durchkommt, käme beim Empfänger auch nicht durch.
  */
 
-const { ItemView, Notice, TFile, TFolder, normalizePath } = require('obsidian');
+const { ItemView, Notice, Setting, TFile, TFolder, normalizePath } = require('obsidian');
 const { parseWork, parseWordNote, splitNote, buildPackage } = require('./build.js');
+const ai = require('./ai.js');
 
 const VIEW_TYPE = 'trisent-packager-view';
 const RIBBON_ICON = 'package-plus';
@@ -33,7 +34,26 @@ const RULES_FILE = 'rules.md';
    "sent" hält fest, welche Fassung eines Textes schon in der Bibliothek
    angekommen ist. Das kann der Packager nicht selbst nachsehen - dort
    drüben schaut er nicht hinein. */
-const DEFAULTS = { sent: {} };
+const DEFAULTS = { sent: {}, claudePath: 'claude' };
+
+/* Aus einem Ordnernamen eine Kennung machen: klein, ohne Sonderzeichen. */
+function slug(name) {
+  return String(name)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '') || 'text';
+}
+
+/* Absätze eines Rohtextes: getrennt durch Leerzeilen, so wie man sie
+   beim Lesen sieht. */
+function paragraphsOf(text) {
+  return String(text)
+    .split(/\r?\n\s*\r?\n/)
+    .map((piece) => piece.trim())
+    .filter((piece) => piece !== '');
+}
 
 /* ------------------------------------------------------------------ */
 /* Die Ansicht                                                         */
@@ -139,12 +159,33 @@ class PackagerView extends ItemView {
 
     const actions = row.createDiv({ cls: 'trisent-pack-actions' });
 
-    const build = actions.createEl('button', { cls: 'mod-cta', text: 'Build package' });
-    build.addEventListener('click', () => this.build(text));
+    /* Aufbereiten kommt vor dem Bauen - deshalb steht der Knopf links. */
+    if (this.packager.canPrepare() && text.done < text.total) {
+      const prepare = actions.createEl('button', {
+        cls: 'mod-cta',
+        text: 'Prepare paragraph ' + (text.done + 1) + ' of ' + text.total
+      });
+      prepare.addEventListener('click', () => this.prepare(text, prepare));
+    }
+
+    if (text.work) {
+      const build = actions.createEl('button', {
+        cls: text.done >= text.total && text.total > 0 ? 'mod-cta' : '',
+        text: 'Build package'
+      });
+      build.addEventListener('click', () => this.build(text));
+    }
 
     if (text.version) {
       const send = actions.createEl('button', { text: 'Send to library' });
       send.addEventListener('click', () => this.send(text));
+    }
+
+    if (text.total > 0 && text.done < text.total) {
+      row.createDiv({
+        cls: 'trisent-pack-detail',
+        text: text.done + ' of ' + text.total + ' paragraphs prepared.'
+      });
     }
 
     const report = this.reports.get(text.folder.path);
@@ -166,6 +207,23 @@ class PackagerView extends ItemView {
     if (report.more > 0) {
       box.createDiv({ cls: 'trisent-pack-detail', text: 'and ' + report.more + ' more.' });
     }
+  }
+
+  /* Das dauert eine knappe Minute. Ohne sichtbares Zeichen dafür sitzt
+     die Person vor einer Ansicht, die nichts tut. */
+  async prepare(text, button) {
+    button.disabled = true;
+    button.setText('Working on paragraph ' + (text.done + 1) + '…');
+    try {
+      this.reports.set(text.folder.path, await this.packager.prepare(text));
+    } catch (error) {
+      console.error('Trisent packager', error);
+      this.reports.set(text.folder.path, {
+        kind: 'bad', headline: 'The paragraph could not be prepared.',
+        lines: [String(error.message || error)], more: 0
+      });
+    }
+    await this.refresh();
   }
 
   async build(text) {
@@ -262,20 +320,29 @@ class Packager {
     const result = [];
     for (const child of languageFolder.children) {
       if (!(child instanceof TFolder)) continue;
-      const work = this.file(child.path + '/' + WORK_FILE);
-      if (!work) continue;
+      let work = this.file(child.path + '/' + WORK_FILE);
+      if (!work) {
+        /* Ein Ordner mit einem Text, aber ohne Werkbank: dort fängt die
+           Aufbereitung an. Die Werkbank legen wir beim ersten Absatz an. */
+        if (!this.file(child.path + '/' + TEXT_FILE)) continue;
+        work = null;
+      }
 
       const built = this.file(child.path + '/' + PACKAGE_FILE);
-      const front = this.app.metadataCache.getFileCache(work)?.frontmatter;
+      const front = work ? this.app.metadataCache.getFileCache(work)?.frontmatter : null;
+      const source = this.file(child.path + '/' + TEXT_FILE);
 
       result.push({
         folder: child,
         work: work,
-        text: this.file(child.path + '/' + TEXT_FILE),
+        text: source,
         package: built,
         title: (front && front.title) || child.name,
         version: built ? await this.versionOf(built) : 0,
-        sent: this.sentVersion(child.path)
+        sent: this.sentVersion(child.path),
+        done: work ? parseWork(await this.app.vault.cachedRead(work)).paragraphs.length : 0,
+        total: source ? paragraphsOf(await this.app.vault.cachedRead(source)).length : 0,
+        code: languageFolder.name.toLowerCase()
       });
     }
     return result;
@@ -293,6 +360,136 @@ class Packager {
 
   sentVersion(folderPath) {
     return (this.settings.sent || {})[folderPath] || 0;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Aufbereiten                                                       */
+  /* ---------------------------------------------------------------- */
+
+  canPrepare() {
+    return ai.available() && !!this.basePath();
+  }
+
+  basePath() {
+    const adapter = this.app.vault.adapter;
+    return adapter && adapter.getBasePath ? adapter.getBasePath() : null;
+  }
+
+  /* Ein Absatz je Aufruf. Am Stück wäre schneller, aber wenn in der Mitte
+     etwas schiefgeht, weiß niemand wo - und die Person sieht sieben
+     Minuten lang nichts. */
+  async prepare(text) {
+    const source = text.text;
+    if (!source) throw new Error('There is no text.md in this folder.');
+
+    const paragraphs = paragraphsOf(await this.app.vault.read(source));
+    if (text.done >= paragraphs.length) {
+      return { kind: 'ok', headline: 'Every paragraph is already prepared.', detail: '' };
+    }
+    const paragraph = paragraphs[text.done];
+
+    const languageFolder = this.basePath() + '/' + this.rootPath + '/' + text.code.toUpperCase();
+    const rules = await this.readIfThere(
+      this.rootPath + '/' + text.code.toUpperCase() + '/' + RULES_FILE
+    );
+    const example = await this.exampleFor(text);
+
+    /* Zwei Anläufe: Beim zweiten bekommt Claude die Fundliste des Prüfers
+       mit. Das ist der ganze Sinn eines strengen Prüfers - er kann sagen,
+       was nicht stimmt, statt nur nein. */
+    let answer = null;
+    let problems = [];
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      answer = await ai.prepare({
+        command: this.settings.claudePath || 'claude',
+        temp: ai.tempDir(),
+        folder: languageFolder,
+        rules: rules,
+        example: example,
+        paragraph: attempt === 1
+          ? paragraph
+          : paragraph + '\n\nDein voriger Versuch hatte diese Fehler:\n- ' +
+            problems.slice(0, 10).join('\n- ')
+      });
+
+      problems = this.checkBlock(answer.block, paragraph, text.code);
+      if (problems.length === 0) break;
+    }
+
+    if (problems.length > 0) {
+      return {
+        kind: 'bad',
+        headline: 'Paragraph ' + (text.done + 1) + ' did not come back clean. Nothing was written.',
+        lines: problems.slice(0, 10),
+        more: Math.max(0, problems.length - 10)
+      };
+    }
+
+    await this.appendToWork(text, answer.block, paragraphs.length);
+
+    return {
+      kind: 'ok',
+      headline: 'Paragraph ' + (text.done + 1) + ' of ' + paragraphs.length + ' prepared.',
+      detail: answer.notes || ''
+    };
+  }
+
+  /* Die Antwort durch denselben Rechner schicken, der später das Paket
+     baut. Was hier stimmt, stimmt auch dort. */
+  checkBlock(block, paragraph, code) {
+    const head = '---\nlanguage: ' + code + '\nid: check\ntitle: check\n---\n\n';
+    const result = buildPackage(parseWork(head + block), paragraph, new Map(), 1);
+    return result.problems;
+  }
+
+  /* Ein fertiger Absatz derselben Sprache als Vorbild - der trägt Format,
+     Ton und Konventionen auf einmal, und deine Korrekturen wandern damit
+     von selbst in die nächsten Texte. */
+  async exampleFor(text) {
+    const folder = this.folder(this.rootPath + '/' + text.code.toUpperCase());
+    if (!folder) return '';
+
+    for (const child of folder.children) {
+      if (!(child instanceof TFolder)) continue;
+      const work = this.file(child.path + '/' + WORK_FILE);
+      if (!work) continue;
+
+      const { body } = splitNote(await this.app.vault.cachedRead(work));
+      const first = body.split(/\r?\n-{3,}\r?\n/)[0].trim();
+      if (first) return first;
+    }
+    return '';
+  }
+
+  async readIfThere(path) {
+    const file = this.file(path);
+    return file ? this.app.vault.cachedRead(file) : '';
+  }
+
+  /* Anhängen, nicht neu schreiben - was schon dasteht, hat die Person
+     vielleicht von Hand verbessert. */
+  async appendToWork(text, block, total) {
+    if (!text.work) {
+      const head = [
+        '---',
+        'type: packager-work',
+        'language: ' + text.code,
+        'id: ' + text.code + '-' + slug(text.folder.name),
+        'title: ' + text.folder.name,
+        'level: A1',
+        '---',
+        '',
+        block,
+        ''
+      ].join('\n');
+      await this.app.vault.create(text.folder.path + '/' + WORK_FILE, head);
+      return;
+    }
+
+    const current = await this.app.vault.read(text.work);
+    const joined = current.replace(/\s+$/, '') + '\n\n---\n\n' + block + '\n';
+    await this.app.vault.modify(text.work, joined);
+    void total;
   }
 
   /* ---------------------------------------------------------------- */
@@ -423,7 +620,28 @@ class Packager {
     workspace.revealLeaf(leaf);
   }
 
-  addSettings(containerEl) { void containerEl; }
+  addSettings(containerEl) {
+    new Setting(containerEl)
+      .setName('Claude command')
+      .setDesc('The packager asks Claude to gloss a paragraph. If "claude" is not found, give the full path.')
+      .addText((text) =>
+        text
+          .setPlaceholder('claude')
+          .setValue(this.settings.claudePath || '')
+          .onChange(async (value) => {
+            this.settings.claudePath = value.trim();
+            await this.saveSettings();
+          })
+      )
+      .addButton((button) =>
+        button.setButtonText('Test').onClick(async () => {
+          button.setButtonText('Testing…');
+          const result = await ai.check(this.settings.claudePath || 'claude');
+          button.setButtonText('Test');
+          new Notice(result.text, 10000);
+        })
+      );
+  }
 }
 
 module.exports = { Packager, DEFAULTS, VIEW_TYPE, RIBBON_ICON };
