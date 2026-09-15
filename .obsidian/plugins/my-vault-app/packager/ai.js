@@ -148,6 +148,58 @@ function instructions(rules, example, languageFolder) {
   return parts.join('\n');
 }
 
+/* Die Anweisung für den zweiten Auftrag: Wortnotizen schreiben.
+
+   Sie entstehen erst, nachdem der Text annotiert ist - dann steht fest,
+   welche Schlüssel wirklich vorkommen, mit welchen Formen und in welchem
+   Satz. Genau das ist der Anhalt. */
+function wordInstructions(rules) {
+  const parts = [];
+
+  parts.push(
+    'Du schreibst Wörterbucheinträge für einen Sprachlern-Reader.',
+    'Zu jedem vorgegebenen Schlüssel entsteht genau ein Eintrag.',
+    '',
+    'DAS FORMAT',
+    '',
+    '    # <der Schlüssel, unverändert übernommen>',
+    '    lemma: <die Grundform, in der Schreibweise der Fremdsprache>',
+    '    gloss: <deutsche Grundbedeutung, ein bis drei Wörter, Varianten mit Komma>',
+    '    forms: <die Formen aus dem Text, mit Komma getrennt>',
+    '    grammar: <ein bis drei Sätze auf Deutsch>',
+    '',
+    'WORAUF ES ANKOMMT',
+    '',
+    '- Der Schlüssel hat die Form sprache:grundform:WORTART. Die Grundform in',
+    '  deiner lemma-Zeile MUSS dazu passen - sonst wird der Eintrag verworfen.',
+    '  Groß- und Kleinschreibung darf abweichen (Eigennamen!), sonst nichts.',
+    '- gloss ist die Grundbedeutung des Wortes, nicht die Glosse aus einem',
+    '  bestimmten Satz. Sie darf breiter sein.',
+    '- grammar ist das, was man beim Lernen wirklich wissen will: Geschlecht,',
+    '  unregelmäßige Formen, wovon das Wort begleitet wird, wogegen man es',
+    '  verwechselt. Keine Schulbuchprosa, keine Beispiele ohne Nutzen.',
+    '- Bei einer Wendung (WORTART ist PHRASE) erklärt grammar, was da wörtlich',
+    '  steht und wann man es benutzt.',
+    ''
+  );
+
+  if (rules) {
+    parts.push('DIE HAUSREGELN DIESER SPRACHE', '', rules.trim(), '');
+  }
+
+  parts.push(
+    'DEINE ANTWORT',
+    '',
+    'Alle Einträge zwischen diesen beiden Marken, nichts sonst:',
+    '',
+    OPEN,
+    '# ...',
+    CLOSE
+  );
+
+  return parts.join('\n');
+}
+
 /* ------------------------------------------------------------------ */
 /* Aufruf                                                              */
 /* ------------------------------------------------------------------ */
@@ -310,6 +362,77 @@ async function prepare(options) {
   return { block: block, notes: after(result.out) };
 }
 
+/* Wortnotizen zu einer Handvoll Schlüsseln schreiben lassen. */
+async function words(options) {
+  const args = [
+    '-p',
+    '--model', MODEL,
+    '--append-system-prompt', wordInstructions(options.rules),
+    '--allowedTools', 'Read,Glob,Grep'
+  ];
+  if (options.folder) args.push('--add-dir', options.folder);
+
+  const lines = ['Schreibe zu diesen Schlüsseln je einen Eintrag.', ''];
+  for (const entry of options.entries) {
+    lines.push('## ' + entry.key);
+    lines.push('Grundform laut Text: ' + entry.lemma);
+    lines.push('Wortart: ' + entry.partOfSpeech);
+    if (entry.forms.length) lines.push('Formen im Text: ' + entry.forms.join(', '));
+    if (entry.glosses.length) lines.push('Glossen im Text: ' + entry.glosses.join(', '));
+    if (entry.sentence) lines.push('Beispielsatz: ' + entry.sentence);
+    lines.push('');
+  }
+
+  const result = await run(options.command, args, {
+    cwd: options.temp,
+    input: lines.join('\n'),
+    timeoutMs: TIMEOUT_MS
+  });
+
+  if (result.code === -2) throw new Error('Claude did not answer within five minutes.');
+  if (result.code !== 0) {
+    throw new Error('Claude stopped with an error: ' + (result.err.trim() || 'no message'));
+  }
+
+  const block = between(result.out);
+  if (!block) throw new Error('The answer contained no entries.');
+
+  return parseEntries(block);
+}
+
+/* Aus dem Antwortblock Einträge machen. Was nicht passt, fällt weg -
+   geprüft wird beim Schreiben noch einmal gegen den Schlüssel. */
+function parseEntries(block) {
+  const entries = [];
+  let current = null;
+  let field = null;
+
+  for (const raw of block.split(/\r?\n/)) {
+    const line = raw.trim();
+    const heading = line.match(/^#+\s*(\S.*)$/);
+    if (heading) {
+      if (current) entries.push(current);
+      current = { key: heading[1].trim(), lemma: '', gloss: '', forms: [], grammar: '' };
+      field = null;
+      continue;
+    }
+    if (!current) continue;
+
+    const pair = line.match(/^(lemma|gloss|forms|grammar)\s*:\s*(.*)$/i);
+    if (pair) {
+      field = pair[1].toLowerCase();
+      const value = pair[2].trim();
+      if (field === 'forms') current.forms = value.split(',').map((p) => p.trim()).filter(Boolean);
+      else current[field] = value;
+      continue;
+    }
+    /* Fortsetzungszeilen gehören zur Grammatiknotiz. */
+    if (field === 'grammar' && line) current.grammar += ' ' + line;
+  }
+  if (current) entries.push(current);
+  return entries;
+}
+
 function between(text) {
   const from = text.indexOf(OPEN);
   const to = text.indexOf(CLOSE);
@@ -329,4 +452,4 @@ function tempDir() {
   return os ? os.tmpdir() : undefined;
 }
 
-module.exports = { available, check, locate, prepare, instructions, tempDir, MODEL };
+module.exports = { available, check, locate, prepare, words, instructions, tempDir, MODEL };

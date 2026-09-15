@@ -18,6 +18,8 @@
 
 const { ItemView, Notice, Platform, Setting, TFile, TFolder, normalizePath } = require('obsidian');
 const { parseWork, parseWordNote, splitNote, buildPackage } = require('./build.js');
+const { keyFor } = require('../core/package.js');
+const { sanitizeFileName, yamlValue } = require('../core/library.js');
 const ai = require('./ai.js');
 
 const VIEW_TYPE = 'trisent-packager-view';
@@ -159,33 +161,21 @@ class PackagerView extends ItemView {
 
     const actions = row.createDiv({ cls: 'trisent-pack-actions' });
 
-    /* Aufbereiten kommt vor dem Bauen - deshalb steht der Knopf links. */
-    if (this.packager.canPrepare() && text.done < text.total) {
-      const prepare = actions.createEl('button', {
+    /* Ein Knopf für den ganzen Weg: aufbereiten, fehlende Wörter
+       beschreiben, bauen. Zwischenstände interessieren nur, solange
+       etwas läuft - dann stehen sie auf dem Knopf. */
+    const open = text.total > text.done;
+    if (text.work || (this.packager.canPrepare() && text.total > 0)) {
+      const make = actions.createEl('button', {
         cls: 'mod-cta',
-        text: 'Prepare paragraph ' + (text.done + 1) + ' of ' + text.total
+        text: open ? 'Make package' : 'Build again'
       });
-      prepare.addEventListener('click', () => this.prepare(text, prepare));
-    }
-
-    if (text.work) {
-      const build = actions.createEl('button', {
-        cls: text.done >= text.total && text.total > 0 ? 'mod-cta' : '',
-        text: 'Build package'
-      });
-      build.addEventListener('click', () => this.build(text));
+      make.addEventListener('click', () => this.make(text, make));
     }
 
     if (text.version) {
       const send = actions.createEl('button', { text: 'Send to library' });
       send.addEventListener('click', () => this.send(text));
-    }
-
-    if (text.total > 0 && text.done < text.total) {
-      row.createDiv({
-        cls: 'trisent-pack-detail',
-        text: text.done + ' of ' + text.total + ' paragraphs prepared.'
-      });
     }
 
     const report = this.reports.get(text.folder.path);
@@ -209,30 +199,19 @@ class PackagerView extends ItemView {
     }
   }
 
-  /* Das dauert eine knappe Minute. Ohne sichtbares Zeichen dafür sitzt
-     die Person vor einer Ansicht, die nichts tut. */
-  async prepare(text, button) {
+  /* Ein langer Text braucht einige Minuten. Solange muss auf dem Knopf
+     stehen, woran gerade gearbeitet wird - sonst sitzt die Person vor
+     einer Ansicht, die nichts tut. */
+  async make(text, button) {
     button.disabled = true;
-    button.setText('Working on paragraph ' + (text.done + 1) + '…');
-    try {
-      this.reports.set(text.folder.path, await this.packager.prepare(text));
-    } catch (error) {
-      console.error('Trisent packager', error);
-      this.reports.set(text.folder.path, {
-        kind: 'bad', headline: 'The paragraph could not be prepared.',
-        lines: [String(error.message || error)], more: 0
-      });
-    }
-    await this.refresh();
-  }
+    const step = (what) => button.setText(what);
 
-  async build(text) {
     try {
-      this.reports.set(text.folder.path, await this.packager.build(text));
+      this.reports.set(text.folder.path, await this.packager.makePackage(text, step));
     } catch (error) {
       console.error('Trisent packager', error);
       this.reports.set(text.folder.path, {
-        kind: 'bad', headline: 'The package could not be built.',
+        kind: 'bad', headline: 'It stopped here.',
         lines: [String(error.message || error)], more: 0
       });
     }
@@ -388,19 +367,61 @@ class Packager {
     return adapter && adapter.getBasePath ? adapter.getBasePath() : null;
   }
 
-  /* Ein Absatz je Aufruf. Am Stück wäre schneller, aber wenn in der Mitte
-     etwas schiefgeht, weiß niemand wo - und die Person sieht sieben
-     Minuten lang nichts. */
-  async prepare(text) {
-    const source = text.text;
-    if (!source) throw new Error('There is no text.md in this folder.');
+  /* Der ganze Weg an einem Stück: aufbereiten, fehlende Wörter
+     beschreiben, bauen. Was dazwischen passiert, meldet "step" nach
+     außen - es steht auf dem Knopf und ist gleich wieder weg. */
+  async makePackage(text, step) {
+    let done = text.done;
 
-    const paragraphs = paragraphsOf(await this.app.vault.read(source));
-    if (text.done >= paragraphs.length) {
-      return { kind: 'ok', headline: 'Every paragraph is already prepared.', detail: '' };
+    if (text.total > done) {
+      if (!this.canPrepare()) {
+        throw new Error('The text is not prepared yet, and Claude was not found. Check the settings.');
+      }
+      const paragraphs = paragraphsOf(await this.app.vault.read(text.text));
+      while (done < paragraphs.length) {
+        step('Paragraph ' + (done + 1) + ' of ' + paragraphs.length + '…');
+        const block = await this.prepareParagraph(text, paragraphs[done]);
+        await this.appendToWork(text, block, done === 0);
+        done += 1;
+      }
+      /* Die Werkbank gibt es jetzt - und der weitere Weg liest aus ihr. */
+      text.work = this.file(text.folder.path + '/' + WORK_FILE);
+      text.done = done;
     }
-    const paragraph = paragraphs[text.done];
 
+    step('Building…');
+    let result = await this.build(text);
+
+    /* Fehlende Wortnotizen sind kein Fehler, sondern der nächste Schritt.
+       Also gehen wir ihn gleich mit. */
+    if (result.kind === 'missing' && this.canPrepare()) {
+      step('Writing ' + result.entries.length + ' word notes…');
+      const written = await this.writeWords(text, result.entries, step);
+      if (written === 0) {
+        return {
+          kind: 'bad',
+          headline: 'No word notes could be written.',
+          lines: result.entries.slice(0, 10).map((e) => e.key),
+          more: Math.max(0, result.entries.length - 10)
+        };
+      }
+      step('Building…');
+      result = await this.build(text);
+    }
+
+    if (result.kind === 'missing') {
+      return {
+        kind: 'bad',
+        headline: result.entries.length + ' words still have no note.',
+        lines: result.entries.slice(0, 10).map((e) => e.key),
+        more: Math.max(0, result.entries.length - 10)
+      };
+    }
+    return result;
+  }
+
+  /* Einen Absatz aufbereiten lassen und nachrechnen. */
+  async prepareParagraph(text, paragraph) {
     const languageFolder = this.basePath() + '/' + this.rootPath + '/' + text.code.toUpperCase();
     const rules = await this.readIfThere(
       this.rootPath + '/' + text.code.toUpperCase() + '/' + RULES_FILE
@@ -430,21 +451,92 @@ class Packager {
     }
 
     if (problems.length > 0) {
-      return {
-        kind: 'bad',
-        headline: 'Paragraph ' + (text.done + 1) + ' did not come back clean. Nothing was written.',
-        lines: problems.slice(0, 10),
-        more: Math.max(0, problems.length - 10)
-      };
+      throw new Error(
+        'A paragraph did not come back clean, twice in a row: ' + problems.slice(0, 3).join(' / ')
+      );
     }
+    return answer.block;
+  }
 
-    await this.appendToWork(text, answer.block, paragraphs.length);
+  /* ---------------------------------------------------------------- */
+  /* Wortnotizen                                                       */
+  /* ---------------------------------------------------------------- */
 
-    return {
-      kind: 'ok',
-      headline: 'Paragraph ' + (text.done + 1) + ' of ' + paragraphs.length + ' prepared.',
-      detail: answer.notes || ''
-    };
+  /* In Häppchen, nicht alles auf einmal: Eine Antwort über dreißig
+     Einträge wird lang, und wird sie abgeschnitten, ist alles weg. */
+  async writeWords(text, entries, step) {
+    const code = text.code.toUpperCase();
+    const languageFolder = this.basePath() + '/' + this.rootPath + '/' + code;
+    const rules = await this.readIfThere(this.rootPath + '/' + code + '/' + RULES_FILE);
+    const folder = await this.ensureWordsFolder(code);
+
+    let written = 0;
+    const size = 8;
+    for (let at = 0; at < entries.length; at += size) {
+      const batch = entries.slice(at, at + size);
+      step('Word notes ' + (at + 1) + '–' + Math.min(at + size, entries.length) +
+           ' of ' + entries.length + '…');
+
+      const answers = await ai.words({
+        command: this.settings.claudePath || 'claude',
+        temp: ai.tempDir(),
+        folder: languageFolder,
+        rules: rules,
+        entries: batch
+      });
+
+      for (const answer of answers) {
+        if (await this.writeWordNote(folder, text.code, answer)) written += 1;
+      }
+    }
+    return written;
+  }
+
+  /* Geschrieben wird nur, was zum Schlüssel passt. Eine Notiz unter dem
+     falschen Schlüssel wäre schlimmer als gar keine: Sie sieht richtig
+     aus und trägt den Lernstand ins Leere. */
+  async writeWordNote(folder, code, answer) {
+    const parts = String(answer.key).split(':');
+    if (parts.length < 3) return false;
+
+    const partOfSpeech = parts[2].toUpperCase();
+    const lemma = answer.lemma || parts[1];
+    if (keyFor(code, lemma, partOfSpeech) !== answer.key) return false;
+    if (!answer.gloss) return false;
+
+    const base = sanitizeFileName(lemma);
+    let path = folder.path + '/' + base + '.md';
+    if (this.app.vault.getAbstractFileByPath(path)) {
+      path = folder.path + '/' + base + ' (' + partOfSpeech + ').md';
+    }
+    if (this.app.vault.getAbstractFileByPath(path)) return false;
+
+    const lines = [
+      '---',
+      'type: packager-word',
+      'language: ' + code,
+      'lemma: ' + yamlValue(lemma),
+      'partOfSpeech: ' + partOfSpeech,
+      'key: ' + yamlValue(answer.key),
+      'gloss: ' + yamlValue(answer.gloss)
+    ];
+    if (answer.forms.length > 0) {
+      lines.push('forms: [' + answer.forms.map(yamlValue).join(', ') + ']');
+    }
+    lines.push('---', '');
+    if (answer.grammar) lines.push('## Grammar', '', answer.grammar.trim(), '');
+
+    await this.app.vault.create(path, lines.join('\n'));
+    return true;
+  }
+
+  async ensureWordsFolder(code) {
+    const path = this.rootPath + '/' + code + '/' + WORDS_DIR;
+    const existing = this.folder(path);
+    if (existing) return existing;
+
+    await this.app.vault.createFolder(normalizePath(path));
+    return this.folder(path);
   }
 
   /* Die Antwort durch denselben Rechner schicken, der später das Paket
@@ -481,7 +573,8 @@ class Packager {
 
   /* Anhängen, nicht neu schreiben - was schon dasteht, hat die Person
      vielleicht von Hand verbessert. */
-  async appendToWork(text, block, total) {
+  async appendToWork(text, block, first) {
+    void first;
     if (!text.work) {
       const head = [
         '---',
@@ -495,14 +588,15 @@ class Packager {
         block,
         ''
       ].join('\n');
-      await this.app.vault.create(text.folder.path + '/' + WORK_FILE, head);
+      /* Ab jetzt gibt es sie - sonst versuchte der nächste Absatz, sie
+         ein zweites Mal anzulegen. */
+      text.work = await this.app.vault.create(text.folder.path + '/' + WORK_FILE, head);
       return;
     }
 
     const current = await this.app.vault.read(text.work);
     const joined = current.replace(/\s+$/, '') + '\n\n---\n\n' + block + '\n';
     await this.app.vault.modify(text.work, joined);
-    void total;
   }
 
   /* ---------------------------------------------------------------- */
@@ -532,12 +626,8 @@ class Packager {
 
     if (result.missing.length > 0) {
       return {
-        kind: 'bad',
-        headline: result.missing.length +
-          (result.missing.length === 1 ? ' word has no note yet.' : ' words have no note yet.') +
-          ' Nothing was written.',
-        lines: result.missing.slice(0, 12),
-        more: Math.max(0, result.missing.length - 12)
+        kind: 'missing',
+        entries: result.missing.map((key) => result.about.get(key) || { key: key, lemma: key.split(':')[1], partOfSpeech: key.split(':')[2], forms: [], glosses: [], sentence: '' })
       };
     }
 

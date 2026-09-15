@@ -199,6 +199,9 @@ function buildPackage(work, original, words, version) {
 
   const usedKeys = new Set();
   const seenForms = new Map();
+  /* Was der Text über einen Schlüssel verrät. Fehlt die Wortnotiz, ist
+     genau das der Anhalt, aus dem sie geschrieben wird. */
+  const about = new Map();
   let sentenceNumber = 0;
   let unitCount = 0;
   let phraseCount = 0;
@@ -240,6 +243,7 @@ function buildPackage(work, original, words, version) {
         const key = keyFor(language, unit.lemma, unit.partOfSpeech);
         usedKeys.add(key);
         remember(seenForms, key, unit.surface);
+        note(about, key, unit.lemma, unit.partOfSpeech, unit.surface, unit.gloss, source);
         unitCount += 1;
 
         units.push({
@@ -279,6 +283,7 @@ function buildPackage(work, original, words, version) {
         const key = keyFor(language, phrase.lemma, 'PHRASE');
         usedKeys.add(key);
         remember(seenForms, key, phrase.surface);
+        note(about, key, phrase.lemma, 'PHRASE', phrase.surface, phrase.gloss, source);
         phraseCount += 1;
 
         phrases.push({
@@ -375,6 +380,7 @@ function buildPackage(work, original, words, version) {
     data: data,
     problems: problems,
     missing: missing,
+    about: about,
     stats: {
       paragraphs: paragraphs.length,
       sentences: sentenceNumber,
@@ -383,6 +389,17 @@ function buildPackage(work, original, words, version) {
       keys: usedKeys.size
     }
   };
+}
+
+/* Grundform, Wortart, Formen, Glossen und ein Beispielsatz je Schlüssel. */
+function note(map, key, lemma, partOfSpeech, surface, gloss, sentence) {
+  let entry = map.get(key);
+  if (!entry) {
+    entry = { key: key, lemma: lemma, partOfSpeech: partOfSpeech, forms: [], glosses: [], sentence: sentence };
+    map.set(key, entry);
+  }
+  if (entry.forms.indexOf(surface) < 0) entry.forms.push(surface);
+  if (gloss && entry.glosses.indexOf(gloss) < 0) entry.glosses.push(gloss);
 }
 
 function remember(map, key, form) {
