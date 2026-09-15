@@ -123,38 +123,32 @@ class NewTextModal extends Modal {
 
   onOpen() {
     const { contentEl } = this;
-    contentEl.addClass('trisent-view');
+    /* Bewusst NICHT trisent-view: Das ist das Gerüst einer ganzen Seite -
+       feste Leiste, eigener Rollbereich, begrenzte Spaltenbreite. In
+       einem Dialog schnürt es alles zusammen. Hier steht der Stil für
+       sich. */
     this.modalEl.addClass('trisent-modal');
-    contentEl.createEl('h2', { cls: 'trisent-modal-title', text: 'New text' });
+    contentEl.addClass('trisent-newtext');
 
-    /* Die Felder rollen, die Knöpfe nicht - sonst rutschen sie bei einem
-       langen Text unter den Fensterrand. */
-    const form = contentEl.createDiv({ cls: 'trisent-form' });
+    contentEl.createEl('h2', { text: 'New text' });
 
-    /* Beschriftung über dem Feld, Feld über die volle Breite. Obsidians
-       Einstellungszeilen drängen alles nach rechts - für einen Titel,
-       den man liest, während man ihn tippt, ist das zu eng. */
-    const title = this.field(form, 'Title',
+    const titleInput = this.field(contentEl, 'Title', 'input',
       'In the foreign language, the way you want to see it in your library.');
-    const titleInput = title.createEl('input', { cls: 'trisent-field-input', type: 'text' });
     titleInput.placeholder = 'Un dimanche à Paris';
     titleInput.addEventListener('input', () => { this.title = titleInput.value.trim(); });
 
-    const language = this.field(form, 'Language', '');
-    const select = language.createEl('select', { cls: 'trisent-field-input trisent-select' });
+    const select = this.field(contentEl, 'Language', 'select', '');
     for (const choice of this.packager.languageChoices()) {
       select.createEl('option', { value: choice.code, text: choice.label });
     }
     this.code = select.value || '';
     select.addEventListener('change', () => { this.code = select.value; });
 
-    const text = this.field(form, 'Text',
+    const area = this.field(contentEl, 'Text', 'textarea',
       'Paste it in - a blank line between paragraphs.');
-    const area = text.createEl('textarea', { cls: 'trisent-field-input trisent-pack-input' });
-    area.rows = 10;
     area.addEventListener('input', () => { this.body = area.value; });
 
-    const actions = contentEl.createDiv({ cls: 'trisent-pack-actions is-right' });
+    const actions = contentEl.createDiv({ cls: 'trisent-newtext-actions' });
     actions.createEl('button', { text: 'Cancel' })
       .addEventListener('click', () => this.close());
     const start = actions.createEl('button', { cls: 'mod-cta', text: 'Add and make package' });
@@ -163,11 +157,12 @@ class NewTextModal extends Modal {
     window.setTimeout(() => titleInput.focus(), 0);
   }
 
-  field(parent, label, hint) {
-    const wrap = parent.createDiv({ cls: 'trisent-field' });
-    wrap.createEl('label', { cls: 'trisent-field-label', text: label });
-    if (hint) wrap.createDiv({ cls: 'trisent-field-hint', text: hint });
-    return wrap;
+  /* Beschriftung, Hinweis, Feld - untereinander, volle Breite. */
+  field(parent, label, kind, hint) {
+    const wrap = parent.createDiv({ cls: 'trisent-newtext-field' });
+    wrap.createEl('label', { text: label });
+    if (hint) wrap.createDiv({ cls: 'trisent-newtext-hint', text: hint });
+    return wrap.createEl(kind, kind === 'input' ? { type: 'text' } : {});
   }
 
   async submit(button) {

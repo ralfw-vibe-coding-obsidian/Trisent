@@ -95,82 +95,81 @@
 
 /* Der Dialog für einen neuen Text.
 
-   Zwei Dinge, die hier leicht schiefgehen: Ein Feld mit width:100% wird
-   um seinen eigenen Rahmen zu breit und stößt über den Fensterrand - und
-   bei einem langen Text rutschen die Knöpfe nach unten aus dem Bild.
-   Deshalb border-box für alle Felder, und die Knöpfe stehen außerhalb
-   des rollenden Bereichs. */
+   Eigenständig gehalten: Die Lese-Ansicht bringt ein Seitengerüst mit -
+   feste Leiste, eigener Rollbereich, begrenzte Spaltenbreite. In einem
+   Dialog richtet das nur Schaden an. */
 
 .trisent-modal {
-  width: min(44rem, 92vw);
+  width: min(40rem, 92vw);
 }
 
-.trisent-modal .modal-content {
-  display: flex;
-  flex-direction: column;
-  max-height: min(42rem, 80vh);
+.trisent-newtext {
+  --accent: #0E7C6B;
 }
 
-.trisent-modal-title {
-  margin: 0 0 1.2rem;
-  font-size: 1.3rem;
-  letter-spacing: -0.01em;
+.theme-dark .trisent-newtext {
+  --accent: #3FBEA4;
 }
 
-.trisent-form {
-  flex: 1;
-  overflow-y: auto;
-  padding: 2px;
-  margin: -2px;
+.trisent-newtext h2 {
+  margin: 0 0 1.4rem;
+  font-size: 1.25rem;
 }
 
-.trisent-field {
-  margin-bottom: 1.3rem;
+.trisent-newtext-field {
+  margin-bottom: 1.15rem;
 }
 
-.trisent-field-label {
+.trisent-newtext label {
   display: block;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.15rem;
 }
 
-.trisent-field-hint {
+.trisent-newtext-hint {
   font-size: 0.82rem;
-  color: var(--text-faint);
-  margin-bottom: 0.45rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
 }
 
-.trisent-field-input {
+.trisent-newtext input,
+.trisent-newtext select,
+.trisent-newtext textarea {
   box-sizing: border-box;
+  display: block;
   width: 100%;
-  padding: 0.55rem 0.7rem;
+  height: auto;
+  padding: 0.5rem 0.7rem;
+  font-family: inherit;
   font-size: 0.95rem;
+  line-height: 1.5;
   color: var(--text-normal);
   background: var(--background-primary);
   border: 1px solid var(--background-modifier-border);
-  border-radius: 7px;
+  border-radius: 6px;
   box-shadow: none;
-  transition: border-color 120ms ease;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
 }
 
-.trisent-field-input:hover {
+.trisent-newtext input:hover,
+.trisent-newtext select:hover,
+.trisent-newtext textarea:hover {
   border-color: var(--background-modifier-border-hover);
 }
 
-.trisent-field-input:focus,
-.trisent-field-input:focus-visible {
+.trisent-newtext input:focus,
+.trisent-newtext select:focus,
+.trisent-newtext textarea:focus {
   outline: none;
-  border-color: var(--tri-accent, var(--interactive-accent));
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--tri-accent, var(--interactive-accent)) 22%, transparent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
-/* Die Sprachwahl soll aussehen wie die anderen Felder, nicht wie ein
-   grauer Knopf. Der Pfeil wird deshalb selbst gezeichnet. */
-.trisent-select {
+/* Der graue Knopf, den Obsidian aus einem select macht, passt nicht zu
+   den anderen Feldern. Also heller Grund und ein selbst gezeichneter
+   Pfeil. */
+.trisent-newtext select {
   appearance: none;
   -webkit-appearance: none;
   padding-right: 2.2rem;
@@ -182,17 +181,15 @@
   cursor: pointer;
 }
 
-.trisent-pack-input {
+.trisent-newtext textarea {
   min-height: 11rem;
-  font-family: var(--font-text);
   line-height: 1.6;
   resize: vertical;
 }
 
-.trisent-pack-actions.is-right {
+.trisent-newtext-actions {
+  display: flex;
   justify-content: flex-end;
-  gap: 0.6rem;
-  margin-top: 1.2rem;
-  padding-top: 1.1rem;
-  border-top: 1px solid var(--background-modifier-border);
+  gap: 0.55rem;
+  margin-top: 1.5rem;
 }
