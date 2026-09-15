@@ -92,3 +92,22 @@
   color: var(--text-error);
   font-size: 0.9rem;
 }
+
+/* Der Dialog für einen neuen Text. Das Feld darf ruhig groß sein - es
+   nimmt ganze Geschichten auf. */
+.trisent-pack-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.trisent-pack-input {
+  width: 100%;
+  min-height: 14rem;
+  margin: 0.4rem 0 1rem;
+  font-family: var(--font-text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  resize: vertical;
+}

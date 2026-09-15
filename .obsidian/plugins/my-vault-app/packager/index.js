@@ -16,10 +16,10 @@
  * Was hier nicht durchkommt, käme beim Empfänger auch nicht durch.
  */
 
-const { ItemView, Notice, Platform, Setting, TFile, TFolder, normalizePath } = require('obsidian');
+const { ItemView, Modal, Notice, Platform, Setting, TFile, TFolder, normalizePath } = require('obsidian');
 const { parseWork, parseWordNote, splitNote, buildPackage } = require('./build.js');
 const { keyFor } = require('../core/package.js');
-const { sanitizeFileName, yamlValue } = require('../core/library.js');
+const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
 
 const VIEW_TYPE = 'trisent-packager-view';
@@ -38,6 +38,52 @@ const RULES_FILE = 'rules.md';
    drüben schaut er nicht hinein. */
 const DEFAULTS = { enabled: true, sent: {}, claudePath: 'claude' };
 
+/* Hausregeln für eine Sprache, die es noch nicht gab.
+
+   Bewusst unvollständig: Was hier steht, gilt für jede Sprache. Alles
+   Sprachtypische - wie Verschmelzungen, Elisionen und Eigennamen
+   behandelt werden - entscheidet sich am ersten Text, und dann gehört
+   es hier hinein. Ohne diese Datei entscheidet jeder Lauf neu, und der
+   Lernstand zerfällt still in zwei Hälften. */
+function starterRules(code) {
+  return [
+    '---',
+    'type: packager-rules',
+    'language: ' + code,
+    '---',
+    '',
+    '# Hausregeln ' + code.toUpperCase(),
+    '',
+    'Entscheidungen, die für **alle** Texte dieser Sprache gelten. Sie halten',
+    'die Wissensschlüssel zusammen: Nur wenn dieselbe Wortform immer dieselbe',
+    'Grundform und Wortart bekommt, gilt ein einmal gelerntes Wort auch im',
+    'nächsten Text.',
+    '',
+    'Diese Liste wächst. Was beim Aufbereiten entschieden werden musste und',
+    'hier noch nicht steht, gehört hierher - sonst wird es beim nächsten Text',
+    'neu und vielleicht anders entschieden.',
+    '',
+    '## Grundformen',
+    '',
+    '1. Verben tragen die Grundform, nicht die gebeugte Form.',
+    '2. Eigennamen: Grundform wie geschrieben, Glosse ist der Name selbst.',
+    '3. Mehrzahl teilt den Schlüssel mit der Einzahl; die Glosse zeigt sie.',
+    '',
+    '## Die Glosse',
+    '',
+    '4. Artikel und Begleiter folgen dem Geschlecht der **Fremdsprache**,',
+    '   nicht dem deutschen. Das ist Absicht - die Ebene zeigt den Bau.',
+    '5. Fehlt ein deutsches Einzelwort, wird gekoppelt: nie zwei Wörter mit',
+    '   Leerzeichen.',
+    '',
+    '## Wendungen',
+    '',
+    '6. Aufgenommen werden Höflichkeitsformeln, grammatische Fügungen und',
+    '   feste Begriffe - nicht gewöhnliche Wortfolgen. Im Zweifel weglassen.',
+    ''
+  ].join('\n');
+}
+
 /* Aus einem Ordnernamen eine Kennung machen: klein, ohne Sonderzeichen. */
 function slug(name) {
   return String(name)
@@ -55,6 +101,89 @@ function paragraphsOf(text) {
     .split(/\r?\n\s*\r?\n/)
     .map((piece) => piece.trim())
     .filter((piece) => piece !== '');
+}
+
+/* ------------------------------------------------------------------ */
+/* Ein neuer Text                                                      */
+/* ------------------------------------------------------------------ */
+
+/* Titel, Sprache, Text einsetzen - und los. Der Text wird eingefügt und
+   nicht abgetippt; damit kommen typografische Apostrophe und geschützte
+   Leerzeichen unversehrt an, und genau darauf beruht später jede
+   Wortposition. */
+class NewTextModal extends Modal {
+  constructor(app, packager, onReady) {
+    super(app);
+    this.packager = packager;
+    this.onReady = onReady;
+    this.title = '';
+    this.code = '';
+    this.body = '';
+  }
+
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.addClass('trisent-view');
+    contentEl.createEl('h2', { text: 'New text' });
+
+    new Setting(contentEl)
+      .setName('Title')
+      .setDesc('In the foreign language, the way you want to see it in your library.')
+      .addText((text) =>
+        text.setPlaceholder('Un dimanche à Paris').onChange((value) => { this.title = value.trim(); })
+      );
+
+    const languages = this.packager.languageChoices();
+    this.code = languages.length > 0 ? languages[0].code : '';
+
+    new Setting(contentEl)
+      .setName('Language')
+      .addDropdown((drop) => {
+        for (const language of languages) drop.addOption(language.code, language.label);
+        drop.setValue(this.code);
+        drop.onChange((value) => { this.code = value; });
+      });
+
+    contentEl.createEl('p', {
+      cls: 'trisent-pack-detail',
+      text: 'Paste the text below. Keep the paragraphs - a blank line between them.'
+    });
+
+    const area = contentEl.createEl('textarea', { cls: 'trisent-pack-input' });
+    area.rows = 14;
+    area.addEventListener('input', () => { this.body = area.value; });
+
+    const actions = contentEl.createDiv({ cls: 'trisent-pack-actions' });
+    const start = actions.createEl('button', { cls: 'mod-cta', text: 'Add and make package' });
+    start.addEventListener('click', () => this.submit(start));
+    actions.createEl('button', { text: 'Cancel' })
+      .addEventListener('click', () => this.close());
+
+    window.setTimeout(() => area.focus(), 0);
+  }
+
+  async submit(button) {
+    if (!this.title) { new Notice('The text needs a title.', 5000); return; }
+    if (!this.body.trim()) { new Notice('There is no text yet.', 5000); return; }
+    if (!this.code) { new Notice('Pick a language.', 5000); return; }
+
+    button.disabled = true;
+    button.setText('Adding…');
+    try {
+      const folder = await this.packager.addText(this.code, this.title, this.body);
+      this.close();
+      this.onReady(folder.path);
+    } catch (error) {
+      console.error('Trisent packager', error);
+      button.disabled = false;
+      button.setText('Add and make package');
+      new Notice(String(error.message || error), 10000);
+    }
+  }
+
+  onClose() {
+    this.contentEl.empty();
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -105,7 +234,10 @@ class PackagerView extends ItemView {
   }
 
   renderBody(page) {
-    page.createEl('h1', { text: 'Packager' });
+    const head = page.createDiv({ cls: 'trisent-pack-head' });
+    head.createEl('h1', { text: 'Packager' });
+    const add = head.createEl('button', { cls: 'mod-cta', text: 'New text' });
+    add.addEventListener('click', () => this.newText());
 
     const languages = this.model;
     if (languages.length === 0) {
@@ -199,12 +331,27 @@ class PackagerView extends ItemView {
     }
   }
 
+  /* Neuer Text: Dialog auf, und wenn er zu ist, läuft es gleich weiter -
+     danach hat die Person ja nichts mehr zu entscheiden. */
+  newText() {
+    new NewTextModal(this.app, this.packager, async (path) => {
+      await this.refresh();
+      const text = this.model
+        .reduce((all, language) => all.concat(language.texts), [])
+        .find((entry) => entry.folder.path === path);
+      if (text) await this.make(text, null);
+    }).open();
+  }
+
   /* Ein langer Text braucht einige Minuten. Solange muss auf dem Knopf
      stehen, woran gerade gearbeitet wird - sonst sitzt die Person vor
      einer Ansicht, die nichts tut. */
   async make(text, button) {
-    button.disabled = true;
-    const step = (what) => button.setText(what);
+    if (button) button.disabled = true;
+    const step = (what) => {
+      if (button) button.setText(what);
+      else this.progress(text, what);
+    };
 
     try {
       this.reports.set(text.folder.path, await this.packager.makePackage(text, step));
@@ -216,6 +363,13 @@ class PackagerView extends ItemView {
       });
     }
     await this.refresh();
+  }
+
+  /* Ohne Knopf - etwa direkt nach dem Dialog - steht der Stand im
+     Bericht des Textes. */
+  progress(text, what) {
+    this.reports.set(text.folder.path, { kind: 'ok', headline: what, detail: '' });
+    this.render();
   }
 
   async send(text) {
@@ -352,6 +506,83 @@ class Packager {
 
   sentVersion(folderPath) {
     return (this.settings.sent || {})[folderPath] || 0;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Einen Text aufnehmen                                              */
+  /* ---------------------------------------------------------------- */
+
+  /* Sprachen zur Auswahl: was in der Werkstatt schon liegt, davor - der
+     Rest als Angebot, damit auch in einer leeren Vault angefangen werden
+     kann. */
+  languageChoices() {
+    const here = new Set();
+    const root = this.folder(this.rootPath);
+    if (root) {
+      for (const child of root.children) {
+        if (child instanceof TFolder && /^[a-z]{2,3}$/i.test(child.name)) {
+          here.add(child.name.toLowerCase());
+        }
+      }
+    }
+
+    const known = new Map(KNOWN_LANGUAGES.map((entry) => [entry.code, entry]));
+    const choices = [];
+    for (const code of Array.from(here).sort()) {
+      const entry = known.get(code);
+      choices.push({ code: code, label: entry ? entry.flag + ' ' + entry.name : code.toUpperCase() });
+    }
+    for (const entry of KNOWN_LANGUAGES) {
+      if (here.has(entry.code)) continue;
+      choices.push({ code: entry.code, label: entry.flag + ' ' + entry.name + ' (new)' });
+    }
+    return choices;
+  }
+
+  /* Legt Sprachordner, Wortvorrat, Hausregeln und den Textordner an und
+     schreibt den Text unverändert hinein. */
+  async addText(code, title, body) {
+    const upper = code.toUpperCase();
+    await this.ensureFolder(this.rootPath);
+    await this.ensureFolder(this.rootPath + '/' + upper);
+    await this.ensureWordsFolder(upper);
+
+    if (!this.file(this.rootPath + '/' + upper + '/' + RULES_FILE)) {
+      await this.app.vault.create(
+        normalizePath(this.rootPath + '/' + upper + '/' + RULES_FILE),
+        starterRules(code)
+      );
+    }
+
+    const base = sanitizeFileName(title);
+    let path = this.rootPath + '/' + upper + '/' + base;
+    for (let n = 2; this.app.vault.getAbstractFileByPath(normalizePath(path)); n++) {
+      path = this.rootPath + '/' + upper + '/' + base + ' ' + n;
+    }
+    const folder = await this.ensureFolder(path);
+
+    /* Genau das, was eingefügt wurde - nur die Zeilenenden vereinheitlicht
+       und der Rand beschnitten. Sonst bleibt jedes Zeichen, wie es ist. */
+    const clean = String(body).replace(/\r\n?/g, '\n').trim() + '\n';
+    await this.app.vault.create(normalizePath(folder.path + '/' + TEXT_FILE), clean);
+
+    return folder;
+  }
+
+  async ensureFolder(path) {
+    const clean = normalizePath(path);
+    const existing = this.folder(clean);
+    if (existing) return existing;
+
+    const parts = clean.split('/');
+    let current = '';
+    for (const part of parts) {
+      current = current ? current + '/' + part : part;
+      if (!this.app.vault.getAbstractFileByPath(current)) {
+        await this.app.vault.createFolder(current);
+      }
+    }
+    return this.folder(clean);
   }
 
   /* ---------------------------------------------------------------- */
@@ -531,12 +762,7 @@ class Packager {
   }
 
   async ensureWordsFolder(code) {
-    const path = this.rootPath + '/' + code + '/' + WORDS_DIR;
-    const existing = this.folder(path);
-    if (existing) return existing;
-
-    await this.app.vault.createFolder(normalizePath(path));
-    return this.folder(path);
+    return this.ensureFolder(this.rootPath + '/' + code + '/' + WORDS_DIR);
   }
 
   /* Die Antwort durch denselben Rechner schicken, der später das Paket
