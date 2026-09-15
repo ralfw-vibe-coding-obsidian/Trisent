@@ -93,8 +93,37 @@
   font-size: 0.9rem;
 }
 
-/* Der Dialog für einen neuen Text. Das Feld darf ruhig groß sein - es
-   nimmt ganze Geschichten auf. */
+/* Der Dialog für einen neuen Text. Breit genug, dass man den Titel beim
+   Tippen lesen kann, und das Textfeld nimmt ganze Geschichten auf. */
+.trisent-modal {
+  width: min(44rem, 92vw);
+}
+
+.trisent-field {
+  margin-bottom: 1.1rem;
+}
+
+.trisent-field-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
+}
+
+.trisent-field-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.trisent-field-input {
+  width: 100%;
+}
+
+.trisent-pack-actions.is-right {
+  justify-content: flex-end;
+  margin-top: 1.4rem;
+}
+
 .trisent-pack-head {
   display: flex;
   align-items: baseline;
@@ -103,7 +132,6 @@
 }
 
 .trisent-pack-input {
-  width: 100%;
   min-height: 14rem;
   margin: 0.4rem 0 1rem;
   font-family: var(--font-text);

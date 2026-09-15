@@ -124,42 +124,46 @@ class NewTextModal extends Modal {
   onOpen() {
     const { contentEl } = this;
     contentEl.addClass('trisent-view');
+    this.modalEl.addClass('trisent-modal');
     contentEl.createEl('h2', { text: 'New text' });
 
-    new Setting(contentEl)
-      .setName('Title')
-      .setDesc('In the foreign language, the way you want to see it in your library.')
-      .addText((text) =>
-        text.setPlaceholder('Un dimanche à Paris').onChange((value) => { this.title = value.trim(); })
-      );
+    /* Beschriftung über dem Feld, Feld über die volle Breite. Obsidians
+       Einstellungszeilen drängen alles nach rechts - für einen Titel,
+       den man liest, während man ihn tippt, ist das zu eng. */
+    const title = this.field(contentEl, 'Title',
+      'In the foreign language, the way you want to see it in your library.');
+    const titleInput = title.createEl('input', { cls: 'trisent-field-input', type: 'text' });
+    titleInput.placeholder = 'Un dimanche à Paris';
+    titleInput.addEventListener('input', () => { this.title = titleInput.value.trim(); });
 
-    const languages = this.packager.languageChoices();
-    this.code = languages.length > 0 ? languages[0].code : '';
+    const language = this.field(contentEl, 'Language', '');
+    const select = language.createEl('select', { cls: 'dropdown trisent-field-input' });
+    for (const choice of this.packager.languageChoices()) {
+      select.createEl('option', { value: choice.code, text: choice.label });
+    }
+    this.code = select.value || '';
+    select.addEventListener('change', () => { this.code = select.value; });
 
-    new Setting(contentEl)
-      .setName('Language')
-      .addDropdown((drop) => {
-        for (const language of languages) drop.addOption(language.code, language.label);
-        drop.setValue(this.code);
-        drop.onChange((value) => { this.code = value; });
-      });
-
-    contentEl.createEl('p', {
-      cls: 'trisent-pack-detail',
-      text: 'Paste the text below. Keep the paragraphs - a blank line between them.'
-    });
-
-    const area = contentEl.createEl('textarea', { cls: 'trisent-pack-input' });
+    const text = this.field(contentEl, 'Text',
+      'Paste it in - a blank line between paragraphs.');
+    const area = text.createEl('textarea', { cls: 'trisent-field-input trisent-pack-input' });
     area.rows = 14;
     area.addEventListener('input', () => { this.body = area.value; });
 
-    const actions = contentEl.createDiv({ cls: 'trisent-pack-actions' });
-    const start = actions.createEl('button', { cls: 'mod-cta', text: 'Add and make package' });
-    start.addEventListener('click', () => this.submit(start));
+    const actions = contentEl.createDiv({ cls: 'trisent-pack-actions is-right' });
     actions.createEl('button', { text: 'Cancel' })
       .addEventListener('click', () => this.close());
+    const start = actions.createEl('button', { cls: 'mod-cta', text: 'Add and make package' });
+    start.addEventListener('click', () => this.submit(start));
 
-    window.setTimeout(() => area.focus(), 0);
+    window.setTimeout(() => titleInput.focus(), 0);
+  }
+
+  field(parent, label, hint) {
+    const wrap = parent.createDiv({ cls: 'trisent-field' });
+    wrap.createEl('label', { cls: 'trisent-field-label', text: label });
+    if (hint) wrap.createDiv({ cls: 'trisent-field-hint', text: hint });
+    return wrap;
   }
 
   async submit(button) {
