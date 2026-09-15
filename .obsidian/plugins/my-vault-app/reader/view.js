@@ -476,7 +476,7 @@ class TrisentView extends ItemView {
       event.preventDefault();
       this.scrollEl.removeClass('is-dropping');
       const files = event.dataTransfer && event.dataTransfer.files;
-      if (files && files.length > 0) this.importFiles(Array.from(files));
+      if (files && files.length > 0) this.importArchives(Array.from(files));
     });
   }
 
@@ -487,12 +487,12 @@ class TrisentView extends ItemView {
     input.multiple = true;
     input.addEventListener('change', () => {
       const files = Array.from(input.files || []);
-      if (files.length > 0) this.importFiles(files);
+      if (files.length > 0) this.importArchives(files);
     });
     input.click();
   }
 
-  async importFiles(files) {
+  async importArchives(files) {
     this.importReport = { busy: true, done: [], failed: [] };
     this.render();
 
@@ -523,6 +523,27 @@ class TrisentView extends ItemView {
     this.render();
   }
 
+  /* Was der Import getan hat, in einem Satz. */
+  importLine(result) {
+    const what = '"' + result.title + '" in ' + result.language.name;
+
+    if (!result.updated) {
+      return 'Added ' + what +
+        (result.addedLanguage ? ' — which was added to your library' : '');
+    }
+
+    const from = result.previousVersion;
+    const to = result.version;
+    if (typeof from === 'number' && typeof to === 'number' && to <= from) {
+      return 'Replaced ' + what + ' — you had version ' + from +
+        ', this one is version ' + to + '.';
+    }
+    if (typeof from === 'number' && typeof to === 'number') {
+      return 'Updated ' + what + ' from version ' + from + ' to ' + to + '.';
+    }
+    return 'Updated ' + what + '.';
+  }
+
   renderImportReport(page) {
     const report = this.importReport;
     const box = page.createDiv({ cls: 'trisent-report' });
@@ -533,14 +554,19 @@ class TrisentView extends ItemView {
     }
 
     for (const result of report.done) {
-      const line = box.createDiv({ cls: 'trisent-report-line is-good' });
-      setIcon(line.createSpan({ cls: 'trisent-report-icon' }), 'check');
-      line.createSpan({
-        text:
-          (result.updated ? 'Updated ' : 'Added ') + '"' + result.title + '"' +
-          ' in ' + result.language.name +
-          (result.addedLanguage ? ' — which was added to your library' : '')
+      /* Ein Paket, das eine neuere Fassung ersetzt, ist einen Hinweis wert -
+         verbieten wollen wir es nicht, entschieden hat es ja die Person. */
+      const backwards =
+        result.updated &&
+        typeof result.version === 'number' &&
+        typeof result.previousVersion === 'number' &&
+        result.version <= result.previousVersion;
+
+      const line = box.createDiv({
+        cls: 'trisent-report-line ' + (backwards ? 'is-warn' : 'is-good')
       });
+      setIcon(line.createSpan({ cls: 'trisent-report-icon' }), backwards ? 'alert-triangle' : 'check');
+      line.createSpan({ text: this.importLine(result) });
     }
 
     for (const failure of report.failed) {

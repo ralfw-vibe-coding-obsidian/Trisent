@@ -343,6 +343,10 @@
 }
 
 .trisent-report-line.is-good .trisent-report-icon { color: var(--tri-accent); }
+.trisent-report-line.is-warn .trisent-report-icon {
+  color: var(--tri-learning);
+}
+
 .trisent-report-line.is-bad { color: var(--text-error, var(--text-normal)); }
 
 .trisent-report-fail + .trisent-report-fail { margin-top: 0.8rem; }

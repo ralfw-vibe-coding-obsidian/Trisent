@@ -43,7 +43,21 @@ function validatePackage(data, fileNames) {
   const paragraphIds = new Set();
   const sentenceIds = new Set();
   const usedKeys = new Set();
-  const keyByLexeme = new Map();
+
+  /* Der Schlüssel darf keine freie Angabe sein, sondern muss aus Grundform
+     und Wortart FOLGEN. Sonst können zwei Pakete unbemerkt auseinander-
+     laufen, und der Lernstand der Person zerfällt in zwei Hälften.
+
+     So wandert der Fehler dorthin, wo man ihn sehen kann: auf die Wahl der
+     Grundform. Ein Bedeutungszusatz (bg:ключ:NOUN:spring) ist erlaubt -
+     geprüft wird der Teil davor. */
+  const checkKey = (where, key, lemma, partOfSpeech) => {
+    if (!lemma || !partOfSpeech) return;
+    const expected = keyFor(data.language, lemma, partOfSpeech);
+    if (key === expected || String(key).startsWith(expected + ':')) return;
+    say(where + ': the key "' + key + '" does not follow from lemma "' + lemma +
+        '" and part of speech "' + partOfSpeech + '". Expected "' + expected + '".');
+  };
 
   for (const paragraph of data.paragraphs) {
     if (!paragraph.id) say('A paragraph has no id.');
@@ -79,13 +93,14 @@ function validatePackage(data, fileNames) {
         for (const field of ['gloss', 'lemma', 'partOfSpeech', 'key']) {
           if (!unit[field]) say(at + ', word ' + (i + 1) + ' ("' + unit.surface + '"): "' + field + '" is missing.');
         }
+        if (unit.partOfSpeech && !POS_TAGS.includes(unit.partOfSpeech)) {
+          say(at + ', word ' + (i + 1) + ' ("' + unit.surface + '"): "' + unit.partOfSpeech +
+              '" is not one of the allowed parts of speech.');
+        }
         if (unit.key) {
           usedKeys.add(unit.key);
-          const lexeme = String(unit.lemma).toLowerCase() + '|' + unit.partOfSpeech;
-          const known = keyByLexeme.get(lexeme);
-          if (known && known !== unit.key) {
-            say('"' + unit.lemma + '" (' + unit.partOfSpeech + ') uses two different keys: "' + known + '" and "' + unit.key + '".');
-          } else keyByLexeme.set(lexeme, unit.key);
+          checkKey(at + ', word ' + (i + 1) + ' ("' + unit.surface + '")',
+                   unit.key, unit.lemma, unit.partOfSpeech);
         }
       }
 
@@ -105,7 +120,10 @@ function validatePackage(data, fileNames) {
         for (const field of ['gloss', 'lemma', 'key']) {
           if (!phrase[field]) say(at + ', phrase ' + label + ': "' + field + '" is missing.');
         }
-        if (phrase.key) usedKeys.add(phrase.key);
+        if (phrase.key) {
+          usedKeys.add(phrase.key);
+          checkKey(at + ', phrase ' + label, phrase.key, phrase.lemma, 'PHRASE');
+        }
       }
 
       if (sentence.audio && sentence.audio.file && !fileNames.has(sentence.audio.file)) {
@@ -139,19 +157,51 @@ function readablePos(tag) {
   return POS_LABELS[tag] || String(tag).toLowerCase();
 }
 
+/* Die vierzehn erlaubten Wortarten. Ein Tippfehler im Tag erzeugt sonst
+   still einen zweiten Schlüssel für dasselbe Wort. */
+const POS_TAGS = [
+  'NOUN', 'PROPN', 'VERB', 'AUX', 'ADJ', 'ADV', 'PRON',
+  'DET', 'ADP', 'NUM', 'CCONJ', 'SCONJ', 'PART', 'INTJ'
+];
+
+/* Was in einen Schlüssel eingeht, wird vorher vereinheitlicht.
+
+   Zwei Fälle, die sonst unbemerkt zwei Karteikarten für dasselbe Wort
+   erzeugen:
+
+   - "é" kann ein Zeichen sein oder zwei (e + Akzent). Beides sieht gleich
+     aus, ist als Zeichenkette aber verschieden.
+   - Der Apostroph kommt gerade (') und typografisch (’) vor. Derselbe
+     Text aus zwei Quellen schreibt "s'il" und "s’il". */
+function normalizeForKey(text) {
+  return String(text)
+    .normalize('NFC')
+    .replace(/[\u2019\u2018\u02BC]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
 /* Der paketübergreifende Wissensschlüssel. Diese eine Funktion hält alle
    Pakete zusammen: Gleiche Grundform und Wortart ergeben denselben
    Schlüssel - und damit denselben Lernstand, über alle Texte hinweg.
-   Bildet der Packager ihn anders als der Reader ihn erwartet, zerfällt
-   der Lernstand unbemerkt in zwei Hälften. */
+
+   Benutze sie, statt den Schlüssel selbst zusammenzusetzen. Zwei Pakete,
+   die ihn unterschiedlich bilden, zerlegen den Lernstand der Person in
+   zwei Hälften, und niemand merkt es - es sieht nur so aus, als käme sie
+   langsamer voran, als sie es tut. */
 function keyFor(language, lemma, partOfSpeech, sense) {
-  const base = String(language).toLowerCase() + ':' +
-               String(lemma).toLowerCase() + ':' + partOfSpeech;
-  return sense ? base + ':' + sense : base;
+  const base =
+    normalizeForKey(language) + ':' +
+    normalizeForKey(lemma) + ':' +
+    String(partOfSpeech).trim().toUpperCase();
+  return sense ? base + ':' + normalizeForKey(sense) : base;
 }
 
 module.exports = {
   PACKAGE_FILE,
+  POS_TAGS,
+  normalizeForKey,
   WORD_STATUS,
   FLUENT_STATUS,
   POS_LABELS,

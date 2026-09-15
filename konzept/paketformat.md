@@ -24,6 +24,14 @@ Die beiden Bereiche sind getrennt. **Ein Paket gelangt nur über den Import in
 den Bereich des Readers** – und damit nur, wenn es die Prüfregeln am Ende
 dieses Dokuments besteht. Auch ein Paket vom Packager nimmt diesen Weg.
 
+Technisch gibt es dafür zwei Türen und einen Weg dahinter:
+
+- `Library.importZip(bytes, label)` – eine ZIP-Datei von außen, wird entpackt
+  und dann weitergereicht an
+- `Library.importFiles(contents, label)` – `contents` ist eine Map von Pfad
+  (relativ zum Paketordner) auf Bytes. Hier prüft, ordnet und schreibt der
+  Import. Der Packager benutzt diese Tür direkt, ohne Umweg über ein Archiv.
+
 Ein Ordner **ist** ein Lernpaket, genau dann wenn eine `package.json` direkt
 darin liegt. Ein Paket enthält keine weiteren Pakete. Der Ordnername ist frei
 wählbar; angezeigt wird immer `title` aus der Paketdatei.
@@ -116,7 +124,7 @@ keine Einheit – dafür sind die Zeichenpositionen da.
 | `gloss` | ja | Möglichst flache deutsche Wort-für-Wort-Entsprechung (G-Ebene). |
 | `lemma` | ja | Grundform in der Fremdsprache. Bei Eigennamen gleich `surface`. |
 | `partOfSpeech` | ja | Ein Tag aus der Liste unten. |
-| `key` | ja | Paketübergreifender Wissensschlüssel, siehe unten. |
+| `key` | ja | Paketübergreifender Wissensschlüssel, siehe unten. **Muss aus `lemma` und `partOfSpeech` folgen** – `keyFor()` in `core/package.js` bildet ihn. |
 
 Einheiten stehen in Lesereihenfolge und dürfen sich nicht überlappen.
 
@@ -132,6 +140,21 @@ Einheiten stehen in Lesereihenfolge und dürfen sich nicht überlappen.
 ```
 
 Kleingeschrieben bis auf den Wortart-Tag. Beispiel: `bg:куче:NOUN`.
+
+**Bilde ihn nie selbst, sondern mit `keyFor()` aus `core/package.js`.** Die
+Funktion vereinheitlicht vorher, was sonst unbemerkt zwei Karteikarten für
+dasselbe Wort erzeugt:
+
+- **Unicode-Form.** `é` kann ein Zeichen sein oder zwei (e + Akzent). Beides
+  sieht gleich aus, ist als Zeichenkette aber verschieden.
+- **Apostrophe.** Der gerade (`'`) und der typografische (`’`) kommen beide in
+  echten Texten vor. `s'il` und `s’il` müssen denselben Schlüssel ergeben.
+- Mehrfache und randständige Leerzeichen, Groß- und Kleinschreibung.
+
+Die Prüfung setzt das durch: Sie rechnet den Schlüssel aus `lemma` und
+`partOfSpeech` nach und lehnt das Paket ab, wenn er nicht dazu passt. Der
+Schlüssel ist damit keine freie Angabe, sondern eine **Folge** – zwei Pakete
+können nicht mehr auseinanderlaufen, ohne dass vorher eines durchgefallen ist.
 
 Alle Formen desselben Lexems teilen sich einen Schlüssel – `куче` und `кучето`
 ergeben beide `bg:куче:NOUN`. Daran hängt der Lernstand.
@@ -151,59 +174,6 @@ Wörter gemeint sind, wird ein Bedeutungszusatz angehängt:
 bg:ключ:NOUN:key
 bg:ключ:NOUN:spring
 ```
-
-## Wendungen (phrases)
-
-Eine Wendung ist eine **feste Mehrwortverbindung, deren Bedeutung nicht aus den
-Einzelwörtern folgt**. Sie ist eine eigene Lerneinheit mit eigenem Schlüssel und
-eigenem Lernstand – **zusätzlich** zu den Wörtern darunter, nicht an ihrer
-Stelle. Die Wörter behalten ihre Einheiten und ihre wörtlichen Glossen.
-
-```json
-"phrases": [
-  {
-    "start": 24,
-    "end": 39,
-    "surface": "s'il vous plaît",
-    "gloss": "bitte",
-    "lemma": "s'il vous plaît",
-    "key": "fr:s'il vous plaît:PHRASE"
-  }
-]
-```
-
-| Feld | Pflicht | Bedeutung |
-|---|---|---|
-| `start`, `end` | ja | Wie bei Einheiten. **Muss an Einheitengrenzen liegen**: `start` ist der `start` einer Einheit, `end` der `end` einer späteren Einheit im selben Satz. |
-| `surface` | ja | Muss exakt `source.slice(start, end)` sein. |
-| `gloss` | ja | Die **natürliche** deutsche Bedeutung – hier gilt die Flachheitsregel der G-Ebene ausdrücklich **nicht**. `s'il vous plaît` → `bitte`, nicht `wenn es Ihnen gefallen`. |
-| `lemma` | ja | Grundform der Wendung, meist gleich `surface`. Flektierte Bestandteile werden hier normalisiert, z.B. `il y avait` → `il y a`. |
-| `key` | ja | `<language>:<lemma>:PHRASE`, Grundform klein. |
-
-Eine Wendung umfasst mindestens zwei Einheiten. Wendungen überlappen sich nicht.
-
-Im Reader erscheint die Wendung als Klammer unter den Wortglossen:
-
-```text
-Je voudrais une chambre, s'il vous plaît.
-ich wollen  eine Zimmer   wenn es Ihnen gefallen
-                          └──────  bitte  ──────┘
-```
-
-Wort und Wendung werden getrennt angeklickt und haben getrennte Lernstände.
-
-### Was eine Wendung ist – und was nicht
-
-Aufnehmen, wenn die Verbindung fest ist und als Ganzes gelernt wird:
-
-- Höflichkeitsformeln: `s'il vous plaît`, `bien sûr`, `d'accord`, `de rien`
-- grammatische Fügungen: `il y a`, `est-ce que`, `c'est`, `je voudrais`
-- feste Begriffe: `mot de passe`, `petit déjeuner`, `carte d'identité`
-- bulgarisch: `добър ден`, `как си`, `няма защо`
-
-Nicht aufnehmen: gewöhnliche Wortfolgen, deren Bedeutung sich aus den Teilen
-ergibt (`une chambre double`, `малко момче`). Im Zweifel weglassen – eine zu
-großzügige Wendungsliste macht den Text unruhig und lernt nichts Zusätzliches.
 
 ## Die G-Ebene: wie flach gloss't wird
 
@@ -276,7 +246,9 @@ Optional. Fehlt es, blendet die App die Abspielknöpfe einfach aus.
 4. Jeder Satz hat `fluent`.
 5. Absatz- und Satz-IDs sind eindeutig.
 6. Jeder `key` aus den Einheiten und den Wendungen hat einen Eintrag in `dictionary`.
-7. Gleiche Grundform und Wortart ergeben immer denselben `key`.
+7. Jeder `key` folgt aus `lemma` und `partOfSpeech` – geprüft gegen `keyFor()`.
+   Ein Bedeutungszusatz ist erlaubt; geprüft wird der Teil davor.
+   Jede `partOfSpeech` ist einer der vierzehn erlaubten Tags.
 8. `source.slice(start, end) === surface` für jede Wendung; ihre Grenzen liegen
    auf Einheitengrenzen; Wendungen überlappen sich nicht und umfassen mindestens
    zwei Einheiten.

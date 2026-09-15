@@ -393,11 +393,8 @@ class Library {
   /* Import                                                            */
   /* ---------------------------------------------------------------- */
 
-  /* Ein Paket aus einer ZIP-Datei in die Vault holen.
-
-     Geprüft wird VOR dem Schreiben. Ein Paket, das durchfällt, hinterlässt
-     keine Spur - lieber gar nicht importiert als halb. */
-  async importZip(arrayBuffer, fileName) {
+  /* Ein Paket aus einer ZIP-Datei in die Vault holen. */
+  async importZip(arrayBuffer, label) {
     const files = await readZip(arrayBuffer);
 
     /* Die Paketdatei kann direkt im Archiv liegen oder in einem Ordner
@@ -412,21 +409,36 @@ class Library {
       }
     }
     if (packagePath === null) {
-      throw new Error('There is no ' + PACKAGE_FILE + ' in "' + fileName + '".');
+      throw new Error('There is no ' + PACKAGE_FILE + ' in "' + label + '".');
     }
 
-    const prefix = packagePath.slice(0, packagePath.length - PACKAGE_FILE.length);
-
     /* Alles aus dem Paketordner, mit Pfaden relativ zu ihm. */
+    const prefix = packagePath.slice(0, packagePath.length - PACKAGE_FILE.length);
     const contents = new Map();
     for (const [name, bytes] of files) {
       if (!name.startsWith(prefix)) continue;
       contents.set(name.slice(prefix.length), bytes);
     }
 
+    return this.importFiles(contents, label);
+  }
+
+  /* Der eigentliche Import: prüfen, einordnen, schreiben.
+
+     Absichtlich getrennt vom Entpacken. So gibt es zwei Türen - eine ZIP
+     von außen und ein fertiges Paket vom Packager - aber nur einen Weg
+     dahinter. Gleiche Prüfung, gleiche Platzierung, gleiches Verhalten.
+     Eine Abkürzung für die eigene Seite würde mit der Zeit vom fremden
+     Weg abweichen, und genau das fiele niemandem auf.
+
+     contents: Map von Pfad (relativ zum Paketordner) auf Bytes. */
+  async importFiles(contents, label) {
+    const source = contents.get(PACKAGE_FILE);
+    if (!source) throw new Error('There is no ' + PACKAGE_FILE + ' in "' + label + '".');
+
     let data;
     try {
-      data = JSON.parse(new TextDecoder('utf-8').decode(contents.get(PACKAGE_FILE)));
+      data = JSON.parse(new TextDecoder('utf-8').decode(source));
     } catch (error) {
       throw new Error('The package file is not valid JSON: ' + String(error.message || error));
     }
@@ -455,7 +467,7 @@ class Library {
 
     /* Dasselbe Paket in neuer Fassung? Dann dorthin, wo es schon liegt. */
     const existing = await this.folderForPackageId(language, data.id);
-    const target = existing || (await this.newPackageFolder(language, data.title));
+    const target = existing ? existing.folder : await this.newPackageFolder(language, data.title);
 
     await this.writePackageFiles(target, contents);
 
@@ -465,14 +477,19 @@ class Library {
       folder: target,
       updated: !!existing,
       addedLanguage: addedLanguage,
-      version: data.version
+      version: data.version,
+      previousVersion: existing ? existing.version : null
     };
   }
 
+  /* Der Ordner, in dem dieses Paket schon liegt - samt seiner bisherigen
+     Fassung, damit der Import sagen kann, was er ersetzt. */
   async folderForPackageId(language, id) {
     for (const folder of this.packagesOf(language)) {
       const entry = await this.loadPackage(folder);
-      if (entry && entry.ok && entry.data.id === id) return folder;
+      if (entry && entry.ok && entry.data.id === id) {
+        return { folder: folder, version: entry.data.version };
+      }
     }
     return null;
   }
