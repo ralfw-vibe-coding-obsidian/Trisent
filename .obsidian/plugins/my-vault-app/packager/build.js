@@ -197,6 +197,12 @@ function buildPackage(work, original, words, version) {
   if (!head.id) say('The work note has no "id" in its front matter.');
   if (!head.title) say('The work note has no "title" in its front matter.');
 
+  /* Dieselbe Wortform, dieselbe Wortart - aber zwei Grundformen, die
+     sich nur in Akzenten, Groß- und Kleinschreibung oder Apostrophen
+     unterscheiden. Das sind keine zwei Wörter, das ist ein Verschreiber,
+     und er kostet den Lernstand. Weil die Absätze unabhängig voneinander
+     bearbeitet werden, kann er entstehen; deshalb wird er hier gesucht. */
+  const spellings = new Map();
   const usedKeys = new Set();
   const seenForms = new Map();
   /* Was der Text über einen Schlüssel verrät. Fehlt die Wortnotiz, ist
@@ -241,6 +247,7 @@ function buildPackage(work, original, words, version) {
         if (!unit.lemma || !unit.partOfSpeech) continue;
 
         const key = keyFor(language, unit.lemma, unit.partOfSpeech);
+        rememberSpelling(spellings, unit.surface, unit.partOfSpeech, unit.lemma);
         usedKeys.add(key);
         remember(seenForms, key, unit.surface);
         note(about, key, unit.lemma, unit.partOfSpeech, unit.surface, unit.gloss, source);
@@ -330,6 +337,15 @@ function buildPackage(work, original, words, version) {
     }
   }
 
+  for (const entry of spellings.values()) {
+    if (entry.lemmas.length < 2) continue;
+    say(
+      '"' + entry.surface + '" (' + entry.partOfSpeech + ') was given two spellings of the same base form: ' +
+      entry.lemmas.map((piece) => '"' + piece + '"').join(' and ') +
+      '. They become different keys, and the learning state falls apart between them.'
+    );
+  }
+
   /* Das Wörterbuch entsteht aus dem Wortvorrat - vollständig, auch für
      Wörter, die in jedem Text vorkommen. Ein Paket muss in einer fremden
      Vault funktionieren, in der nichts davon bekannt ist. */
@@ -400,6 +416,28 @@ function note(map, key, lemma, partOfSpeech, surface, gloss, sentence) {
   }
   if (entry.forms.indexOf(surface) < 0) entry.forms.push(surface);
   if (gloss && entry.glosses.indexOf(gloss) < 0) entry.glosses.push(gloss);
+}
+
+/* Zwei Grundformen gelten als dasselbe Wort, wenn sie sich nur in
+   Schreibweise unterscheiden. Echte Gleichschreiber - französisch "suis"
+   von être und von suivre - bleiben unbeanstandet: Da sind die
+   Grundformen wirklich verschieden. */
+function skeleton(text) {
+  return String(text)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/['\u2019\u2018\u02bc\s-]/g, '');
+}
+
+function rememberSpelling(map, surface, partOfSpeech, lemma) {
+  const id = skeleton(surface) + '|' + partOfSpeech + '|' + skeleton(lemma);
+  let entry = map.get(id);
+  if (!entry) {
+    entry = { surface: surface, partOfSpeech: partOfSpeech, lemmas: [] };
+    map.set(id, entry);
+  }
+  if (entry.lemmas.indexOf(lemma) < 0) entry.lemmas.push(lemma);
 }
 
 function remember(map, key, form) {
