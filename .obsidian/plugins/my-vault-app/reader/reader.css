@@ -1080,3 +1080,13 @@
   border-color: var(--tri-accent);
 }
 
+
+/* Das Wort, das gerade klingt. Es überlagert die Lernstands-Markierung,
+   solange es spricht - beides gleichzeitig wäre nicht mehr lesbar. Danach
+   ist die alte Markierung wieder da. */
+.trisent-text .trisent-word.is-spoken {
+  background-color: rgba(14, 124, 107, 0.2);
+  background-color: color-mix(in srgb, var(--tri-accent) 20%, transparent);
+  box-shadow: inset 0 -2px 0 var(--tri-accent);
+  border-radius: 3px;
+}

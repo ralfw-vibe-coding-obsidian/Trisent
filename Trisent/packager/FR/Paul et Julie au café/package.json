@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "fr-paul-et-julie-au-cafe",
-  "version": 4,
+  "version": 5,
   "title": "Paul et Julie au café",
   "language": "fr",
   "glossLanguage": "de",
@@ -87,7 +87,53 @@
               "partOfSpeech": "NOUN",
               "key": "fr:café:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/deeae2336a7130eb.mp3",
+            "durationMs": 2229,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 267
+              },
+              {
+                "unit": 1,
+                "startMs": 337,
+                "endMs": 383
+              },
+              {
+                "unit": 2,
+                "startMs": 430,
+                "endMs": 685
+              },
+              {
+                "unit": 3,
+                "startMs": 731,
+                "endMs": 824
+              },
+              {
+                "unit": 4,
+                "startMs": 871,
+                "endMs": 1265
+              },
+              {
+                "unit": 5,
+                "startMs": 1289,
+                "endMs": 1416
+              },
+              {
+                "unit": 6,
+                "startMs": 1486,
+                "endMs": 1533
+              },
+              {
+                "unit": 7,
+                "startMs": 1567,
+                "endMs": 1950
+              }
+            ]
+          }
         },
         {
           "id": "s002",
@@ -175,7 +221,58 @@
               "partOfSpeech": "NOUN",
               "key": "fr:fête:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/94adae95a66f94b5.mp3",
+            "durationMs": 2461,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 186
+              },
+              {
+                "unit": 1,
+                "startMs": 209,
+                "endMs": 360
+              },
+              {
+                "unit": 2,
+                "startMs": 395,
+                "endMs": 755
+              },
+              {
+                "unit": 3,
+                "startMs": 778,
+                "endMs": 848
+              },
+              {
+                "unit": 4,
+                "startMs": 906,
+                "endMs": 1010
+              },
+              {
+                "unit": 5,
+                "startMs": 1068,
+                "endMs": 1370
+              },
+              {
+                "unit": 6,
+                "startMs": 1428,
+                "endMs": 1649
+              },
+              {
+                "unit": 7,
+                "startMs": 1672,
+                "endMs": 1741
+              },
+              {
+                "unit": 8,
+                "startMs": 1811,
+                "endMs": 2148
+              }
+            ]
+          }
         }
       ]
     },
@@ -223,7 +320,33 @@
               "partOfSpeech": "PROPN",
               "key": "fr:julie:PROPN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/ae5af70a5d7ad533.mp3",
+            "durationMs": 1950,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 337
+              },
+              {
+                "unit": 1,
+                "startMs": 418,
+                "endMs": 592
+              },
+              {
+                "unit": 2,
+                "startMs": 917,
+                "endMs": 1312
+              },
+              {
+                "unit": 3,
+                "startMs": 1347,
+                "endMs": 1637
+              }
+            ]
+          }
         },
         {
           "id": "s004",
@@ -264,10 +387,31 @@
               "end": 13,
               "surface": "Comment ça va",
               "gloss": "wie-geht-es",
-              "lemma": "Comment ça va",
+              "lemma": "comment ça va",
               "key": "fr:comment ça va:PHRASE"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/a3967c479bfae6c7.mp3",
+            "durationMs": 1347,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 453
+              },
+              {
+                "unit": 1,
+                "startMs": 488,
+                "endMs": 592
+              },
+              {
+                "unit": 2,
+                "startMs": 650,
+                "endMs": 778
+              }
+            ]
+          }
         }
       ]
     },
@@ -340,10 +484,46 @@
               "end": 22,
               "surface": "Ça va",
               "gloss": "es-geht",
-              "lemma": "Ça va",
+              "lemma": "ça va",
               "key": "fr:ça va:PHRASE"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/201eddb23eddda37.mp3",
+            "durationMs": 2461,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 348
+              },
+              {
+                "unit": 1,
+                "startMs": 395,
+                "endMs": 766
+              },
+              {
+                "unit": 2,
+                "startMs": 1126,
+                "endMs": 1300
+              },
+              {
+                "unit": 3,
+                "startMs": 1347,
+                "endMs": 1428
+              },
+              {
+                "unit": 4,
+                "startMs": 1498,
+                "endMs": 1672
+              },
+              {
+                "unit": 5,
+                "startMs": 1718,
+                "endMs": 2125
+              }
+            ]
+          }
         },
         {
           "id": "s006",
@@ -368,7 +548,23 @@
               "partOfSpeech": "PRON",
               "key": "fr:toi:PRON"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/c65ae7e8c9358adf.mp3",
+            "durationMs": 1022,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 313
+              },
+              {
+                "unit": 1,
+                "startMs": 360,
+                "endMs": 569
+              }
+            ]
+          }
         }
       ]
     },
@@ -398,7 +594,23 @@
               "partOfSpeech": "ADV",
               "key": "fr:bien:ADV"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/a3da39232936d732.mp3",
+            "durationMs": 1393,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 337,
+                "endMs": 662
+              },
+              {
+                "unit": 1,
+                "startMs": 685,
+                "endMs": 894
+              }
+            ]
+          }
         }
       ]
     },
@@ -464,7 +676,43 @@
               "partOfSpeech": "NOUN",
               "key": "fr:table:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/66836043beea2d4a.mp3",
+            "durationMs": 1672,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 186
+              },
+              {
+                "unit": 1,
+                "startMs": 209,
+                "endMs": 302
+              },
+              {
+                "unit": 2,
+                "startMs": 302,
+                "endMs": 743
+              },
+              {
+                "unit": 3,
+                "startMs": 801,
+                "endMs": 836
+              },
+              {
+                "unit": 4,
+                "startMs": 871,
+                "endMs": 987
+              },
+              {
+                "unit": 5,
+                "startMs": 1022,
+                "endMs": 1347
+              }
+            ]
+          }
         },
         {
           "id": "s009",
@@ -498,7 +746,28 @@
               "partOfSpeech": "VERB",
               "key": "fr:arriver:VERB"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/f0dff6fde92cf2b0.mp3",
+            "durationMs": 1300,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 174
+              },
+              {
+                "unit": 1,
+                "startMs": 232,
+                "endMs": 615
+              },
+              {
+                "unit": 2,
+                "startMs": 685,
+                "endMs": 1033
+              }
+            ]
+          }
         }
       ]
     },
@@ -573,7 +842,48 @@
               "partOfSpeech": "NOUN",
               "key": "fr:croissant:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/24c09d2030d291f7.mp3",
+            "durationMs": 2415,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 337
+              },
+              {
+                "unit": 1,
+                "startMs": 383,
+                "endMs": 801
+              },
+              {
+                "unit": 2,
+                "startMs": 824,
+                "endMs": 882
+              },
+              {
+                "unit": 3,
+                "startMs": 964,
+                "endMs": 1138
+              },
+              {
+                "unit": 4,
+                "startMs": 1312,
+                "endMs": 1474
+              },
+              {
+                "unit": 5,
+                "startMs": 1556,
+                "endMs": 1602
+              },
+              {
+                "unit": 6,
+                "startMs": 1660,
+                "endMs": 2101
+              }
+            ]
+          }
         },
         {
           "id": "s011",
@@ -643,7 +953,48 @@
               "partOfSpeech": "NOUN",
               "key": "fr:sandwich:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/18da38fca4273274.mp3",
+            "durationMs": 2461,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 255
+              },
+              {
+                "unit": 1,
+                "startMs": 337,
+                "endMs": 743
+              },
+              {
+                "unit": 2,
+                "startMs": 766,
+                "endMs": 813
+              },
+              {
+                "unit": 3,
+                "startMs": 859,
+                "endMs": 1242
+              },
+              {
+                "unit": 4,
+                "startMs": 1335,
+                "endMs": 1451
+              },
+              {
+                "unit": 5,
+                "startMs": 1509,
+                "endMs": 1556
+              },
+              {
+                "unit": 6,
+                "startMs": 1614,
+                "endMs": 2101
+              }
+            ]
+          }
         }
       ]
     },
@@ -709,7 +1060,43 @@
               "partOfSpeech": "NOUN",
               "key": "fr:journée:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/d975e02649aa2259.mp3",
+            "durationMs": 1811,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 383
+              },
+              {
+                "unit": 1,
+                "startMs": 430,
+                "endMs": 534
+              },
+              {
+                "unit": 2,
+                "startMs": 557,
+                "endMs": 813
+              },
+              {
+                "unit": 3,
+                "startMs": 848,
+                "endMs": 906
+              },
+              {
+                "unit": 4,
+                "startMs": 975,
+                "endMs": 1103
+              },
+              {
+                "unit": 5,
+                "startMs": 1161,
+                "endMs": 1556
+              }
+            ]
+          }
         }
       ]
     },
@@ -775,7 +1162,43 @@
               "partOfSpeech": "ADV",
               "key": "fr:beaucoup:ADV"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/0d31e6fc6af05d94.mp3",
+            "durationMs": 3111,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 395
+              },
+              {
+                "unit": 1,
+                "startMs": 441,
+                "endMs": 697
+              },
+              {
+                "unit": 2,
+                "startMs": 1068,
+                "endMs": 1660
+              },
+              {
+                "unit": 3,
+                "startMs": 1788,
+                "endMs": 1892
+              },
+              {
+                "unit": 4,
+                "startMs": 1939,
+                "endMs": 2368
+              },
+              {
+                "unit": 5,
+                "startMs": 2392,
+                "endMs": 2740
+              }
+            ]
+          }
         },
         {
           "id": "s014",
@@ -827,7 +1250,38 @@
               "partOfSpeech": "NOUN",
               "key": "fr:heure:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/c47449855669c892.mp3",
+            "durationMs": 1440,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 163
+              },
+              {
+                "unit": 1,
+                "startMs": 221,
+                "endMs": 592
+              },
+              {
+                "unit": 2,
+                "startMs": 627,
+                "endMs": 650
+              },
+              {
+                "unit": 3,
+                "startMs": 708,
+                "endMs": 894
+              },
+              {
+                "unit": 4,
+                "startMs": 929,
+                "endMs": 1126
+              }
+            ]
+          }
         },
         {
           "id": "s015",
@@ -897,7 +1351,48 @@
               "partOfSpeech": "NOUN",
               "key": "fr:collègue:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/3f8afc679c7b9d24.mp3",
+            "durationMs": 2183,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 104
+              },
+              {
+                "unit": 1,
+                "startMs": 197,
+                "endMs": 488
+              },
+              {
+                "unit": 2,
+                "startMs": 546,
+                "endMs": 639
+              },
+              {
+                "unit": 3,
+                "startMs": 720,
+                "endMs": 975
+              },
+              {
+                "unit": 4,
+                "startMs": 998,
+                "endMs": 1196
+              },
+              {
+                "unit": 5,
+                "startMs": 1265,
+                "endMs": 1358
+              },
+              {
+                "unit": 6,
+                "startMs": 1393,
+                "endMs": 1869
+              }
+            ]
+          }
         },
         {
           "id": "s016",
@@ -1048,7 +1543,83 @@
               "lemma": "un peu",
               "key": "fr:un peu:PHRASE"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/8773bd3299207e02.mp3",
+            "durationMs": 3622,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 348
+              },
+              {
+                "unit": 1,
+                "startMs": 372,
+                "endMs": 453
+              },
+              {
+                "unit": 2,
+                "startMs": 488,
+                "endMs": 917
+              },
+              {
+                "unit": 3,
+                "startMs": 998,
+                "endMs": 1103
+              },
+              {
+                "unit": 4,
+                "startMs": 1161,
+                "endMs": 1428
+              },
+              {
+                "unit": 5,
+                "startMs": 1451,
+                "endMs": 1474
+              },
+              {
+                "unit": 6,
+                "startMs": 1509,
+                "endMs": 1579
+              },
+              {
+                "unit": 7,
+                "startMs": 1660,
+                "endMs": 2009
+              },
+              {
+                "unit": 8,
+                "startMs": 2125,
+                "endMs": 2287
+              },
+              {
+                "unit": 9,
+                "startMs": 2334,
+                "endMs": 2403
+              },
+              {
+                "unit": 10,
+                "startMs": 2450,
+                "endMs": 2531
+              },
+              {
+                "unit": 11,
+                "startMs": 2601,
+                "endMs": 3030
+              },
+              {
+                "unit": 12,
+                "startMs": 3053,
+                "endMs": 3111
+              },
+              {
+                "unit": 13,
+                "startMs": 3170,
+                "endMs": 3332
+              }
+            ]
+          }
         }
       ]
     },
@@ -1132,7 +1703,53 @@
               "partOfSpeech": "NOUN",
               "key": "fr:université:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/dd9a56ff62edeb37.mp3",
+            "durationMs": 2554,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 267
+              },
+              {
+                "unit": 1,
+                "startMs": 337,
+                "endMs": 534
+              },
+              {
+                "unit": 2,
+                "startMs": 836,
+                "endMs": 1080
+              },
+              {
+                "unit": 3,
+                "startMs": 1138,
+                "endMs": 1219
+              },
+              {
+                "unit": 4,
+                "startMs": 1277,
+                "endMs": 1393
+              },
+              {
+                "unit": 5,
+                "startMs": 1416,
+                "endMs": 1451
+              },
+              {
+                "unit": 6,
+                "startMs": 1486,
+                "endMs": 1556
+              },
+              {
+                "unit": 7,
+                "startMs": 1556,
+                "endMs": 2264
+              }
+            ]
+          }
         },
         {
           "id": "s018",
@@ -1193,7 +1810,43 @@
               "partOfSpeech": "NOUN",
               "key": "fr:matin:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/175bc7caf911a5e6.mp3",
+            "durationMs": 1393,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 128
+              },
+              {
+                "unit": 1,
+                "startMs": 128,
+                "endMs": 174
+              },
+              {
+                "unit": 2,
+                "startMs": 232,
+                "endMs": 360
+              },
+              {
+                "unit": 3,
+                "startMs": 395,
+                "endMs": 580
+              },
+              {
+                "unit": 4,
+                "startMs": 604,
+                "endMs": 662
+              },
+              {
+                "unit": 5,
+                "startMs": 708,
+                "endMs": 1033
+              }
+            ]
+          }
         },
         {
           "id": "s019",
@@ -1263,7 +1916,48 @@
               "partOfSpeech": "NOUN",
               "key": "fr:ami:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/8c82ea67d3b01fb6.mp3",
+            "durationMs": 1858,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 93
+              },
+              {
+                "unit": 1,
+                "startMs": 186,
+                "endMs": 464
+              },
+              {
+                "unit": 2,
+                "startMs": 522,
+                "endMs": 604
+              },
+              {
+                "unit": 3,
+                "startMs": 673,
+                "endMs": 917
+              },
+              {
+                "unit": 4,
+                "startMs": 940,
+                "endMs": 1126
+              },
+              {
+                "unit": 5,
+                "startMs": 1184,
+                "endMs": 1300
+              },
+              {
+                "unit": 6,
+                "startMs": 1382,
+                "endMs": 1556
+              }
+            ]
+          }
         },
         {
           "id": "s020",
@@ -1351,7 +2045,58 @@
               "partOfSpeech": "NOUN",
               "key": "fr:bibliothèque:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/f67f86116083a1b2.mp3",
+            "durationMs": 3065,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 139
+              },
+              {
+                "unit": 1,
+                "startMs": 139,
+                "endMs": 720
+              },
+              {
+                "unit": 2,
+                "startMs": 789,
+                "endMs": 882
+              },
+              {
+                "unit": 3,
+                "startMs": 940,
+                "endMs": 1080
+              },
+              {
+                "unit": 4,
+                "startMs": 1115,
+                "endMs": 1231
+              },
+              {
+                "unit": 5,
+                "startMs": 1265,
+                "endMs": 1683
+              },
+              {
+                "unit": 6,
+                "startMs": 1741,
+                "endMs": 1800
+              },
+              {
+                "unit": 7,
+                "startMs": 1881,
+                "endMs": 1939
+              },
+              {
+                "unit": 8,
+                "startMs": 1997,
+                "endMs": 2740
+              }
+            ]
+          }
         }
       ]
     },
@@ -1408,7 +2153,38 @@
               "partOfSpeech": "ADJ",
               "key": "fr:fatigué:ADJ"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/47cbc0e7ffa9f5b6.mp3",
+            "durationMs": 2368,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 360
+              },
+              {
+                "unit": 1,
+                "startMs": 383,
+                "endMs": 778
+              },
+              {
+                "unit": 2,
+                "startMs": 1231,
+                "endMs": 1405
+              },
+              {
+                "unit": 3,
+                "startMs": 1474,
+                "endMs": 1533
+              },
+              {
+                "unit": 4,
+                "startMs": 1567,
+                "endMs": 2101
+              }
+            ]
+          }
         }
       ]
     },
@@ -1526,10 +2302,71 @@
               "end": 22,
               "surface": "Un peu",
               "gloss": "ein-bisschen",
-              "lemma": "Un peu",
+              "lemma": "un peu",
               "key": "fr:un peu:PHRASE"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/5484e678d5391fe7.mp3",
+            "durationMs": 3204,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 232
+              },
+              {
+                "unit": 1,
+                "startMs": 302,
+                "endMs": 639
+              },
+              {
+                "unit": 2,
+                "startMs": 1057,
+                "endMs": 1231
+              },
+              {
+                "unit": 3,
+                "startMs": 1289,
+                "endMs": 1486
+              },
+              {
+                "unit": 4,
+                "startMs": 1556,
+                "endMs": 1672
+              },
+              {
+                "unit": 5,
+                "startMs": 1707,
+                "endMs": 1776
+              },
+              {
+                "unit": 6,
+                "startMs": 1823,
+                "endMs": 1950
+              },
+              {
+                "unit": 7,
+                "startMs": 1974,
+                "endMs": 2276
+              },
+              {
+                "unit": 8,
+                "startMs": 2310,
+                "endMs": 2380
+              },
+              {
+                "unit": 9,
+                "startMs": 2438,
+                "endMs": 2519
+              },
+              {
+                "unit": 10,
+                "startMs": 2577,
+                "endMs": 2833
+              }
+            ]
+          }
         }
       ]
     },
@@ -1559,7 +2396,23 @@
               "partOfSpeech": "VERB",
               "key": "fr:sourire:VERB"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/5959a40829cf77be.mp3",
+            "durationMs": 1115,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 372
+              },
+              {
+                "unit": 1,
+                "startMs": 418,
+                "endMs": 789
+              }
+            ]
+          }
         }
       ]
     },
@@ -1652,7 +2505,58 @@
               "partOfSpeech": "NOUN",
               "key": "fr:repas:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/3312df545536ace4.mp3",
+            "durationMs": 2926,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 163
+              },
+              {
+                "unit": 1,
+                "startMs": 186,
+                "endMs": 615
+              },
+              {
+                "unit": 2,
+                "startMs": 650,
+                "endMs": 778
+              },
+              {
+                "unit": 3,
+                "startMs": 894,
+                "endMs": 1115
+              },
+              {
+                "unit": 4,
+                "startMs": 1242,
+                "endMs": 1382
+              },
+              {
+                "unit": 5,
+                "startMs": 1440,
+                "endMs": 1869
+              },
+              {
+                "unit": 6,
+                "startMs": 1950,
+                "endMs": 2043
+              },
+              {
+                "unit": 7,
+                "startMs": 2090,
+                "endMs": 2206
+              },
+              {
+                "unit": 8,
+                "startMs": 2252,
+                "endMs": 2601
+              }
+            ]
+          }
         },
         {
           "id": "s025",
@@ -1704,7 +2608,38 @@
               "partOfSpeech": "NOUN",
               "key": "fr:addition:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/76800649db6ce28b.mp3",
+            "durationMs": 1950,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 522
+              },
+              {
+                "unit": 1,
+                "startMs": 592,
+                "endMs": 778
+              },
+              {
+                "unit": 2,
+                "startMs": 836,
+                "endMs": 1115
+              },
+              {
+                "unit": 3,
+                "startMs": 1149,
+                "endMs": 1196
+              },
+              {
+                "unit": 4,
+                "startMs": 1196,
+                "endMs": 1614
+              }
+            ]
+          }
         }
       ]
     },
@@ -1761,7 +2696,38 @@
               "partOfSpeech": "NOUN",
               "key": "fr:addition:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/18e07cc0e6dc391d.mp3",
+            "durationMs": 1858,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 186
+              },
+              {
+                "unit": 1,
+                "startMs": 244,
+                "endMs": 639
+              },
+              {
+                "unit": 2,
+                "startMs": 697,
+                "endMs": 987
+              },
+              {
+                "unit": 3,
+                "startMs": 1022,
+                "endMs": 1068
+              },
+              {
+                "unit": 4,
+                "startMs": 1068,
+                "endMs": 1486
+              }
+            ]
+          }
         },
         {
           "id": "s027",
@@ -1804,7 +2770,33 @@
               "partOfSpeech": "VERB",
               "key": "fr:payer:VERB"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/e49944b6ea1c3fb8.mp3",
+            "durationMs": 1393,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 279
+              },
+              {
+                "unit": 1,
+                "startMs": 372,
+                "endMs": 464
+              },
+              {
+                "unit": 2,
+                "startMs": 511,
+                "endMs": 824
+              },
+              {
+                "unit": 3,
+                "startMs": 871,
+                "endMs": 1103
+              }
+            ]
+          }
         }
       ]
     },
@@ -1870,7 +2862,43 @@
               "partOfSpeech": "ADV",
               "key": "fr:ensemble:ADV"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/fd270599441114fa.mp3",
+            "durationMs": 1858,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 267
+              },
+              {
+                "unit": 1,
+                "startMs": 302,
+                "endMs": 395
+              },
+              {
+                "unit": 2,
+                "startMs": 418,
+                "endMs": 662
+              },
+              {
+                "unit": 3,
+                "startMs": 685,
+                "endMs": 743
+              },
+              {
+                "unit": 4,
+                "startMs": 789,
+                "endMs": 1080
+              },
+              {
+                "unit": 5,
+                "startMs": 1115,
+                "endMs": 1567
+              }
+            ]
+          }
         }
       ]
     },
@@ -1945,7 +2973,48 @@
               "partOfSpeech": "NOUN",
               "key": "fr:cinéma:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/01084530f5ad0670.mp3",
+            "durationMs": 2926,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 464
+              },
+              {
+                "unit": 1,
+                "startMs": 499,
+                "endMs": 766
+              },
+              {
+                "unit": 2,
+                "startMs": 1057,
+                "endMs": 1579
+              },
+              {
+                "unit": 3,
+                "startMs": 1660,
+                "endMs": 1765
+              },
+              {
+                "unit": 4,
+                "startMs": 1823,
+                "endMs": 1904
+              },
+              {
+                "unit": 5,
+                "startMs": 1939,
+                "endMs": 1997
+              },
+              {
+                "unit": 6,
+                "startMs": 2032,
+                "endMs": 2450
+              }
+            ]
+          }
         }
       ]
     },
@@ -2002,7 +3071,38 @@
               "partOfSpeech": "NOUN",
               "key": "fr:idée:NOUN"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/d7f052641575155b.mp3",
+            "durationMs": 2136,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 232
+              },
+              {
+                "unit": 1,
+                "startMs": 302,
+                "endMs": 673
+              },
+              {
+                "unit": 2,
+                "startMs": 1022,
+                "endMs": 1254
+              },
+              {
+                "unit": 3,
+                "startMs": 1312,
+                "endMs": 1567
+              },
+              {
+                "unit": 4,
+                "startMs": 1591,
+                "endMs": 1823
+              }
+            ]
+          }
         }
       ]
     },
@@ -2095,7 +3195,58 @@
               "partOfSpeech": "ADV",
               "key": "fr:ensemble:ADV"
             }
-          ]
+          ],
+          "audio": {
+            "file": "audio/1f7244070c0b7320.mp3",
+            "durationMs": 3111,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 197
+              },
+              {
+                "unit": 1,
+                "startMs": 221,
+                "endMs": 499
+              },
+              {
+                "unit": 2,
+                "startMs": 522,
+                "endMs": 662
+              },
+              {
+                "unit": 3,
+                "startMs": 685,
+                "endMs": 766
+              },
+              {
+                "unit": 4,
+                "startMs": 813,
+                "endMs": 1324
+              },
+              {
+                "unit": 5,
+                "startMs": 1440,
+                "endMs": 1602
+              },
+              {
+                "unit": 6,
+                "startMs": 1649,
+                "endMs": 1927
+              },
+              {
+                "unit": 7,
+                "startMs": 2009,
+                "endMs": 2334
+              },
+              {
+                "unit": 8,
+                "startMs": 2357,
+                "endMs": 2821
+              }
+            ]
+          }
         }
       ]
     }
@@ -2992,7 +4143,7 @@
       "grammar": "Sehr vielseitig. Mit le verschmilzt es zu au, mit les zu aux."
     },
     "fr:ça va:PHRASE": {
-      "lemma": "Ça va",
+      "lemma": "ça va",
       "partOfSpeech": "PHRASE",
       "gloss": "es-geht, gut",
       "forms": [

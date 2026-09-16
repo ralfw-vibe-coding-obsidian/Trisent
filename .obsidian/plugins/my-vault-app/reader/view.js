@@ -657,13 +657,22 @@ class TrisentView extends ItemView {
     });
   }
 
+  /* Was der Abspieler über einen Satz wissen muss. */
+  playItem(sentenceId) {
+    const audio = this.audioFor.get(sentenceId);
+    return {
+      id: sentenceId,
+      file: audio.file,
+      timings: Array.isArray(audio.timings) ? audio.timings : null
+    };
+  }
+
   renderAudioBar(container) {
     const bar = container.createDiv({ cls: 'trisent-audiobar' });
 
     const all = [];
     for (const id of this.sentenceIds) {
-      const file = this.audioFor.get(id);
-      if (file) all.push({ id: id, file: file });
+      if (this.audioFor.has(id)) all.push(this.playItem(id));
     }
 
     this.speakButton = bar.createEl('button', { cls: 'trisent-speak' });
@@ -826,8 +835,8 @@ class TrisentView extends ItemView {
       for (const paragraph of data.paragraphs || []) {
         for (const sentence of paragraph.sentences || []) {
           this.sentenceIds.push(sentence.id);
-          const file = sentence.audio && sentence.audio.file;
-          if (file) this.audioFor.set(sentence.id, file);
+          const audio = sentence.audio;
+          if (audio && audio.file) this.audioFor.set(sentence.id, audio);
         }
       }
 
@@ -848,7 +857,7 @@ class TrisentView extends ItemView {
 
         const spoken = (paragraph.sentences || [])
           .filter((sentence) => this.audioFor.has(sentence.id))
-          .map((sentence) => ({ id: sentence.id, file: this.audioFor.get(sentence.id) }));
+          .map((sentence) => this.playItem(sentence.id));
 
         /* Bei nur einem vertonten Satz täte der Absatzknopf genau dasselbe
            wie der Satzknopf daneben - zwei Knöpfe für eine Handlung. */
@@ -937,13 +946,12 @@ class TrisentView extends ItemView {
     /* Die schmale Spalte links steht bei jedem Satz, sobald das Paket
        überhaupt Ton hat - auch bei einem Satz ohne. Sonst rückten die
        Zeilen unterschiedlich weit ein. */
-    const file = this.audioFor.get(sentence.id);
     if (this.audioFor.size > 0) {
       const gutter = wrap.createDiv({ cls: 'trisent-gutter' });
-      if (file) {
+      if (this.audioFor.has(sentence.id)) {
         this.renderPlayButton(
           gutter, 'trisent-play-sentence',
-          [{ id: sentence.id, file: file }], 'Play this sentence'
+          [this.playItem(sentence.id)], 'Play this sentence'
         );
       }
     }
@@ -981,6 +989,23 @@ class TrisentView extends ItemView {
     return button;
   }
 
+  /* Hebt das Wort hervor, das gerade klingt. Bei Sprachen, in denen man
+     die Wortgrenzen nicht hört, ist das der Unterschied zwischen "ich
+     höre den Satz" und "ich sehe, wo ich gerade bin". */
+  markSpokenWord(sentenceId, unitIndex) {
+    if (!this.scrollEl) return;
+
+    for (const el of this.scrollEl.querySelectorAll('.trisent-word.is-spoken')) {
+      el.removeClass('is-spoken');
+    }
+    if (unitIndex === null || unitIndex === undefined) return;
+
+    const word = this.scrollEl.querySelector(
+      '.trisent-sentence[data-sentence="' + sentenceId + '"] .trisent-word[data-unit="' + unitIndex + '"]'
+    );
+    if (word) word.addClass('is-spoken');
+  }
+
   /* Zeigt, welcher Satz gerade klingt. Beim Durchlaufen wandert die
      Anzeige mit und zieht die Seite nach, damit man nicht sucht. */
   markPlaying(sentenceId, follow) {
@@ -988,6 +1013,9 @@ class TrisentView extends ItemView {
 
     for (const el of this.scrollEl.querySelectorAll('.trisent-sentence.is-playing')) {
       el.removeClass('is-playing');
+    }
+    for (const el of this.scrollEl.querySelectorAll('.trisent-word.is-spoken')) {
+      el.removeClass('is-spoken');
     }
     for (const el of this.scrollEl.querySelectorAll('.trisent-play.is-playing')) {
       el.removeClass('is-playing');
@@ -1054,6 +1082,7 @@ class TrisentView extends ItemView {
            auf dem Wort selbst, nicht auf der Spalte, damit sie den
            Wortabstand nicht mit einfärbt. */
         wordEl = f.createSpan({ cls: 'trisent-word', text: column.f });
+        if (column.unitIndex !== undefined) wordEl.dataset.unit = String(column.unitIndex);
         this.attachTouch(wordEl, column.unit.key, column.unit);
       } else {
         f.setText(column.f);
@@ -1417,11 +1446,13 @@ class TrisentView extends ItemView {
     };
 
     let cursor = 0;
-    for (const unit of units) {
+    units.forEach((unit, index) => {
       between(cursor, unit.start);
       push(unit.surface, unit.gloss || '', unit.start, unit.end, unit);
+      /* Die Zeitmarken zeigen auf diesen Index, nicht auf die Spalte. */
+      columns[columns.length - 1].unitIndex = index;
       cursor = unit.end;
-    }
+    });
     between(cursor, source.length);
 
     /* Wendungen über die beteiligten Spalten legen. Satzzeichen innerhalb

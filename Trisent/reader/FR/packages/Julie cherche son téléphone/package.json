@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "fr-julie-cherche-son-telephone",
-  "version": 2,
+  "version": 3,
   "title": "Julie cherche son téléphone",
   "language": "fr",
   "glossLanguage": "de",
@@ -71,7 +71,40 @@
             }
           ],
           "audio": {
-            "file": "audio/bf6c91a043eac45d.mp3"
+            "file": "audio/bf6c91a043eac45d.mp3",
+            "durationMs": 2276,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 151
+              },
+              {
+                "unit": 1,
+                "startMs": 186,
+                "endMs": 464
+              },
+              {
+                "unit": 2,
+                "startMs": 534,
+                "endMs": 824
+              },
+              {
+                "unit": 3,
+                "startMs": 848,
+                "endMs": 1219
+              },
+              {
+                "unit": 4,
+                "startMs": 1277,
+                "endMs": 1416
+              },
+              {
+                "unit": 5,
+                "startMs": 1463,
+                "endMs": 1974
+              }
+            ]
           }
         },
         {
@@ -162,7 +195,55 @@
             }
           ],
           "audio": {
-            "file": "audio/caff7eafcc36f10d.mp3"
+            "file": "audio/caff7eafcc36f10d.mp3",
+            "durationMs": 2508,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 197
+              },
+              {
+                "unit": 1,
+                "startMs": 232,
+                "endMs": 673
+              },
+              {
+                "unit": 2,
+                "startMs": 708,
+                "endMs": 848
+              },
+              {
+                "unit": 3,
+                "startMs": 882,
+                "endMs": 964
+              },
+              {
+                "unit": 4,
+                "startMs": 1033,
+                "endMs": 1370
+              },
+              {
+                "unit": 5,
+                "startMs": 1486,
+                "endMs": 1660
+              },
+              {
+                "unit": 6,
+                "startMs": 1707,
+                "endMs": 1881
+              },
+              {
+                "unit": 7,
+                "startMs": 1904,
+                "endMs": 1985
+              },
+              {
+                "unit": 8,
+                "startMs": 2032,
+                "endMs": 2229
+              }
+            ]
           }
         }
       ]
@@ -259,7 +340,50 @@
             }
           ],
           "audio": {
-            "file": "audio/3bac2f5c99571c2a.mp3"
+            "file": "audio/3bac2f5c99571c2a.mp3",
+            "durationMs": 3158,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 244
+              },
+              {
+                "unit": 1,
+                "startMs": 302,
+                "endMs": 662
+              },
+              {
+                "unit": 2,
+                "startMs": 720,
+                "endMs": 848
+              },
+              {
+                "unit": 3,
+                "startMs": 894,
+                "endMs": 1277
+              },
+              {
+                "unit": 4,
+                "startMs": 1672,
+                "endMs": 1823
+              },
+              {
+                "unit": 5,
+                "startMs": 1881,
+                "endMs": 2159
+              },
+              {
+                "unit": 6,
+                "startMs": 2183,
+                "endMs": 2438
+              },
+              {
+                "unit": 7,
+                "startMs": 2473,
+                "endMs": 2763
+              }
+            ]
           }
         }
       ]
@@ -319,7 +443,35 @@
             }
           ],
           "audio": {
-            "file": "audio/1e9b45094d64c8b7.mp3"
+            "file": "audio/1e9b45094d64c8b7.mp3",
+            "durationMs": 2276,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 325
+              },
+              {
+                "unit": 1,
+                "startMs": 360,
+                "endMs": 685
+              },
+              {
+                "unit": 2,
+                "startMs": 987,
+                "endMs": 1161
+              },
+              {
+                "unit": 3,
+                "startMs": 1207,
+                "endMs": 1324
+              },
+              {
+                "unit": 4,
+                "startMs": 1382,
+                "endMs": 1916
+              }
+            ]
           }
         },
         {
@@ -374,7 +526,35 @@
             }
           ],
           "audio": {
-            "file": "audio/b7501826af9f12bf.mp3"
+            "file": "audio/b7501826af9f12bf.mp3",
+            "durationMs": 1207,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 163
+              },
+              {
+                "unit": 1,
+                "startMs": 209,
+                "endMs": 255
+              },
+              {
+                "unit": 2,
+                "startMs": 290,
+                "endMs": 360
+              },
+              {
+                "unit": 3,
+                "startMs": 406,
+                "endMs": 650
+              },
+              {
+                "unit": 4,
+                "startMs": 685,
+                "endMs": 882
+              }
+            ]
           }
         }
       ]

@@ -51,6 +51,53 @@ function validatePackage(data, fileNames) {
      So wandert der Fehler dorthin, wo man ihn sehen kann: auf die Wahl der
      Grundform. Ein Bedeutungszusatz (bg:ключ:NOUN:spring) ist erlaubt -
      geprüft wird der Teil davor. */
+  /* Zeitmarken zeigen beim Abspielen, welches Wort gerade klingt. Eine
+     Marke, die auf das falsche Wort zeigt, ist schlimmer als gar keine -
+     man liest dann beim Hören an der falschen Stelle mit. Deshalb lieber
+     das Paket ablehnen als eine Marke geradebiegen.
+
+     Lücken sind ausdrücklich erlaubt: Nicht jedes Wort muss eine Marke
+     haben, und "unit" ist der Index in "units", nicht die Position in
+     dieser Liste. */
+  const checkTimings = (where, audio, unitCount) => {
+    if (!Array.isArray(audio.timings)) return;
+
+    const seen = new Set();
+    let previousEnd = -1;
+
+    for (let i = 0; i < audio.timings.length; i++) {
+      const mark = audio.timings[i];
+      const at = where + ', timing ' + (i + 1);
+
+      if (!Number.isInteger(mark.unit) || mark.unit < 0 || mark.unit >= unitCount) {
+        say(at + ': "unit" is not a word of this sentence.');
+        continue;
+      }
+      if (seen.has(mark.unit)) {
+        say(at + ': word ' + (mark.unit + 1) + ' already has a timing.');
+        continue;
+      }
+      seen.add(mark.unit);
+
+      if (typeof mark.startMs !== 'number' || typeof mark.endMs !== 'number') {
+        say(at + ': "startMs" and "endMs" must be numbers.');
+        continue;
+      }
+      if (mark.startMs < 0 || mark.endMs < mark.startMs) {
+        say(at + ': the timing ends before it starts.');
+        continue;
+      }
+      if (mark.startMs < previousEnd) {
+        say(at + ': timings overlap or are out of order.');
+      }
+      previousEnd = mark.endMs;
+
+      if (typeof audio.durationMs === 'number' && mark.endMs > audio.durationMs) {
+        say(at + ': the timing runs past the end of the recording.');
+      }
+    }
+  };
+
   const checkKey = (where, key, lemma, partOfSpeech) => {
     if (!lemma || !partOfSpeech) return;
     const expected = keyFor(data.language, lemma, partOfSpeech);
@@ -126,8 +173,11 @@ function validatePackage(data, fileNames) {
         }
       }
 
-      if (sentence.audio && sentence.audio.file && !fileNames.has(sentence.audio.file)) {
-        say(at + ': the audio file "' + sentence.audio.file + '" is not in the package.');
+      if (sentence.audio && sentence.audio.file) {
+        if (!fileNames.has(sentence.audio.file)) {
+          say(at + ': the audio file "' + sentence.audio.file + '" is not in the package.');
+        }
+        checkTimings(at, sentence.audio, units.length);
       }
     }
   }

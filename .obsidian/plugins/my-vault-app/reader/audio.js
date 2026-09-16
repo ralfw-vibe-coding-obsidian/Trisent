@@ -28,6 +28,11 @@ class Playback {
     this.at = -1;
 
     this.player.addEventListener('ended', () => this.next());
+
+    /* Mitlesen: Welches Wort klingt gerade? Die Marken stehen im Paket,
+       gerechnet hat sie der Packager aus den Zeichenpositionen - hier wird
+       nur nachgeschlagen. Feuert etwa viermal je Sekunde. */
+    this.player.addEventListener('timeupdate', () => this.followWords());
     this.player.addEventListener('error', () => {
       /* Eine fehlende oder kaputte Tondatei darf nicht die ganze Wiedergabe
          abbrechen - der nächste Satz kann ja in Ordnung sein. */
@@ -74,6 +79,7 @@ class Playback {
     }
 
     const item = this.queue[this.at];
+    this.spokenUnit = undefined;
     this.player.src = this.urlFor(item.file);
     this.player.playbackRate = this.speed;
     this.player.play().catch((error) => {
@@ -83,11 +89,32 @@ class Playback {
     this.view.markPlaying(item.id, this.queue.length > 1);
   }
 
+  followWords() {
+    const item = this.queue[this.at];
+    if (!item || !item.timings || item.timings.length === 0) return;
+
+    const ms = this.player.currentTime * 1000;
+    let unit = null;
+    for (const mark of item.timings) {
+      if (ms >= mark.startMs && ms < mark.endMs) {
+        unit = mark.unit;
+        break;
+      }
+    }
+
+    /* Zwischen zwei Wörtern liegt Stille - dann ist nichts hervorgehoben,
+       statt dass die Markierung am letzten Wort kleben bleibt. */
+    if (unit === this.spokenUnit) return;
+    this.spokenUnit = unit;
+    this.view.markSpokenWord(item.id, unit);
+  }
+
   playing() {
     return this.at >= 0 && !this.player.paused;
   }
 
   stop() {
+    this.spokenUnit = undefined;
     this.player.pause();
     this.player.removeAttribute('src');
     this.queue = [];
