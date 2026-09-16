@@ -1057,6 +1057,40 @@
   height: 0.95em;
 }
 
+/* Steht immer da und belegt seinen Platz, ist aber nur sichtbar, wenn es
+   etwas zu stoppen gibt. So springt die Leiste nicht, sobald das
+   Abspielen beginnt - und man tippt nicht auf das Tempo, weil sich
+   darunter gerade alles verschoben hat. */
+.trisent-view .trisent-stopbutton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  cursor: pointer;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-stopbutton svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.trisent-view .trisent-stopbutton:hover {
+  color: var(--text-normal);
+  border-color: var(--tri-accent);
+}
+
+.trisent-view .trisent-stopbutton.is-idle {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .trisent-view .trisent-speed {
   cursor: pointer;
   min-width: 2.7rem;

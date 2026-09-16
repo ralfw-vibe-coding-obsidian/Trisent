@@ -680,6 +680,16 @@ class TrisentView extends ItemView {
     this.speakButton.createSpan({ cls: 'trisent-speak-label', text: 'Play text' });
     this.speakButton.addEventListener('click', () => this.playback().play(all));
 
+    /* Ganz aufhören, statt nur anzuhalten. Der Knopf steht immer da, ist
+       aber nur sichtbar, wenn es etwas zu stoppen gibt - so springt die
+       Leiste nicht, sobald das Abspielen beginnt. */
+    this.stopButton = bar.createEl('button', {
+      cls: 'trisent-stopbutton',
+      attr: { 'aria-label': 'Stop', title: 'Stop' }
+    });
+    setIcon(this.stopButton, 'square');
+    this.stopButton.addEventListener('click', () => this.stopAudio());
+
     /* Langsamer hören ist beim Lernen kein Luxus. */
     const label = (value) => (value === 1 ? '1×' : String(value).replace('0.', '.') + '×');
     const speed = () => {
@@ -1027,6 +1037,8 @@ class TrisentView extends ItemView {
         el.removeClass('is-spoken');
       }
     }
+
+    if (this.stopButton) this.stopButton.toggleClass('is-idle', !running && !held);
 
     if (this.speakButton) {
       this.speakButton.toggleClass('is-on', running || held);
