@@ -54,15 +54,19 @@ class Playback {
     );
   }
 
-  /* Eine Liste von Sätzen abspielen. Läuft schon etwas und ist es dieselbe
-     Liste, hört es auf - derselbe Knopf schaltet an und aus. */
+  /* Eine Liste von Sätzen abspielen.
+
+     Läuft schon dieselbe Liste, hält derselbe Knopf an - und zwar als
+     Pause, nicht als Stopp: Beim nächsten Tipp geht es dort weiter, wo
+     es aufgehört hat, nicht am Satzanfang. */
   play(items) {
     const same =
       this.queue.length === items.length &&
       this.queue.every((entry, i) => entry.id === items[i].id);
 
-    if (same && this.playing()) {
-      this.stop();
+    if (same && this.at >= 0) {
+      if (this.player.paused) this.resume();
+      else this.pause();
       return;
     }
 
@@ -71,6 +75,7 @@ class Playback {
     this.next();
   }
 
+  /* Den nächsten Satz der Warteschlange. Ist sie zu Ende, ist Schluss. */
   next() {
     this.at += 1;
     if (this.at >= this.queue.length) {
@@ -86,9 +91,12 @@ class Playback {
       new Notice('Could not play this sentence: ' + String(error.message || error));
       this.stop();
     });
-    this.view.markPlaying(item.id, this.queue.length > 1);
+    this.report('playing');
   }
 
+  /* Mitlesen: Welches Wort klingt gerade? Die Marken stehen im Paket,
+     gerechnet hat sie der Packager aus den Zeichenpositionen - hier wird
+     nur nachgeschlagen. Feuert etwa viermal je Sekunde. */
   followWords() {
     const item = this.queue[this.at];
     if (!item || !item.timings || item.timings.length === 0) return;
@@ -109,8 +117,23 @@ class Playback {
     this.view.markSpokenWord(item.id, unit);
   }
 
-  playing() {
-    return this.at >= 0 && !this.player.paused;
+  pause() {
+    this.player.pause();
+    this.report('paused');
+  }
+
+  resume() {
+    this.player.play().catch((error) => {
+      new Notice('Could not continue: ' + String(error.message || error));
+      this.stop();
+    });
+    this.report('playing');
+  }
+
+  /* Wo man gerade ist, und in welchem Zustand. */
+  report(state) {
+    const item = this.queue[this.at];
+    this.view.markPlaying(item ? item.id : null, state, this.queue.length > 1);
   }
 
   stop() {
@@ -119,7 +142,7 @@ class Playback {
     this.player.removeAttribute('src');
     this.queue = [];
     this.at = -1;
-    this.view.markPlaying(null, false);
+    this.view.markPlaying(null, 'stopped', false);
   }
 
   /* Die Geschwindigkeit wirkt sofort, auch mitten im Satz. */

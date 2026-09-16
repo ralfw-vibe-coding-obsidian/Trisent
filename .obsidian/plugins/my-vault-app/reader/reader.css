@@ -1004,7 +1004,9 @@
   height: 1.3rem;
 }
 
-/* Der Satz, der gerade klingt. */
+/* Der Satz, der gerade klingt - und der, bei dem es angehalten wurde.
+   Beide bleiben markiert, damit man nach einer Pause wiederfindet, wo
+   man war. */
 
 .trisent-sentence.is-playing .trisent-sentence-body {
   box-shadow: -0.55rem 0 0 -0.45rem var(--tri-accent);

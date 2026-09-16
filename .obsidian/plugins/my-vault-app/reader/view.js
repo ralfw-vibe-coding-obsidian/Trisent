@@ -1008,27 +1008,34 @@ class TrisentView extends ItemView {
 
   /* Zeigt, welcher Satz gerade klingt. Beim Durchlaufen wandert die
      Anzeige mit und zieht die Seite nach, damit man nicht sucht. */
-  markPlaying(sentenceId, follow) {
+  markPlaying(sentenceId, state, follow) {
     if (!this.scrollEl) return;
+
+    const running = state === 'playing';
+    const held = state === 'paused';
 
     for (const el of this.scrollEl.querySelectorAll('.trisent-sentence.is-playing')) {
       el.removeClass('is-playing');
-    }
-    for (const el of this.scrollEl.querySelectorAll('.trisent-word.is-spoken')) {
-      el.removeClass('is-spoken');
     }
     for (const el of this.scrollEl.querySelectorAll('.trisent-play.is-playing')) {
       el.removeClass('is-playing');
       setIcon(el, 'play');
     }
+    /* Beim Anhalten bleibt das Wort stehen, bei Stopp geht es weg. */
+    if (!held) {
+      for (const el of this.scrollEl.querySelectorAll('.trisent-word.is-spoken')) {
+        el.removeClass('is-spoken');
+      }
+    }
+
     if (this.speakButton) {
-      const running = !!sentenceId;
-      this.speakButton.toggleClass('is-on', running);
+      this.speakButton.toggleClass('is-on', running || held);
       const icon = this.speakButton.querySelector('.trisent-speak-icon');
       const text = this.speakButton.querySelector('.trisent-speak-label');
-      if (icon) setIcon(icon, running ? 'square' : 'play');
-      if (text) text.setText(running ? 'Stop' : 'Play text');
+      if (icon) setIcon(icon, running ? 'pause' : 'play');
+      if (text) text.setText(running ? 'Pause' : held ? 'Continue' : 'Play text');
     }
+
     if (!sentenceId) return;
 
     const wrap = this.scrollEl.querySelector(
@@ -1040,10 +1047,10 @@ class TrisentView extends ItemView {
     const button = wrap.querySelector('.trisent-play');
     if (button) {
       button.addClass('is-playing');
-      setIcon(button, 'square');
+      setIcon(button, running ? 'pause' : 'play');
     }
 
-    if (!follow) return;
+    if (!follow || !running) return;
     const box = this.scrollEl.getBoundingClientRect();
     const rect = wrap.getBoundingClientRect();
     if (rect.top < box.top + 12 || rect.bottom > box.bottom - 12) {
