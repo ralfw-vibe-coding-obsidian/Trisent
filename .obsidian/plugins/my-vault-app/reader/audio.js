@@ -14,8 +14,10 @@
 
 const { Notice, normalizePath } = require('obsidian');
 
-/* Womit man einen A1-Text noch mitsprechen kann. */
-const SPEEDS = [1, 0.75, 0.5];
+/* Die Reihenfolge, in der der Knopf durchschaltet. Erst langsamer - das
+   ist beim Lernen der häufigere Wunsch -, dann einmal schneller, dann
+   wieder normal. */
+const SPEEDS = [1, 0.75, 0.5, 1.5];
 
 class Playback {
   constructor(app, view) {
