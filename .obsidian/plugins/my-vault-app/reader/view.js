@@ -642,8 +642,8 @@ class TrisentView extends ItemView {
     });
   }
 
-  renderSpeech(header) {
-    const group = header.createDiv({ cls: 'trisent-speech' });
+  renderAudioBar(container) {
+    const bar = container.createDiv({ cls: 'trisent-audiobar' });
 
     const all = [];
     for (const id of this.sentenceIds) {
@@ -651,19 +651,19 @@ class TrisentView extends ItemView {
       if (file) all.push({ id: id, file: file });
     }
 
-    this.speakButton = group.createEl('button', {
-      cls: 'trisent-switch trisent-switch-icon',
-      attr: { 'aria-label': 'Read the whole text', title: 'Read the whole text' }
-    });
-    setIcon(this.speakButton, 'play');
+    this.speakButton = bar.createEl('button', { cls: 'trisent-speak' });
+    setIcon(this.speakButton.createSpan({ cls: 'trisent-speak-icon' }), 'play');
+    this.speakButton.createSpan({ cls: 'trisent-speak-label', text: 'Play text' });
     this.speakButton.addEventListener('click', () => this.playback().play(all));
 
     /* Langsamer hören ist beim Lernen kein Luxus. */
-    const speed = this.reader.settings.speed;
-    const current = SPEEDS.includes(speed) ? speed : 1;
-    const pace = group.createEl('button', {
-      cls: 'trisent-switch trisent-speed' + (current === 1 ? '' : ' is-on'),
-      text: current === 1 ? '1×' : String(current).replace('0.', '.') + '×',
+    const stored = this.reader.settings.speed;
+    const current = SPEEDS.includes(stored) ? stored : 1;
+    const label = (value) => (value === 1 ? '1×' : String(value).replace('0.', '.') + '×');
+
+    const pace = bar.createEl('button', {
+      cls: 'trisent-speed' + (current === 1 ? '' : ' is-on'),
+      text: label(current),
       attr: { 'aria-label': 'Playback speed', title: 'Playback speed' }
     });
     pace.addEventListener('click', async () => {
@@ -672,8 +672,13 @@ class TrisentView extends ItemView {
       await this.reader.saveSettings();
       /* Wirkt sofort, auch mitten im Satz. */
       if (this.player) this.player.setSpeed(next);
-      pace.setText(next === 1 ? '1×' : String(next).replace('0.', '.') + '×');
+      pace.setText(label(next));
       pace.toggleClass('is-on', next !== 1);
+    });
+
+    bar.createSpan({
+      cls: 'trisent-audiobar-note',
+      text: all.length + (all.length === 1 ? ' sentence spoken' : ' sentences spoken')
     });
   }
 
@@ -812,6 +817,9 @@ class TrisentView extends ItemView {
 
       this.renderLevelSwitches(bar);
       this.updateProgress();
+      /* Der Ton bekommt eine eigene Zeile mit Beschriftung. Als Symbol in
+         der ohnehin vollen Kopfzeile hat ihn niemand gefunden. */
+      if (this.audioFor.size > 0) this.renderAudioBar(bar);
 
       const text = page.createDiv({
         cls:
@@ -893,10 +901,6 @@ class TrisentView extends ItemView {
       this.render();
     });
 
-    /* Den ganzen Text vorlesen lassen, und wie schnell. Beides erscheint
-       nur, wenn das Paket überhaupt Ton mitbringt. */
-    if (this.audioFor && this.audioFor.size > 0) this.renderSpeech(header);
-
     /* Wie weit im Text man ist. Wandert beim Scrollen mit. */
     const progress = header.createDiv({ cls: 'trisent-progress' });
     this.progressBar = progress.createDiv({ cls: 'trisent-track' }).createDiv({ cls: 'trisent-track-fill' });
@@ -970,8 +974,12 @@ class TrisentView extends ItemView {
       setIcon(el, 'play');
     }
     if (this.speakButton) {
-      this.speakButton.toggleClass('is-on', !!sentenceId);
-      setIcon(this.speakButton, sentenceId ? 'square' : 'play');
+      const running = !!sentenceId;
+      this.speakButton.toggleClass('is-on', running);
+      const icon = this.speakButton.querySelector('.trisent-speak-icon');
+      const text = this.speakButton.querySelector('.trisent-speak-label');
+      if (icon) setIcon(icon, running ? 'square' : 'play');
+      if (text) text.setText(running ? 'Stop' : 'Play text');
     }
     if (!sentenceId) return;
 

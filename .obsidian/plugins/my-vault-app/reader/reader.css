@@ -989,17 +989,77 @@
   box-shadow: -0.55rem 0 0 -0.45rem var(--tri-accent);
 }
 
-/* Ganzer Text und Geschwindigkeit, oben in der Leiste. */
+/* Ganzer Text und Geschwindigkeit: eigene Zeile, beschriftet. Als Symbol
+   in der ohnehin vollen Kopfzeile hat sie niemand gefunden. */
 
-.trisent-speech {
+.trisent-audiobar {
   display: flex;
-  gap: 2px;
-  padding: 3px;
-  background: var(--background-modifier-border);
-  border-radius: 9px;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.7rem;
+}
+
+.trisent-view .trisent-speak {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem 0.35rem 0.7rem;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-speak:hover {
+  background: var(--background-modifier-hover);
+}
+
+.trisent-view .trisent-speak.is-on {
+  background: var(--tri-accent);
+  color: #FFFFFF;
+}
+
+.trisent-speak-icon {
+  display: inline-flex;
+}
+
+.trisent-speak-icon svg {
+  width: 0.95em;
+  height: 0.95em;
 }
 
 .trisent-view .trisent-speed {
-  min-width: 2.4rem;
+  cursor: pointer;
+  min-width: 2.7rem;
+  font-family: var(--tri-ui);
+  font-size: 0.8rem;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-speed:hover {
+  color: var(--text-normal);
+  border-color: var(--tri-accent);
+}
+
+.trisent-view .trisent-speed.is-on {
+  color: var(--tri-accent);
+  border-color: var(--tri-accent);
+}
+
+.trisent-audiobar-note {
+  font-size: 0.72rem;
+  color: var(--text-faint);
 }
