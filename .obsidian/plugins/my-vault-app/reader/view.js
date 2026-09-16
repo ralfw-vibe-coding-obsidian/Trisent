@@ -466,7 +466,7 @@ class TrisentView extends ItemView {
         cls: 'trisent-t-audio',
         attr: { 'aria-label': 'Has audio', title: 'Has audio' }
       });
-      setIcon(note, 'music');
+      setIcon(note, 'volume-2');
     }
     if (data.titleTranslation) {
       left.createDiv({ cls: 'trisent-t-sub', text: data.titleTranslation });
