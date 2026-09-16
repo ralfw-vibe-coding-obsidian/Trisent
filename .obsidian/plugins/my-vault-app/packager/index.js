@@ -202,8 +202,18 @@ function same(one, other) {
   return strip(one) === strip(other);
 }
 
+/* Woran ein Bericht und ein laufender Vorgang hängen. Eine lose Notiz
+   hat noch keinen eigenen Ordner, also dient sie selbst als Kennung -
+   sonst teilten sich zwei Notizen derselben Sprache einen Platz. */
+function keyOf(text) {
+  return text.loose ? text.loose.path : text.folder.path;
+}
+
 /* Woran man mit einem Text ist - in einem Satz, nicht in Kästchen. */
 function stateOf(text) {
+  if (text.loose) {
+    return 'Dropped in, not packaged yet. Making the package files it away.';
+  }
   const sound = text.spoken ? ' With sound.' : '';
   if (!text.version) return 'Not packaged yet.' + sound;
   if (!text.sent) return 'Packaged, not sent to your library yet.' + sound;
@@ -487,7 +497,7 @@ class PackagerView extends ItemView {
        beschreiben, bauen. Er heißt nach dem Ziel, nicht nach dem Schritt -
        solange es kein Paket gibt, lautet das Ziel "Paket machen", ganz
        gleich, wie weit die Aufbereitung schon ist. */
-    const busy = this.running.get(text.folder.path);
+    const busy = this.running.get(keyOf(text));
     if (text.work || (this.packager.canPrepare() && text.total > 0)) {
       const make = actions.createEl('button', {
         cls: 'mod-cta',
@@ -512,7 +522,7 @@ class PackagerView extends ItemView {
       send.addEventListener('click', () => this.send(text));
     }
 
-    const report = this.reports.get(text.folder.path);
+    const report = this.reports.get(keyOf(text));
     if (report) this.renderReport(row, report);
   }
 
@@ -546,7 +556,7 @@ class PackagerView extends ItemView {
      stehen, woran gerade gearbeitet wird - sonst sitzt die Person vor
      einer Ansicht, die nichts tut. */
   async make(text) {
-    const path = text.folder.path;
+    const path = keyOf(text);
     if (this.running.has(path)) return;
 
     this.running.set(path, 'Starting…');
@@ -559,10 +569,10 @@ class PackagerView extends ItemView {
     };
 
     try {
-      this.reports.set(text.folder.path, await this.packager.makePackage(text, step));
+      this.reports.set(path, await this.packager.makePackage(text, step));
     } catch (error) {
       console.error('Trisent packager', error);
-      this.reports.set(text.folder.path, {
+      this.reports.set(path, {
         kind: 'bad', headline: 'It stopped here.',
         lines: [String(error.message || error)], more: 0
       });
@@ -576,7 +586,7 @@ class PackagerView extends ItemView {
   speak(text) {
     const voices = this.packager.voicesFor(text.code);
     new VoiceModal(this.app, voices, async (voice) => {
-      const path = text.folder.path;
+      const path = keyOf(text);
       if (this.running.has(path)) return;
 
       this.running.set(path, 'Recording audio…');
@@ -697,6 +707,32 @@ class Packager {
   /* Ein Ordner mit einer work.md darin ist ein Text in Arbeit. */
   async textsOf(languageFolder) {
     const result = [];
+
+    /* Eine Notiz, die einfach im Sprachordner liegt, ist ein Text, der
+       noch hereinwill. Man kann ihn also auch in Obsidian schreiben und
+       hierher schieben, statt ihn in den Dialog einzufügen. */
+    for (const child of languageFolder.children) {
+      if (!(child instanceof TFile) || child.extension !== 'md') continue;
+      if (child.name === RULES_FILE) continue;
+
+      const raw = await this.app.vault.cachedRead(child);
+      result.push({
+        folder: languageFolder,
+        loose: child,
+        work: null,
+        text: null,
+        package: null,
+        title: child.basename,
+        version: 0,
+        sent: 0,
+        spoken: false,
+        done: 0,
+        total: paragraphsOf(raw).length,
+        words: countWords(raw),
+        code: languageFolder.name.toLowerCase()
+      });
+    }
+
     for (const child of languageFolder.children) {
       if (!(child instanceof TFolder)) continue;
       let work = this.file(child.path + '/' + WORK_FILE);
@@ -775,6 +811,37 @@ class Packager {
     return choices;
   }
 
+  /* Aus einer losen Notiz einen Textordner machen. Der Inhalt wird nicht
+     angefasst - nur verschoben und umbenannt. */
+  async fileAway(text) {
+    const note = text.loose;
+    const base = this.rootPath + '/' + text.code.toUpperCase();
+    await this.ensureRules(text.code);
+
+    const name = sanitizeFileName(note.basename);
+    let path = base + '/' + name;
+    for (let n = 2; this.app.vault.getAbstractFileByPath(normalizePath(path)); n++) {
+      path = base + '/' + name + ' ' + n;
+    }
+    const folder = await this.ensureFolder(path);
+    await this.app.fileManager.renameFile(note, folder.path + '/' + TEXT_FILE);
+
+    text.loose = null;
+    text.folder = folder;
+    text.text = this.file(folder.path + '/' + TEXT_FILE);
+  }
+
+  /* Hausregeln, falls die Sprache von Hand angelegt wurde. Ohne sie
+     entscheidet jeder Lauf neu - und genau das sollen sie verhindern. */
+  async ensureRules(code) {
+    const path = this.rootPath + '/' + code.toUpperCase() + '/' + RULES_FILE;
+    if (this.file(path)) return;
+
+    const template = await this.ensureTemplate();
+    await this.ensureFolder(this.rootPath + '/' + code.toUpperCase());
+    await this.app.vault.create(normalizePath(path), fillTemplate(template, code, this.myLanguageName()));
+  }
+
   /* Legt Sprachordner, Wortvorrat, Hausregeln und den Textordner an und
      schreibt den Text unverändert hinein. */
   async addText(code, title, body) {
@@ -783,13 +850,7 @@ class Packager {
     await this.ensureFolder(this.rootPath + '/' + upper);
     await this.ensureWordsFolder(upper);
 
-    if (!this.file(this.rootPath + '/' + upper + '/' + RULES_FILE)) {
-      const template = await this.ensureTemplate();
-      await this.app.vault.create(
-        normalizePath(this.rootPath + '/' + upper + '/' + RULES_FILE),
-        fillTemplate(template, code, this.myLanguageName())
-      );
-    }
+    await this.ensureRules(code);
 
     const base = sanitizeFileName(title);
     let path = this.rootPath + '/' + upper + '/' + base;
@@ -871,12 +932,20 @@ class Packager {
      beschreiben, bauen. Was dazwischen passiert, meldet "step" nach
      außen - es steht auf dem Knopf und ist gleich wieder weg. */
   async makePackage(text, step) {
+    /* Eine lose Notiz bekommt erst ihren eigenen Ordner - danach ist sie
+       ein Text wie jeder andere. */
+    if (text.loose) {
+      step('Filing it away…');
+      await this.fileAway(text);
+    }
+
     let done = text.done;
 
     if (text.total > done) {
       if (!this.canPrepare()) {
         throw new Error('The text is not prepared yet, and Claude was not found. Check the settings.');
       }
+      await this.ensureRules(text.code);
       const paragraphs = paragraphsOf(await this.app.vault.read(text.text));
       const open = paragraphs.slice(done);
       const blocks = await this.prepareAll(text, open, step);
