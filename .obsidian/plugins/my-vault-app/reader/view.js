@@ -850,12 +850,16 @@ class TrisentView extends ItemView {
           .filter((sentence) => this.audioFor.has(sentence.id))
           .map((sentence) => ({ id: sentence.id, file: this.audioFor.get(sentence.id) }));
 
-        if (paragraph.speaker || spoken.length > 0) {
+        /* Bei nur einem vertonten Satz täte der Absatzknopf genau dasselbe
+           wie der Satzknopf daneben - zwei Knöpfe für eine Handlung. */
+        const worthIt = spoken.length > 1;
+
+        if (paragraph.speaker || worthIt) {
           const head = block.createDiv({ cls: 'trisent-paragraph-head' });
           if (paragraph.speaker) {
             head.createDiv({ cls: 'trisent-speaker', text: paragraph.speaker });
           }
-          if (spoken.length > 0) {
+          if (worthIt) {
             this.renderPlayButton(head, 'trisent-play-paragraph', spoken, 'Play this part');
           }
         }
