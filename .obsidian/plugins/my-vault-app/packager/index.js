@@ -523,9 +523,12 @@ class PackagerView extends ItemView {
         this.reports.set(path, await this.packager.speak(text, voice, step));
       } catch (error) {
         console.error('Trisent packager', error);
+        const spent = error.credits
+          ? ' Before that, ' + error.written + ' sentences were recorded for ' + error.credits + ' credits.'
+          : '';
         this.reports.set(path, {
           kind: 'bad', headline: 'The audio stopped here.',
-          lines: [String(error.message || error)], more: 0
+          lines: [String(error.message || error) + spent], more: 0
         });
       }
       this.running.delete(path);
@@ -1122,7 +1125,8 @@ class Packager {
 
     const spoken = result.written + (result.skipped || 0);
     const detail = spoken + ' of ' + sentences.length + ' sentences have sound' +
-      (result.skipped ? ' (' + result.skipped + ' were already there)' : '') + '.';
+      (result.skipped ? ' (' + result.skipped + ' were already there)' : '') + '. ' +
+      (result.credits ? result.credits + ' credits used.' : 'Nothing new to record.');
 
     if (built.kind === 'ok') {
       return { kind: 'ok', headline: voice.name + ' spoke "' + (text.title || text.folder.name) + '".', detail: detail };

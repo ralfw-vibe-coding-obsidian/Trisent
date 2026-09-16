@@ -80,7 +80,11 @@ async function speakOnce(key, voice, text) {
   if (!answer.arrayBuffer || answer.arrayBuffer.byteLength < 512) {
     throw new Error('The answer contained no sound.');
   }
-  return answer.arrayBuffer;
+
+  /* Was der Satz gekostet hat, sagt der Dienst selbst. Besser als es zu
+     schätzen - dann steht am Ende da, was wirklich abgebucht wurde. */
+  const cost = Number((answer.headers || {})['character-cost']);
+  return { bytes: answer.arrayBuffer, cost: Number.isFinite(cost) ? cost : 0 };
 }
 
 /* Fehler des Dienstes in Worte fassen.
@@ -112,15 +116,19 @@ function explain(answer) {
    "write" legt eine Datei an, "step" meldet den Fortschritt. */
 async function generate(options) {
   const open = options.sentences.filter((one) => !options.have.has(one.file));
-  if (open.length === 0) return { written: 0, skipped: options.sentences.length };
+  if (open.length === 0) {
+    return { written: 0, credits: 0, skipped: options.sentences.length };
+  }
 
   /* Der erste Satz geht allein los. Danach ist die Stimme bereit, und
      der Rest kann nebeneinander laufen. */
   let written = 0;
+  let credits = 0;
   try {
-    const bytes = await speak(options.key, options.voice, open[0].source);
-    await options.write(open[0].file, bytes);
+    const first = await speak(options.key, options.voice, open[0].source);
+    await options.write(open[0].file, first.bytes);
     written = 1;
+    credits += first.cost;
     options.step('Recording audio… ' + Math.round((1 / open.length) * 100) + '%');
   } catch (error) {
     error.written = 0;
@@ -137,9 +145,10 @@ async function generate(options) {
       if (at >= open.length || failure) return;
 
       try {
-        const bytes = await speak(options.key, options.voice, open[at].source);
-        await options.write(open[at].file, bytes);
+        const spoken = await speak(options.key, options.voice, open[at].source);
+        await options.write(open[at].file, spoken.bytes);
         written += 1;
+        credits += spoken.cost;
         options.step('Recording audio… ' + Math.round((written / open.length) * 100) + '%');
       } catch (error) {
         if (!failure) failure = error;
@@ -154,9 +163,14 @@ async function generate(options) {
 
   if (failure) {
     failure.written = written;
+    failure.credits = credits;
     throw failure;
   }
-  return { written: written, skipped: options.sentences.length - open.length };
+  return {
+    written: written,
+    credits: credits,
+    skipped: options.sentences.length - open.length
+  };
 }
 
 module.exports = { sentencesOf, generate, speak };
