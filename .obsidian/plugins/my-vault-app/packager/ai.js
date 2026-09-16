@@ -367,6 +367,67 @@ async function prepare(options) {
   return { block: block, notes: after(result.out) };
 }
 
+/* Was beim Aufbereiten entschieden wurde, in Hausregeln fassen.
+
+   Ohne diesen Schritt ist jede Entscheidung nach dem Lauf vergessen, und
+   der nächste Text entscheidet vielleicht anders - das ist der leise Weg,
+   auf dem die Wissensschlüssel über Monate auseinanderlaufen. */
+async function learnRules(options) {
+  const system = [
+    'Du pflegst die Hausregeln einer Sprache für einen interlinearen Reader.',
+    '',
+    'Hausregeln sind Entscheidungen, die für ALLE Texte dieser Sprache gelten',
+    'müssen: welche Grundform eine Wortform bekommt, welche Wortart, wie',
+    'Verschmelzungen und Elisionen behandelt werden, was als Wendung zählt,',
+    'wie glossiert wird. Daran hängt, ob ein einmal gelerntes Wort im nächsten',
+    'Text wiedererkannt wird.',
+    '',
+    'Du bekommst die geltenden Regeln und die Entscheidungen, die beim',
+    'Aufbereiten eines Textes getroffen wurden. Nenne daraus NUR das, was',
+    '',
+    '- allgemein gilt, nicht nur für diesen einen Text,',
+    '- in den geltenden Regeln noch NICHT steht,',
+    '- und beim nächsten Text sonst anders entschieden werden könnte.',
+    '',
+    'Höchstens fünf. Lieber keine als eine überflüssige - eine Regelsammlung,',
+    'die alles aufschreibt, liest am Ende niemand mehr.',
+    '',
+    'Jede Regel ein Satz, in der Befehlsform, mit einem Beispiel aus der',
+    'Fremdsprache. Keine Nummerierung, keine Einleitung.',
+    '',
+    'Antworte mit den Regeln zwischen diesen Marken, je eine Zeile:',
+    '',
+    OPEN,
+    '- ...',
+    CLOSE,
+    '',
+    'Ist nichts Neues dabei, lass den Bereich zwischen den Marken leer.'
+  ].join('\n');
+
+  const input = [
+    'GELTENDE HAUSREGELN',
+    '',
+    (options.rules || '(noch keine)').trim(),
+    '',
+    'ENTSCHEIDUNGEN BEIM AUFBEREITEN DIESES TEXTES',
+    '',
+    options.notes.join('\n')
+  ].join('\n');
+
+  const args = ['-p', '--model', MODEL, '--append-system-prompt', system];
+  const result = await run(options.command, args, {
+    cwd: options.temp,
+    input: input,
+    timeoutMs: TIMEOUT_MS
+  });
+  if (result.code !== 0) return [];
+
+  return between(result.out)
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^[-*\d.\s]+/, '').trim())
+    .filter((line) => line.length > 10);
+}
+
 /* Wortnotizen zu einer Handvoll Schlüsseln schreiben lassen. */
 async function words(options) {
   const args = [
@@ -478,4 +539,4 @@ function tempDir() {
   return os ? os.tmpdir() : undefined;
 }
 
-module.exports = { available, check, locate, prepare, words, instructions, tempDir, MODEL };
+module.exports = { available, check, locate, prepare, words, learnRules, instructions, tempDir, MODEL };

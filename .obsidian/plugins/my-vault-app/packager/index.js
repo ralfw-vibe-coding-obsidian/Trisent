@@ -822,6 +822,13 @@ class Packager {
         text.done = done;
         throw blocks.error;
       }
+
+      /* Was dabei entschieden wurde, in die Hausregeln - sonst ist es
+         nach dem Lauf vergessen und der nächste Text entscheidet neu. */
+      if (blocks.notes.length > 0) {
+        step('Writing down what was decided…');
+        await this.learn(text, blocks.notes);
+      }
       /* Die Werkbank gibt es jetzt - und der weitere Weg liest aus ihr. */
       text.work = this.file(text.folder.path + '/' + WORK_FILE);
       text.done = done;
@@ -874,6 +881,7 @@ class Packager {
      auf - was hinter der Lücke läge, ließe sich ohnehin nicht anhängen. */
   async prepareAll(text, paragraphs, step) {
     const blocks = new Array(paragraphs.length).fill(null);
+    const notes = [];
     let next = 0;
     let finished = 0;
     let error = null;
@@ -885,7 +893,9 @@ class Packager {
         if (at >= paragraphs.length || error) return;
 
         try {
-          blocks[at] = await this.prepareParagraph(text, paragraphs[at]);
+          const answer = await this.prepareParagraph(text, paragraphs[at]);
+          blocks[at] = answer.block;
+          if (answer.notes) notes.push(answer.notes.trim());
         } catch (problem) {
           if (!error) error = problem;
           return;
@@ -904,7 +914,7 @@ class Packager {
       if (!block) break;
       inOrder.push(block);
     }
-    return { done: inOrder, error: error };
+    return { done: inOrder, error: error, notes: notes };
   }
 
   /* Einen Absatz aufbereiten lassen und nachrechnen. */
@@ -942,7 +952,58 @@ class Packager {
         'A paragraph did not come back clean, twice in a row: ' + problems.slice(0, 3).join(' / ')
       );
     }
-    return answer.block;
+    return answer;
+  }
+
+  /* Neue Hausregeln an die Regeldatei anhängen - in einen eigenen
+     Abschnitt, datiert und mit dem Text, aus dem sie stammen. Oben
+     umgeschrieben wird nichts: Was die Person dort einmal festgelegt hat,
+     gehört ihr. */
+  async learn(text, notes) {
+    const code = text.code.toUpperCase();
+    const path = this.rootPath + '/' + code + '/' + RULES_FILE;
+    const file = this.file(path);
+    if (!file) return;
+
+    const rules = await this.app.vault.read(file);
+
+    let learned = [];
+    try {
+      learned = await ai.learnRules({
+        command: this.settings.claudePath || 'claude',
+        temp: ai.tempDir(),
+        rules: rules,
+        notes: notes
+      });
+    } catch (error) {
+      /* Regeln zu lernen ist eine Zugabe. Klappt es nicht, ist der Text
+         trotzdem fertig. */
+      console.error('Trisent packager', error);
+      return;
+    }
+
+    /* Was sinngemäß schon dasteht, nicht doppelt aufschreiben. */
+    const known = rules.toLowerCase();
+    const fresh = learned.filter((rule) => {
+      const core = rule.toLowerCase().replace(/[^\p{L}\p{N} ]/gu, '').split(' ')
+        .filter((word) => word.length > 4).slice(0, 4);
+      return core.length === 0 || !core.every((word) => known.indexOf(word) >= 0);
+    });
+    if (fresh.length === 0) return;
+
+    const today = new Date().toISOString().slice(0, 10);
+    const heading = '## Dazugelernt';
+    const lines = fresh.map(
+      (rule) => '- ' + today + ', „' + (text.title || text.folder.name) + '": ' + rule
+    );
+
+    let body = rules.replace(/\s+$/, '');
+    if (body.indexOf(heading) < 0) {
+      body += '\n\n' + heading + '\n\n' +
+        'Beim Aufbereiten entstanden. Sieh sie durch und arbeite ein, was bleiben\n' +
+        'soll - oben, in deinen eigenen Worten. Was hier steht, gilt trotzdem schon.\n';
+    }
+    await this.app.vault.modify(file, body + '\n' + lines.join('\n') + '\n');
   }
 
   /* ---------------------------------------------------------------- */
