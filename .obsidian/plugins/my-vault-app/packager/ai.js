@@ -49,104 +49,102 @@ function available() {
    in einer Notiz: Sie muss mit dem Einleser in build.js übereinstimmen.
    Läge sie getrennt, driftete sie irgendwann ab, und niemand merkte es.
    Was Geschmack ist, steht dagegen in rules.md und gehört der Person. */
-function instructions(rules, example, languageFolder) {
+function instructions(options) {
+  const into = options.into || 'German';
   const parts = [];
 
   parts.push(
-    'Du bereitest fremdsprachige Texte für einen interlinearen Lese-Reader auf.',
-    'Deine einzige Aufgabe ist es, einen Absatz Satz für Satz und Wort für Wort',
-    'zu annotieren.',
+    'You prepare foreign-language texts for an interlinear reading app.',
+    'Your only job is to annotate one paragraph, sentence by sentence and',
+    'word by word. The reader\'s own language is ' + into + ': every gloss and',
+    'every translation you write is in ' + into + '.',
     '',
-    'DIE DREI EBENEN',
+    'THE THREE LAYERS',
     '',
-    '1. Der Originalsatz, Zeichen für Zeichen unverändert.',
-    '2. Eine möglichst FLACHE deutsche Wort-für-Wort-Glosse. Das ist kein gutes',
-    '   Deutsch, sondern ein Fenster auf den Bau der Fremdsprache: Verben in der',
-    '   Grundform, Artikel folgen dem Geschlecht der Fremdsprache, keine',
-    '   Umstellung, kein Weglassen, kein Ergänzen. Ein Wort, eine Glosse.',
-    '3. Ein natürlicher deutscher Satz, der die Bedeutung trägt.',
+    '1. The original sentence, unchanged, character for character.',
+    '2. A word-for-word gloss in ' + into + ', as FLAT as possible. This is not',
+    '   good ' + into + ' - it is a window onto how the foreign language is built:',
+    '   verbs in their base form, articles following the gender of the FOREIGN',
+    '   language, no reordering, nothing left out, nothing added. One word, one',
+    '   gloss. Grammar that hides inside a word ending must become visible in',
+    '   the gloss.',
+    '3. A natural sentence in ' + into + ' that carries the actual meaning.',
     '',
-    'DAS FORMAT',
+    'THE FORMAT',
     '',
-    '    Originalsatz',
-    '    : natürlicher deutscher Satz',
-    '        Wort · Glosse · Grundform · WORTART',
-    '        Wort · Glosse · Grundform · WORTART',
-    '      + Wendung · Glosse',
+    '    the original sentence',
+    '    : the natural sentence',
+    '        word · gloss · base form · PART-OF-SPEECH',
+    '        word · gloss · base form · PART-OF-SPEECH',
+    '      + phrase · gloss',
     '',
-    '- Ein Block je Satz, Blöcke durch eine Leerzeile getrennt.',
-    '- Der Originalsatz steht ohne Einrückung, Wörter eingerückt.',
-    '- Die Wörter stehen in LESEREIHENFOLGE.',
-    '- Satzzeichen und Leerzeichen bekommen KEINE Zeile.',
-    '- Schreibe NIEMALS Zahlen oder Zeichenpositionen. Die rechnet ein',
-    '  Programm aus, und es rechnet besser als du zählst.',
-    '- Trennzeichen ist ausschließlich das Mittelpunkt-Zeichen ·',
-    '- Erlaubte Wortarten, nichts anderes:',
+    '- One block per sentence, blocks separated by a blank line.',
+    '- The original sentence is not indented, the words are.',
+    '- The words stand in READING ORDER.',
+    '- Punctuation and spaces get NO line of their own.',
+    '- NEVER write numbers or character positions. A program works those out,',
+    '  and it counts better than you do.',
+    '- The separator is the middle dot · and nothing else.',
+    '- Allowed parts of speech, nothing else:',
     '  NOUN PROPN VERB AUX ADJ ADV PRON DET ADP NUM CCONJ SCONJ PART INTJ',
-    '- Eine Wendung (+) ist eine feste Mehrwortverbindung, deren Bedeutung sich',
-    '  nicht aus den Einzelwörtern ergibt. Sie umfasst mindestens zwei Wörter',
-    '  und ersetzt sie nicht - die Wörter behalten ihre eigenen Zeilen.',
-    '  Im Zweifel weglassen.',
-    '- Steht hinter einer Wendung eine dritte Angabe, ist das ihre GRUNDFORM,',
-    '  und die ist die Zitierform: klein geschrieben (außer Eigennamen) und mit',
-    '  geradem Apostroph. Am Satzanfang heißt es also nicht "Je m\u2019appelle",',
-    '  sondern "je m\'appelle" - so steht es später im Wörterbuch.',
+    '- A phrase (+) is a fixed multi-word expression whose meaning does not',
+    '  follow from its parts. It spans at least two words and does not replace',
+    '  them - the words keep their own lines. When in doubt, leave it out.',
+    '- A third field after a phrase is its BASE FORM, and that is the citation',
+    '  form: lower case (unless it is a name) and with a straight apostrophe.',
+    '  At the start of a sentence that means "je m\'appelle", not',
+    '  "Je m\u2019appelle" - this is what ends up in the dictionary.',
     '',
-    'DER ORIGINALTEXT IST UNANTASTBAR',
+    'THE ORIGINAL IS UNTOUCHABLE',
     '',
-    'Kopiere jeden Satz Zeichen für Zeichen. Typografische Apostrophe,',
-    'geschützte Leerzeichen und Anführungszeichen bleiben, wie sie sind.',
-    'Tippe nichts ab und glätte nichts - sonst steht danach kein Wort mehr an',
-    'seiner Stelle. Die Sätze müssen zusammengesetzt wieder genau den Absatz',
-    'ergeben.',
+    'Copy every sentence character for character. Typographic apostrophes,',
+    'non-breaking spaces and quotation marks stay exactly as they are. Do not',
+    'retype and do not tidy up - otherwise no word sits where it says it does.',
+    'Put back together, your sentences must be exactly the paragraph you were',
+    'given.',
     '',
-    'NACHSCHLAGEN, BEVOR DU ENTSCHEIDEST',
+    'LOOK THINGS UP BEFORE YOU DECIDE',
     ''
   );
 
-  if (languageFolder) {
+  if (options.folder) {
     parts.push(
-      'In ' + languageFolder + '/words/ liegt der Wortvorrat: je eine Notiz mit',
-      'Grundform, Wortart und Glosse. Kommt ein Wort dort schon vor, benutze',
-      'GENAU diese Grundform und diese Wortart. Daran hängt der Lernstand der',
-      'Person über alle Texte hinweg; eine abweichende Grundform zerreißt ihn,',
-      'ohne dass es jemand merkt. Schlage nach, bevor du entscheidest.',
+      'In ' + options.folder + '/words/ there is a word store: one note per word',
+      'with base form, part of speech and gloss. If a word is already there, use',
+      'EXACTLY that base form and that part of speech. The reader\'s learning',
+      'state hangs on it across every text; a different base form tears it apart',
+      'without anyone noticing. So look it up before you decide.',
       ''
     );
   }
 
-  if (rules) {
+  if (options.rules) {
     parts.push(
-      'DIE HAUSREGELN DIESER SPRACHE',
+      'THE HOUSE RULES FOR THIS LANGUAGE',
       '',
-      'Sie haben Vorrang vor deinem eigenen Urteil.',
+      'They take precedence over your own judgement.',
       '',
-      rules.trim(),
+      options.rules.trim(),
       ''
     );
   }
 
-  if (example) {
-    parts.push(
-      'SO SIEHT EIN FERTIGER ABSATZ AUS',
-      '',
-      example.trim(),
-      ''
-    );
+  if (options.example) {
+    parts.push('WHAT A FINISHED PARAGRAPH LOOKS LIKE', '', options.example.trim(), '');
   }
 
   parts.push(
-    'DEINE ANTWORT',
+    'YOUR ANSWER',
     '',
-    'Schreibe die Werkbank-Fassung zwischen diese beiden Marken:',
+    'Put the annotated blocks between these two marks:',
     '',
     OPEN,
-    '... die Blöcke ...',
+    '... the blocks ...',
     CLOSE,
     '',
-    'Danach, außerhalb der Marken, in höchstens fünf Zeilen: welche',
-    'Entscheidungen du treffen musstest, die NICHT aus dem Wortvorrat kamen.',
-    'Kurz, für einen Menschen, der die Fremdsprache nicht kann.'
+    'After that, outside the marks, in at most five lines: which decisions you',
+    'had to make that did NOT come from the word store. Short, for a person who',
+    'does not speak the foreign language.'
   );
 
   return parts.join('\n');
@@ -157,45 +155,47 @@ function instructions(rules, example, languageFolder) {
    Sie entstehen erst, nachdem der Text annotiert ist - dann steht fest,
    welche Schlüssel wirklich vorkommen, mit welchen Formen und in welchem
    Satz. Genau das ist der Anhalt. */
-function wordInstructions(rules) {
+function wordInstructions(options) {
+  const into = options.into || 'German';
   const parts = [];
 
   parts.push(
-    'Du schreibst Wörterbucheinträge für einen Sprachlern-Reader.',
-    'Zu jedem vorgegebenen Schlüssel entsteht genau ein Eintrag.',
+    'You write dictionary entries for a language-learning reader.',
+    'One entry per key you are given. Everything you write is in ' + into + '.',
     '',
-    'DAS FORMAT',
+    'THE FORMAT',
     '',
-    '    # <der Schlüssel, unverändert übernommen>',
-    '    lemma: <die Grundform, in der Schreibweise der Fremdsprache>',
-    '    gloss: <deutsche Grundbedeutung, ein bis drei Wörter, Varianten mit Komma>',
-    '    forms: <die Formen aus dem Text, mit Komma getrennt>',
-    '    grammar: <ein bis drei Sätze auf Deutsch>',
+    '    # <the key, copied unchanged>',
+    '    lemma: <the base form, spelled as the foreign language spells it>',
+    '    gloss: <the basic meaning in ' + into + ', one to three words,',
+    '            alternatives separated by commas>',
+    '    forms: <the forms found in the text, separated by commas>',
+    '    grammar: <one to three sentences in ' + into + '>',
     '',
-    'WORAUF ES ANKOMMT',
+    'WHAT MATTERS',
     '',
-    '- Der Schlüssel hat die Form sprache:grundform:WORTART. Die Grundform in',
-    '  deiner lemma-Zeile MUSS dazu passen - sonst wird der Eintrag verworfen.',
-    '  Groß- und Kleinschreibung darf abweichen (Eigennamen!), sonst nichts.',
-    '- gloss ist die Grundbedeutung des Wortes, nicht die Glosse aus einem',
-    '  bestimmten Satz. Sie darf breiter sein.',
-    '- grammar ist das, was man beim Lernen wirklich wissen will: Geschlecht,',
-    '  unregelmäßige Formen, wovon das Wort begleitet wird, wogegen man es',
-    '  verwechselt. Keine Schulbuchprosa, keine Beispiele ohne Nutzen.',
-    '- Bei einer Wendung (WORTART ist PHRASE) erklärt grammar, was da wörtlich',
-    '  steht und wann man es benutzt. Ihre lemma-Zeile trägt die Zitierform:',
-    '  klein geschrieben, gerader Apostroph.',
+    '- The key reads language:baseform:PART-OF-SPEECH. Your lemma line MUST',
+    '  match it, or the entry is thrown away. Upper and lower case may differ',
+    '  (names!), nothing else.',
+    '- gloss is the word\'s basic meaning, not the gloss from one particular',
+    '  sentence. It may be broader.',
+    '- grammar is what you actually want to know while learning: gender,',
+    '  irregular forms, what the word is used with, what it is confused with.',
+    '  No textbook prose, no examples without a point.',
+    '- For a phrase (part of speech PHRASE), grammar says what it literally',
+    '  says and when it is used. Its lemma line carries the citation form:',
+    '  lower case, straight apostrophe.',
     ''
   );
 
-  if (rules) {
-    parts.push('DIE HAUSREGELN DIESER SPRACHE', '', rules.trim(), '');
+  if (options.rules) {
+    parts.push('THE HOUSE RULES FOR THIS LANGUAGE', '', options.rules.trim(), '');
   }
 
   parts.push(
-    'DEINE ANTWORT',
+    'YOUR ANSWER',
     '',
-    'Alle Einträge zwischen diesen beiden Marken, nichts sonst:',
+    'All entries between these two marks, nothing else:',
     '',
     OPEN,
     '# ...',
@@ -339,13 +339,13 @@ async function prepare(options) {
   const args = [
     '-p',
     '--model', MODEL,
-    '--append-system-prompt', instructions(options.rules, options.example, options.folder),
+    '--append-system-prompt', instructions(options),
     '--allowedTools', 'Read,Glob,Grep'
   ];
   if (options.folder) args.push('--add-dir', options.folder);
 
   const input =
-    'Annotiere diesen Absatz nach den Vorgaben. Schlage vorher im Wortvorrat nach.\n\n' +
+    'Annotate this paragraph as instructed. Look words up in the word store first.\n\n' +
     options.paragraph + '\n';
 
   const result = await run(options.command, args, {
@@ -373,43 +373,43 @@ async function prepare(options) {
    der nächste Text entscheidet vielleicht anders - das ist der leise Weg,
    auf dem die Wissensschlüssel über Monate auseinanderlaufen. */
 async function learnRules(options) {
+  const into = options.into || 'German';
   const system = [
-    'Du pflegst die Hausregeln einer Sprache für einen interlinearen Reader.',
+    'You maintain the house rules for one foreign language in a reading app.',
     '',
-    'Hausregeln sind Entscheidungen, die für ALLE Texte dieser Sprache gelten',
-    'müssen: welche Grundform eine Wortform bekommt, welche Wortart, wie',
-    'Verschmelzungen und Elisionen behandelt werden, was als Wendung zählt,',
-    'wie glossiert wird. Daran hängt, ob ein einmal gelerntes Wort im nächsten',
-    'Text wiedererkannt wird.',
+    'House rules are decisions that must hold for EVERY text in that language:',
+    'which base form a word form gets, which part of speech, how contractions',
+    'and elisions are handled, what counts as a phrase, how to gloss. Whether a',
+    'word learned once is recognised in the next text hangs on them.',
     '',
-    'Du bekommst die geltenden Regeln und die Entscheidungen, die beim',
-    'Aufbereiten eines Textes getroffen wurden. Nenne daraus NUR das, was',
+    'You are given the rules in force and the decisions that were made while',
+    'preparing one text. Name ONLY what',
     '',
-    '- allgemein gilt, nicht nur für diesen einen Text,',
-    '- in den geltenden Regeln noch NICHT steht,',
-    '- und beim nächsten Text sonst anders entschieden werden könnte.',
+    '- holds in general, not just for this one text,',
+    '- is NOT yet in the rules in force,',
+    '- and could otherwise be decided differently next time.',
     '',
-    'Höchstens fünf. Lieber keine als eine überflüssige - eine Regelsammlung,',
-    'die alles aufschreibt, liest am Ende niemand mehr.',
+    'At most five. Better none than one too many - a rule book that writes',
+    'everything down is one nobody reads.',
     '',
-    'Jede Regel ein Satz, in der Befehlsform, mit einem Beispiel aus der',
-    'Fremdsprache. Keine Nummerierung, keine Einleitung.',
+    'One sentence per rule, in the imperative, with an example from the foreign',
+    'language. Write them in ' + into + '. No numbering, no preamble.',
     '',
-    'Antworte mit den Regeln zwischen diesen Marken, je eine Zeile:',
+    'Answer with the rules between these marks, one per line:',
     '',
     OPEN,
     '- ...',
     CLOSE,
     '',
-    'Ist nichts Neues dabei, lass den Bereich zwischen den Marken leer.'
+    'If there is nothing new, leave the space between the marks empty.'
   ].join('\n');
 
   const input = [
-    'GELTENDE HAUSREGELN',
+    'RULES IN FORCE',
     '',
-    (options.rules || '(noch keine)').trim(),
+    (options.rules || '(none yet)').trim(),
     '',
-    'ENTSCHEIDUNGEN BEIM AUFBEREITEN DIESES TEXTES',
+    'DECISIONS MADE WHILE PREPARING THIS TEXT',
     '',
     options.notes.join('\n')
   ].join('\n');
@@ -433,19 +433,19 @@ async function words(options) {
   const args = [
     '-p',
     '--model', MODEL,
-    '--append-system-prompt', wordInstructions(options.rules),
+    '--append-system-prompt', wordInstructions(options),
     '--allowedTools', 'Read,Glob,Grep'
   ];
   if (options.folder) args.push('--add-dir', options.folder);
 
-  const lines = ['Schreibe zu diesen Schlüsseln je einen Eintrag.', ''];
+  const lines = ['Write one entry for each of these keys.', ''];
   for (const entry of options.entries) {
     lines.push('## ' + entry.key);
-    lines.push('Grundform laut Text: ' + entry.lemma);
-    lines.push('Wortart: ' + entry.partOfSpeech);
-    if (entry.forms.length) lines.push('Formen im Text: ' + entry.forms.join(', '));
-    if (entry.glosses.length) lines.push('Glossen im Text: ' + entry.glosses.join(', '));
-    if (entry.sentence) lines.push('Beispielsatz: ' + entry.sentence);
+    lines.push('Base form used in the text: ' + entry.lemma);
+    lines.push('Part of speech: ' + entry.partOfSpeech);
+    if (entry.forms.length) lines.push('Forms in the text: ' + entry.forms.join(', '));
+    if (entry.glosses.length) lines.push('Glosses in the text: ' + entry.glosses.join(', '));
+    if (entry.sentence) lines.push('Example sentence: ' + entry.sentence);
     lines.push('');
   }
 

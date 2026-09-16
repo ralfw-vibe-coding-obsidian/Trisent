@@ -21,32 +21,47 @@ const PACKAGES_DIR = 'packages';
 
 /* Angebot beim Anlegen einer Sprache. Lucide hat keine Flaggen, deshalb Emoji.
    Bei Sprachen ohne eindeutiges Land ist die Flagge immer etwas willkürlich. */
+/* Angebot beim Anlegen einer Sprache: Europa. Lucide hat keine Flaggen,
+   deshalb Emoji - und bei Sprachen ohne eindeutiges Land ist die Flagge
+   immer etwas willkürlich.
+
+   Bewusst begrenzt: Was hier steht, ist erprobt oder zumindest nah an
+   Erprobtem - lateinische, kyrillische und griechische Schrift, Sprachen
+   mit Wortzwischenräumen. Sprachen, die anders gebaut sind, gehören erst
+   hierher, wenn jemand sie wirklich durchgespielt hat. */
 const KNOWN_LANGUAGES = [
   { code: 'bg', name: 'Bulgarian', flag: '🇧🇬' },
+  { code: 'ca', name: 'Catalan', flag: '🏴' },
   { code: 'cs', name: 'Czech', flag: '🇨🇿' },
   { code: 'da', name: 'Danish', flag: '🇩🇰' },
   { code: 'de', name: 'German', flag: '🇩🇪' },
   { code: 'el', name: 'Greek', flag: '🇬🇷' },
   { code: 'en', name: 'English', flag: '🇬🇧' },
   { code: 'es', name: 'Spanish', flag: '🇪🇸' },
+  { code: 'et', name: 'Estonian', flag: '🇪🇪' },
   { code: 'fi', name: 'Finnish', flag: '🇫🇮' },
   { code: 'fr', name: 'French', flag: '🇫🇷' },
-  { code: 'he', name: 'Hebrew', flag: '🇮🇱' },
+  { code: 'ga', name: 'Irish', flag: '🇮🇪' },
+  { code: 'hr', name: 'Croatian', flag: '🇭🇷' },
   { code: 'hu', name: 'Hungarian', flag: '🇭🇺' },
+  { code: 'is', name: 'Icelandic', flag: '🇮🇸' },
   { code: 'it', name: 'Italian', flag: '🇮🇹' },
-  { code: 'ja', name: 'Japanese', flag: '🇯🇵' },
-  { code: 'ko', name: 'Korean', flag: '🇰🇷' },
+  { code: 'lt', name: 'Lithuanian', flag: '🇱🇹' },
+  { code: 'lv', name: 'Latvian', flag: '🇱🇻' },
+  { code: 'mk', name: 'Macedonian', flag: '🇲🇰' },
   { code: 'nl', name: 'Dutch', flag: '🇳🇱' },
   { code: 'no', name: 'Norwegian', flag: '🇳🇴' },
   { code: 'pl', name: 'Polish', flag: '🇵🇱' },
   { code: 'pt', name: 'Portuguese', flag: '🇵🇹' },
   { code: 'ro', name: 'Romanian', flag: '🇷🇴' },
   { code: 'ru', name: 'Russian', flag: '🇷🇺' },
+  { code: 'sk', name: 'Slovak', flag: '🇸🇰' },
+  { code: 'sl', name: 'Slovenian', flag: '🇸🇮' },
+  { code: 'sq', name: 'Albanian', flag: '🇦🇱' },
   { code: 'sr', name: 'Serbian', flag: '🇷🇸' },
   { code: 'sv', name: 'Swedish', flag: '🇸🇪' },
   { code: 'tr', name: 'Turkish', flag: '🇹🇷' },
-  { code: 'uk', name: 'Ukrainian', flag: '🇺🇦' },
-  { code: 'zh', name: 'Chinese', flag: '🇨🇳' }
+  { code: 'uk', name: 'Ukrainian', flag: '🇺🇦' }
 ];
 
 /* In Dateinamen verbotene Zeichen. Grundformen enthalten sie normaler-

@@ -67,6 +67,10 @@ const DEFAULTS = {
   enabled: false,
   sent: {},
   claudePath: 'claude',
+  /* Die Sprache der Person: in ihr stehen Glossen, Übersetzungen und
+     Grammatiknotizen. Sie steckte früher fest im Programm - damit konnte
+     nur lernen, wer Deutsch spricht. */
+  myLanguage: 'de',
   /* Der Zugangsschlüssel des Sprachdienstes. Bleibt hier und wandert nie
      in ein Paket - ein Paket geht an Fremde. */
   speechKey: '',
@@ -81,68 +85,76 @@ const DEFAULTS = {
    behandelt werden - entscheidet sich am ersten Text, und dann gehört
    es hier hinein. Ohne diese Datei entscheidet jeder Lauf neu, und der
    Lernstand zerfällt still in zwei Hälften. */
-function starterRules(code) {
+function starterRules(code, into) {
   return [
     '---',
     'type: packager-rules',
     'language: ' + code,
     '---',
     '',
-    '# Hausregeln ' + code.toUpperCase(),
+    '# House rules: ' + code.toUpperCase(),
     '',
-    'Entscheidungen, die für **alle** Texte dieser Sprache gelten. Sie halten',
-    'die Wissensschlüssel zusammen: Nur wenn dieselbe Wortform immer dieselbe',
-    'Grundform und Wortart bekommt, gilt ein einmal gelerntes Wort auch im',
-    'nächsten Text.',
+    'Decisions that hold for **every** text in this language. They keep the',
+    'knowledge keys together: only if the same word form always gets the same',
+    'base form and part of speech does a word learned once still count in the',
+    'next text.',
     '',
-    'Diese Liste wächst. Was beim Aufbereiten entschieden werden musste und',
-    'hier noch nicht steht, gehört hierher - sonst wird es beim nächsten Text',
-    'neu und vielleicht anders entschieden.',
+    'Glosses and translations are written in **' + (into || 'German') + '**.',
     '',
-    '## Grundformen',
+    'This list grows. Whatever had to be decided while preparing a text and is',
+    'not written here yet belongs here - otherwise it is decided again next',
+    'time, and perhaps differently.',
     '',
-    '1. Verben tragen die Grundform, nicht die gebeugte Form.',
-    '2. Eigennamen: Grundform wie geschrieben, Glosse ist der Name selbst.',
-    '3. Mehrzahl teilt den Schlüssel mit der Einzahl; die Glosse zeigt sie.',
+    '## Base forms',
     '',
-    '## Die Glosse',
+    '1. Verbs carry their base form, not the form from the sentence. Where a',
+    '   language has no infinitive, pick one form and keep to it.',
+    '2. Names: base form as written, the gloss is the name itself.',
+    '3. Plural shares the key with the singular; the gloss shows the plural.',
+    '4. The base form of a determiner, pronoun or preposition is that word',
+    '   itself - never the word next to it. "la mesa" gives "la" the base form',
+    '   of its own article series, not "mesa".',
     '',
-    '4. Artikel und Begleiter folgen dem Geschlecht der **Fremdsprache**,',
-    '   nicht dem deutschen. Das ist Absicht - die Ebene zeigt den Bau.',
-    '5. Fehlt ein deutsches Einzelwort, wird gekoppelt: nie zwei Wörter mit',
-    '   Leerzeichen.',
+    '## Glossing',
     '',
-    '## Wendungen',
+    '5. Articles and determiners follow the gender of the **foreign** language,',
+    '   not of your own. That is on purpose - this layer shows how the foreign',
+    '   language is built.',
+    '6. Grammar hidden inside a word ending must become visible in the gloss.',
+    '7. If a single word of your language does not exist, hyphenate: never two',
+    '   words with a space.',
     '',
-    '6. Aufgenommen werden Höflichkeitsformeln, grammatische Fügungen und',
-    '   feste Begriffe - nicht gewöhnliche Wortfolgen. Im Zweifel weglassen.',
-    '7. Die Grundform einer Wendung ist die **Zitierform**, nicht die Form aus',
-    '   dem Satz: klein geschrieben, gerader Apostroph.',
+    '## Phrases',
     '',
-    '## Was in einer Grammatiknotiz steht',
+    '8. Take in polite formulas, grammatical constructions and fixed terms -',
+    '   not ordinary word sequences. When in doubt, leave it out.',
+    '9. The base form of a phrase is the **citation form**, not the form from',
+    '   the sentence: lower case, straight apostrophe.',
     '',
-    'Die Notiz zu einem Wort soll nicht zufällig besser oder schlechter',
-    'ausfallen, je nachdem, in welchem Text das Wort zuerst vorkam. Ein bis',
-    'drei Sätze, und je Wortart dasselbe Raster. Für den Anfang:',
+    '## What belongs in a grammar note',
     '',
-    '| Wortart | Was hineingehört |',
+    'A word\'s note should not come out better or worse by accident, depending',
+    'on which text the word first appeared in. One to three sentences, and the',
+    'same frame per part of speech. To start with:',
+    '',
+    '| Part of speech | What belongs in it |',
     '|---|---|',
-    '| NOUN | Geschlecht, Mehrzahl wenn unregelmäßig, feste Verbindungen |',
-    '| VERB | Regelmäßig oder unregelmäßig, die wichtigen Formen, was folgt |',
-    '| ADJ | Abweichende Formen, Stellung wenn ungewöhnlich |',
-    '| DET, PRON | Die Formenreihe, Stellung im Satz |',
-    '| ADP | Was folgt, Verschmelzungen |',
-    '| PROPN | Nur Aussprache-Besonderheiten |',
-    '| PHRASE | Was wörtlich dasteht, und wann man es benutzt |',
+    '| NOUN | Gender, plural when irregular, fixed combinations |',
+    '| VERB | Regular or irregular, the forms that matter, what follows it |',
+    '| ADJ | Forms that differ, position when unusual |',
+    '| DET, PRON | The series of forms, position in the sentence |',
+    '| ADP | What follows, contractions |',
+    '| PROPN | Pronunciation only |',
+    '| PHRASE | What it literally says, and when it is used |',
     '',
-    'Immer erwähnen, **womit man das Wort verwechselt**, wenn es einen',
-    'Verwechslungspartner gibt.',
+    'Always mention **what the word is confused with**, when there is such a',
+    'partner.',
     '',
-    'Nicht hineinschreiben: die Glosse noch einmal, Beispielsätze ohne',
-    'Nutzen, Schulbuchprosa, Herkunftsgeschichten.',
+    'Do not write: the gloss again, examples without a point, textbook prose,',
+    'etymology.',
     '',
-    'Diese Tabelle gilt für jede Sprache nur ungefähr. Schärfe sie, sobald',
-    'du siehst, was bei dieser Sprache wirklich zählt.',
+    'This table fits every language only roughly. Sharpen it as soon as you see',
+    'what really matters in this one.',
     ''
   ].join('\n');
 }
@@ -748,7 +760,7 @@ class Packager {
     if (!this.file(this.rootPath + '/' + upper + '/' + RULES_FILE)) {
       await this.app.vault.create(
         normalizePath(this.rootPath + '/' + upper + '/' + RULES_FILE),
-        starterRules(code)
+        starterRules(code, this.myLanguageName())
       );
     }
 
@@ -919,6 +931,7 @@ class Packager {
 
   /* Einen Absatz aufbereiten lassen und nachrechnen. */
   async prepareParagraph(text, paragraph) {
+    const into = this.myLanguageName();
     const languageFolder = this.basePath() + '/' + this.rootPath + '/' + text.code.toUpperCase();
     const rules = await this.readIfThere(
       this.rootPath + '/' + text.code.toUpperCase() + '/' + RULES_FILE
@@ -932,6 +945,7 @@ class Packager {
     let problems = [];
     for (let attempt = 1; attempt <= 2; attempt++) {
       answer = await this.ask(() => ai.prepare({
+        into: into,
         command: this.settings.claudePath || 'claude',
         temp: ai.tempDir(),
         folder: languageFolder,
@@ -939,7 +953,7 @@ class Packager {
         example: example,
         paragraph: attempt === 1
           ? paragraph
-          : paragraph + '\n\nDein voriger Versuch hatte diese Fehler:\n- ' +
+          : paragraph + '\n\nYour previous attempt had these problems:\n- ' +
             problems.slice(0, 10).join('\n- ')
       }));
 
@@ -970,6 +984,7 @@ class Packager {
     let learned = [];
     try {
       learned = await ai.learnRules({
+        into: this.myLanguageName(),
         command: this.settings.claudePath || 'claude',
         temp: ai.tempDir(),
         rules: rules,
@@ -1030,6 +1045,7 @@ class Packager {
       const round = await Promise.all(
         batches.slice(from, from + AT_ONCE).map(async (batch) => {
           const result = await this.ask(() => ai.words({
+            into: this.myLanguageName(),
             command: this.settings.claudePath || 'claude',
             temp: ai.tempDir(),
             folder: languageFolder,
@@ -1164,6 +1180,13 @@ class Packager {
   /* Ton                                                               */
   /* ---------------------------------------------------------------- */
 
+  /* Der Name der eigenen Sprache, wie ihn Claude versteht. */
+  myLanguageName() {
+    const code = this.settings.myLanguage || 'de';
+    const found = KNOWN_LANGUAGES.find((one) => one.code === code);
+    return found ? found.name : 'German';
+  }
+
   voicesFor(code) {
     if (!this.settings.speechKey) return [];
     return (this.settings.voices || []).filter(
@@ -1292,7 +1315,11 @@ class Packager {
     }
     const held = previous && Number.isFinite(previous.version) ? previous.version : 0;
 
-    const result = buildPackage(work, original, words, held || 1, await this.audioWithTimings(text.folder));
+    const result = buildPackage(
+      work, original, words, held || 1,
+      await this.audioWithTimings(text.folder),
+      this.settings.myLanguage || 'de'
+    );
 
     if (result.missing.length > 0) {
       return {
@@ -1458,6 +1485,20 @@ class Packager {
           new Notice(result.text, 12000);
         })
       );
+
+    new Setting(containerEl)
+      .setName('Your language')
+      .setDesc('Glosses, translations and grammar notes are written in this language. Change it before you make your first package.')
+      .addDropdown((drop) => {
+        for (const language of KNOWN_LANGUAGES) {
+          drop.addOption(language.code, language.flag + ' ' + language.name);
+        }
+        drop.setValue(this.settings.myLanguage || 'de');
+        drop.onChange(async (value) => {
+          this.settings.myLanguage = value;
+          await this.saveSettings();
+        });
+      });
 
     this.addVoiceSettings(containerEl);
   }

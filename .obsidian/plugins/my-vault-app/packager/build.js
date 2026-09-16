@@ -207,6 +207,7 @@ function pad(n) {
 }
 
 /*  audio     Map von Tondatei auf ihre Zeitmarken (oder null)
+ *  into      Sprachcode der Person - in ihr stehen Glossen und Übersetzung
  *  work      Ergebnis von parseWork()
  *  original  Inhalt von text.md, oder null
  *  words     Map von Schlüssel auf Wortnotiz
@@ -215,7 +216,7 @@ function pad(n) {
  *  Zurück kommt { data, problems, missing, stats }. Ist "problems" leer,
  *  ist "data" ein gültiges Paket.
  */
-function buildPackage(work, original, words, version, audio) {
+function buildPackage(work, original, words, version, audio, into) {
   const problems = [];
   const missing = [];
   const say = (text) => { if (problems.length < 40) problems.push(text); };
@@ -417,8 +418,8 @@ function buildPackage(work, original, words, version, audio) {
     version: version,
     title: head.title || '',
     language: language,
-    glossLanguage: 'de',
-    fluentLanguage: 'de',
+    glossLanguage: into || 'de',
+    fluentLanguage: into || 'de',
     paragraphs: paragraphs,
     dictionary: dictionary
   };
