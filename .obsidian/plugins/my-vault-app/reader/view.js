@@ -452,7 +452,22 @@ class TrisentView extends ItemView {
     });
 
     const left = row.createDiv({ cls: 'trisent-t-left' });
-    left.createDiv({ cls: 'trisent-t-title', text: data.title || entry.folder.name });
+
+    const heading = left.createDiv({ cls: 'trisent-t-title' });
+    heading.createSpan({ text: data.title || entry.folder.name });
+
+    /* Ob ein Text zu hören ist, entscheidet mit darüber, ob man ihn jetzt
+       aufschlägt - also gehört es neben den Titel, nicht in die Zahlen. */
+    const spoken = (data.paragraphs || []).some((paragraph) =>
+      (paragraph.sentences || []).some((sentence) => sentence.audio && sentence.audio.file)
+    );
+    if (spoken) {
+      const note = heading.createSpan({
+        cls: 'trisent-t-audio',
+        attr: { 'aria-label': 'Has audio', title: 'Has audio' }
+      });
+      setIcon(note, 'music');
+    }
     if (data.titleTranslation) {
       left.createDiv({ cls: 'trisent-t-sub', text: data.titleTranslation });
     }

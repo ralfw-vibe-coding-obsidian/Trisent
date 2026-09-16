@@ -281,6 +281,26 @@
   color: var(--text-normal);
 }
 
+/* Zeigt, dass es den Text zu hören gibt. Dieselbe Farbe wie die
+   Abspielknöpfe - überall in der App heißt dieses Grün "Ton". */
+.trisent-t-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.trisent-t-audio {
+  display: inline-flex;
+  color: var(--tri-accent);
+  opacity: 0.75;
+}
+
+.trisent-t-audio svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
 .trisent-t-sub {
   font-size: 0.84rem;
   color: var(--text-muted);
