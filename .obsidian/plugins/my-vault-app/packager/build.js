@@ -153,7 +153,7 @@ function parseWork(text) {
         sentence.phrases.push({
           surface: parts[0] || '',
           gloss: parts[1] || '',
-          lemma: parts[2] || parts[0] || '',
+          lemma: parts[2] || citationOf(parts[0] || ''),
           line: at
         });
       }
@@ -185,6 +185,15 @@ function parseWork(text) {
   return { head: front, paragraphs: paragraphs };
 }
 
+/* Die Zitierform einer Wendung: so, wie sie im Wörterbuch stünde, nicht
+   so, wie sie zufällig im Satz steht. Am Satzanfang ist sie großgeschrieben
+   und trägt womöglich einen typografischen Apostroph - beides gehört nicht
+   in eine Grundform. */
+function citationOf(surface) {
+  const clean = String(surface).replace(/[\u2019\u2018\u02bc]/g, "'");
+  return clean.charAt(0).toLowerCase() + clean.slice(1);
+}
+
 function splitFields(line) {
   return line.split('·').map((piece) => piece.trim());
 }
@@ -197,7 +206,7 @@ function pad(n) {
   return String(n).padStart(3, '0');
 }
 
-/*  audio     Set der vorhandenen Tondateien, oder leer
+/*  audio     Map von Tondatei auf ihre Zeitmarken (oder null)
  *  work      Ergebnis von parseWork()
  *  original  Inhalt von text.md, oder null
  *  words     Map von Schlüssel auf Wortnotiz
@@ -329,7 +338,14 @@ function buildPackage(work, original, words, version, audio) {
       /* Ton gehört zum Satz, sobald die Datei da ist - erzeugt wird er
          eigens, nicht beim Bauen. */
       const track = nameFor(source);
-      if (audio && audio.has(track)) built.audio = { file: track };
+      if (audio && audio.has(track)) {
+        built.audio = { file: track };
+        const marks = timingsFor(audio.get(track), units);
+        if (marks) {
+          built.audio.durationMs = marks.durationMs;
+          if (marks.timings.length > 0) built.audio.timings = marks.timings;
+        }
+      }
 
       return built;
     });
@@ -416,7 +432,7 @@ function buildPackage(work, original, words, version, audio) {
      Was hier durchfällt, würde beim Empfänger durchfallen. */
   if (missing.length === 0) {
     const files = new Set(['package.json']);
-    for (const name of audio || []) files.add(name);
+    if (audio) for (const name of audio.keys()) files.add(name);
     for (const problem of validatePackage(data, files)) say(problem);
   }
 
@@ -466,6 +482,35 @@ function rememberSpelling(map, surface, partOfSpeech, lemma) {
     map.set(id, entry);
   }
   if (entry.lemmas.indexOf(lemma) < 0) entry.lemmas.push(lemma);
+}
+
+/* Aus den Zeitmarken je Zeichen die Zeitmarken je Wort machen.
+
+   Der Sprachdienst sagt, wann jedes Zeichen des Satzes klingt; die
+   Einheiten wissen, welche Zeichen zu ihnen gehören. Mehr braucht es
+   nicht - und geraten wird nichts: Wo eine Marke fehlt oder unsinnig
+   wäre, bleibt das Wort ohne. Eine Hervorhebung, die danebenliegt, ist
+   schlimmer als keine. */
+function timingsFor(timing, units) {
+  if (!timing || !Array.isArray(timing.starts)) return null;
+
+  const timings = [];
+  let previousEnd = -1;
+
+  for (let i = 0; i < units.length; i++) {
+    const unit = units[i];
+    const from = timing.starts[unit.start];
+    const to = timing.ends[unit.end - 1];
+
+    if (!Number.isFinite(from) || !Number.isFinite(to)) continue;
+    if (to <= from) continue;
+    if (from < previousEnd) continue;
+
+    timings.push({ unit: i, startMs: from, endMs: to });
+    previousEnd = to;
+  }
+
+  return { durationMs: timing.durationMs, timings: timings };
 }
 
 function remember(map, key, form) {

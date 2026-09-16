@@ -1,7 +1,7 @@
 ---
 type: packager-word
 language: fr
-lemma: Ça va
+lemma: ça va
 partOfSpeech: PHRASE
 key: "fr:ça va:PHRASE"
 gloss: "es-geht, gut"

@@ -15,6 +15,7 @@ const { requestUrl } = require('obsidian');
 const { nameFor } = require('./build.js');
 
 const ENDPOINT = 'https://api.elevenlabs.io/v1/text-to-speech/';
+const WITH_TIMING = '/with-timestamps';
 const MODEL = 'eleven_multilingual_v2';
 const AT_ONCE = 4;
 
@@ -57,12 +58,12 @@ async function speak(key, voice, text) {
 
 async function speakOnce(key, voice, text) {
   const answer = await requestUrl({
-    url: ENDPOINT + encodeURIComponent(voice),
+    url: ENDPOINT + encodeURIComponent(voice) + WITH_TIMING,
     method: 'POST',
     headers: {
       'xi-api-key': key,
       'Content-Type': 'application/json',
-      Accept: 'audio/mpeg'
+      Accept: 'application/json'
     },
     body: JSON.stringify({
       text: text,
@@ -77,14 +78,47 @@ async function speakOnce(key, voice, text) {
     problem.again = AGAIN.indexOf(answer.status) >= 0;
     throw problem;
   }
-  if (!answer.arrayBuffer || answer.arrayBuffer.byteLength < 512) {
-    throw new Error('The answer contained no sound.');
+  /* Mit Zeitmarken kommt die Antwort als JSON: der Ton als Text kodiert,
+     dazu für JEDES Zeichen des Satzes ein Anfang und ein Ende. Weil die
+     Einheiten ihre Zeichenpositionen kennen, lässt sich daraus später
+     genau ausrechnen, wann welches Wort klingt. */
+  let body;
+  try {
+    body = JSON.parse(answer.text);
+  } catch (error) {
+    throw new Error('The answer could not be read.');
   }
+  if (!body.audio_base64) throw new Error('The answer contained no sound.');
 
-  /* Was der Satz gekostet hat, sagt der Dienst selbst. Besser als es zu
-     schätzen - dann steht am Ende da, was wirklich abgebucht wurde. */
+  const bytes = decode(body.audio_base64);
+  if (bytes.byteLength < 512) throw new Error('The answer contained no sound.');
+
   const cost = Number((answer.headers || {})['character-cost']);
-  return { bytes: answer.arrayBuffer, cost: Number.isFinite(cost) ? cost : 0 };
+  return {
+    bytes: bytes,
+    cost: Number.isFinite(cost) ? cost : 0,
+    timing: timingFrom(body.alignment || body.normalized_alignment)
+  };
+}
+
+/* Der Ton kommt als Text kodiert zurück. */
+function decode(text) {
+  const raw = atob(text);
+  const bytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return bytes.buffer;
+}
+
+/* Sekunden zu Millisekunden, je Zeichen. Gespeichert wird nur, was wir
+   später brauchen - die Zeichen selbst stehen ja im Satz. */
+function timingFrom(alignment) {
+  if (!alignment || !Array.isArray(alignment.character_start_times_seconds)) return null;
+
+  const starts = alignment.character_start_times_seconds.map((one) => Math.round(one * 1000));
+  const ends = alignment.character_end_times_seconds.map((one) => Math.round(one * 1000));
+  if (starts.length === 0) return null;
+
+  return { durationMs: ends[ends.length - 1], starts: starts, ends: ends };
 }
 
 /* Fehler des Dienstes in Worte fassen.
@@ -115,7 +149,11 @@ function explain(answer) {
 /* Fehlende Tondateien nachziehen. "have" sagt, was schon da ist,
    "write" legt eine Datei an, "step" meldet den Fortschritt. */
 async function generate(options) {
-  const open = options.sentences.filter((one) => !options.have.has(one.file));
+  /* Offen ist ein Satz, wenn der Ton fehlt - oder wenn es ihn zwar gibt,
+     aber ohne Zeitmarken. Die sind erst später dazugekommen. */
+  const open = options.sentences.filter(
+    (one) => !options.have.has(one.file) || !options.have.get(one.file)
+  );
   if (open.length === 0) {
     return { written: 0, credits: 0, skipped: options.sentences.length };
   }
@@ -126,7 +164,7 @@ async function generate(options) {
   let credits = 0;
   try {
     const first = await speak(options.key, options.voice, open[0].source);
-    await options.write(open[0].file, first.bytes);
+    await options.write(open[0].file, first.bytes, first.timing);
     written = 1;
     credits += first.cost;
     options.step('Recording audio… ' + Math.round((1 / open.length) * 100) + '%');
@@ -146,7 +184,7 @@ async function generate(options) {
 
       try {
         const spoken = await speak(options.key, options.voice, open[at].source);
-        await options.write(open[at].file, spoken.bytes);
+        await options.write(open[at].file, spoken.bytes, spoken.timing);
         written += 1;
         credits += spoken.cost;
         options.step('Recording audio… ' + Math.round((written / open.length) * 100) + '%');

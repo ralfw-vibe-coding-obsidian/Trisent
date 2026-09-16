@@ -65,7 +65,37 @@ Bestand bisher:
 `mot de passe` · `petit déjeuner` · `à droite` · `à quelle heure` ·
 `quatre-vingts`
 
+## Was in einer Grammatiknotiz steht
+
+Die Notiz zu einem Wort soll **nicht zufällig besser oder schlechter** ausfallen,
+je nachdem, in welchem Text das Wort zuerst vorkam. Deshalb je Wortart dasselbe
+Raster - ein bis drei Sätze, nicht mehr:
+
+| Wortart | Was hineingehört |
+|---|---|
+| NOUN | Geschlecht mit Artikel (`le livre`, `la table`), Mehrzahl nur wenn unregelmäßig, feste Verbindungen |
+| VERB | Regelmäßig auf -er/-ir/-re oder unregelmäßig; die Formen, die man wirklich hört; `être` statt `avoir` in zusammengesetzten Zeiten; welche Präposition folgt |
+| AUX | Die vollständige Formenreihe im Präsens |
+| ADJ | Weibliche Form; Stellung vor dem Substantiv, wenn sie ungewöhnlich ist |
+| DET | Die Reihe männlich / weiblich / Mehrzahl; Elision vor Vokal |
+| PRON | Betont oder unbetont; Stellung im Satz; Elision; womit man es verwechselt |
+| ADP | Was folgt; Verschmelzungen (`à` + `le` = `au`) |
+| ADV | Stellung im Satz |
+| NUM | Aussprache-Besonderheiten, Bindung |
+| INTJ | Wann man es sagt und wie förmlich es ist |
+| PROPN | Nur Aussprache-Besonderheiten. Sonst nichts. |
+| PHRASE | Was wörtlich dasteht, und wann man es benutzt |
+
+Immer erwähnen, **womit man das Wort verwechselt**, wenn es einen Verwechslungs-
+partner gibt: `lit` (Bett) und `il lit` (er liest), `ou` und `où`, `le` als
+Artikel und als Fürwort.
+
+Nicht hineinschreiben: die Glosse noch einmal, Beispielsätze ohne Nutzen,
+Schulbuchprosa, Herkunftsgeschichten.
+
 ## Schreibweise
 
 16. In **Grundformen** steht immer der gerade Apostroph `'`. Der Originaltext
     behält seinen eigenen - wird nie geglättet.
+17. Die Grundform einer **Wendung** ist die Zitierform, nicht die Form aus dem
+    Satz: `je m'appelle`, auch wenn im Text `Je m’appelle` steht.

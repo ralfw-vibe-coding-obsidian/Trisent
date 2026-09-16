@@ -30,6 +30,10 @@ const WORK_FILE = 'work.md';
 const TEXT_FILE = 'text.md';
 const PACKAGE_FILE = 'package.json';
 const WORDS_DIR = 'words';
+const AUDIO_DIR = 'audio';
+/* Die Zeitmarken je Satz. Bleiben in der Werkstatt - im Paket stehen
+   sie fertig ausgerechnet an den Sätzen, nicht als Rohdaten daneben. */
+const TIMING_DIR = 'timing';
 const RULES_FILE = 'rules.md';
 
 /* Wie viele Absätze gleichzeitig aufbereitet werden.
@@ -112,6 +116,33 @@ function starterRules(code) {
     '',
     '6. Aufgenommen werden Höflichkeitsformeln, grammatische Fügungen und',
     '   feste Begriffe - nicht gewöhnliche Wortfolgen. Im Zweifel weglassen.',
+    '7. Die Grundform einer Wendung ist die **Zitierform**, nicht die Form aus',
+    '   dem Satz: klein geschrieben, gerader Apostroph.',
+    '',
+    '## Was in einer Grammatiknotiz steht',
+    '',
+    'Die Notiz zu einem Wort soll nicht zufällig besser oder schlechter',
+    'ausfallen, je nachdem, in welchem Text das Wort zuerst vorkam. Ein bis',
+    'drei Sätze, und je Wortart dasselbe Raster. Für den Anfang:',
+    '',
+    '| Wortart | Was hineingehört |',
+    '|---|---|',
+    '| NOUN | Geschlecht, Mehrzahl wenn unregelmäßig, feste Verbindungen |',
+    '| VERB | Regelmäßig oder unregelmäßig, die wichtigen Formen, was folgt |',
+    '| ADJ | Abweichende Formen, Stellung wenn ungewöhnlich |',
+    '| DET, PRON | Die Formenreihe, Stellung im Satz |',
+    '| ADP | Was folgt, Verschmelzungen |',
+    '| PROPN | Nur Aussprache-Besonderheiten |',
+    '| PHRASE | Was wörtlich dasteht, und wann man es benutzt |',
+    '',
+    'Immer erwähnen, **womit man das Wort verwechselt**, wenn es einen',
+    'Verwechslungspartner gibt.',
+    '',
+    'Nicht hineinschreiben: die Glosse noch einmal, Beispielsätze ohne',
+    'Nutzen, Schulbuchprosa, Herkunftsgeschichten.',
+    '',
+    'Diese Tabelle gilt für jede Sprache nur ungefähr. Schärfe sie, sobald',
+    'du siehst, was bei dieser Sprache wirklich zählt.',
     ''
   ].join('\n');
 }
@@ -1079,14 +1110,44 @@ class Packager {
     );
   }
 
-  /* Was an Ton schon im Textordner liegt, mit Pfaden relativ dazu. */
+  /* Was an Ton schon im Textordner liegt: je Datei ihre Zeitmarken,
+     oder null, wenn sie vor deren Einführung entstanden ist. */
   audioFiles(folder) {
-    const found = new Set();
-    const sub = this.childFolder(folder, 'audio');
-    if (!sub) return found;
+    const found = new Map();
+    const sounds = this.childFolder(folder, AUDIO_DIR);
+    if (!sounds) return found;
 
-    for (const child of sub.children) {
-      if (child instanceof TFile) found.add('audio/' + child.name);
+    const marks = this.childFolder(folder, TIMING_DIR);
+    const known = new Set();
+    if (marks) {
+      for (const child of marks.children) {
+        if (child instanceof TFile) known.add(child.basename);
+      }
+    }
+
+    for (const child of sounds.children) {
+      if (!(child instanceof TFile)) continue;
+      found.set(AUDIO_DIR + '/' + child.name, known.has(child.basename) ? child.basename : null);
+    }
+    return found;
+  }
+
+  /* Die Zeitmarken selbst - erst beim Bauen gebraucht, deshalb einzeln
+     nachgeladen statt bei jeder Übersicht. */
+  async audioWithTimings(folder) {
+    const found = this.audioFiles(folder);
+    const marks = this.childFolder(folder, TIMING_DIR);
+    if (!marks) return found;
+
+    for (const [file, base] of found) {
+      if (!base) continue;
+      const note = this.file(marks.path + '/' + base + '.json');
+      if (!note) { found.set(file, null); continue; }
+      try {
+        found.set(file, JSON.parse(await this.app.vault.cachedRead(note)));
+      } catch (error) {
+        found.set(file, null);
+      }
     }
     return found;
   }
@@ -1105,7 +1166,8 @@ class Packager {
     const sentences = audio.sentencesOf(work);
     if (sentences.length === 0) throw new Error('There are no sentences yet.');
 
-    const folder = await this.ensureFolder(text.folder.path + '/audio');
+    const folder = await this.ensureFolder(text.folder.path + '/' + AUDIO_DIR);
+    const marks = await this.ensureFolder(text.folder.path + '/' + TIMING_DIR);
     const have = this.audioFiles(text.folder);
 
     step('Recording audio…');
@@ -1115,8 +1177,18 @@ class Packager {
       sentences: sentences,
       have: have,
       step: step,
-      write: async (name, bytes) => {
-        await this.app.vault.createBinary(folder.path + '/' + name.slice('audio/'.length), bytes);
+      write: async (name, bytes, timing) => {
+        const base = name.slice((AUDIO_DIR + '/').length).replace(/\.mp3$/, '');
+
+        const sound = this.file(folder.path + '/' + base + '.mp3');
+        if (sound) await this.app.vault.modifyBinary(sound, bytes);
+        else await this.app.vault.createBinary(folder.path + '/' + base + '.mp3', bytes);
+
+        if (!timing) return;
+        const note = this.file(marks.path + '/' + base + '.json');
+        const body = JSON.stringify(timing);
+        if (note) await this.app.vault.modify(note, body);
+        else await this.app.vault.create(marks.path + '/' + base + '.json', body);
       }
     });
 
@@ -1159,7 +1231,7 @@ class Packager {
     }
     const held = previous && Number.isFinite(previous.version) ? previous.version : 0;
 
-    const result = buildPackage(work, original, words, held || 1, this.audioFiles(text.folder));
+    const result = buildPackage(work, original, words, held || 1, await this.audioWithTimings(text.folder));
 
     if (result.missing.length > 0) {
       return {
@@ -1234,6 +1306,9 @@ class Packager {
     for (const file of this.filesUnder(text.folder)) {
       const relative = file.path.slice(text.folder.path.length + 1);
       if (relative === WORK_FILE || relative === TEXT_FILE) continue;
+      /* Die Rohdaten der Zeitmarken bleiben in der Werkstatt - im Paket
+         stehen sie fertig an den Sätzen. */
+      if (relative.startsWith(TIMING_DIR + '/')) continue;
       const bytes = await this.app.vault.readBinary(file);
       contents.set(relative, new Uint8Array(bytes));
     }

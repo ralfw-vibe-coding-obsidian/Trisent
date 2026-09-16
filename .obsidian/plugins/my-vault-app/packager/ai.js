@@ -87,6 +87,10 @@ function instructions(rules, example, languageFolder) {
     '  nicht aus den Einzelwörtern ergibt. Sie umfasst mindestens zwei Wörter',
     '  und ersetzt sie nicht - die Wörter behalten ihre eigenen Zeilen.',
     '  Im Zweifel weglassen.',
+    '- Steht hinter einer Wendung eine dritte Angabe, ist das ihre GRUNDFORM,',
+    '  und die ist die Zitierform: klein geschrieben (außer Eigennamen) und mit',
+    '  geradem Apostroph. Am Satzanfang heißt es also nicht "Je m\u2019appelle",',
+    '  sondern "je m\'appelle" - so steht es später im Wörterbuch.',
     '',
     'DER ORIGINALTEXT IST UNANTASTBAR',
     '',
@@ -179,7 +183,8 @@ function wordInstructions(rules) {
     '  unregelmäßige Formen, wovon das Wort begleitet wird, wogegen man es',
     '  verwechselt. Keine Schulbuchprosa, keine Beispiele ohne Nutzen.',
     '- Bei einer Wendung (WORTART ist PHRASE) erklärt grammar, was da wörtlich',
-    '  steht und wann man es benutzt.',
+    '  steht und wann man es benutzt. Ihre lemma-Zeile trägt die Zitierform:',
+    '  klein geschrieben, gerader Apostroph.',
     ''
   );
 
