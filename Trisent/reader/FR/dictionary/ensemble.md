@@ -7,7 +7,7 @@ key: fr:ensemble:ADV
 gloss: zusammen
 forms:
   - ensemble
-status: learning
+status: familiar
 updatedAt: 2026-09-15
 ---
 

@@ -3,11 +3,12 @@ type: word
 language: fr
 lemma: au
 partOfSpeech: ADP
-key: "fr:au:ADP"
-gloss: "zu dem, im"
-forms: [au]
-status: learning
-updatedAt: 2026-09-14
+key: fr:au:ADP
+gloss: zu dem, im
+forms:
+  - au
+status: known
+updatedAt: 2026-09-15
 ---
 
 ## Grammar

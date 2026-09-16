@@ -903,3 +903,103 @@
   border-color: var(--text-normal);
   color: var(--background-primary);
 }
+
+/* ---------------------------------------------------------------- */
+/* Abspielen                                                         */
+/* ---------------------------------------------------------------- */
+
+/* Die schmale Spalte links am Satz. Sie steht bei jedem Satz, sobald das
+   Paket überhaupt Ton hat - auch bei einem Satz ohne. Sonst rückten die
+   Zeilen unterschiedlich weit ein. */
+
+.trisent-sentence {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.trisent-gutter {
+  flex: 0 0 1.5rem;
+  display: flex;
+  justify-content: center;
+  padding-top: 0.28rem;
+}
+
+.trisent-sentence-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.trisent-view .trisent-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  cursor: pointer;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  /* Zurückhaltend, solange nichts läuft - sonst stehen bei 35 Sätzen
+     35 Knöpfe im Text herum. */
+  color: var(--text-faint);
+  opacity: 0.55;
+}
+
+.trisent-view .trisent-play svg {
+  width: 0.85em;
+  height: 0.85em;
+}
+
+.trisent-view .trisent-play:hover {
+  opacity: 1;
+  color: var(--tri-accent);
+  background: var(--background-modifier-hover);
+}
+
+.trisent-view .trisent-play.is-playing {
+  opacity: 1;
+  color: var(--tri-accent);
+}
+
+/* Der Absatz bekommt seinen Knopf neben den Sprecher. */
+
+.trisent-paragraph-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+  margin-left: 1.85rem;
+}
+
+.trisent-paragraph-head .trisent-speaker {
+  margin-bottom: 0;
+}
+
+.trisent-view .trisent-play-paragraph {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+/* Der Satz, der gerade klingt. */
+
+.trisent-sentence.is-playing .trisent-sentence-body {
+  box-shadow: -0.55rem 0 0 -0.45rem var(--tri-accent);
+}
+
+/* Ganzer Text und Geschwindigkeit, oben in der Leiste. */
+
+.trisent-speech {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--background-modifier-border);
+  border-radius: 9px;
+}
+
+.trisent-view .trisent-speed {
+  min-width: 2.4rem;
+  font-variant-numeric: tabular-nums;
+}

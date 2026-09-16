@@ -20,6 +20,8 @@ const DEFAULTS = {
   sort: 'easiest',
   /* Wie ein Wort zeigt, wie gut es sitzt: 'none', 'underline', 'fill'. */
   highlight: 'underline',
+  /* Abspielgeschwindigkeit: 1, 0.75 oder 0.5. */
+  speed: 1,
   lastLanguage: null,
   lastPackage: null,
   reading: {},

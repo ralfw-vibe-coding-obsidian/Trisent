@@ -9,6 +9,7 @@
 const { ItemView, TFolder, Notice, setIcon } = require('obsidian');
 const { WORD_STATUS } = require('../core/package.js');
 const { KNOWN_LANGUAGES } = require('../core/library.js');
+const { Playback, SPEEDS } = require('./audio.js');
 
 const VIEW_TYPE = 'trisent-view';
 const RIBBON_ICON = 'languages';
@@ -71,11 +72,24 @@ class TrisentView extends ItemView {
     this.render();
   }
 
+  playback() {
+    if (!this.player) this.player = new Playback(this.app, this);
+    return this.player;
+  }
+
+  stopAudio() {
+    if (this.player) this.player.stop();
+  }
+
   async onClose() {
+    this.stopAudio();
     /* nichts aufzuräumen */
   }
 
   render() {
+    /* Was gerade läuft, gehört zu dem, was gerade zu sehen ist. */
+    this.stopAudio();
+
     const root = this.contentEl;
     root.empty();
     root.addClass('trisent-view');
@@ -628,6 +642,41 @@ class TrisentView extends ItemView {
     });
   }
 
+  renderSpeech(header) {
+    const group = header.createDiv({ cls: 'trisent-speech' });
+
+    const all = [];
+    for (const id of this.sentenceIds) {
+      const file = this.audioFor.get(id);
+      if (file) all.push({ id: id, file: file });
+    }
+
+    this.speakButton = group.createEl('button', {
+      cls: 'trisent-switch trisent-switch-icon',
+      attr: { 'aria-label': 'Read the whole text', title: 'Read the whole text' }
+    });
+    setIcon(this.speakButton, 'play');
+    this.speakButton.addEventListener('click', () => this.playback().play(all));
+
+    /* Langsamer hören ist beim Lernen kein Luxus. */
+    const speed = this.reader.settings.speed;
+    const current = SPEEDS.includes(speed) ? speed : 1;
+    const pace = group.createEl('button', {
+      cls: 'trisent-switch trisent-speed' + (current === 1 ? '' : ' is-on'),
+      text: current === 1 ? '1×' : String(current).replace('0.', '.') + '×',
+      attr: { 'aria-label': 'Playback speed', title: 'Playback speed' }
+    });
+    pace.addEventListener('click', async () => {
+      const next = SPEEDS[(SPEEDS.indexOf(current) + 1) % SPEEDS.length];
+      this.reader.settings.speed = next;
+      await this.reader.saveSettings();
+      /* Wirkt sofort, auch mitten im Satz. */
+      if (this.player) this.player.setSpeed(next);
+      pace.setText(next === 1 ? '1×' : String(next).replace('0.', '.') + '×');
+      pace.toggleClass('is-on', next !== 1);
+    });
+  }
+
   highlightMode() {
     const mode = this.reader.settings.highlight;
     return HIGHLIGHTS.some((h) => h.id === mode) ? mode : 'underline';
@@ -749,8 +798,16 @@ class TrisentView extends ItemView {
       this.renderHeader(bar, data.title || folder.name, () => this.backToPackages(), language.name);
       /* Satz-IDs in Lesereihenfolge - daraus wird der Fortschritt. */
       this.sentenceIds = [];
+      /* Und die Sätze, zu denen Ton im Paket liegt. Hat ein Paket keinen,
+         erscheinen die Abspielknöpfe gar nicht erst - eine App, der die
+         Hälfte der Knöpfe nichts tut, sieht kaputt aus. */
+      this.audioFor = new Map();
       for (const paragraph of data.paragraphs || []) {
-        for (const sentence of paragraph.sentences || []) this.sentenceIds.push(sentence.id);
+        for (const sentence of paragraph.sentences || []) {
+          this.sentenceIds.push(sentence.id);
+          const file = sentence.audio && sentence.audio.file;
+          if (file) this.audioFor.set(sentence.id, file);
+        }
       }
 
       this.renderLevelSwitches(bar);
@@ -764,8 +821,19 @@ class TrisentView extends ItemView {
       });
       for (const paragraph of data.paragraphs || []) {
         const block = text.createDiv({ cls: 'trisent-paragraph' });
-        if (paragraph.speaker) {
-          block.createDiv({ cls: 'trisent-speaker', text: paragraph.speaker });
+
+        const spoken = (paragraph.sentences || [])
+          .filter((sentence) => this.audioFor.has(sentence.id))
+          .map((sentence) => ({ id: sentence.id, file: this.audioFor.get(sentence.id) }));
+
+        if (paragraph.speaker || spoken.length > 0) {
+          const head = block.createDiv({ cls: 'trisent-paragraph-head' });
+          if (paragraph.speaker) {
+            head.createDiv({ cls: 'trisent-speaker', text: paragraph.speaker });
+          }
+          if (spoken.length > 0) {
+            this.renderPlayButton(head, 'trisent-play-paragraph', spoken, 'Play this part');
+          }
         }
         for (const sentence of paragraph.sentences || []) {
           /* Ein Satz, der sich nicht zeichnen lässt, darf nur sich selbst
@@ -825,6 +893,10 @@ class TrisentView extends ItemView {
       this.render();
     });
 
+    /* Den ganzen Text vorlesen lassen, und wie schnell. Beides erscheint
+       nur, wenn das Paket überhaupt Ton mitbringt. */
+    if (this.audioFor && this.audioFor.size > 0) this.renderSpeech(header);
+
     /* Wie weit im Text man ist. Wandert beim Scrollen mit. */
     const progress = header.createDiv({ cls: 'trisent-progress' });
     this.progressBar = progress.createDiv({ cls: 'trisent-track' }).createDiv({ cls: 'trisent-track-fill' });
@@ -838,8 +910,24 @@ class TrisentView extends ItemView {
     const wrap = block.createDiv({ cls: 'trisent-sentence' });
     wrap.dataset.sentence = sentence.id || '';
 
+    /* Die schmale Spalte links steht bei jedem Satz, sobald das Paket
+       überhaupt Ton hat - auch bei einem Satz ohne. Sonst rückten die
+       Zeilen unterschiedlich weit ein. */
+    const file = this.audioFor.get(sentence.id);
+    if (this.audioFor.size > 0) {
+      const gutter = wrap.createDiv({ cls: 'trisent-gutter' });
+      if (file) {
+        this.renderPlayButton(
+          gutter, 'trisent-play-sentence',
+          [{ id: sentence.id, file: file }], 'Play this sentence'
+        );
+      }
+    }
+
+    const body = wrap.createDiv({ cls: 'trisent-sentence-body' });
+
     if (levels.source !== false || levels.gloss !== false) {
-      const line = wrap.createDiv({ cls: 'trisent-line' });
+      const line = body.createDiv({ cls: 'trisent-line' });
       for (const group of this.groupsOf(sentence)) {
         const groupEl = line.createDiv({ cls: 'trisent-group' });
         for (const column of group) {
@@ -849,7 +937,61 @@ class TrisentView extends ItemView {
     }
 
     if (levels.fluent !== false) {
-      wrap.createDiv({ cls: 'trisent-t', text: sentence.fluent || '' });
+      body.createDiv({ cls: 'trisent-t', text: sentence.fluent || '' });
+    }
+  }
+
+  /* Ein Abspielknopf. Alle drei Ebenen benutzen denselben - ein Absatz
+     ist nur eine längere Liste von Sätzen als ein einzelner Satz. */
+  renderPlayButton(parent, cls, items, label) {
+    const button = parent.createEl('button', {
+      cls: 'trisent-play ' + cls,
+      attr: { 'aria-label': label, title: label }
+    });
+    setIcon(button, 'play');
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      this.playback().play(items);
+    });
+    return button;
+  }
+
+  /* Zeigt, welcher Satz gerade klingt. Beim Durchlaufen wandert die
+     Anzeige mit und zieht die Seite nach, damit man nicht sucht. */
+  markPlaying(sentenceId, follow) {
+    if (!this.scrollEl) return;
+
+    for (const el of this.scrollEl.querySelectorAll('.trisent-sentence.is-playing')) {
+      el.removeClass('is-playing');
+    }
+    for (const el of this.scrollEl.querySelectorAll('.trisent-play.is-playing')) {
+      el.removeClass('is-playing');
+      setIcon(el, 'play');
+    }
+    if (this.speakButton) {
+      this.speakButton.toggleClass('is-on', !!sentenceId);
+      setIcon(this.speakButton, sentenceId ? 'square' : 'play');
+    }
+    if (!sentenceId) return;
+
+    const wrap = this.scrollEl.querySelector(
+      '.trisent-sentence[data-sentence="' + sentenceId + '"]'
+    );
+    if (!wrap) return;
+    wrap.addClass('is-playing');
+
+    const button = wrap.querySelector('.trisent-play');
+    if (button) {
+      button.addClass('is-playing');
+      setIcon(button, 'square');
+    }
+
+    if (!follow) return;
+    const box = this.scrollEl.getBoundingClientRect();
+    const rect = wrap.getBoundingClientRect();
+    if (rect.top < box.top + 12 || rect.bottom > box.bottom - 12) {
+      this.scrollEl.scrollTop += rect.top - box.top - 80;
     }
   }
 

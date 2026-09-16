@@ -28,6 +28,7 @@ const MODULES = [
   'core/zip.js',
   'core/package.js',
   'core/library.js',
+  'reader/audio.js',
   'reader/view.js',
   'reader/card.js',
   'reader/index.js',
