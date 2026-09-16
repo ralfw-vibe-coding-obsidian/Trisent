@@ -684,7 +684,9 @@ class TrisentView extends ItemView {
        aber nur sichtbar, wenn es etwas zu stoppen gibt - so springt die
        Leiste nicht, sobald das Abspielen beginnt. */
     this.stopButton = bar.createEl('button', {
-      cls: 'trisent-stopbutton',
+      /* Von Anfang an unsichtbar - beim Öffnen läuft ja noch nichts.
+         Sichtbar wird er erst, wenn es etwas zu stoppen gibt. */
+      cls: 'trisent-stopbutton is-idle',
       attr: { 'aria-label': 'Stop', title: 'Stop' }
     });
     setIcon(this.stopButton, 'square');
