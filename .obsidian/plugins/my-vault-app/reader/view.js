@@ -657,28 +657,29 @@ class TrisentView extends ItemView {
     this.speakButton.addEventListener('click', () => this.playback().play(all));
 
     /* Langsamer hören ist beim Lernen kein Luxus. */
-    const stored = this.reader.settings.speed;
-    const current = SPEEDS.includes(stored) ? stored : 1;
     const label = (value) => (value === 1 ? '1×' : String(value).replace('0.', '.') + '×');
+    const speed = () => {
+      const stored = this.reader.settings.speed;
+      return SPEEDS.includes(stored) ? stored : 1;
+    };
 
     const pace = bar.createEl('button', {
-      cls: 'trisent-speed' + (current === 1 ? '' : ' is-on'),
-      text: label(current),
+      cls: 'trisent-speed' + (speed() === 1 ? '' : ' is-on'),
+      text: label(speed()),
       attr: { 'aria-label': 'Playback speed', title: 'Playback speed' }
     });
+
     pace.addEventListener('click', async () => {
-      const next = SPEEDS[(SPEEDS.indexOf(current) + 1) % SPEEDS.length];
+      /* Den Stand jedes Mal frisch nachsehen. Merkt der Knopf ihn sich vom
+         Zeichnen, rechnet er beim zweiten Klick wieder dieselbe Stufe aus
+         und wirkt, als klemme er. */
+      const next = SPEEDS[(SPEEDS.indexOf(speed()) + 1) % SPEEDS.length];
       this.reader.settings.speed = next;
       await this.reader.saveSettings();
       /* Wirkt sofort, auch mitten im Satz. */
       if (this.player) this.player.setSpeed(next);
       pace.setText(label(next));
       pace.toggleClass('is-on', next !== 1);
-    });
-
-    bar.createSpan({
-      cls: 'trisent-audiobar-note',
-      text: all.length + (all.length === 1 ? ' sentence spoken' : ' sentences spoken')
     });
   }
 

@@ -942,10 +942,11 @@
   border-radius: 50%;
   background: transparent;
   box-shadow: none;
-  /* Zurückhaltend, solange nichts läuft - sonst stehen bei 35 Sätzen
-     35 Knöpfe im Text herum. */
-  color: var(--text-faint);
-  opacity: 0.55;
+  /* Dieselbe Farbe wie "Play text" - es ist dieselbe Handlung, nur für
+     einen Satz. Gedämpft, solange nichts läuft, sonst stehen bei 35
+     Sätzen 35 kräftige Knöpfe im Text herum. */
+  color: var(--tri-accent);
+  opacity: 0.5;
 }
 
 .trisent-view .trisent-play svg {
@@ -1059,7 +1060,3 @@
   border-color: var(--tri-accent);
 }
 
-.trisent-audiobar-note {
-  font-size: 0.72rem;
-  color: var(--text-faint);
-}
