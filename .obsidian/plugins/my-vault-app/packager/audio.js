@@ -18,6 +18,16 @@ const ENDPOINT = 'https://api.elevenlabs.io/v1/text-to-speech/';
 const MODEL = 'eleven_multilingual_v2';
 const AT_ONCE = 4;
 
+/* Antworten, bei denen es sich lohnt, kurz zu warten und noch einmal zu
+   fragen: Der Dienst ist gerade beschäftigt oder richtet die Stimme erst
+   ein. Das sagt nichts über den Satz aus. */
+const AGAIN = [409, 429, 500, 502, 503, 504];
+const WAITS = [2000, 5000, 10000, 20000];
+
+function pause(ms) {
+  return new Promise((done) => window.setTimeout(done, ms));
+}
+
 /* Alle Sätze eines Textes in Lesereihenfolge, mit ihrem Dateinamen. */
 function sentencesOf(work) {
   const all = [];
@@ -29,8 +39,23 @@ function sentencesOf(work) {
   return all;
 }
 
-/* Einen Satz sprechen lassen. */
+/* Einen Satz sprechen lassen - mit Geduld.
+
+   Beim allerersten Aufruf richtet der Dienst die Stimme ein und lehnt
+   weitere Anfragen so lange ab (409). Wer dann aufgibt, hat den ganzen
+   Text verloren, obwohl nur eine Sekunde gefehlt hat. */
 async function speak(key, voice, text) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await speakOnce(key, voice, text);
+    } catch (error) {
+      if (!error.again || attempt >= WAITS.length) throw error;
+      await pause(WAITS[attempt]);
+    }
+  }
+}
+
+async function speakOnce(key, voice, text) {
   const answer = await requestUrl({
     url: ENDPOINT + encodeURIComponent(voice),
     method: 'POST',
@@ -48,7 +73,9 @@ async function speak(key, voice, text) {
   });
 
   if (answer.status !== 200) {
-    throw new Error(explain(answer));
+    const problem = new Error(explain(answer));
+    problem.again = AGAIN.indexOf(answer.status) >= 0;
+    throw problem;
   }
   if (!answer.arrayBuffer || answer.arrayBuffer.byteLength < 512) {
     throw new Error('The answer contained no sound.');
@@ -62,7 +89,8 @@ function explain(answer) {
   if (status === 401) return 'The key was refused. Check it in the settings.';
   if (status === 404) return 'That voice does not exist. Check the voice id.';
   if (status === 422) return 'The service could not use this text.';
-  if (status === 429) return 'Too many requests at once - try again in a moment.';
+  if (status === 409) return 'The voice was busy being set up.';
+  if (status === 429) return 'Too many requests at once.';
 
   let detail = '';
   try {
@@ -80,8 +108,20 @@ async function generate(options) {
   const open = options.sentences.filter((one) => !options.have.has(one.file));
   if (open.length === 0) return { written: 0, skipped: options.sentences.length };
 
-  let next = 0;
+  /* Der erste Satz geht allein los. Danach ist die Stimme bereit, und
+     der Rest kann nebeneinander laufen. */
   let written = 0;
+  try {
+    const bytes = await speak(options.key, options.voice, open[0].source);
+    await options.write(open[0].file, bytes);
+    written = 1;
+    options.step('Speaking… ' + Math.round((1 / open.length) * 100) + '%');
+  } catch (error) {
+    error.written = 0;
+    throw error;
+  }
+
+  let next = 1;
   let failure = null;
 
   const worker = async () => {

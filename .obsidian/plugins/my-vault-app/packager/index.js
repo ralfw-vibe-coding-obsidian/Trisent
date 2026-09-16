@@ -253,7 +253,10 @@ class NewTextModal extends Modal {
   }
 }
 
-/* Welche Stimme soll diesen Text sprechen? */
+/* Welche Stimme soll diesen Text sprechen?
+
+   Dieselbe Form wie der Dialog für einen neuen Text: Beschriftung oben,
+   Feld über die volle Breite, Knöpfe unten rechts. */
 class VoiceModal extends Modal {
   constructor(app, voices, onPick) {
     super(app);
@@ -265,19 +268,33 @@ class VoiceModal extends Modal {
     const { contentEl } = this;
     this.modalEl.addClass('trisent-modal');
     contentEl.addClass('trisent-newtext');
-    contentEl.createEl('h2', { text: 'Which voice?' });
 
+    contentEl.createEl('h2', { text: 'Add audio' });
+
+    const wrap = contentEl.createDiv({ cls: 'trisent-newtext-field' });
+    wrap.createEl('label', { text: 'Voice' });
+    wrap.createDiv({
+      cls: 'trisent-newtext-hint',
+      text: 'Every sentence will be spoken by this voice.'
+    });
+
+    const select = wrap.createEl('select');
     for (const voice of this.voices) {
-      const row = contentEl.createEl('button', { cls: 'trisent-voice', text: voice.name });
-      row.addEventListener('click', () => {
-        this.close();
-        this.onPick(voice);
+      select.createEl('option', {
+        value: voice.id,
+        text: voice.language.toUpperCase() + ' · ' + (voice.name || voice.id)
       });
     }
 
     const actions = contentEl.createDiv({ cls: 'trisent-newtext-actions' });
     actions.createEl('button', { text: 'Cancel' })
       .addEventListener('click', () => this.close());
+    const start = actions.createEl('button', { cls: 'mod-cta', text: 'Speak' });
+    start.addEventListener('click', () => {
+      const voice = this.voices.find((one) => one.id === select.value) || this.voices[0];
+      this.close();
+      this.onPick(voice);
+    });
   }
 
   onClose() {
