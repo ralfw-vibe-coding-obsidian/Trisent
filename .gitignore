@@ -12,3 +12,6 @@
 
 # Testarchive für den Import. Lassen sich jederzeit neu packen.
 Import-Test-*.zip
+
+# Die gebaute Fassung. Entsteht bei jedem Release neu.
+dist/

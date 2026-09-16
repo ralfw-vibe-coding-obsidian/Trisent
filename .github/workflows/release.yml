@@ -1,0 +1,55 @@
+# Eine Fassung zum Weitergeben.
+#
+# Springt an, sobald ein Tag wie 0.1.0 geschoben wird: baut aus dem
+# Plugin-Ordner die drei Dateien, die ein Empfänger braucht, und hängt sie
+# an ein GitHub-Release. Damit kann das Plugin über BRAT installiert
+# werden.
+#
+# Nichts davon läuft auf einem Rechner hier - node und gh gibt es auf dem
+# Runner. Einen eigenen Zugangsschlüssel braucht es auch nicht: GitHub
+# stellt dem Lauf einen bereit.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fassung bauen
+        run: node scripts/build-release.mjs
+
+      # Ein Tag, der nicht zur Fassung im Manifest passt, wäre für BRAT
+      # unbrauchbar - es sucht die Fassung anhand des Tags.
+      - name: Tag gegen das Manifest prüfen
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version=$(node -p "require('./dist/manifest.json').version")
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME passt nicht zur Fassung $version im Manifest."
+            exit 1
+          fi
+
+      - name: Release veröffentlichen
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            dist/main.js dist/manifest.json dist/styles.css \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes

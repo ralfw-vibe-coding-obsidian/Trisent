@@ -54,6 +54,18 @@ function resolvePath(from, request) {
    hat und wir uns nicht gegenseitig hineinschreiben. */
 const MODULE_STYLES = ['reader/reader.css', 'packager/packager.css'];
 
+/* Beim Entwickeln liegen die Dateien einzeln im Plugin-Ordner und werden
+   von dort gelesen. Für eine Veröffentlichung darf das nicht sein: Über
+   BRAT kommen nur main.js, manifest.json und styles.css beim Empfänger
+   an, und ein Plugin, das dann elf fehlende Dateien sucht, startet gar
+   nicht erst.
+
+   Deshalb diese eine Naht: Der Bauschritt auf GitHub ersetzt das null
+   durch die Inhalte aller Dateien. Ist etwas darin, wird nicht mehr
+   gelesen, sondern von hier genommen. Für die Entwicklung ändert sich
+   nichts. */
+const EMBEDDED = null;
+
 /* Nur was beide Module angeht. Alles Weitere steht darunter in "reader"
    bzw. "packager" - so kann jede Seite ihre Einstellungen ändern, ohne
    der anderen ihre zu überschreiben. */
@@ -176,9 +188,12 @@ module.exports = class TrisentPlugin extends Plugin {
     const base = this.manifest.dir;
     if (!base) throw new Error('The plugin folder is unknown.');
 
-    const sources = {};
-    for (const name of MODULES) {
-      sources[name] = await this.app.vault.adapter.read(normalizePath(base + '/' + name));
+    let sources = EMBEDDED;
+    if (!sources) {
+      sources = {};
+      for (const name of MODULES) {
+        sources[name] = await this.app.vault.adapter.read(normalizePath(base + '/' + name));
+      }
     }
 
     const loaded = {};
@@ -213,6 +228,10 @@ module.exports = class TrisentPlugin extends Plugin {
   /* Obsidian lädt von sich aus nur styles.css. Die Dateien der Module
      holen wir selbst - fehlt eine, läuft die App trotzdem. */
   async loadModuleStyles() {
+    /* In einer veröffentlichten Fassung stecken alle Stilvorlagen bereits
+       in styles.css, die Obsidian selbst lädt. */
+    if (EMBEDDED) return;
+
     const base = this.manifest.dir;
     if (!base) return;
 
