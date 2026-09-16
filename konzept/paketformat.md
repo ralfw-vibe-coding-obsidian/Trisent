@@ -63,12 +63,17 @@ wählbar; angezeigt wird immer `title` aus der Paketdatei.
 | `title` | ja | Titel in der Fremdsprache. |
 | `titleTranslation` | nein | Deutscher Titel. |
 | `language` | ja | Sprachcode der Fremdsprache, klein (`bg`, `fr`). Muss zum Sprachordner passen. |
-| `glossLanguage` | ja | Sprache der G-Ebene. Zurzeit immer `de`. |
-| `fluentLanguage` | ja | Sprache der T-Ebene. Zurzeit immer `de`. |
+| `glossLanguage` | ja | Sprachcode der Person, klein – die Sprache der G-Ebene. Aus derselben Liste wie `language`. |
+| `fluentLanguage` | ja | Sprachcode der Person, klein – die Sprache der T-Ebene. |
 | `level` | nein | `A1`…`C2`. |
 | `topics` | nein | Kurze englische Schlagwörter, klein. Erscheinen in der Paketliste. |
 | `paragraphs` | ja | Der Text. |
 | `dictionary` | ja | Wörterbucheinträge zu allen vorkommenden Schlüsseln. |
+
+**Die Sprache der Person steht im Paket, nicht im Code.** Ein Franzose, der
+Spanisch lernt, bekommt französische Glossen und `"glossLanguage": "fr"`. Der
+Reader liest beide Ebenen, ohne eine bestimmte Sprache vorauszusetzen; nur seine
+Oberfläche ist englisch.
 
 ## Absätze und Sätze
 
@@ -176,6 +181,9 @@ bg:ключ:NOUN:spring
 ```
 
 ## Die G-Ebene: wie flach gloss't wird
+
+Die Beispiele hier sind deutsch, weil die erprobten Pakete es sind – der
+Grundsatz gilt für jede `glossLanguage`.
 
 Die Glosse ist **kein gutes Deutsch**. Sie ist ein Fenster auf den Bau der
 Fremdsprache. Deshalb gilt:

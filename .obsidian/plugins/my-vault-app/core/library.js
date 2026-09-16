@@ -72,10 +72,18 @@ function sanitizeFileName(name) {
 }
 
 /* Werte, die Doppelpunkte oder Anführungszeichen enthalten können,
-   müssen im Frontmatter in Anführungszeichen stehen. */
+   müssen im Frontmatter in Anführungszeichen stehen.
+
+   Die Zeichenbereiche decken ab, was die App anbietet: erweitertes
+   Latein, Griechisch und Kyrillisch samt der Buchstaben, die über das
+   Russische hinausgehen (є ї ґ ђ ј љ њ ћ џ). Sonst stünden serbische
+   oder griechische Grundformen ohne Not in Anführungszeichen - lesbar
+   bleiben sollen die Notizen ja auch für die Person. */
+const PLAIN_YAML = /^[\wÀ-ɏΆ-ώЀ-ӿ][\wÀ-ɏΆ-ώЀ-ӿ .'\u2019-]*$/;
+
 function yamlValue(value) {
   const text = String(value);
-  if (/^[\wÀ-ſА-я][\wÀ-ſА-я .'\u2019-]*$/.test(text)) return text;
+  if (PLAIN_YAML.test(text)) return text;
   return '"' + text.replace(/"/g, '\\"') + '"';
 }
 
