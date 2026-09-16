@@ -83,23 +83,29 @@ async function speakOnce(key, voice, text) {
   return answer.arrayBuffer;
 }
 
-/* Fehler des Dienstes in Worte fassen, mit denen man etwas anfangen kann. */
+/* Fehler des Dienstes in Worte fassen.
+
+   Zuerst das, was der Dienst selbst sagt - er weiß es genauer als wir.
+   Einmal stand hinter einem 401 nicht "Schlüssel falsch", sondern "dieser
+   Schlüssel hat nur noch 5 Credits, gebraucht werden 10" - und meine
+   eigene Formulierung hat das verschluckt. */
 function explain(answer) {
+  let said = '';
+  try {
+    const body = JSON.parse(answer.text);
+    said = (body.detail && (body.detail.message || body.detail.status)) || body.message || '';
+  } catch (error) {
+    said = String(answer.text || '').trim().slice(0, 200);
+  }
+  if (said) return said;
+
   const status = answer.status;
   if (status === 401) return 'The key was refused. Check it in the settings.';
   if (status === 404) return 'That voice does not exist. Check the voice id.';
   if (status === 422) return 'The service could not use this text.';
   if (status === 409) return 'The voice was busy being set up.';
   if (status === 429) return 'Too many requests at once.';
-
-  let detail = '';
-  try {
-    const body = JSON.parse(answer.text);
-    detail = (body.detail && (body.detail.message || body.detail.status)) || '';
-  } catch (error) {
-    detail = String(answer.text || '').slice(0, 120);
-  }
-  return 'The speech service answered with ' + status + (detail ? ': ' + detail : '.');
+  return 'The speech service answered with ' + status + '.';
 }
 
 /* Fehlende Tondateien nachziehen. "have" sagt, was schon da ist,
@@ -115,7 +121,7 @@ async function generate(options) {
     const bytes = await speak(options.key, options.voice, open[0].source);
     await options.write(open[0].file, bytes);
     written = 1;
-    options.step('Speaking… ' + Math.round((1 / open.length) * 100) + '%');
+    options.step('Recording audio… ' + Math.round((1 / open.length) * 100) + '%');
   } catch (error) {
     error.written = 0;
     throw error;
@@ -134,7 +140,7 @@ async function generate(options) {
         const bytes = await speak(options.key, options.voice, open[at].source);
         await options.write(open[at].file, bytes);
         written += 1;
-        options.step('Speaking… ' + Math.round((written / open.length) * 100) + '%');
+        options.step('Recording audio… ' + Math.round((written / open.length) * 100) + '%');
       } catch (error) {
         if (!failure) failure = error;
         return;

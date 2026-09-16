@@ -514,7 +514,7 @@ class PackagerView extends ItemView {
       const path = text.folder.path;
       if (this.running.has(path)) return;
 
-      this.running.set(path, 'Speaking…');
+      this.running.set(path, 'Recording audio…');
       this.reports.delete(path);
       this.render();
 
@@ -1105,7 +1105,7 @@ class Packager {
     const folder = await this.ensureFolder(text.folder.path + '/audio');
     const have = this.audioFiles(text.folder);
 
-    step('Speaking…');
+    step('Recording audio…');
     const result = await audio.generate({
       key: this.settings.speechKey,
       voice: voice.id,
