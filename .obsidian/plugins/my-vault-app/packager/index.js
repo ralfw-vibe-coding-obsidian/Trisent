@@ -35,6 +35,9 @@ const AUDIO_DIR = 'audio';
    sie fertig ausgerechnet an den Sätzen, nicht als Rohdaten daneben. */
 const TIMING_DIR = 'timing';
 const RULES_FILE = 'rules.md';
+/* Die Vorlage, aus der die Hausregeln einer neuen Sprache entstehen.
+   Sie liegt als Notiz da, damit die Person sie ändern kann. */
+const TEMPLATE_FILE = 'rules-template.md';
 
 /* Wie viele Absätze gleichzeitig aufbereitet werden.
 
@@ -85,21 +88,24 @@ const DEFAULTS = {
    behandelt werden - entscheidet sich am ersten Text, und dann gehört
    es hier hinein. Ohne diese Datei entscheidet jeder Lauf neu, und der
    Lernstand zerfällt still in zwei Hälften. */
-function starterRules(code, into) {
+/* Die Vorlage für die Hausregeln einer Sprache, die es noch nicht gab.
+
+   Sie liegt als Notiz in der Werkstatt, damit die Person bestimmen kann,
+   womit eine neue Sprache anfängt. Fehlt sie, wird sie aus dem Text hier
+   wiederhergestellt - verloren gehen kann sie also nicht.
+
+   Drei Platzhalter werden beim Abschreiben ersetzt:
+   {{LANGUAGE}}, {{language}} und {{yourLanguage}}. */
+function templateBody() {
   return [
-    '---',
-    'type: packager-rules',
-    'language: ' + code,
-    '---',
-    '',
-    '# House rules: ' + code.toUpperCase(),
+    '# House rules: {{LANGUAGE}}',
     '',
     'Decisions that hold for **every** text in this language. They keep the',
     'knowledge keys together: only if the same word form always gets the same',
     'base form and part of speech does a word learned once still count in the',
     'next text.',
     '',
-    'Glosses and translations are written in **' + (into || 'German') + '**.',
+    'Glosses and translations are written in **{{yourLanguage}}**.',
     '',
     'This list grows. Whatever had to be decided while preparing a text and is',
     'not written here yet belongs here - otherwise it is decided again next',
@@ -133,7 +139,7 @@ function starterRules(code, into) {
     '',
     '## What belongs in a grammar note',
     '',
-    'A word\'s note should not come out better or worse by accident, depending',
+    "A word's note should not come out better or worse by accident, depending",
     'on which text the word first appeared in. One to three sentences, and the',
     'same frame per part of speech. To start with:',
     '',
@@ -156,6 +162,22 @@ function starterRules(code, into) {
     'This table fits every language only roughly. Sharpen it as soon as you see',
     'what really matters in this one.',
     ''
+  ].join('\n');
+}
+
+/* Aus der Vorlage die Regeln einer bestimmten Sprache machen. */
+function fillTemplate(body, code, into) {
+  return [
+    '---',
+    'type: packager-rules',
+    'language: ' + code,
+    '---',
+    '',
+    String(body)
+      .replace(/\{\{LANGUAGE\}\}/g, code.toUpperCase())
+      .replace(/\{\{language\}\}/g, code)
+      .replace(/\{\{yourLanguage\}\}/g, into || 'German')
+      .replace(/^\s+/, '')
   ].join('\n');
 }
 
@@ -651,6 +673,10 @@ class Packager {
     const root = this.folder(this.rootPath);
     if (!root) return [];
 
+    /* Damit die Vorlage auffindbar ist, ohne dass man erst einen Text
+       anlegen muss. */
+    if (!this.file(this.rootPath + '/' + TEMPLATE_FILE)) await this.ensureTemplate();
+
     const result = [];
     for (const child of root.children) {
       if (!(child instanceof TFolder)) continue;
@@ -758,9 +784,10 @@ class Packager {
     await this.ensureWordsFolder(upper);
 
     if (!this.file(this.rootPath + '/' + upper + '/' + RULES_FILE)) {
+      const template = await this.ensureTemplate();
       await this.app.vault.create(
         normalizePath(this.rootPath + '/' + upper + '/' + RULES_FILE),
-        starterRules(code, this.myLanguageName())
+        fillTemplate(template, code, this.myLanguageName())
       );
     }
 
@@ -777,6 +804,38 @@ class Packager {
     await this.app.vault.create(normalizePath(folder.path + '/' + TEXT_FILE), clean);
 
     return folder;
+  }
+
+  /* Die Vorlage bereitstellen und zurückgeben. Fehlt die Notiz, wird sie
+     aus dem eingebauten Text wiederhergestellt - so kann die Person sie
+     ändern, ohne sie verlieren zu können. */
+  async ensureTemplate() {
+    await this.ensureFolder(this.rootPath);
+    const path = this.rootPath + '/' + TEMPLATE_FILE;
+
+    const existing = this.file(path);
+    if (existing) {
+      const { body } = splitNote(await this.app.vault.read(existing));
+      if (body.trim()) return body;
+    }
+
+    const fresh = [
+      '---',
+      'type: packager-rules-template',
+      '---',
+      '',
+      '<!-- Womit eine neue Sprache anfängt. Ändere hier, was jede künftige',
+      '     Sprache mitbekommen soll - vorhandene Sprachen bleiben, wie sie sind.',
+      '',
+      '     {{LANGUAGE}}, {{language}} und {{yourLanguage}} werden beim',
+      '     Abschreiben ersetzt. Löschst du diese Notiz, entsteht sie neu. -->',
+      '',
+      templateBody()
+    ].join('\n');
+
+    if (existing) await this.app.vault.modify(existing, fresh);
+    else await this.app.vault.create(normalizePath(path), fresh);
+    return templateBody();
   }
 
   async ensureFolder(path) {
