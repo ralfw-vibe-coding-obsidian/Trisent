@@ -224,3 +224,23 @@
   border-color: var(--tri-accent);
   color: var(--tri-accent);
 }
+
+/* Die Stimmenauswahl beim Vertonen. Eine Zeile je Stimme, groß genug
+   zum Antippen. */
+.trisent-voice {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.4rem;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  font-size: 0.95rem;
+  background: transparent;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.trisent-voice:hover {
+  border-color: var(--tri-accent);
+  color: var(--tri-accent);
+}

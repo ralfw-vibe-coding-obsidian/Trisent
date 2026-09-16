@@ -21,6 +21,7 @@ const { parseWork, parseWordNote, splitNote, buildPackage } = require('./build.j
 const { keyFor } = require('../core/package.js');
 const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
+const audio = require('./audio.js');
 
 const VIEW_TYPE = 'trisent-packager-view';
 const RIBBON_ICON = 'package-plus';
@@ -58,7 +59,16 @@ const RETRY_MS = 4000;
    "sent" hält fest, welche Fassung eines Textes schon in der Bibliothek
    angekommen ist. Das kann der Packager nicht selbst nachsehen - dort
    drüben schaut er nicht hinein. */
-const DEFAULTS = { enabled: false, sent: {}, claudePath: 'claude' };
+const DEFAULTS = {
+  enabled: false,
+  sent: {},
+  claudePath: 'claude',
+  /* Der Zugangsschlüssel des Sprachdienstes. Bleibt hier und wandert nie
+     in ein Paket - ein Paket geht an Fremde. */
+  speechKey: '',
+  /* Stimmen, unter denen beim Vertonen gewählt wird: Sprache, Name, Id. */
+  voices: []
+};
 
 /* Hausregeln für eine Sprache, die es noch nicht gab.
 
@@ -129,13 +139,14 @@ function same(one, other) {
 
 /* Woran man mit einem Text ist - in einem Satz, nicht in Kästchen. */
 function stateOf(text) {
-  if (!text.version) return 'Not packaged yet.';
-  if (!text.sent) return 'Packaged, not sent to your library yet.';
+  const sound = text.spoken ? ' With sound.' : '';
+  if (!text.version) return 'Not packaged yet.' + sound;
+  if (!text.sent) return 'Packaged, not sent to your library yet.' + sound;
   if (text.sent < text.version) {
     return 'Changed since you sent it — version ' + text.version +
-           ' here, version ' + text.sent + ' in your library.';
+           ' here, version ' + text.sent + ' in your library.' + sound;
   }
-  return 'In your library, version ' + text.version + '.';
+  return 'In your library, version ' + text.version + '.' + sound;
 }
 
 /* Wörter eines Textes. Grob gezählt - es geht um die Größenordnung,
@@ -235,6 +246,38 @@ class NewTextModal extends Modal {
       button.setText('Add text');
       new Notice(String(error.message || error), 10000);
     }
+  }
+
+  onClose() {
+    this.contentEl.empty();
+  }
+}
+
+/* Welche Stimme soll diesen Text sprechen? */
+class VoiceModal extends Modal {
+  constructor(app, voices, onPick) {
+    super(app);
+    this.voices = voices;
+    this.onPick = onPick;
+  }
+
+  onOpen() {
+    const { contentEl } = this;
+    this.modalEl.addClass('trisent-modal');
+    contentEl.addClass('trisent-newtext');
+    contentEl.createEl('h2', { text: 'Which voice?' });
+
+    for (const voice of this.voices) {
+      const row = contentEl.createEl('button', { cls: 'trisent-voice', text: voice.name });
+      row.addEventListener('click', () => {
+        this.close();
+        this.onPick(voice);
+      });
+    }
+
+    const actions = contentEl.createDiv({ cls: 'trisent-newtext-actions' });
+    actions.createEl('button', { text: 'Cancel' })
+      .addEventListener('click', () => this.close());
   }
 
   onClose() {
@@ -372,6 +415,14 @@ class PackagerView extends ItemView {
       else make.addEventListener('click', () => this.make(text));
     }
 
+    if (!busy && this.packager.voicesFor(text.code).length > 0 && text.work) {
+      const speak = actions.createEl('button', {
+        cls: 'trisent-pack-second',
+        text: text.spoken ? 'Redo audio' : 'Add audio'
+      });
+      speak.addEventListener('click', () => this.speak(text));
+    }
+
     if (text.version && !busy) {
       /* Zweite Handlung, nicht zweitrangige: eigener Rahmen in der
          Akzentfarbe, damit sie nicht wie abgeschaltet aussieht. */
@@ -436,6 +487,33 @@ class PackagerView extends ItemView {
     }
     this.running.delete(path);
     await this.refresh();
+  }
+
+  /* Vertonen: Stimme wählen, sprechen lassen, neu bauen - der Ton
+     gehört ins Paket, also muss es danach neu entstehen. */
+  speak(text) {
+    const voices = this.packager.voicesFor(text.code);
+    new VoiceModal(this.app, voices, async (voice) => {
+      const path = text.folder.path;
+      if (this.running.has(path)) return;
+
+      this.running.set(path, 'Speaking…');
+      this.reports.delete(path);
+      this.render();
+
+      const step = (what) => { this.running.set(path, what); this.render(); };
+      try {
+        this.reports.set(path, await this.packager.speak(text, voice, step));
+      } catch (error) {
+        console.error('Trisent packager', error);
+        this.reports.set(path, {
+          kind: 'bad', headline: 'The audio stopped here.',
+          lines: [String(error.message || error)], more: 0
+        });
+      }
+      this.running.delete(path);
+      await this.refresh();
+    }).open();
   }
 
   async send(text) {
@@ -554,6 +632,7 @@ class Packager {
         version: built ? await this.versionOf(built) : 0,
         sent: this.sentVersion(child.path),
         done: work ? parseWork(await this.app.vault.cachedRead(work)).paragraphs.length : 0,
+        spoken: this.audioFiles(child).size > 0,
         total: source ? paragraphsOf(raw).length : 0,
         words: countWords(raw),
         code: languageFolder.name.toLowerCase()
@@ -970,6 +1049,72 @@ class Packager {
   }
 
   /* ---------------------------------------------------------------- */
+  /* Ton                                                               */
+  /* ---------------------------------------------------------------- */
+
+  voicesFor(code) {
+    if (!this.settings.speechKey) return [];
+    return (this.settings.voices || []).filter(
+      (voice) => String(voice.language || '').toLowerCase() === String(code).toLowerCase() && voice.id
+    );
+  }
+
+  /* Was an Ton schon im Textordner liegt, mit Pfaden relativ dazu. */
+  audioFiles(folder) {
+    const found = new Set();
+    const sub = this.childFolder(folder, 'audio');
+    if (!sub) return found;
+
+    for (const child of sub.children) {
+      if (child instanceof TFile) found.add('audio/' + child.name);
+    }
+    return found;
+  }
+
+  childFolder(folder, name) {
+    const child = folder.children.find((one) => one instanceof TFolder && one.name === name);
+    return child || null;
+  }
+
+  /* Jeden Satz sprechen lassen, der noch keine Datei hat, und danach das
+     Paket neu bauen - der Ton gehört hinein. */
+  async speak(text, voice, step) {
+    if (!text.work) throw new Error('There is nothing to speak yet.');
+
+    const work = parseWork(await this.app.vault.read(text.work));
+    const sentences = audio.sentencesOf(work);
+    if (sentences.length === 0) throw new Error('There are no sentences yet.');
+
+    const folder = await this.ensureFolder(text.folder.path + '/audio');
+    const have = this.audioFiles(text.folder);
+
+    step('Speaking…');
+    const result = await audio.generate({
+      key: this.settings.speechKey,
+      voice: voice.id,
+      sentences: sentences,
+      have: have,
+      step: step,
+      write: async (name, bytes) => {
+        await this.app.vault.createBinary(folder.path + '/' + name.slice('audio/'.length), bytes);
+      }
+    });
+
+    step('Building…');
+    const built = await this.build(text);
+
+    const spoken = result.written + (result.skipped || 0);
+    const detail = spoken + ' of ' + sentences.length + ' sentences have sound' +
+      (result.skipped ? ' (' + result.skipped + ' were already there)' : '') + '.';
+
+    if (built.kind === 'ok') {
+      return { kind: 'ok', headline: voice.name + ' spoke "' + (text.title || text.folder.name) + '".', detail: detail };
+    }
+    return built;
+
+  }
+
+  /* ---------------------------------------------------------------- */
   /* Bauen                                                             */
   /* ---------------------------------------------------------------- */
 
@@ -993,7 +1138,7 @@ class Packager {
     }
     const held = previous && Number.isFinite(previous.version) ? previous.version : 0;
 
-    const result = buildPackage(work, original, words, held || 1);
+    const result = buildPackage(work, original, words, held || 1, this.audioFiles(text.folder));
 
     if (result.missing.length > 0) {
       return {
@@ -1156,6 +1301,81 @@ class Packager {
           new Notice(result.text, 12000);
         })
       );
+
+    this.addVoiceSettings(containerEl);
+  }
+
+  /* Ton. Der Schlüssel bleibt hier; die Stimmen sind eine Liste, weil man
+     denselben Text mal männlich und mal weiblich sprechen lassen will -
+     und weil nur die Person weiß, welche Stimme zu welcher Sprache passt. */
+  addVoiceSettings(containerEl) {
+    containerEl.createEl('h4', { text: 'Voices' });
+
+    new Setting(containerEl)
+      .setName('ElevenLabs key')
+      .setDesc('Needed to turn sentences into sound. It stays on this computer and never travels inside a package.')
+      .addText((text) => {
+        text.inputEl.type = 'password';
+        text
+          .setPlaceholder('sk-…')
+          .setValue(this.settings.speechKey || '')
+          .onChange(async (value) => {
+            this.settings.speechKey = value.trim();
+            await this.saveSettings();
+          });
+      });
+
+    const list = containerEl.createDiv();
+    const draw = () => {
+      list.empty();
+      const voices = this.settings.voices || [];
+
+      if (voices.length === 0) {
+        list.createDiv({
+          cls: 'setting-item-description',
+          text: 'No voices yet. Add one for each language and speaker you want to use.'
+        });
+      }
+
+      voices.forEach((voice, at) => {
+        const row = new Setting(list);
+        row.addText((text) =>
+          text.setPlaceholder('fr').setValue(voice.language || '').onChange(async (value) => {
+            voice.language = value.trim().toLowerCase();
+            await this.saveSettings();
+          })
+        );
+        row.addText((text) =>
+          text.setPlaceholder('Charlotte').setValue(voice.name || '').onChange(async (value) => {
+            voice.name = value.trim();
+            await this.saveSettings();
+          })
+        );
+        row.addText((text) =>
+          text.setPlaceholder('voice id').setValue(voice.id || '').onChange(async (value) => {
+            voice.id = value.trim();
+            await this.saveSettings();
+          })
+        );
+        row.addExtraButton((button) =>
+          button.setIcon('trash-2').setTooltip('Remove').onClick(async () => {
+            voices.splice(at, 1);
+            await this.saveSettings();
+            draw();
+          })
+        );
+      });
+
+      new Setting(list).addButton((button) =>
+        button.setButtonText('Add voice').onClick(async () => {
+          if (!this.settings.voices) this.settings.voices = [];
+          this.settings.voices.push({ language: '', name: '', id: '' });
+          await this.saveSettings();
+          draw();
+        })
+      );
+    };
+    draw();
   }
 }
 

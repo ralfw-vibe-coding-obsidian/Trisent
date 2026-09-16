@@ -15,6 +15,25 @@
 
 const { keyFor, validatePackage, POS_TAGS } = require('../core/package.js');
 
+/* Der Dateiname hängt am Satz, nicht an seiner Nummer.
+
+   Sonst wäre jede Änderung an der Werkbank gefährlich: Kommt ein Absatz
+   dazu, verschieben sich alle Satznummern - und danach läge unter jedem
+   Satz die Stimme des Nachbarn. Am Wortlaut festgemacht kann das nicht
+   passieren. Ein geänderter Satz verliert seinen Ton und bekommt einen
+   neuen; ein verschobener behält ihn. */
+function nameFor(source) {
+  let a = 0x811c9dc5;
+  let b = 0x1000193;
+  const text = String(source);
+  for (let i = 0; i < text.length; i++) {
+    const code = text.charCodeAt(i);
+    a = Math.imul(a ^ code, 16777619) >>> 0;
+    b = Math.imul(b + code + i, 2654435761) >>> 0;
+  }
+  return 'audio/' + a.toString(16).padStart(8, '0') + b.toString(16).padStart(8, '0') + '.mp3';
+}
+
 /* ------------------------------------------------------------------ */
 /* Notizen lesen                                                       */
 /* ------------------------------------------------------------------ */
@@ -178,7 +197,8 @@ function pad(n) {
   return String(n).padStart(3, '0');
 }
 
-/*  work      Ergebnis von parseWork()
+/*  audio     Set der vorhandenen Tondateien, oder leer
+ *  work      Ergebnis von parseWork()
  *  original  Inhalt von text.md, oder null
  *  words     Map von Schlüssel auf Wortnotiz
  *  version   Nummer der neuen Fassung
@@ -186,7 +206,7 @@ function pad(n) {
  *  Zurück kommt { data, problems, missing, stats }. Ist "problems" leer,
  *  ist "data" ein gültiges Paket.
  */
-function buildPackage(work, original, words, version) {
+function buildPackage(work, original, words, version, audio) {
   const problems = [];
   const missing = [];
   const say = (text) => { if (problems.length < 40) problems.push(text); };
@@ -305,6 +325,12 @@ function buildPackage(work, original, words, version) {
 
       const built = { id: id, source: source, fluent: sentence.fluent, units: units };
       if (phrases.length > 0) built.phrases = phrases;
+
+      /* Ton gehört zum Satz, sobald die Datei da ist - erzeugt wird er
+         eigens, nicht beim Bauen. */
+      const track = nameFor(source);
+      if (audio && audio.has(track)) built.audio = { file: track };
+
       return built;
     });
 
@@ -389,7 +415,9 @@ function buildPackage(work, original, words, version) {
   /* Zum Schluss durch dieselbe Prüfung, die auch der Import anwendet.
      Was hier durchfällt, würde beim Empfänger durchfallen. */
   if (missing.length === 0) {
-    for (const problem of validatePackage(data, new Set(['package.json']))) say(problem);
+    const files = new Set(['package.json']);
+    for (const name of audio || []) files.add(name);
+    for (const problem of validatePackage(data, files)) say(problem);
   }
 
   return {
@@ -451,4 +479,4 @@ function shorten(text) {
   return clean.length > 40 ? clean.slice(0, 40) + '…' : clean;
 }
 
-module.exports = { parseWork, parseWordNote, splitNote, buildPackage };
+module.exports = { parseWork, parseWordNote, splitNote, buildPackage, nameFor };

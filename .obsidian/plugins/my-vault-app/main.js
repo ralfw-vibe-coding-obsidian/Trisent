@@ -32,6 +32,7 @@ const MODULES = [
   'reader/card.js',
   'reader/index.js',
   'packager/ai.js',
+  'packager/audio.js',
   'packager/build.js',
   'packager/index.js'
 ];
