@@ -815,15 +815,12 @@ class Packager {
      angefasst - nur verschoben und umbenannt. */
   async fileAway(text) {
     const note = text.loose;
-    const base = this.rootPath + '/' + text.code.toUpperCase();
+    const base = this.languagePath(text.code);
     await this.ensureRules(text.code);
 
-    const name = sanitizeFileName(note.basename);
-    let path = base + '/' + name;
-    for (let n = 2; this.app.vault.getAbstractFileByPath(normalizePath(path)); n++) {
-      path = base + '/' + name + ' ' + n;
-    }
-    const folder = await this.ensureFolder(path);
+    const folder = await this.ensureFolder(
+      this.freeFolderPath(base, sanitizeFileName(note.basename))
+    );
     await this.app.fileManager.renameFile(note, folder.path + '/' + TEXT_FILE);
 
     text.loose = null;
@@ -834,30 +831,28 @@ class Packager {
   /* Hausregeln, falls die Sprache von Hand angelegt wurde. Ohne sie
      entscheidet jeder Lauf neu - und genau das sollen sie verhindern. */
   async ensureRules(code) {
-    const path = this.rootPath + '/' + code.toUpperCase() + '/' + RULES_FILE;
+    const base = this.languagePath(code);
+    const path = base + '/' + RULES_FILE;
     if (this.file(path)) return;
 
     const template = await this.ensureTemplate();
-    await this.ensureFolder(this.rootPath + '/' + code.toUpperCase());
+    await this.ensureFolder(base);
     await this.app.vault.create(normalizePath(path), fillTemplate(template, code, this.myLanguageName()));
   }
 
   /* Legt Sprachordner, Wortvorrat, Hausregeln und den Textordner an und
      schreibt den Text unverändert hinein. */
   async addText(code, title, body) {
-    const upper = code.toUpperCase();
     await this.ensureFolder(this.rootPath);
-    await this.ensureFolder(this.rootPath + '/' + upper);
-    await this.ensureWordsFolder(upper);
+    const here = this.languagePath(code);
+    await this.ensureFolder(here);
+    await this.ensureWordsFolder(code);
 
     await this.ensureRules(code);
 
-    const base = sanitizeFileName(title);
-    let path = this.rootPath + '/' + upper + '/' + base;
-    for (let n = 2; this.app.vault.getAbstractFileByPath(normalizePath(path)); n++) {
-      path = this.rootPath + '/' + upper + '/' + base + ' ' + n;
-    }
-    const folder = await this.ensureFolder(path);
+    const folder = await this.ensureFolder(
+      this.freeFolderPath(here, sanitizeFileName(title))
+    );
 
     /* Genau das, was eingefügt wurde - nur die Zeilenenden vereinheitlicht
        und der Rand beschnitten. Sonst bleibt jedes Zeichen, wie es ist. */
@@ -908,11 +903,35 @@ class Packager {
     let current = '';
     for (const part of parts) {
       current = current ? current + '/' + part : part;
-      if (!this.app.vault.getAbstractFileByPath(current)) {
+      if (this.app.vault.getAbstractFileByPath(current)) continue;
+
+      try {
         await this.app.vault.createFolder(current);
+      } catch (error) {
+        /* Auf Mac und Windows ist dem Dateisystem die Groß- und
+           Kleinschreibung egal, Obsidians Verzeichnis nicht. Dann gibt es
+           den Ordner schon, nur anders geschrieben - das ist kein Fehler,
+           es geht einfach dort weiter. */
+        if (!/exist/i.test(String(error.message || error))) throw error;
       }
     }
     return this.folder(clean);
+  }
+
+  /* Ein freier Ordnername neben den vorhandenen - und zwar unabhängig von
+     Groß- und Kleinschreibung, aus demselben Grund. */
+  freeFolderPath(parent, name) {
+    const taken = new Set();
+    const folder = this.folder(parent);
+    if (folder) {
+      for (const child of folder.children) taken.add(child.name.toLowerCase());
+    }
+
+    if (!taken.has(name.toLowerCase())) return parent + '/' + name;
+    for (let n = 2; n < 1000; n++) {
+      if (!taken.has((name + ' ' + n).toLowerCase())) return parent + '/' + name + ' ' + n;
+    }
+    return parent + '/' + name + ' ' + Date.now();
   }
 
   /* ---------------------------------------------------------------- */
@@ -1060,10 +1079,9 @@ class Packager {
   /* Einen Absatz aufbereiten lassen und nachrechnen. */
   async prepareParagraph(text, paragraph) {
     const into = this.myLanguageName();
-    const languageFolder = this.basePath() + '/' + this.rootPath + '/' + text.code.toUpperCase();
-    const rules = await this.readIfThere(
-      this.rootPath + '/' + text.code.toUpperCase() + '/' + RULES_FILE
-    );
+    const here = this.languagePath(text.code);
+    const languageFolder = this.basePath() + '/' + here;
+    const rules = await this.readIfThere(here + '/' + RULES_FILE);
     const example = await this.exampleFor(text);
 
     /* Zwei Anläufe: Beim zweiten bekommt Claude die Fundliste des Prüfers
@@ -1102,9 +1120,7 @@ class Packager {
      umgeschrieben wird nichts: Was die Person dort einmal festgelegt hat,
      gehört ihr. */
   async learn(text, notes) {
-    const code = text.code.toUpperCase();
-    const path = this.rootPath + '/' + code + '/' + RULES_FILE;
-    const file = this.file(path);
+    const file = this.file(this.languagePath(text.code) + '/' + RULES_FILE);
     if (!file) return;
 
     const rules = await this.app.vault.read(file);
@@ -1156,10 +1172,10 @@ class Packager {
   /* In Häppchen, nicht alles auf einmal: Eine Antwort über dreißig
      Einträge wird lang, und wird sie abgeschnitten, ist alles weg. */
   async writeWords(text, entries, step) {
-    const code = text.code.toUpperCase();
-    const languageFolder = this.basePath() + '/' + this.rootPath + '/' + code;
-    const rules = await this.readIfThere(this.rootPath + '/' + code + '/' + RULES_FILE);
-    const folder = await this.ensureWordsFolder(code);
+    const here = this.languagePath(text.code);
+    const languageFolder = this.basePath() + '/' + here;
+    const rules = await this.readIfThere(here + '/' + RULES_FILE);
+    const folder = await this.ensureWordsFolder(text.code);
 
     const size = 8;
     const batches = [];
@@ -1234,7 +1250,7 @@ class Packager {
   }
 
   async ensureWordsFolder(code) {
-    return this.ensureFolder(this.rootPath + '/' + code + '/' + WORDS_DIR);
+    return this.ensureFolder(this.languagePath(code) + '/' + WORDS_DIR);
   }
 
   /* Die Antwort durch denselben Rechner schicken, der später das Paket
@@ -1249,7 +1265,7 @@ class Packager {
      Ton und Konventionen auf einmal, und deine Korrekturen wandern damit
      von selbst in die nächsten Texte. */
   async exampleFor(text) {
-    const folder = this.folder(this.rootPath + '/' + text.code.toUpperCase());
+    const folder = this.folder(this.languagePath(text.code));
     if (!folder) return '';
 
     for (const child of folder.children) {
@@ -1313,6 +1329,22 @@ class Packager {
     const code = this.settings.myLanguage || 'de';
     const found = KNOWN_LANGUAGES.find((one) => one.code === code);
     return found ? found.name : 'German';
+  }
+
+  /* Der Ordner einer Sprache - so, wie er wirklich heißt.
+
+     Aus dem Kürzel einen Pfad zu bauen ging schief: Heißt der Ordner "es"
+     und wir suchen "ES", findet Obsidian nichts, legt neu an, und das
+     Dateisystem sagt "gibt es schon". Deshalb wird immer erst gesucht. */
+  languagePath(code) {
+    const wanted = String(code).toLowerCase();
+    const root = this.folder(this.rootPath);
+    if (root) {
+      for (const child of root.children) {
+        if (child instanceof TFolder && child.name.toLowerCase() === wanted) return child.path;
+      }
+    }
+    return this.rootPath + '/' + wanted.toUpperCase();
   }
 
   voicesFor(code) {
@@ -1498,7 +1530,7 @@ class Packager {
   /* Der Wortvorrat einer Sprache, nach Schlüssel. */
   async wordsOf(code) {
     const map = new Map();
-    const folder = this.folder(this.rootPath + '/' + code.toUpperCase() + '/' + WORDS_DIR);
+    const folder = this.folder(this.languagePath(code) + '/' + WORDS_DIR);
     if (!folder) return map;
 
     for (const child of folder.children) {
