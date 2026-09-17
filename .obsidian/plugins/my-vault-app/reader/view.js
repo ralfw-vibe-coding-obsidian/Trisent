@@ -1173,10 +1173,13 @@ class TrisentView extends ItemView {
     if (voice) {
       const gutter = wrap.querySelector('.trisent-gutter');
       if (gutter) {
-        gutter.createDiv({
-          cls: 'trisent-voice is-' + voice,
-          text: voice === 'you' ? 'you' : 'native'
-        });
+        /* Zwei Symbole statt zweier Wörter: Man hört ohnehin, wer spricht -
+           es geht nur darum, auf einen Blick zu sehen, an welcher Stelle
+           des Vergleichs man ist. Dieselben Symbole wie die Knöpfe darüber:
+           Mikrofon für die eigene Stimme, Lautsprecher für die aus dem
+           Paket. */
+        const badge = gutter.createDiv({ cls: 'trisent-voice is-' + voice });
+        setIcon(badge, voice === 'you' ? 'mic' : 'volume-2');
       }
     }
 

@@ -1181,14 +1181,17 @@
   .trisent-view .trisent-record.is-recording { animation: none; }
 }
 
-/* Wen man gerade hört. Ohne das ist der Vergleich wertlos. */
+/* An welcher Stelle des Vergleichs man ist. Wer spricht, hört man ja. */
 .trisent-voice {
   flex: 0 0 100%;
-  font-size: 0.6rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-align: center;
+  display: flex;
+  justify-content: center;
   color: var(--text-faint);
+}
+
+.trisent-voice svg {
+  width: 0.8em;
+  height: 0.8em;
 }
 
 .trisent-voice.is-you {
