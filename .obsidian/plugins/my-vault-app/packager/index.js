@@ -204,7 +204,13 @@ function same(one, other) {
 
 /* Woran ein Bericht und ein laufender Vorgang hängen. Eine lose Notiz
    hat noch keinen eigenen Ordner, also dient sie selbst als Kennung -
-   sonst teilten sich zwei Notizen derselben Sprache einen Platz. */
+   sonst teilten sich zwei Notizen derselben Sprache einen Platz.
+
+   Wichtig: Diese Kennung darf sich WÄHREND eines Laufs nicht ändern.
+   Die Notiz wird ja gleich zu Beginn in ihren Ordner einsortiert - würde
+   sie danach anders heißen, fände die Ansicht den laufenden Vorgang nicht
+   mehr, zeichnete den Knopf wieder anklickbar, und ein zweiter Klick
+   startete einen zweiten Lauf neben dem ersten. */
 function keyOf(text) {
   return text.loose ? text.loose.path : text.folder.path;
 }
@@ -577,6 +583,13 @@ class PackagerView extends ItemView {
         lines: [String(error.message || error)], more: 0
       });
     }
+    /* Nach dem Einsortieren heißt der Text anders. Der Bericht wird
+       deshalb auch unter dem neuen Namen abgelegt - sonst verschwände er
+       mit der nächsten Auffrischung. */
+    if (text.filed && text.folder && text.folder.path !== path) {
+      this.reports.set(text.folder.path, this.reports.get(path));
+    }
+
     this.running.delete(path);
     await this.refresh();
   }
@@ -848,8 +861,11 @@ class Packager {
 
     /* Die Notiz selbst weiterverwenden, nicht neu nachschlagen: Obsidians
        Verzeichnis kennt den neuen Pfad womöglich noch nicht, und dann
-       stünde hier nichts - die Aufbereitung bliebe wortlos stehen. */
-    text.loose = null;
+       stünde hier nichts - die Aufbereitung bliebe wortlos stehen.
+
+       "loose" bleibt absichtlich stehen: Daran hängt die Kennung dieses
+       Laufs. Dass die Notiz schon einsortiert ist, merkt sich "filed". */
+    text.filed = true;
     text.folder = folder;
     text.text = note;
   }
@@ -1023,7 +1039,7 @@ class Packager {
   async makePackage(text, step) {
     /* Eine lose Notiz bekommt erst ihren eigenen Ordner - danach ist sie
        ein Text wie jeder andere. */
-    if (text.loose) {
+    if (text.loose && !text.filed) {
       step('Filing it away…');
       await this.fileAway(text);
     }
