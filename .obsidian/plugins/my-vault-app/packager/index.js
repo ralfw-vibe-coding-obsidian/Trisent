@@ -644,6 +644,29 @@ class Packager {
       name: 'Open packager',
       callback: () => this.open()
     });
+
+    /* Legt die Person eine Notiz in einen Sprachordner, während die
+       Werkstatt offen ist, soll sie dort auftauchen - ohne dass erst
+       jemand die Ansicht schließt und wieder öffnet. */
+    const changed = () => this.scheduleRefresh();
+    plugin.registerEvent(this.app.vault.on('create', changed));
+    plugin.registerEvent(this.app.vault.on('delete', changed));
+    plugin.registerEvent(this.app.vault.on('rename', changed));
+  }
+
+  /* Beim Aufbereiten entstehen laufend Dateien. Währenddessen wird nicht
+     nachgelesen: Die Ansicht zeigt ohnehin den Fortschritt, und ein
+     Neuaufbau mittendrin würde ihn nur zerreißen. */
+  scheduleRefresh() {
+    window.clearTimeout(this.refreshTimer);
+    this.refreshTimer = window.setTimeout(() => {
+      for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) {
+        const view = leaf.view;
+        if (!view || typeof view.refresh !== 'function') continue;
+        if (view.running && view.running.size > 0) continue;
+        view.refresh();
+      }
+    }, 500);
   }
 
   /* Auf dem Handy immer aus - unabhängig vom Schalter. Der steht in den
