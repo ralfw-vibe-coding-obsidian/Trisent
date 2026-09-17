@@ -1028,7 +1028,9 @@ class Packager {
     if (result.kind === 'missing') {
       return {
         kind: 'bad',
-        headline: result.entries.length + ' words still have no note.',
+        headline: result.entries.length === 1
+          ? 'One word still has no note: the entry that came back did not fit.'
+          : result.entries.length + ' words still have no note.',
         lines: result.entries.slice(0, 10).map((e) => e.key),
         more: Math.max(0, result.entries.length - 10)
       };
@@ -1216,23 +1218,36 @@ class Packager {
       for (const one of round) answers.push(one);
     }
 
+    const byKey = new Map(entries.map((one) => [one.key, one]));
     let written = 0;
     for (const answer of [].concat.apply([], answers)) {
-      if (await this.writeWordNote(folder, text.code, answer)) written += 1;
+      if (await this.writeWordNote(folder, text.code, answer, byKey.get(answer.key))) written += 1;
     }
     return written;
   }
 
   /* Geschrieben wird nur, was zum Schlüssel passt. Eine Notiz unter dem
      falschen Schlüssel wäre schlimmer als gar keine: Sie sieht richtig
-     aus und trägt den Lernstand ins Leere. */
-  async writeWordNote(folder, code, answer) {
+     aus und trägt den Lernstand ins Leere.
+
+     Weicht aber nur die vorgeschlagene Grundform ab, wird der Eintrag
+     nicht weggeworfen: Es gilt die Grundform aus dem Text, denn aus ihr
+     ist der Schlüssel entstanden. Sonst fehlte das Wort weiterhin, der
+     nächste Anlauf bekäme dieselbe Antwort, und die Person käme aus der
+     Schleife nicht heraus. (Spanisch: im Text steht "la", vorgeschlagen
+     wird "el" - beides vertretbar, aber der Schlüssel hat Vorrang.) */
+  async writeWordNote(folder, code, answer, asked) {
     const parts = String(answer.key).split(':');
     if (parts.length < 3) return false;
 
     const partOfSpeech = parts[2].toUpperCase();
-    const lemma = answer.lemma || parts[1];
-    if (keyFor(code, lemma, partOfSpeech) !== answer.key) return false;
+    let lemma = answer.lemma || parts[1];
+
+    if (keyFor(code, lemma, partOfSpeech) !== answer.key) {
+      const fromText = asked && asked.lemma;
+      if (!fromText || keyFor(code, fromText, partOfSpeech) !== answer.key) return false;
+      lemma = fromText;
+    }
     if (!answer.gloss) return false;
 
     const base = sanitizeFileName(lemma);
