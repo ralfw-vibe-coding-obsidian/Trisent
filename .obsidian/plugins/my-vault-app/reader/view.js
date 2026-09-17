@@ -9,7 +9,7 @@
 const { ItemView, TFolder, Notice, setIcon } = require('obsidian');
 const { WORD_STATUS } = require('../core/package.js');
 const { KNOWN_LANGUAGES } = require('../core/library.js');
-const { Playback, SPEEDS } = require('./audio.js');
+const { Playback, Recorder, SPEEDS } = require('./audio.js');
 
 const VIEW_TYPE = 'trisent-view';
 const RIBBON_ICON = 'languages';
@@ -77,18 +77,33 @@ class TrisentView extends ItemView {
     return this.player;
   }
 
+  recorder() {
+    if (!this.taker) this.taker = new Recorder(this);
+    return this.taker;
+  }
+
   stopAudio() {
     if (this.player) this.player.stop();
+    if (this.taker) this.taker.stop();
+  }
+
+  /* Beim Verlassen des Textes sind die Aufnahmen weg - sie liegen nur im
+     Arbeitsspeicher und sollen nirgends sonst landen. */
+  dropRecordings() {
+    if (this.taker) this.taker.clear();
+    this.taker = null;
   }
 
   async onClose() {
     this.stopAudio();
+    this.dropRecordings();
     /* nichts aufzuräumen */
   }
 
   render() {
     /* Was gerade läuft, gehört zu dem, was gerade zu sehen ist. */
     this.stopAudio();
+    this.dropRecordings();
 
     const root = this.contentEl;
     root.empty();
@@ -965,6 +980,9 @@ class TrisentView extends ItemView {
           gutter, 'trisent-play-sentence',
           [this.playItem(sentence.id)], 'Play this sentence'
         );
+        /* Nachsprechen gibt es nur da, wo es auch etwas zum Vergleichen
+           gibt - ohne das Original wäre die Aufnahme wertlos. */
+        this.renderRecordButton(gutter, sentence.id);
       }
     }
 
@@ -1018,9 +1036,102 @@ class TrisentView extends ItemView {
     if (word) word.addClass('is-spoken');
   }
 
+  /* Nachsprechen: aufnehmen, und danach beides hintereinander hören -
+     erst sich selbst, dann den Muttersprachler. */
+  renderRecordButton(gutter, sentenceId) {
+    const button = gutter.createEl('button', {
+      cls: 'trisent-record',
+      attr: { 'aria-label': 'Say it yourself', title: 'Say it yourself' }
+    });
+    setIcon(button, 'mic');
+
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const taker = this.recorder();
+      if (taker.running) {
+        taker.stop();
+        return;
+      }
+      /* Nicht gleichzeitig hören und sprechen. */
+      this.stopAudio();
+      taker.start(sentenceId);
+    });
+  }
+
+  markRecording(sentenceId) {
+    if (!this.scrollEl) return;
+    for (const el of this.scrollEl.querySelectorAll('.trisent-record.is-recording')) {
+      el.removeClass('is-recording');
+      setIcon(el, 'mic');
+    }
+    const wrap = this.sentenceEl(sentenceId);
+    const button = wrap && wrap.querySelector('.trisent-record');
+    if (button) {
+      button.addClass('is-recording');
+      setIcon(button, 'square');
+    }
+  }
+
+  /* Die Aufnahme steht - jetzt der Vergleich. */
+  recordingDone(sentenceId, take) {
+    this.markRecording(null);
+    if (!take) return;
+    this.renderTakeRow(sentenceId);
+    this.compare(sentenceId);
+  }
+
+  compare(sentenceId) {
+    const take = this.recorder().takeFor(sentenceId);
+    if (!take || !this.audioFor.has(sentenceId)) return;
+
+    const original = this.playItem(sentenceId);
+    this.playback().play([
+      { id: sentenceId, url: take.url, voice: 'you' },
+      Object.assign({}, original, { voice: 'native' })
+    ]);
+  }
+
+  /* Eine Zeile unter dem Satz, solange eine eigene Aufnahme dazu da ist.
+     Nur bei einem Satz gleichzeitig - man vergleicht ja immer den, den
+     man gerade gesprochen hat. */
+  renderTakeRow(sentenceId) {
+    for (const el of this.scrollEl.querySelectorAll('.trisent-take')) el.remove();
+
+    const wrap = this.sentenceEl(sentenceId);
+    const body = wrap && wrap.querySelector('.trisent-sentence-body');
+    if (!body) return;
+
+    const row = body.createDiv({ cls: 'trisent-take' });
+
+    const again = row.createEl('button', { cls: 'trisent-take-button' });
+    setIcon(again.createSpan({ cls: 'trisent-take-icon' }), 'repeat');
+    again.createSpan({ text: 'Hear both again' });
+    again.addEventListener('click', () => this.compare(sentenceId));
+
+    const drop = row.createEl('button', {
+      cls: 'trisent-take-button is-quiet',
+      attr: { 'aria-label': 'Discard recording', title: 'Discard recording' }
+    });
+    setIcon(drop, 'trash-2');
+    drop.addEventListener('click', () => {
+      this.stopAudio();
+      this.recorder().discard(sentenceId);
+      row.remove();
+    });
+  }
+
+  sentenceEl(sentenceId) {
+    if (!this.scrollEl || !sentenceId) return null;
+    return this.scrollEl.querySelector(
+      '.trisent-sentence[data-sentence="' + sentenceId + '"]'
+    );
+  }
+
   /* Zeigt, welcher Satz gerade klingt. Beim Durchlaufen wandert die
      Anzeige mit und zieht die Seite nach, damit man nicht sucht. */
-  markPlaying(sentenceId, state, follow) {
+  markPlaying(sentenceId, state, follow, voice) {
     if (!this.scrollEl) return;
 
     const running = state === 'playing';
@@ -1050,13 +1161,24 @@ class TrisentView extends ItemView {
       if (text) text.setText(running ? 'Pause' : held ? 'Continue' : 'Play text');
     }
 
+    for (const el of this.scrollEl.querySelectorAll('.trisent-voice')) el.remove();
     if (!sentenceId) return;
 
-    const wrap = this.scrollEl.querySelector(
-      '.trisent-sentence[data-sentence="' + sentenceId + '"]'
-    );
+    const wrap = this.sentenceEl(sentenceId);
     if (!wrap) return;
     wrap.addClass('is-playing');
+
+    /* Beim Vergleich muss man wissen, wen man gerade hört - sonst ist der
+       Vergleich wertlos. */
+    if (voice) {
+      const gutter = wrap.querySelector('.trisent-gutter');
+      if (gutter) {
+        gutter.createDiv({
+          cls: 'trisent-voice is-' + voice,
+          text: voice === 'you' ? 'you' : 'native'
+        });
+      }
+    }
 
     const button = wrap.querySelector('.trisent-play');
     if (button) {

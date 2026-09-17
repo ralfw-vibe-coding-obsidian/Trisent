@@ -85,7 +85,7 @@ class Playback {
 
     const item = this.queue[this.at];
     this.spokenUnit = undefined;
-    this.player.src = this.urlFor(item.file);
+    this.player.src = item.url ? item.url : this.urlFor(item.file);
     this.player.playbackRate = this.speed;
     this.player.play().catch((error) => {
       new Notice('Could not play this sentence: ' + String(error.message || error));
@@ -133,7 +133,9 @@ class Playback {
   /* Wo man gerade ist, und in welchem Zustand. */
   report(state) {
     const item = this.queue[this.at];
-    this.view.markPlaying(item ? item.id : null, state, this.queue.length > 1);
+    this.view.markPlaying(
+      item ? item.id : null, state, this.queue.length > 1, item ? item.voice : null
+    );
   }
 
   stop() {
@@ -151,4 +153,107 @@ class Playback {
   }
 }
 
-module.exports = { Playback, SPEEDS };
+/* ------------------------------------------------------------------ */
+/* Die eigene Stimme aufnehmen                                         */
+/* ------------------------------------------------------------------ */
+
+/* Nachsprechen und sich sofort danach mit der Aufnahme aus dem Paket
+   vergleichen. Kein Dienst, kein Schlüssel, kein Netz - die Aufnahme
+   bleibt im Arbeitsspeicher und ist beim Verlassen des Textes weg.
+
+   Das eigene Ohr erkennt den Unterschied zuverlässig, wenn beides
+   unmittelbar nacheinander kommt. Genau so haben Sprachlabore
+   jahrzehntelang gearbeitet. */
+
+/* Damit das Mikrofon nicht aus Versehen offen bleibt. */
+const MAX_RECORDING_MS = 30000;
+
+class Recorder {
+  constructor(view) {
+    this.view = view;
+    this.recorder = null;
+    this.sentenceId = null;
+    this.takes = new Map();
+  }
+
+  get running() {
+    return !!this.recorder;
+  }
+
+  takeFor(sentenceId) {
+    return this.takes.get(sentenceId) || null;
+  }
+
+  async start(sentenceId) {
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (error) {
+      const denied = error && (error.name === 'NotAllowedError' || error.name === 'SecurityError');
+      new Notice(
+        denied
+          ? 'Trisent needs permission to use the microphone.'
+          : 'No microphone available: ' + String(error.message || error),
+        8000
+      );
+      return false;
+    }
+
+    const chunks = [];
+    this.recorder = new MediaRecorder(stream);
+    this.sentenceId = sentenceId;
+
+    this.recorder.addEventListener('dataavailable', (event) => {
+      if (event.data && event.data.size > 0) chunks.push(event.data);
+    });
+
+    this.recorder.addEventListener('stop', () => {
+      /* Das Mikrofon wieder freigeben - sonst leuchtet die Anzeige des
+         Rechners weiter, und das beunruhigt zu Recht. */
+      for (const track of stream.getTracks()) track.stop();
+      window.clearTimeout(this.timer);
+      this.recorder = null;
+
+      const id = this.sentenceId;
+      this.sentenceId = null;
+      if (chunks.length === 0) {
+        this.view.recordingDone(id, null);
+        return;
+      }
+
+      this.replace(id, URL.createObjectURL(new Blob(chunks, { type: chunks[0].type })));
+      this.view.recordingDone(id, this.takes.get(id));
+    });
+
+    this.recorder.start();
+    this.timer = window.setTimeout(() => this.stop(), MAX_RECORDING_MS);
+    this.view.markRecording(sentenceId);
+    return true;
+  }
+
+  stop() {
+    if (this.recorder) this.recorder.stop();
+  }
+
+  replace(sentenceId, url) {
+    const old = this.takes.get(sentenceId);
+    if (old) URL.revokeObjectURL(old.url);
+    this.takes.set(sentenceId, { url: url });
+  }
+
+  discard(sentenceId) {
+    const take = this.takes.get(sentenceId);
+    if (!take) return;
+    URL.revokeObjectURL(take.url);
+    this.takes.delete(sentenceId);
+  }
+
+  /* Beim Verlassen des Textes alles freigeben. */
+  clear() {
+    this.stop();
+    for (const take of this.takes.values()) URL.revokeObjectURL(take.url);
+    this.takes.clear();
+  }
+}
+
+module.exports = { Playback, Recorder, SPEEDS };

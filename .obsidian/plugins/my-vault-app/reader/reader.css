@@ -1126,3 +1126,115 @@
   box-shadow: inset 0 -2px 0 var(--tri-accent);
   border-radius: 3px;
 }
+
+/* ---------------------------------------------------------------- */
+/* Nachsprechen                                                      */
+/* ---------------------------------------------------------------- */
+
+.trisent-gutter {
+  flex-wrap: wrap;
+  gap: 0.1rem;
+}
+
+.trisent-view .trisent-record {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  cursor: pointer;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  /* Leiser als der Abspielknopf: Zuhören macht man oft, Nachsprechen
+     gelegentlich. */
+  color: var(--text-faint);
+  opacity: 0.45;
+}
+
+.trisent-view .trisent-record svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.trisent-view .trisent-record:hover {
+  opacity: 1;
+  color: var(--tri-accent);
+  background: var(--background-modifier-hover);
+}
+
+.trisent-view .trisent-record.is-recording {
+  opacity: 1;
+  color: var(--tri-unknown);
+  background: color-mix(in srgb, var(--tri-unknown) 16%, transparent);
+  animation: trisent-recording 1.4s ease-in-out infinite;
+}
+
+@keyframes trisent-recording {
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trisent-view .trisent-record.is-recording { animation: none; }
+}
+
+/* Wen man gerade hört. Ohne das ist der Vergleich wertlos. */
+.trisent-voice {
+  flex: 0 0 100%;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text-faint);
+}
+
+.trisent-voice.is-you {
+  color: var(--tri-unknown);
+}
+
+.trisent-voice.is-native {
+  color: var(--tri-accent);
+}
+
+/* Die Zeile unter dem Satz, solange eine eigene Aufnahme dazu da ist. */
+
+.trisent-take {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.trisent-view .trisent-take-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-take-button:hover {
+  color: var(--text-normal);
+  border-color: var(--tri-accent);
+}
+
+.trisent-view .trisent-take-button.is-quiet {
+  padding: 0.2rem 0.4rem;
+  color: var(--text-faint);
+}
+
+.trisent-take-icon svg,
+.trisent-view .trisent-take-button svg {
+  width: 0.85em;
+  height: 0.85em;
+}
