@@ -317,19 +317,15 @@ function buildPackage(work, original, words, version, audio, into) {
         }
         if (!phrase.gloss) say('Line ' + phrase.line + ' ("' + phrase.surface + '"): the gloss is missing.');
 
-        const key = keyFor(language, phrase.lemma, 'PHRASE');
-        usedKeys.add(key);
-        remember(seenForms, key, phrase.surface);
-        note(about, key, phrase.lemma, 'PHRASE', phrase.surface, phrase.gloss, source);
-        phraseCount += 1;
-
+        /* Der Schlüssel wird erst vermerkt, wenn feststeht, dass die
+           Wendung auch bleibt - siehe gleich darunter. */
         phrases.push({
           start: start,
           end: end,
           surface: phrase.surface,
           gloss: phrase.gloss,
           lemma: phrase.lemma,
-          key: key
+          key: keyFor(language, phrase.lemma, 'PHRASE')
         });
       }
 
@@ -341,16 +337,23 @@ function buildPackage(work, original, words, version, audio, into) {
          eigenen Zeilen. */
       const kept = [];
       for (const one of phrases.slice().sort((a, b) => (b.end - b.start) - (a.end - a.start))) {
-        if (kept.some((other) => one.start < other.end && other.start < one.end)) {
-          usedKeys.delete(one.key);
-          phraseCount -= 1;
-          continue;
-        }
+        if (kept.some((other) => one.start < other.end && other.start < one.end)) continue;
         kept.push(one);
       }
       kept.sort((a, b) => a.start - b.start);
       phrases.length = 0;
-      for (const one of kept) phrases.push(one);
+
+      /* Erst jetzt zählen und vermerken. Vorher hätte eine Wendung, die
+         hier wegfällt, ihren Schlüssel aus dem ganzen Paket gestrichen -
+         auch dort, wo sie in einem anderen Satz stehen geblieben ist.
+         Dann fehlte ihr Wörterbucheintrag, und das Paket fiel durch. */
+      for (const one of kept) {
+        phrases.push(one);
+        usedKeys.add(one.key);
+        remember(seenForms, one.key, one.surface);
+        note(about, one.key, one.lemma, 'PHRASE', one.surface, one.gloss, source);
+        phraseCount += 1;
+      }
 
       const built = { id: id, source: source, fluent: sentence.fluent, units: units };
       if (phrases.length > 0) built.phrases = phrases;
