@@ -823,9 +823,12 @@ class Packager {
     );
     await this.app.fileManager.renameFile(note, folder.path + '/' + TEXT_FILE);
 
+    /* Die Notiz selbst weiterverwenden, nicht neu nachschlagen: Obsidians
+       Verzeichnis kennt den neuen Pfad womöglich noch nicht, und dann
+       stünde hier nichts - die Aufbereitung bliebe wortlos stehen. */
     text.loose = null;
     text.folder = folder;
-    text.text = this.file(folder.path + '/' + TEXT_FILE);
+    text.text = note;
   }
 
   /* Hausregeln, falls die Sprache von Hand angelegt wurde. Ohne sie
@@ -991,6 +994,15 @@ class Packager {
       /* Die Werkbank gibt es jetzt - und der weitere Weg liest aus ihr. */
       text.work = this.file(text.folder.path + '/' + WORK_FILE);
       text.done = done;
+    }
+
+    if (text.total === 0) {
+      return {
+        kind: 'bad',
+        headline: 'There is no text to work with.',
+        lines: ['The note seems to be empty.'],
+        more: 0
+      };
     }
 
     step('Building…');
