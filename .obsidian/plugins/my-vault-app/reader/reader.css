@@ -1148,15 +1148,16 @@
   border-radius: 50%;
   background: transparent;
   box-shadow: none;
-  /* Leiser als der Abspielknopf: Zuhören macht man oft, Nachsprechen
-     gelegentlich. */
-  color: var(--text-faint);
-  opacity: 0.45;
+  /* Dasselbe Grün wie der Abspielknopf, nur etwas leiser: Zuhören macht
+     man oft, Nachsprechen gelegentlich. Ganz blass war es zu wenig - man
+     hat es schlicht nicht gefunden. */
+  color: var(--tri-accent);
+  opacity: 0.55;
 }
 
 .trisent-view .trisent-record svg {
-  width: 0.8em;
-  height: 0.8em;
+  width: 1em;
+  height: 1em;
 }
 
 .trisent-view .trisent-record:hover {
