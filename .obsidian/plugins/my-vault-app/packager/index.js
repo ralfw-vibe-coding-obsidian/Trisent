@@ -840,7 +840,7 @@ class Packager {
 
     const template = await this.ensureTemplate();
     await this.ensureFolder(base);
-    await this.app.vault.create(normalizePath(path), fillTemplate(template, code, this.myLanguageName()));
+    await this.put(path, fillTemplate(template, code, this.myLanguageName()));
   }
 
   /* Legt Sprachordner, Wortvorrat, Hausregeln und den Textordner an und
@@ -860,7 +860,7 @@ class Packager {
     /* Genau das, was eingefügt wurde - nur die Zeilenenden vereinheitlicht
        und der Rand beschnitten. Sonst bleibt jedes Zeichen, wie es ist. */
     const clean = String(body).replace(/\r\n?/g, '\n').trim() + '\n';
-    await this.app.vault.create(normalizePath(folder.path + '/' + TEXT_FILE), clean);
+    await this.put(folder.path + '/' + TEXT_FILE, clean);
 
     return folder;
   }
@@ -892,9 +892,53 @@ class Packager {
       templateBody()
     ].join('\n');
 
-    if (existing) await this.app.vault.modify(existing, fresh);
-    else await this.app.vault.create(normalizePath(path), fresh);
+    await this.put(path, fresh);
     return templateBody();
+  }
+
+  /* Eine Datei schreiben, gleich ob es sie schon gibt.
+
+     Obsidians Verzeichnis hinkt manchmal hinterher: Eine Datei, die eben
+     entstanden oder verschoben wurde, steht dort noch nicht - und dann
+     scheitert das Anlegen mit "gibt es schon", obwohl man sie gerade
+     nicht finden konnte. Hier wird beides behandelt. */
+  async put(path, body) {
+    const clean = normalizePath(path);
+    const existing = this.file(clean);
+    if (existing) {
+      await this.app.vault.modify(existing, body);
+      return existing;
+    }
+
+    try {
+      return await this.app.vault.create(clean, body);
+    } catch (error) {
+      if (!/exist/i.test(String(error.message || error))) throw error;
+      const found = this.file(clean);
+      if (found) {
+        await this.app.vault.modify(found, body);
+        return found;
+      }
+      await this.app.vault.adapter.write(clean, body);
+      return this.file(clean);
+    }
+  }
+
+  /* Dasselbe für Tondateien. */
+  async putBinary(path, bytes) {
+    const clean = normalizePath(path);
+    const existing = this.file(clean);
+    if (existing) {
+      await this.app.vault.modifyBinary(existing, bytes);
+      return;
+    }
+
+    try {
+      await this.app.vault.createBinary(clean, bytes);
+    } catch (error) {
+      if (!/exist/i.test(String(error.message || error))) throw error;
+      await this.app.vault.adapter.writeBinary(clean, bytes);
+    }
   }
 
   async ensureFolder(path) {
@@ -1251,11 +1295,6 @@ class Packager {
     if (!answer.gloss) return false;
 
     const base = sanitizeFileName(lemma);
-    let path = folder.path + '/' + base + '.md';
-    if (this.app.vault.getAbstractFileByPath(path)) {
-      path = folder.path + '/' + base + ' (' + partOfSpeech + ').md';
-    }
-    if (this.app.vault.getAbstractFileByPath(path)) return false;
 
     const lines = [
       '---',
@@ -1272,8 +1311,33 @@ class Packager {
     lines.push('---', '');
     if (answer.grammar) lines.push('## Grammar', '', answer.grammar.trim(), '');
 
-    await this.app.vault.create(path, lines.join('\n'));
-    return true;
+    return this.writeNote(folder, base, partOfSpeech, lines.join('\n'));
+  }
+
+  /* Eine Wortnotiz anlegen, ohne über einen Namen zu stolpern.
+
+     Zwei Fallen: Groß- und Kleinschreibung ist dem Dateisystem egal,
+     Obsidians Verzeichnis aber nicht - und eine Datei, die gerade eben
+     entstanden ist, steht dort womöglich noch gar nicht. Deshalb wird
+     gegen die tatsächlichen Namen im Ordner geprüft, und wenn es trotzdem
+     schiefgeht, der nächste Name genommen. */
+  async writeNote(folder, base, partOfSpeech, body) {
+    const taken = new Set(folder.children.map((child) => child.name.toLowerCase()));
+
+    const names = [base + '.md', base + ' (' + partOfSpeech + ').md'];
+    for (let n = 2; n < 50; n++) names.push(base + ' ' + n + '.md');
+
+    for (const name of names) {
+      if (taken.has(name.toLowerCase())) continue;
+      try {
+        await this.app.vault.create(folder.path + '/' + name, body);
+        return true;
+      } catch (error) {
+        if (!/exist/i.test(String(error.message || error))) throw error;
+        taken.add(name.toLowerCase());
+      }
+    }
+    return false;
   }
 
   async ensureWordsFolder(code) {
@@ -1331,7 +1395,7 @@ class Packager {
       ].join('\n');
       /* Ab jetzt gibt es sie - sonst versuchte der nächste Absatz, sie
          ein zweites Mal anzulegen. */
-      text.work = await this.app.vault.create(text.folder.path + '/' + WORK_FILE, head);
+      text.work = await this.put(text.folder.path + '/' + WORK_FILE, head);
       return;
     }
 
@@ -1450,16 +1514,8 @@ class Packager {
       step: step,
       write: async (name, bytes, timing) => {
         const base = name.slice((AUDIO_DIR + '/').length).replace(/\.mp3$/, '');
-
-        const sound = this.file(folder.path + '/' + base + '.mp3');
-        if (sound) await this.app.vault.modifyBinary(sound, bytes);
-        else await this.app.vault.createBinary(folder.path + '/' + base + '.mp3', bytes);
-
-        if (!timing) return;
-        const note = this.file(marks.path + '/' + base + '.json');
-        const body = JSON.stringify(timing);
-        if (note) await this.app.vault.modify(note, body);
-        else await this.app.vault.create(marks.path + '/' + base + '.json', body);
+        await this.putBinary(folder.path + '/' + base + '.mp3', bytes);
+        if (timing) await this.put(marks.path + '/' + base + '.json', JSON.stringify(timing));
       }
     });
 
@@ -1538,11 +1594,10 @@ class Packager {
 
     /* Erst wenn alles stimmt, wird geschrieben. Ein halbes Paket ist
        schlimmer als keins. */
-    const path = text.folder.path + '/' + PACKAGE_FILE;
-    const body = JSON.stringify(result.data, null, 2) + '\n';
-    const existing = this.file(path);
-    if (existing) await this.app.vault.modify(existing, body);
-    else await this.app.vault.create(path, body);
+    await this.put(
+      text.folder.path + '/' + PACKAGE_FILE,
+      JSON.stringify(result.data, null, 2) + '\n'
+    );
 
     const stats = result.stats;
     return {
