@@ -391,14 +391,18 @@ function buildPackage(work, original, words, version, audio, into) {
           cursor = original.length;
           break;
         }
-        if (original.slice(cursor, found).trim()) {
-          say('Between ' + sentence.id + ' and the sentence before it, a piece of text.md is missing.');
+        const gap = original.slice(cursor, found).trim();
+        if (gap) {
+          /* Den übergangenen Text mitnennen. "Da fehlt etwas" hilft
+             niemandem - weder der Person noch dem zweiten Anlauf. */
+          say('This piece was left out, before ' + sentence.id + ': "' + shorten(gap) + '"');
         }
         cursor = found + sentence.source.length;
       }
     }
-    if (original.slice(cursor).trim()) {
-      say('The end of text.md is not covered by any sentence.');
+    const rest = original.slice(cursor).trim();
+    if (rest) {
+      say('The end was left out: "' + shorten(rest) + '"');
     }
   }
 
@@ -543,8 +547,8 @@ function remember(map, key, form) {
 }
 
 function shorten(text) {
-  const clean = String(text);
-  return clean.length > 40 ? clean.slice(0, 40) + '…' : clean;
+  const clean = String(text).replace(/\s+/g, ' ').trim();
+  return clean.length > 120 ? clean.slice(0, 120) + '…' : clean;
 }
 
 module.exports = { parseWork, parseWordNote, splitNote, buildPackage, nameFor };

@@ -1186,7 +1186,10 @@ class Packager {
        was nicht stimmt, statt nur nein. */
     let answer = null;
     let problems = [];
-    for (let attempt = 1; attempt <= 2; attempt++) {
+    /* Drei Anläufe. Der zweite und dritte bekommen die Fundliste des
+       Prüfers mit - beim Übergehen eines Satzes steht darin jetzt der
+       übergangene Text selbst, und damit lässt sich etwas anfangen. */
+    for (let attempt = 1; attempt <= 3; attempt++) {
       answer = await this.ask(() => ai.prepare({
         into: into,
         command: this.settings.claudePath || 'claude',
@@ -1197,7 +1200,8 @@ class Packager {
         paragraph: attempt === 1
           ? paragraph
           : paragraph + '\n\nYour previous attempt had these problems:\n- ' +
-            problems.slice(0, 10).join('\n- ')
+            problems.slice(0, 10).join('\n- ') +
+            '\n\nEvery sentence of the paragraph must appear, in order, copied exactly.'
       }));
 
       problems = this.checkBlock(answer.block, paragraph, text.code);
@@ -1206,7 +1210,8 @@ class Packager {
 
     if (problems.length > 0) {
       throw new Error(
-        'A paragraph did not come back clean, twice in a row: ' + problems.slice(0, 3).join(' / ')
+        'One paragraph did not come back clean, three times in a row: ' +
+        problems.slice(0, 3).join(' / ')
       );
     }
     return answer;
