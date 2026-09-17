@@ -333,6 +333,25 @@ function buildPackage(work, original, words, version, audio, into) {
         });
       }
 
+      /* Überlappende Wendungen kommen vor - "un poco" und "un poco de"
+         im selben Satz. Beide sind für sich richtig, zusammen sind sie
+         unzulässig. Daran soll aber nicht der ganze Text scheitern:
+         Die längere gewinnt, weil sie die festere Fügung ist, und die
+         kürzere fällt weg. Die Wörter darunter behalten ohnehin ihre
+         eigenen Zeilen. */
+      const kept = [];
+      for (const one of phrases.slice().sort((a, b) => (b.end - b.start) - (a.end - a.start))) {
+        if (kept.some((other) => one.start < other.end && other.start < one.end)) {
+          usedKeys.delete(one.key);
+          phraseCount -= 1;
+          continue;
+        }
+        kept.push(one);
+      }
+      kept.sort((a, b) => a.start - b.start);
+      phrases.length = 0;
+      for (const one of kept) phrases.push(one);
+
       const built = { id: id, source: source, fluent: sentence.fluent, units: units };
       if (phrases.length > 0) built.phrases = phrases;
 
