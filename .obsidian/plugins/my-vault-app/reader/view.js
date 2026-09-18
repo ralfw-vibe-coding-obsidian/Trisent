@@ -43,6 +43,7 @@ class TrisentView extends ItemView {
     super(leaf);
     this.reader = reader;
     this.library = reader.library;
+    this.streak = reader.streak;
     this.screen = 'languages';
     this.languageCode = null;
     this.packagePath = null;
@@ -202,6 +203,21 @@ class TrisentView extends ItemView {
     this.renderAddLanguage(page);
   }
 
+  /* An wie vielen Tagen hintereinander. Steht im Reader und im Translator,
+     und es ist derselbe Zähler. */
+  renderStreak(parent, language) {
+    const days = this.streak.current(language);
+    if (days <= 0) return null;
+
+    const badge = parent.createSpan({
+      cls: 'trisent-streak',
+      attr: { title: days + (days === 1 ? ' day in a row' : ' days in a row') }
+    });
+    setIcon(badge.createSpan({ cls: 'trisent-streak-icon' }), 'flame');
+    badge.createSpan({ text: String(days) });
+    return badge;
+  }
+
   /* Erklärt die Farben des Spektrums - einmal, unter den Kacheln. */
   renderLegend(page) {
     const legend = page.createDiv({ cls: 'trisent-legend' });
@@ -270,6 +286,7 @@ class TrisentView extends ItemView {
 
     const foot = card.createDiv({ cls: 'trisent-tile-foot' });
     foot.createSpan({ text: stats.packages + (stats.packages === 1 ? ' text' : ' texts') });
+    this.renderStreak(foot, language);
     foot.createSpan({
       text: stats.words > 0 ? stats.words + ' words touched' : 'not started yet'
     });
@@ -404,7 +421,9 @@ class TrisentView extends ItemView {
       this.render();
     }, 'Languages');
 
-    this.renderImportButton(bar.querySelector('.trisent-header'));
+    const head = bar.querySelector('.trisent-header');
+    this.renderStreak(head, language);
+    this.renderImportButton(head);
     this.attachDropTarget();
 
     if (this.importReport) this.renderImportReport(page);
@@ -519,6 +538,7 @@ class TrisentView extends ItemView {
   openText(path) {
     this.screen = 'text';
     this.packagePath = path;
+    this.countToday();
     this.reader.settings.lastPackage = { path: path, language: this.languageCode };
     this.reader.saveSettings();
     this.render();
@@ -1647,6 +1667,16 @@ class TrisentView extends ItemView {
     back.addEventListener('click', onBack);
 
     header.createDiv({ cls: 'trisent-header-title', text: title });
+  }
+
+  /* Einen Text aufzuschlagen ist die Beschäftigung, die zählt - nicht
+     schon das Öffnen der App. */
+  countToday() {
+    const language = this.library.languageByCode(this.languageCode);
+    if (!language) return;
+    this.streak.touch(language).then((state) => {
+      if (state) this.render();
+    });
   }
 
   backToPackages() {

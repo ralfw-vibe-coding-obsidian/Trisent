@@ -180,10 +180,16 @@ Die Aufteilung ist keine Empfehlung, sondern eine Abmachung.
 │   ├── package.js       das Paketformat: Prüfregeln, Schlüsselbildung
 │   ├── library.js       Ordnerstruktur, Pakete, Wortnotizen
 │   └── zip.js           ZIP lesen
+├── learning/            LEARNING - was beide Lernwerkzeuge teilen
 ├── reader/              LEARNING - lesen und hören
 ├── translator/          LEARNING - übersetzen, tippend oder sprechend
 └── packager/            PREPARING - Texte zu Paketen schnüren
 ```
+
+`learning/` ist zu `core/`, was Reader und Translator gemeinsam haben, aber
+den Packager nichts angeht – zum Beispiel der Streak, der je Sprache zählt
+und nicht je Werkzeug. Änderungen dort im Einvernehmen zwischen den beiden
+Lernwerkzeugen; der Packager ist nicht betroffen.
 
 **Wem was gehört:**
 
@@ -191,6 +197,7 @@ Die Aufteilung ist keine Empfehlung, sondern eine Abmachung.
 |---|---|
 | `reader/` | nur die Reader-Sitzung |
 | `translator/` | nur die Translator-Sitzung |
+| `learning/` | Reader und Translator - im Einvernehmen |
 | `packager/` | nur die Packager-Sitzung |
 | `core/`, `main.js`, `styles.css`, `konzept/paketformat.md` | **alle - nur im Einvernehmen** |
 | `Trisent/learning/` in der Vault | die Learning-Seite (Reader und Translator) |

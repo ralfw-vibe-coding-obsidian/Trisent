@@ -402,3 +402,32 @@
 .trisent-legend-dot.is-familiar { background: var(--tri-familiar); }
 .trisent-legend-dot.is-learning { background: var(--tri-learning); }
 .trisent-legend-dot.is-unknown { background: var(--tri-unknown); }
+
+/* An wie vielen Tagen hintereinander gelernt wurde. Ein Zähler je Sprache,
+   nicht je Werkzeug - deshalb steht er im Reader und im Translator gleich
+   aussehend da, und deshalb gehört er hierher und nicht in eine der
+   beiden Stilvorlagen. */
+
+.trisent-streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--tri-learning);
+}
+
+.trisent-streak-icon {
+  display: inline-flex;
+}
+
+.trisent-streak-icon svg {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+/* In der Kopfzeile sitzt er zwischen Titel und Knöpfen. */
+.trisent-header .trisent-streak {
+  margin-left: -0.4rem;
+}

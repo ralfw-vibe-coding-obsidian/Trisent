@@ -21,6 +21,7 @@ class TranslatorView extends ItemView {
     this.translator = translator;
     this.library = translator.library;
     this.knowledge = translator.knowledge;
+    this.streak = translator.streak;
     this.screen = 'languages';
     this.languageCode = null;
     this.packagePath = null;
@@ -126,6 +127,7 @@ class TranslatorView extends ItemView {
       const top = card.createDiv({ cls: 'trisent-tile-top' });
       top.createSpan({ cls: 'trisent-flag', text: language.flag || '🏳️' });
       top.createSpan({ cls: 'trisent-tile-name', text: language.name });
+      this.renderStreak(top, language);
       card.addEventListener('click', () => {
         this.languageCode = language.code;
         this.screen = 'packages';
@@ -137,10 +139,11 @@ class TranslatorView extends ItemView {
   }
 
   renderPackages(page, language) {
-    this.header(this.useBar(), language.flag + ' ' + language.name, () => {
+    const head = this.header(this.useBar(), language.flag + ' ' + language.name, () => {
       this.screen = 'languages';
       this.render();
     }, 'Languages');
+    this.renderStreak(head, language);
 
     const list = page.createDiv({ cls: 'trisent-package-list' });
     list.createDiv({ cls: 'trisent-loading', text: '…' });
@@ -188,8 +191,29 @@ class TranslatorView extends ItemView {
     row.addEventListener('click', () => {
       this.screen = 'text';
       this.packagePath = entry.folder.path;
+      this.countToday(language);
       this.render();
     });
+  }
+
+  /* Einen Text aufzuschlagen ist die Beschäftigung, die zählt. Derselbe
+     Zähler wie im Reader, dieselbe Sprache. */
+  countToday(language) {
+    this.streak.touch(language).then((state) => {
+      if (state) this.render();
+    });
+  }
+
+  renderStreak(parent, language) {
+    const days = this.streak.current(language);
+    if (days <= 0) return;
+
+    const badge = parent.createSpan({
+      cls: 'trisent-streak',
+      attr: { title: days + (days === 1 ? ' day in a row' : ' days in a row') }
+    });
+    setIcon(badge.createSpan({ cls: 'trisent-streak-icon' }), 'flame');
+    badge.createSpan({ text: String(days) });
   }
 
   label(language, directionId) {
@@ -229,10 +253,11 @@ class TranslatorView extends ItemView {
       this.language = language;
 
       const bar = this.useBar();
-      this.header(bar, data.title || folder.name, () => {
+      const head = this.header(bar, data.title || folder.name, () => {
         this.screen = 'packages';
         this.render();
       }, language.name);
+      this.renderStreak(head, language);
       this.renderDirectionSwitch(bar, language);
 
       this.known = this.knowledge.counts(language, folder)[this.direction] || {};

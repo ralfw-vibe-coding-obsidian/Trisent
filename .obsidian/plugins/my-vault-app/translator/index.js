@@ -10,6 +10,7 @@
 const { Setting, Notice } = require('obsidian');
 const { Library } = require('../core/library.js');
 const { SentenceKnowledge } = require('./sentences.js');
+const { Streak } = require('../learning/streak.js');
 const { TranslatorView, VIEW_TYPE, RIBBON_ICON } = require('./view.js');
 
 const DEFAULTS = {
@@ -31,6 +32,9 @@ class Translator {
     this.app = plugin.app;
     this.library = new Library(plugin.app, plugin, 'learning');
     this.knowledge = new SentenceKnowledge(plugin.app, this.library);
+    /* Derselbe Zähler wie im Reader - ein Tag Beschäftigung mit der
+       Sprache, egal mit welchem Werkzeug. */
+    this.streak = new Streak(plugin.app);
 
     plugin.registerView(VIEW_TYPE, (leaf) => new TranslatorView(leaf, this));
     plugin.addRibbonIcon(RIBBON_ICON, 'Translate with Trisent', () => this.open());
