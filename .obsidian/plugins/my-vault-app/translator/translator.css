@@ -45,17 +45,34 @@
 
 .trisent-score {
   display: flex;
-  align-items: baseline;
-  gap: 0.35rem;
+  align-items: center;
+  gap: 0.3rem;
   justify-content: flex-end;
   font-variant-numeric: tabular-nums;
+}
+
+.trisent-score-icon {
+  display: inline-flex;
+  color: var(--background-modifier-border);
+}
+
+.trisent-score-icon svg {
+  width: 0.85em;
+  height: 0.85em;
 }
 
 .trisent-score-value {
   font-family: var(--tri-read);
   font-size: 1.05rem;
   font-weight: var(--tri-read-weight);
-  color: var(--text-normal);
+  color: var(--text-faint);
+}
+
+/* Sobald ein Satz in dieser Richtung saß, wird die Zeile grün - dasselbe
+   Grün und derselbe Haken wie oben am Satz. */
+.trisent-score.is-started .trisent-score-icon,
+.trisent-score.is-started .trisent-score-value {
+  color: var(--tri-accent);
 }
 
 .trisent-score-label {

@@ -169,11 +169,15 @@ class TranslatorView extends ItemView {
       left.createDiv({ cls: 'trisent-t-sub', text: data.titleTranslation });
     }
 
-    /* Zwei Zahlen: wie viele Sätze du in welche Richtung schon konntest. */
+    /* Wie viele Sätze du in welche Richtung schon konntest - in derselben
+       Sprache wie die Marke am Satz: Haken und Grün heißt "sitzt". */
     const right = row.createDiv({ cls: 'trisent-t-right' });
     for (const direction of DIRECTIONS) {
       const done = this.knowledge.solved(language, entry.folder, direction.id);
-      const line = right.createDiv({ cls: 'trisent-score' });
+      const line = right.createDiv({
+        cls: 'trisent-score' + (done > 0 ? ' is-started' : '')
+      });
+      setIcon(line.createSpan({ cls: 'trisent-score-icon' }), 'check');
       line.createSpan({ cls: 'trisent-score-value', text: done + '/' + total });
       line.createSpan({ cls: 'trisent-score-label', text: this.label(language, direction.id) });
     }
