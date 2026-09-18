@@ -250,3 +250,65 @@
   color: var(--text-muted);
   white-space: pre-wrap;
 }
+
+/* ---------------------------------------------------------------- */
+/* Einsprechen                                                       */
+/* ---------------------------------------------------------------- */
+
+/* Eines von beiden: Wer redet, tippt nicht - und wer getippt hat, redet
+   nicht mehr in dasselbe Feld hinein. */
+
+.trisent-view .trisent-dictate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  cursor: pointer;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-dictate svg {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.trisent-view .trisent-dictate:hover {
+  background: var(--background-modifier-hover);
+}
+
+.trisent-view .trisent-dictate.is-recording {
+  color: var(--tri-unknown);
+  border-color: var(--tri-unknown);
+  background: color-mix(in srgb, var(--tri-unknown) 12%, transparent);
+  animation: trisent-dictating 1.4s ease-in-out infinite;
+}
+
+@keyframes trisent-dictating {
+  50% { opacity: 0.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trisent-view .trisent-dictate.is-recording { animation: none; }
+}
+
+/* Sobald etwas im Feld steht, ist das Mikrofon nicht mehr zuständig. */
+.trisent-view .trisent-dictate[disabled] {
+  opacity: 0.3;
+  cursor: default;
+  color: var(--text-faint);
+}
+
+.trisent-view textarea.trisent-task-input[disabled] {
+  opacity: 0.6;
+}
+
+.trisent-task-status {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}

@@ -3,7 +3,8 @@ type: sentences
 language: fr
 package: fr-julie-cherche-son-telephone
 title: Julie cherche son téléphone
-intoForeign: {}
+intoForeign:
+  s002: 1/1
 intoNative:
   s001: 2/3
   s002: 1

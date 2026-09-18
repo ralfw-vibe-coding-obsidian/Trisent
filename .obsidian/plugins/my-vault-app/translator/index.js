@@ -20,7 +20,9 @@ const DEFAULTS = {
      der Packager vertont. Der eine bezahlt das Üben, der andere das
      Herstellen. */
   openRouterKey: '',
-  model: 'anthropic/claude-sonnet-5'
+  model: 'anthropic/claude-sonnet-5',
+  /* Für das Einsprechen - dieselbe Anmeldung, anderes Modell. */
+  speechModel: 'openai/whisper-large-v3'
 };
 
 class Translator {
@@ -84,13 +86,26 @@ class Translator {
 
     new Setting(containerEl)
       .setName('Model')
-      .setDesc('Any model id from OpenRouter.')
+      .setDesc('Checks your translations. Any model id from OpenRouter.')
       .addText((text) =>
         text
           .setPlaceholder(DEFAULTS.model)
           .setValue(this.settings.model || DEFAULTS.model)
           .onChange(async (value) => {
             this.settings.model = value.trim() || DEFAULTS.model;
+            await this.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName('Speech model')
+      .setDesc('Turns what you say into text. Any transcription model from OpenRouter.')
+      .addText((text) =>
+        text
+          .setPlaceholder(DEFAULTS.speechModel)
+          .setValue(this.settings.speechModel || DEFAULTS.speechModel)
+          .onChange(async (value) => {
+            this.settings.speechModel = value.trim() || DEFAULTS.speechModel;
             await this.saveSettings();
           })
       );

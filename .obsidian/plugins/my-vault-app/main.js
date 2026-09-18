@@ -34,6 +34,7 @@ const MODULES = [
   'reader/index.js',
   'translator/sentences.js',
   'translator/check.js',
+  'translator/speech.js',
   'translator/view.js',
   'translator/index.js',
   'packager/ai.js',

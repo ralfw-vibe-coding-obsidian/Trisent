@@ -10,6 +10,7 @@
 const { ItemView, TFolder, Notice, setIcon } = require('obsidian');
 const { DIRECTIONS } = require('./sentences.js');
 const { checkTranslation } = require('./check.js');
+const { Dictation } = require('./speech.js');
 
 const VIEW_TYPE = 'trisent-translator-view';
 const RIBBON_ICON = 'pen-line';
@@ -47,7 +48,7 @@ class TranslatorView extends ItemView {
   }
 
   async onClose() {
-    /* nichts aufzuräumen */
+    if (this.speech) this.speech.stop();
   }
 
   get direction() {
@@ -56,6 +57,8 @@ class TranslatorView extends ItemView {
   }
 
   render() {
+    if (this.speech) this.speech.stop();
+
     const root = this.contentEl;
     root.empty();
     root.addClass('trisent-view');
@@ -281,7 +284,65 @@ class TranslatorView extends ItemView {
 
     const row = block.createDiv({ cls: 'trisent-task-row' });
     const check = row.createEl('button', { cls: 'trisent-check', text: 'Check' });
+
+    /* Einsprechen statt tippen. Eines von beiden - wer redet, tippt nicht,
+       und wer getippt hat, redet nicht mehr in dasselbe Feld hinein. */
+    const mic = row.createEl('button', {
+      cls: 'trisent-dictate',
+      attr: { 'aria-label': 'Say your translation', title: 'Say your translation' }
+    });
+    setIcon(mic, 'mic');
+
+    const status = row.createSpan({ cls: 'trisent-task-status' });
     const verdict = block.createDiv({ cls: 'trisent-verdict' });
+
+    const lockForTyping = () => {
+      const typed = field.value.trim().length > 0;
+      mic.toggleClass('is-locked', typed);
+      if (typed) mic.setAttr('disabled', 'true');
+      else mic.removeAttribute('disabled');
+    };
+    field.addEventListener('input', lockForTyping);
+
+    mic.addEventListener('click', async () => {
+      const dictation = this.dictation();
+
+      if (dictation.running) {
+        dictation.stop();
+        return;
+      }
+
+      dictation.language = intoForeign ? this.data.language : this.data.fluentLanguage;
+      field.setAttr('disabled', 'true');
+      check.setAttr('disabled', 'true');
+      verdict.empty();
+
+      try {
+        const text = await dictation.record(() => {
+          mic.addClass('is-recording');
+          setIcon(mic, 'square');
+          status.setText('Listening… tap again when you are done');
+        });
+
+        setIcon(mic, 'mic');
+        mic.removeClass('is-recording');
+        status.setText(text ? '' : 'Nothing was recorded.');
+        if (text) field.value = text;
+      } catch (error) {
+        setIcon(mic, 'mic');
+        mic.removeClass('is-recording');
+        status.setText('');
+        verdict.createDiv({
+          cls: 'trisent-verdict-line is-bad',
+          text: String(error.message || error)
+        });
+      }
+
+      field.removeAttribute('disabled');
+      check.removeAttribute('disabled');
+      lockForTyping();
+      field.focus();
+    });
 
     const run = async () => {
       const answer = field.value.trim();
@@ -293,6 +354,7 @@ class TranslatorView extends ItemView {
       check.setAttr('disabled', 'true');
       check.setText('Checking…');
       verdict.empty();
+      status.setText('');
 
       try {
         const result = await checkTranslation(this.translator.settings, {
@@ -320,6 +382,11 @@ class TranslatorView extends ItemView {
         run();
       }
     });
+  }
+
+  dictation() {
+    if (!this.speech) this.speech = new Dictation(this.translator.settings);
+    return this.speech;
   }
 
   /* Wie der Satz in dieser Richtung bisher lief: Haken für richtig,
