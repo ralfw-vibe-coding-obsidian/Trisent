@@ -32,9 +32,10 @@ class Reader {
   constructor(plugin) {
     this.plugin = plugin;
     this.app = plugin.app;
-    /* Der Bereich des Readers. Hierhin kommt nur, was den Import
-       durchlaufen hat. */
-    this.library = new Library(plugin.app, plugin, 'reader');
+    /* Der Bereich der Lernenden. Reader und Translator teilen ihn sich -
+       er gehört nicht einem Werkzeug, sondern der Person. Hierhin kommt
+       nur, was den Import durchlaufen hat. */
+    this.library = new Library(plugin.app, plugin, 'learning');
 
     plugin.registerView(VIEW_TYPE, (leaf) => new TrisentView(leaf, this));
     plugin.registerView(CARD_VIEW_TYPE, (leaf) => new WordCardView(leaf, this));

@@ -135,34 +135,42 @@ getrennt:
 
 ```text
 Trisent/                  einstellbar, Vorgabe: Trisent
-├── reader/               nur der Reader
+├── learning/             die Seite der Lernenden
 │   ├── BG/
 │   │   ├── language.md
-│   │   ├── dictionary/   der Lernstand der Person, eine Notiz je Wort
+│   │   ├── dictionary/   was die Person über Wörter weiß, eine Notiz je Wort
+│   │   ├── sentences/    was sie über Sätze weiß, eine Notiz je Text
 │   │   └── packages/     die Lerntexte
 │   └── FR/
-└── packager/             nur der Packager
+└── packager/             die Seite des Herstellens
 ```
 
-**Der Packager schreibt nie in den Bereich des Readers.** Ein fertiges Paket
+Der Bereich heißt `learning` und nicht `reader`, weil er **der Person gehört,
+nicht einem Werkzeug**. Reader und Translator arbeiten beide darin: derselbe
+Text, dasselbe Wortwissen, dasselbe Satzwissen.
+
+**Der Packager schreibt nie in den Bereich der Lernenden.** Ein fertiges Paket
 kommt dort ausschließlich über den **Import** an – und damit ausschließlich
 durch `validatePackage()`. Das ist keine Formsache: Es gibt dadurch genau eine
 Tür in die Bibliothek der Person, und die ist geprüft. Ein halbfertiges oder
 fehlerhaftes Paket kann gar nicht dort landen, auch nicht aus Versehen, auch
 nicht vom Schreibtisch nebenan.
 
-Technisch bekommt jedes Modul dafür eine eigene `Library` mit seinem Bereich:
-`new Library(app, plugin, 'reader')` bzw. `'packager'`. Beide benutzen denselben
-Code, sehen aber nur ihren eigenen Ordner.
+Technisch bekommt jede Seite dafür eine eigene `Library` mit ihrem Bereich:
+`new Library(app, plugin, 'learning')` bzw. `'packager'`. Beide benutzen
+denselben Code, sehen aber nur ihren eigenen Ordner.
 
 Wenn ein Wunsch dieses Muster wirklich sprengt, sprich es an, statt es still
 anders zu machen.
 
 ## Aufbau des Codes
 
-An dieser App arbeiten **zwei Sitzungen parallel**: eine am Reader, eine am
-Packager. Deshalb ist der Code aufgeteilt, und die Aufteilung ist keine
-Empfehlung, sondern eine Abmachung.
+An dieser App arbeiten **mehrere Sitzungen parallel**. Die große Grenze läuft
+zwischen **Learning** – allem, womit die Person lernt – und **Preparing**, dem
+Herstellen der Texte. Innerhalb von Learning liegt jedes Werkzeug in einem
+eigenen Verzeichnis, damit auch dort getrennt gearbeitet werden kann.
+
+Die Aufteilung ist keine Empfehlung, sondern eine Abmachung.
 
 ```text
 .obsidian/plugins/my-vault-app/
@@ -172,10 +180,9 @@ Empfehlung, sondern eine Abmachung.
 │   ├── package.js       das Paketformat: Prüfregeln, Schlüsselbildung
 │   ├── library.js       Ordnerstruktur, Pakete, Wortnotizen
 │   └── zip.js           ZIP lesen
-├── reader/              Lesen und Lernen
-│   ├── index.js  view.js  card.js  reader.css
-└── packager/            Texte zu Paketen schnüren
-    └── index.js  packager.css
+├── reader/              LEARNING - lesen und hören
+├── translator/          LEARNING - übersetzen, tippend oder sprechend
+└── packager/            PREPARING - Texte zu Paketen schnüren
 ```
 
 **Wem was gehört:**
@@ -183,9 +190,10 @@ Empfehlung, sondern eine Abmachung.
 | Ort | Wer ändert |
 |---|---|
 | `reader/` | nur die Reader-Sitzung |
+| `translator/` | nur die Translator-Sitzung |
 | `packager/` | nur die Packager-Sitzung |
-| `core/`, `main.js`, `styles.css`, `konzept/paketformat.md` | **beide - nur im Einvernehmen** |
-| `Trisent/reader/` in der Vault | nur der Reader |
+| `core/`, `main.js`, `styles.css`, `konzept/paketformat.md` | **alle - nur im Einvernehmen** |
+| `Trisent/learning/` in der Vault | die Learning-Seite (Reader und Translator) |
 | `Trisent/packager/` in der Vault | nur der Packager |
 
 Bevor du etwas in `core/`, `main.js` oder `styles.css` änderst, sag es der
