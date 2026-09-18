@@ -9,8 +9,6 @@
  */
 
 const { Setting, Notice } = require('obsidian');
-const { Library } = require('../core/library.js');
-const { Streak } = require('../learning/streak.js');
 const { TrisentView, VIEW_TYPE, RIBBON_ICON } = require('./view.js');
 const { WordCardView, CARD_VIEW_TYPE } = require('./card.js');
 
@@ -33,13 +31,10 @@ class Reader {
   constructor(plugin) {
     this.plugin = plugin;
     this.app = plugin.app;
-    /* Der Bereich der Lernenden. Reader und Translator teilen ihn sich -
-       er gehört nicht einem Werkzeug, sondern der Person. Hierhin kommt
-       nur, was den Import durchlaufen hat. */
-    this.library = new Library(plugin.app, plugin, 'learning');
-    /* Derselbe Zähler wie im Translator - ein Tag Beschäftigung mit der
-       Sprache, egal mit welchem Werkzeug. */
-    this.streak = new Streak(plugin.app);
+    /* Bibliothek und Streak gehören der Learning-Seite, nicht dem Reader -
+       der Translator arbeitet mit denselben. */
+    this.library = plugin.learning.library;
+    this.streak = plugin.learning.streak;
 
     plugin.registerView(VIEW_TYPE, (leaf) => new TrisentView(leaf, this));
     plugin.registerView(CARD_VIEW_TYPE, (leaf) => new WordCardView(leaf, this));

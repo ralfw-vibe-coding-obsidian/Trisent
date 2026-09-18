@@ -29,6 +29,7 @@ const MODULES = [
   'core/package.js',
   'core/library.js',
   'learning/streak.js',
+  'learning/index.js',
   'reader/audio.js',
   'reader/view.js',
   'reader/card.js',
@@ -151,6 +152,12 @@ module.exports = class TrisentPlugin extends Plugin {
     const packager = modules['packager/index.js'];
 
     await this.loadSettings(reader.DEFAULTS, translator.DEFAULTS, packager.DEFAULTS);
+
+    /* Die Seite der Lernenden. Reader und Translator teilen sich, was hier
+       liegt - und der Packager reicht fertige Pakete an
+       plugin.learning.importFiles(). Das ist die Vordertür, benannt nach
+       dem Zweck und nicht nach einem Werkzeug. */
+    this.learning = new modules['learning/index.js'].Learning(this);
 
     this.reader = new reader.Reader(this);
     this.translator = new translator.Translator(this);

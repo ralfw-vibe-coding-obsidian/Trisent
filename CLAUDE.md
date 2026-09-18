@@ -186,10 +186,17 @@ Die Aufteilung ist keine Empfehlung, sondern eine Abmachung.
 └── packager/            PREPARING - Texte zu Paketen schnüren
 ```
 
-`learning/` ist zu `core/`, was Reader und Translator gemeinsam haben, aber
-den Packager nichts angeht – zum Beispiel der Streak, der je Sprache zählt
-und nicht je Werkzeug. Änderungen dort im Einvernehmen zwischen den beiden
-Lernwerkzeugen; der Packager ist nicht betroffen.
+`learning/` ist zu `core/`, was Reader und Translator gemeinsam haben: die
+Bibliothek, der Streak (je Sprache, nicht je Werkzeug) – und die **Vordertür**.
+
+**Die Vordertür ist `plugin.learning.importFiles(contents, label)`.** Dort
+reicht der Packager fertige Pakete hinein; geprüft wird dahinter, immer. Sie
+heißt nach dem Zweck und nicht nach einem Werkzeug, denn ein Werkzeugname
+ändert sich – und ein gebrochener Aufruf fiele der Person erst auf, wenn sie
+„Deploy" drückt, nicht beim Laden.
+
+Änderungen an `learning/` im Einvernehmen zwischen Reader und Translator; an
+Namen oder Form von `importFiles` auch mit dem Packager.
 
 **Wem was gehört:**
 
