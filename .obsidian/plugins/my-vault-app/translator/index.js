@@ -23,7 +23,11 @@ const DEFAULTS = {
   openRouterKey: '',
   model: 'anthropic/claude-sonnet-5',
   /* Für das Einsprechen - dieselbe Anmeldung, anderes Modell. */
-  speechModel: 'openai/whisper-large-v3'
+  speechModel: 'openai/whisper-large-v3',
+  /* Was das Üben bisher gekostet hat, in Dollar. OpenRouter legt die
+     tatsächlichen Kosten jeder Anfrage bei; hier werden sie addiert. */
+  spent: 0,
+  spentSince: null
 };
 
 class Translator {
@@ -51,6 +55,30 @@ class Translator {
 
   saveSettings() {
     return this.plugin.saveSettings();
+  }
+
+  /* Die Kosten einer Anfrage dazuzählen. Geschrieben wird verzögert -
+     beim Üben fällt das im Sekundentakt an. */
+  addCost(amount) {
+    if (typeof amount !== 'number' || !(amount > 0)) return;
+    if (!this.settings.spentSince) {
+      this.settings.spentSince = new Date().toISOString().slice(0, 10);
+    }
+    this.settings.spent = (Number(this.settings.spent) || 0) + amount;
+    this.plugin.saveSettingsSoon();
+  }
+
+  /* Was bisher zusammengekommen ist, als Text. Unter einem Cent mit vier
+     Stellen - sonst stünde da für die erste Übungsstunde "$0.00", und das
+     wäre so falsch wie nutzlos. */
+  spentSoFar() {
+    const spent = Number(this.settings.spent) || 0;
+    if (spent <= 0) return 'Nothing spent yet.';
+
+    const amount = '$' + (spent < 0.01 ? spent.toFixed(4) : spent.toFixed(2));
+    return this.settings.spentSince
+      ? amount + ' since ' + this.settings.spentSince
+      : amount;
   }
 
   async open() {
@@ -87,6 +115,20 @@ class Translator {
             await this.saveSettings();
           });
       });
+
+    /* Direkt unter dem Schlüssel: Hier sieht man nach, wenn man an die
+       Rechnung denkt. Beim Üben soll keine Zahl hochticken - das bremst. */
+    const spent = new Setting(containerEl)
+      .setName('Spent so far')
+      .setDesc(this.spentSoFar())
+      .addButton((button) =>
+        button.setButtonText('Reset').onClick(async () => {
+          this.settings.spent = 0;
+          this.settings.spentSince = new Date().toISOString().slice(0, 10);
+          await this.saveSettings();
+          spent.setDesc(this.spentSoFar());
+        })
+      );
 
     new Setting(containerEl)
       .setName('Model')

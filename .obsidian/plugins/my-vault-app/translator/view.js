@@ -253,11 +253,12 @@ class TranslatorView extends ItemView {
       this.language = language;
 
       const bar = this.useBar();
-      const head = this.header(bar, data.title || folder.name, () => {
+      /* Beim Üben steht die Flamme nicht - wie im Reader beim Lesen auch
+         nicht. Wer arbeitet, braucht keinen Zähler vor der Nase. */
+      this.header(bar, data.title || folder.name, () => {
         this.screen = 'packages';
         this.render();
       }, language.name);
-      this.renderStreak(head, language);
       this.renderDirectionSwitch(bar, language);
 
       this.known = this.knowledge.counts(language, folder)[this.direction] || {};
@@ -404,7 +405,7 @@ class TranslatorView extends ItemView {
           fromLanguage: intoForeign ? this.data.fluentLanguage : this.data.language,
           toLanguage: intoForeign ? this.data.language : this.data.fluentLanguage,
           feedbackLanguage: this.data.glossLanguage || this.data.fluentLanguage
-        });
+        }, (cost) => this.translator.addCost(cost));
         this.showVerdict(verdict, result, reference, sentence, badge);
       } catch (error) {
         verdict.createDiv({ cls: 'trisent-verdict-line is-bad', text: String(error.message || error) });
@@ -425,7 +426,9 @@ class TranslatorView extends ItemView {
   }
 
   dictation() {
-    if (!this.speech) this.speech = new Dictation(this.translator.settings);
+    if (!this.speech) {
+      this.speech = new Dictation(this.translator.settings, (cost) => this.translator.addCost(cost));
+    }
     return this.speech;
   }
 

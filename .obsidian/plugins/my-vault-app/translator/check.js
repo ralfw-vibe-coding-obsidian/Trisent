@@ -62,7 +62,7 @@ function nameOf(code) {
   }
 }
 
-async function checkTranslation(settings, task) {
+async function checkTranslation(settings, task, onCost) {
   const key = (settings.openRouterKey || '').trim();
   if (!key) {
     throw new Error('No OpenRouter key yet. Put one in the Trisent settings.');
@@ -113,6 +113,10 @@ async function checkTranslation(settings, task) {
   }
 
   const body = response.json || {};
+
+  /* OpenRouter legt die tatsächlichen Kosten jeder Anfrage bei. */
+  if (onCost && body.usage && typeof body.usage.cost === 'number') onCost(body.usage.cost);
+
   const text = body.choices && body.choices[0] && body.choices[0].message
     ? body.choices[0].message.content
     : '';

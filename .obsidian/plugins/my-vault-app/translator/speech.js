@@ -25,8 +25,9 @@ const ENDPOINT = 'https://openrouter.ai/api/v1/audio/transcriptions';
 const MAX_RECORDING_MS = 60000;
 
 class Dictation {
-  constructor(settings) {
+  constructor(settings, onCost) {
     this.settings = settings;
+    this.onCost = onCost;
     this.recorder = null;
     this.stream = null;
   }
@@ -137,8 +138,13 @@ class Dictation {
       throw new Error('OpenRouter answered ' + response.status + (detail ? ': ' + detail : ''));
     }
 
-    const text = response.json && typeof response.json.text === 'string' ? response.json.text : '';
-    return text.trim();
+    const result = response.json || {};
+    /* OpenRouter legt die tatsächlichen Kosten jeder Anfrage bei. */
+    if (this.onCost && result.usage && typeof result.usage.cost === 'number') {
+      this.onCost(result.usage.cost);
+    }
+
+    return typeof result.text === 'string' ? result.text.trim() : '';
   }
 }
 
