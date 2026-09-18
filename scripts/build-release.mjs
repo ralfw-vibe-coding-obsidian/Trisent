@@ -40,9 +40,16 @@ if (!main.includes('const EMBEDDED = null;')) {
 const sources = {};
 for (const name of modules) sources[name] = await read(name);
 
+/* Die Ersetzung MUSS über eine Funktion laufen.
+
+   Mit einer Zeichenkette als Ersatz deutet JavaScript darin $-Folgen als
+   Befehle: $& steht für den Treffer, $' für alles danach. Enthält
+   irgendein Baustein so eine Folge - etwa in einem regulären Ausdruck -,
+   zerschneidet das die fertige Datei an einer Stelle, die niemand
+   vorhersagen kann. Eine Funktion als Ersatz wird wörtlich genommen. */
 const bundled = main.replace(
   'const EMBEDDED = null;',
-  'const EMBEDDED = ' + JSON.stringify(sources, null, 0) + ';'
+  () => 'const EMBEDDED = ' + JSON.stringify(sources, null, 0) + ';'
 );
 
 /* Stilvorlagen hintereinander, jede mit ihrem Namen darüber. */
