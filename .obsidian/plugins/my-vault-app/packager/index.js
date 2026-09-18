@@ -17,7 +17,7 @@
  */
 
 const { ItemView, Modal, Notice, Platform, Setting, TFile, TFolder, normalizePath } = require('obsidian');
-const { parseWork, parseWordNote, splitNote, buildPackage } = require('./build.js');
+const { parseWork, parseWordNote, splitNote, buildPackage, nameFor } = require('./build.js');
 const { keyFor } = require('../core/package.js');
 const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
@@ -215,17 +215,71 @@ function keyOf(text) {
   return text.loose ? text.loose.path : text.folder.path;
 }
 
+/* Die vier Schritte eines Textes, und wann welcher an der Reihe ist.
+
+   Alle vier stehen immer da; wer nicht dran ist, ist abgeblendet und sagt
+   beim Darauffahren, warum. So sieht man auf einen Blick, wo ein Text
+   steht - statt es aus wechselnden Knöpfen zu erschließen. */
+function stepsFor(text, can) {
+  const packaged = text.version > 0;
+  const stale = packaged && text.workAt > text.packageAt;
+  const silent = Math.max(0, text.sentences - text.spoken);
+
+  return [
+    {
+      name: 'Integrate',
+      run: 'integrate',
+      on: !!text.loose,
+      why: text.loose ? 'Give this note a folder of its own.' : 'Already part of the library folder.'
+    },
+    {
+      name: 'Package',
+      run: 'make',
+      on: !text.loose && (!packaged || stale || text.done < text.total),
+      why: text.loose ? 'Integrate it first.'
+        : !can.prepare ? 'Claude was not found - see the settings.'
+        : stale ? 'The workbench changed after the last build.'
+        : packaged ? 'Nothing has changed since the last build.'
+        : 'Turn the text into a package.'
+    },
+    {
+      name: 'Record',
+      run: 'speak',
+      on: !text.loose && packaged && !stale && silent > 0 && can.voices,
+      why: !packaged ? 'Make the package first.'
+        : !can.voices ? 'No voice for this language in the settings.'
+        : stale ? 'Build the package again first.'
+        : silent === 0 ? 'Every sentence already has sound.'
+        : silent + ' of ' + text.sentences + ' sentences have no sound yet.'
+    },
+    {
+      name: 'Deploy',
+      run: 'send',
+      on: !text.loose && packaged && !stale && text.sent < text.version,
+      why: !packaged ? 'Make the package first.'
+        : stale ? 'Build the package again first.'
+        : text.sent >= text.version ? 'Your library already has this version.'
+        : 'Send it to your library.'
+    }
+  ];
+}
+
 /* Woran man mit einem Text ist - in einem Satz, nicht in Kästchen. */
 function stateOf(text) {
-  if (text.loose) {
-    return 'Dropped in, not packaged yet. Making the package files it away.';
+  if (text.loose) return 'Dropped in. Integrate it to get started.';
+
+  const sound = text.sentences > 0 && text.spoken >= text.sentences
+    ? ' With sound.'
+    : text.spoken > 0 ? ' Sound for ' + text.spoken + ' of ' + text.sentences + ' sentences.' : '';
+
+  if (!text.version) return 'Not packaged yet.';
+  if (text.workAt > text.packageAt) {
+    return 'The workbench changed after the last build — package it again.' + sound;
   }
-  const sound = text.spoken ? ' With sound.' : '';
-  if (!text.version) return 'Not packaged yet.' + sound;
-  if (!text.sent) return 'Packaged, not sent to your library yet.' + sound;
+  if (!text.sent) return 'Packaged, not in your library yet.' + sound;
   if (text.sent < text.version) {
-    return 'Changed since you sent it — version ' + text.version +
-           ' here, version ' + text.sent + ' in your library.' + sound;
+    return 'Version ' + text.version + ' here, version ' + text.sent +
+           ' in your library.' + sound;
   }
   return 'In your library, version ' + text.version + '.' + sound;
 }
@@ -498,34 +552,24 @@ class PackagerView extends ItemView {
     row.createDiv({ cls: 'trisent-pack-state', text: stateOf(text) });
 
     const actions = row.createDiv({ cls: 'trisent-pack-actions' });
-
-    /* Ein Knopf für den ganzen Weg: aufbereiten, fehlende Wörter
-       beschreiben, bauen. Er heißt nach dem Ziel, nicht nach dem Schritt -
-       solange es kein Paket gibt, lautet das Ziel "Paket machen", ganz
-       gleich, wie weit die Aufbereitung schon ist. */
     const busy = this.running.get(keyOf(text));
-    if (text.work || (this.packager.canPrepare() && text.total > 0)) {
-      const make = actions.createEl('button', {
-        cls: 'mod-cta',
-        text: busy || 'Make package'
-      });
-      if (busy) make.disabled = true;
-      else make.addEventListener('click', () => this.make(text));
-    }
+    const can = {
+      prepare: this.packager.canPrepare(),
+      voices: this.packager.voicesFor(text.code).length > 0
+    };
 
-    if (!busy && this.packager.voicesFor(text.code).length > 0 && text.work) {
-      const speak = actions.createEl('button', {
-        cls: 'trisent-pack-second',
-        text: text.spoken ? 'Redo audio' : 'Add audio'
+    for (const step of stepsFor(text, can)) {
+      const button = actions.createEl('button', {
+        cls: step.on && !busy ? 'mod-cta' : '',
+        text: busy && busy.step === step.run ? busy.label : step.name
       });
-      speak.addEventListener('click', () => this.speak(text));
-    }
+      button.title = step.why;
 
-    if (text.version && !busy) {
-      /* Zweite Handlung, nicht zweitrangige: eigener Rahmen in der
-         Akzentfarbe, damit sie nicht wie abgeschaltet aussieht. */
-      const send = actions.createEl('button', { cls: 'trisent-pack-second', text: 'Send to library' });
-      send.addEventListener('click', () => this.send(text));
+      if (busy || !step.on) {
+        button.disabled = true;
+        continue;
+      }
+      button.addEventListener('click', () => this[step.run](text));
     }
 
     const report = this.reports.get(keyOf(text));
@@ -558,31 +602,37 @@ class PackagerView extends ItemView {
     }).open();
   }
 
-  /* Ein langer Text braucht einige Minuten. Solange muss auf dem Knopf
-     stehen, woran gerade gearbeitet wird - sonst sitzt die Person vor
-     einer Ansicht, die nichts tut. */
-  async make(text) {
+  /* Alle vier Schritte laufen gleich ab: sperren, arbeiten, berichten,
+     auffrischen. Was sie unterscheidet, steckt in "work".
+
+     Ein langer Text braucht einige Minuten - solange steht auf dem Knopf,
+     woran gerade gearbeitet wird. */
+  async run(text, name, first, work) {
     const path = keyOf(text);
     if (this.running.has(path)) return;
 
-    this.running.set(path, 'Starting…');
+    this.running.set(path, { step: name, label: first });
     this.reports.delete(path);
     this.render();
 
-    const step = (what) => {
-      this.running.set(path, what);
+    const step = (label) => {
+      this.running.set(path, { step: name, label: label });
       this.render();
     };
 
     try {
-      this.reports.set(path, await this.packager.makePackage(text, step));
+      this.reports.set(path, await work(step));
     } catch (error) {
       console.error('Trisent packager', error);
+      const spent = error.credits
+        ? ' Before that, ' + error.written + ' sentences were recorded for ' + error.credits + ' credits.'
+        : '';
       this.reports.set(path, {
         kind: 'bad', headline: 'It stopped here.',
-        lines: [String(error.message || error)], more: 0
+        lines: [String(error.message || error) + spent], more: 0
       });
     }
+
     /* Nach dem Einsortieren heißt der Text anders. Der Bericht wird
        deshalb auch unter dem neuen Namen abgelegt - sonst verschwände er
        mit der nächsten Auffrischung. */
@@ -594,45 +644,32 @@ class PackagerView extends ItemView {
     await this.refresh();
   }
 
-  /* Vertonen: Stimme wählen, sprechen lassen, neu bauen - der Ton
-     gehört ins Paket, also muss es danach neu entstehen. */
-  speak(text) {
-    const voices = this.packager.voicesFor(text.code);
-    new VoiceModal(this.app, voices, async (voice) => {
-      const path = keyOf(text);
-      if (this.running.has(path)) return;
-
-      this.running.set(path, 'Recording audio…');
-      this.reports.delete(path);
-      this.render();
-
-      const step = (what) => { this.running.set(path, what); this.render(); };
-      try {
-        this.reports.set(path, await this.packager.speak(text, voice, step));
-      } catch (error) {
-        console.error('Trisent packager', error);
-        const spent = error.credits
-          ? ' Before that, ' + error.written + ' sentences were recorded for ' + error.credits + ' credits.'
-          : '';
-        this.reports.set(path, {
-          kind: 'bad', headline: 'The audio stopped here.',
-          lines: [String(error.message || error) + spent], more: 0
-        });
-      }
-      this.running.delete(path);
-      await this.refresh();
-    }).open();
+  integrate(text) {
+    return this.run(text, 'integrate', 'Filing it away…', async () => {
+      await this.packager.fileAway(text);
+      return { kind: 'ok', headline: 'Filed away. Package it next.', detail: '' };
+    });
   }
 
-  async send(text) {
-    try {
-      const result = await this.packager.send(text);
-      new Notice(result, 8000);
-    } catch (error) {
-      console.error('Trisent packager', error);
-      new Notice(String(error.message || error), 12000);
-    }
-    await this.refresh();
+  make(text) {
+    return this.run(text, 'make', 'Starting…', (step) => this.packager.makePackage(text, step));
+  }
+
+  /* Vertonen: Stimme wählen, sprechen lassen, neu bauen - der Ton gehört
+     ins Paket, also muss es danach neu entstehen. */
+  speak(text) {
+    new VoiceModal(this.app, this.packager.voicesFor(text.code), (voice) =>
+      this.run(text, 'speak', 'Recording audio…', (step) =>
+        this.packager.speak(text, voice, step)
+      )
+    ).open();
+  }
+
+  send(text) {
+    return this.run(text, 'send', 'Sending…', async () => {
+      const said = await this.packager.send(text);
+      return { kind: 'ok', headline: said, detail: '' };
+    });
   }
 }
 
@@ -761,7 +798,10 @@ class Packager {
         title: child.basename,
         version: 0,
         sent: 0,
-        spoken: false,
+        sentences: 0,
+        spoken: 0,
+        workAt: 0,
+        packageAt: 0,
         done: 0,
         total: paragraphsOf(raw).length,
         words: countWords(raw),
@@ -784,6 +824,21 @@ class Packager {
       const source = this.file(child.path + '/' + TEXT_FILE);
       const raw = source ? await this.app.vault.cachedRead(source) : '';
 
+      /* Wie viele Sätze schon eine Tonspur haben. Der Name einer Tondatei
+         hängt am Wortlaut des Satzes - ändert sich der Satz, verliert er
+         seinen Ton, und das fällt genau hier auf. */
+      let sentences = 0;
+      let spoken = 0;
+      if (work) {
+        const sounds = this.audioFiles(child);
+        for (const paragraph of parseWork(await this.app.vault.cachedRead(work)).paragraphs) {
+          for (const sentence of paragraph.sentences) {
+            sentences += 1;
+            if (sounds.has(nameFor(sentence.source))) spoken += 1;
+          }
+        }
+      }
+
       result.push({
         folder: child,
         work: work,
@@ -793,7 +848,12 @@ class Packager {
         version: built ? await this.versionOf(built) : 0,
         sent: this.sentVersion(child.path),
         done: work ? parseWork(await this.app.vault.cachedRead(work)).paragraphs.length : 0,
-        spoken: this.audioFiles(child).size > 0,
+        sentences: sentences,
+        spoken: spoken,
+        /* Woran man erkennt, dass das Paket veraltet ist: Die Werkbank
+           wurde nach dem Bauen angefasst. */
+        workAt: work ? work.stat.mtime : 0,
+        packageAt: built ? built.stat.mtime : 0,
         total: source ? paragraphsOf(raw).length : 0,
         words: countWords(raw),
         code: languageFolder.name.toLowerCase()
@@ -1037,11 +1097,8 @@ class Packager {
      beschreiben, bauen. Was dazwischen passiert, meldet "step" nach
      außen - es steht auf dem Knopf und ist gleich wieder weg. */
   async makePackage(text, step) {
-    /* Eine lose Notiz bekommt erst ihren eigenen Ordner - danach ist sie
-       ein Text wie jeder andere. */
     if (text.loose && !text.filed) {
-      step('Filing it away…');
-      await this.fileAway(text);
+      throw new Error('This note has not been integrated yet.');
     }
 
     let done = text.done;

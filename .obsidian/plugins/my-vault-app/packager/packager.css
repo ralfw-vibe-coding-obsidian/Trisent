@@ -224,3 +224,15 @@
   border-color: var(--tri-accent);
   color: var(--tri-accent);
 }
+
+/* Die vier Schritte. Abgeblendet heißt: nicht jetzt - nicht kaputt.
+   Beim Darauffahren sagt jeder Knopf, warum er wartet. */
+.trisent-pack-actions button:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}
+
+.trisent-pack-actions button:disabled:hover {
+  background: var(--interactive-normal);
+}
