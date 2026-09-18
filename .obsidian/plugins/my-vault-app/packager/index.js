@@ -1744,7 +1744,10 @@ class Packager {
       contents.set(relative, new Uint8Array(bytes));
     }
 
-    const result = await this.plugin.reader.library.importFiles(contents, text.folder.name);
+    /* Die Vordertür. Sie heißt nach ihrem Zweck, nicht nach einem
+       Werkzeug - hinter ihr liegt dieselbe Prüfung wie bei einem Paket
+       von einem Fremden. */
+    const result = await this.plugin.learning.importFiles(contents, text.folder.name);
 
     if (!this.settings.sent) this.settings.sent = {};
     this.settings.sent[text.folder.path] = result.version;
