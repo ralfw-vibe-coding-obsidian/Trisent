@@ -329,11 +329,26 @@ class TranslatorView extends ItemView {
     };
     field.addEventListener('input', lockForTyping);
 
+    const idle = () => {
+      mic.removeClass('is-recording');
+      mic.removeClass('is-working');
+      mic.removeAttribute('disabled');
+      setIcon(mic, 'mic');
+    };
+
     mic.addEventListener('click', async () => {
       const dictation = this.dictation();
 
       if (dictation.running) {
         dictation.stop();
+        /* Sofort zeigen, dass es weitergeht. Ohne das sieht es aus, als
+           sei der Klick ins Leere gegangen - und dann erscheint der Text
+           plötzlich aus dem Nichts. */
+        mic.removeClass('is-recording');
+        mic.addClass('is-working');
+        mic.setAttr('disabled', 'true');
+        setIcon(mic, 'loader');
+        status.setText('Writing it down…');
         return;
       }
 
@@ -342,20 +357,16 @@ class TranslatorView extends ItemView {
       check.setAttr('disabled', 'true');
       verdict.empty();
 
+      let text = '';
       try {
-        const text = await dictation.record(() => {
+        text = await dictation.record(() => {
           mic.addClass('is-recording');
           setIcon(mic, 'square');
           status.setText('Listening… tap again when you are done');
         });
-
-        setIcon(mic, 'mic');
-        mic.removeClass('is-recording');
         status.setText(text ? '' : 'Nothing was recorded.');
         if (text) field.value = text;
       } catch (error) {
-        setIcon(mic, 'mic');
-        mic.removeClass('is-recording');
         status.setText('');
         verdict.createDiv({
           cls: 'trisent-verdict-line is-bad',
@@ -363,10 +374,14 @@ class TranslatorView extends ItemView {
         });
       }
 
+      idle();
       field.removeAttribute('disabled');
       check.removeAttribute('disabled');
       lockForTyping();
-      field.focus();
+
+      /* Wer eingesprochen hat, will das Urteil - nicht noch einen Knopf. */
+      if (text) run();
+      else field.focus();
     });
 
     const run = async () => {

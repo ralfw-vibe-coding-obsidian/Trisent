@@ -312,3 +312,22 @@
   font-size: 0.75rem;
   color: var(--text-faint);
 }
+
+/* Nach dem Stoppen wird transkribiert. Das dauert, also muss man es
+   sehen - sonst wirkt der Klick, als sei er ins Leere gegangen. */
+.trisent-view .trisent-dictate.is-working {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+.trisent-view .trisent-dictate.is-working svg {
+  animation: trisent-working 1s linear infinite;
+}
+
+@keyframes trisent-working {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trisent-view .trisent-dictate.is-working svg { animation: none; }
+}
