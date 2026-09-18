@@ -205,3 +205,18 @@
   color: var(--text-faint);
   margin-bottom: 0.25rem;
 }
+
+/* Ließ sich das Urteil nicht lesen, ist das kein "falsch" - die Person
+   hat nichts verkehrt gemacht. */
+.trisent-verdict-line.is-unclear .trisent-verdict-icon {
+  color: var(--tri-learning);
+}
+
+.trisent-verdict-raw {
+  margin-top: 0.4rem;
+  padding-left: 1.35rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+}

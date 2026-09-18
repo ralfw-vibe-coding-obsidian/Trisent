@@ -34,12 +34,18 @@ const SYSTEM = [
   'Mention them under "issues" instead. A wrong tense, wrong number or wrong',
   'gender that changes the meaning DOES make it wrong.',
   '',
-  'Answer with JSON only, no code fence, in this shape:',
-  '{"correct": true|false, "note": "...", "issues": ["..."]}',
+  'Answer in plain lines, nothing else, exactly in this shape:',
   '',
-  '"note" is one or two short sentences addressed to the learner: what was',
-  'good, or what went wrong and why. Never just repeat the reference.',
-  '"issues" lists small flaws that did not make it wrong. May be empty.'
+  'VERDICT: correct',
+  'NOTE: one or two short sentences addressed to the learner',
+  'ISSUE: a small flaw that did not make it wrong',
+  'ISSUE: another one',
+  '',
+  'VERDICT is either "correct" or "wrong". NOTE says what was good, or what',
+  'went wrong and why - never just repeat the reference. ISSUE lines are',
+  'optional; leave them out when there is nothing to mention.',
+  '',
+  'Do not use JSON, quotes around the values, markdown, or a code fence.'
 ].join('\n');
 
 /* Sprachnamen, damit das Modell weiß, worum es geht. */
@@ -111,24 +117,80 @@ async function checkTranslation(settings, task) {
   return readVerdict(text);
 }
 
-/* Modelle packen JSON gern in einen Codeblock, auch wenn man es verbietet. */
+/* Die Antwort lesen.
+
+   Zeilen statt JSON, und zwar aus einem konkreten Grund: Sobald in der
+   Rückmeldung Anführungszeichen vorkommen - und beim Übersetzen kommen sie
+   vor, es geht ja oft genau um « » gegen " " -, schreiben Modelle sie
+   ungeschützt mitten in die Zeichenkette und das JSON ist kaputt. Bei
+   Zeilen gibt es nichts zu schützen.
+
+   Schickt ein Modell trotzdem JSON, wird auch das noch gelesen. */
 function readVerdict(text) {
-  const cleaned = String(text).replace(/^\s*```(?:json)?/i, '').replace(/```\s*$/, '').trim();
+  const cleaned = String(text)
+    .replace(/^\s*```(?:json|text)?/i, '')
+    .replace(/```\s*$/, '')
+    .trim();
+
+  const lines = readLines(cleaned);
+  if (lines) return lines;
+
+  const json = readJson(cleaned);
+  if (json) return json;
+
+  /* Immer noch etwas anderes? Dann wenigstens den Text zeigen, statt der
+     Person eine Fehlermeldung vorzusetzen, mit der sie nichts anfangen
+     kann. Als "richtig" gilt es dabei nicht. */
+  return { correct: false, note: cleaned, issues: [], unclear: true };
+}
+
+function readLines(text) {
+  let verdict = null;
+  let note = '';
+  const issues = [];
+  let last = null;
+
+  for (const raw of text.split('\n')) {
+    const line = raw.trim();
+    if (!line) continue;
+
+    const match = line.match(/^(VERDICT|NOTE|ISSUE)\s*:\s*(.*)$/i);
+    if (match) {
+      const field = match[1].toUpperCase();
+      const value = match[2].trim();
+      if (field === 'VERDICT') verdict = /^correct\b/i.test(value);
+      else if (field === 'NOTE') note = value;
+      else if (value) issues.push(value);
+      last = field;
+      continue;
+    }
+
+    /* Eine Fortsetzungszeile gehört zu dem, was davor stand. */
+    if (last === 'NOTE') note = note ? note + ' ' + line : line;
+    else if (last === 'ISSUE' && issues.length > 0) {
+      issues[issues.length - 1] += ' ' + line;
+    }
+  }
+
+  if (verdict === null) return null;
+  return { correct: verdict, note: note, issues: issues };
+}
+
+function readJson(text) {
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start < 0 || end <= start) return null;
 
   let data;
   try {
-    data = JSON.parse(cleaned);
+    data = JSON.parse(text.slice(start, end + 1));
   } catch (error) {
-    const start = cleaned.indexOf('{');
-    const end = cleaned.lastIndexOf('}');
-    if (start < 0 || end <= start) {
-      throw new Error('Could not read the answer from the model.');
-    }
-    data = JSON.parse(cleaned.slice(start, end + 1));
+    return null;
   }
+  if (typeof data.correct !== 'boolean') return null;
 
   return {
-    correct: data.correct === true,
+    correct: data.correct,
     note: typeof data.note === 'string' ? data.note : '',
     issues: Array.isArray(data.issues) ? data.issues.filter((i) => typeof i === 'string') : []
   };

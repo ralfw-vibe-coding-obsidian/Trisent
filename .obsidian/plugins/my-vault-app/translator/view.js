@@ -325,11 +325,22 @@ class TranslatorView extends ItemView {
   showVerdict(verdict, result, reference, sentence) {
     verdict.empty();
 
-    const line = verdict.createDiv({
-      cls: 'trisent-verdict-line ' + (result.correct ? 'is-good' : 'is-bad')
+    /* Drei Fälle, nicht zwei: Wenn sich das Urteil nicht lesen ließ, ist
+       das kein "falsch" - die Person hat nichts verkehrt gemacht. */
+    const state = result.unclear ? 'is-unclear' : result.correct ? 'is-good' : 'is-bad';
+    const icon = result.unclear ? 'help-circle' : result.correct ? 'check' : 'x';
+
+    const line = verdict.createDiv({ cls: 'trisent-verdict-line ' + state });
+    setIcon(line.createSpan({ cls: 'trisent-verdict-icon' }), icon);
+    line.createSpan({
+      text: result.unclear
+        ? 'The model did not answer in the expected form. It said:'
+        : result.note || (result.correct ? 'Correct.' : 'Not quite.')
     });
-    setIcon(line.createSpan({ cls: 'trisent-verdict-icon' }), result.correct ? 'check' : 'x');
-    line.createSpan({ text: result.note || (result.correct ? 'Correct.' : 'Not quite.') });
+
+    if (result.unclear) {
+      verdict.createDiv({ cls: 'trisent-verdict-raw', text: result.note });
+    }
 
     for (const issue of result.issues) {
       verdict.createDiv({ cls: 'trisent-verdict-issue', text: issue });
