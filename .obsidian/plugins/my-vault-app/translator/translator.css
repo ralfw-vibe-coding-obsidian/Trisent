@@ -1,0 +1,207 @@
+/*
+ * Der Translator - aktiv übersetzen statt lesen.
+ *
+ * Gehört der Translator-Sitzung. Wird beim Start automatisch geladen.
+ *
+ * Die Grundlagen - Farben, Schriften, Knöpfe, Marken, Kopfleiste - stehen
+ * in ../styles.css und gelten hier genauso.
+ */
+
+/* ---------------------------------------------------------------- */
+/* Richtung                                                          */
+/* ---------------------------------------------------------------- */
+
+.trisent-directions {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+}
+
+.trisent-view .trisent-direction {
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-faint);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-direction:hover {
+  color: var(--text-normal);
+  border-color: var(--tri-accent);
+}
+
+.trisent-view .trisent-direction.is-on {
+  background: var(--text-normal);
+  border-color: var(--text-normal);
+  color: var(--background-primary);
+}
+
+/* Die zwei Zahlen in der Textliste: was du in welche Richtung kannst. */
+
+.trisent-score {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  justify-content: flex-end;
+  font-variant-numeric: tabular-nums;
+}
+
+.trisent-score-value {
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+  font-weight: var(--tri-read-weight);
+  color: var(--text-normal);
+}
+
+.trisent-score-label {
+  font-size: 0.68rem;
+  color: var(--text-faint);
+}
+
+/* ---------------------------------------------------------------- */
+/* Eine Aufgabe                                                      */
+/* ---------------------------------------------------------------- */
+
+.trisent-write {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.trisent-task {
+  position: relative;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+/* Die Vorlage in der Leseschrift - es ist ja derselbe Text wie im Reader. */
+.trisent-task-prompt {
+  font-family: var(--tri-read);
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--text-normal);
+  margin-bottom: 0.6rem;
+}
+
+.trisent-view textarea.trisent-task-input {
+  width: 100%;
+  resize: vertical;
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.trisent-task-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.trisent-view .trisent-check {
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.35rem 1rem;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-check:hover {
+  background: var(--background-modifier-hover);
+}
+
+.trisent-view .trisent-check[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Wie oft dieser Satz in dieser Richtung schon saß. */
+
+.trisent-task-done {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.68rem;
+  color: var(--tri-accent);
+}
+
+.trisent-task-done svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+/* ---------------------------------------------------------------- */
+/* Das Urteil                                                        */
+/* ---------------------------------------------------------------- */
+
+.trisent-verdict:empty {
+  display: none;
+}
+
+.trisent-verdict {
+  margin-top: 0.7rem;
+}
+
+.trisent-verdict-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.trisent-verdict-icon {
+  display: inline-flex;
+  padding-top: 0.15rem;
+}
+
+.trisent-verdict-icon svg {
+  width: 0.95em;
+  height: 0.95em;
+}
+
+.trisent-verdict-line.is-good .trisent-verdict-icon { color: var(--tri-accent); }
+.trisent-verdict-line.is-bad { color: var(--text-error, var(--text-normal)); }
+
+/* Kleinigkeiten, die das Urteil nicht gekippt haben. */
+.trisent-verdict-issue {
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  margin-top: 0.25rem;
+  padding-left: 1.35rem;
+}
+
+/* Die Musterlösung erscheint erst nach dem Prüfen - vorher wäre sie
+   die Antwort. Und sie heißt ausdrücklich "eine" richtige Fassung. */
+.trisent-verdict-reference {
+  margin-top: 0.7rem;
+  padding: 0.6rem 0.8rem;
+  border-left: 2px solid var(--background-modifier-border);
+  font-family: var(--tri-read);
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.trisent-verdict-label {
+  display: block;
+  font-family: var(--tri-ui);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 0.25rem;
+}

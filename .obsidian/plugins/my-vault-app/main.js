@@ -32,6 +32,10 @@ const MODULES = [
   'reader/view.js',
   'reader/card.js',
   'reader/index.js',
+  'translator/sentences.js',
+  'translator/check.js',
+  'translator/view.js',
+  'translator/index.js',
   'packager/ai.js',
   'packager/audio.js',
   'packager/build.js',
@@ -52,7 +56,7 @@ function resolvePath(from, request) {
 /* Die Stilvorlagen der Module. styles.css lädt Obsidian selbst; alles
    Weitere holen wir beim Start dazu, damit jede Seite ihre eigene Datei
    hat und wir uns nicht gegenseitig hineinschreiben. */
-const MODULE_STYLES = ['reader/reader.css', 'packager/packager.css'];
+const MODULE_STYLES = ['reader/reader.css', 'translator/translator.css', 'packager/packager.css'];
 
 /* Beim Entwickeln liegen die Dateien einzeln im Plugin-Ordner und werden
    von dort gelesen. Für eine Veröffentlichung darf das nicht sein: Über
@@ -118,6 +122,7 @@ class TrisentSettingTab extends PluginSettingTab {
 
     /* Jedes Modul steuert bei, was nur es betrifft. */
     this.plugin.reader.addSettings(containerEl);
+    this.plugin.translator.addSettings(containerEl);
     this.plugin.packager.addSettings(containerEl);
   }
 }
@@ -140,11 +145,13 @@ module.exports = class TrisentPlugin extends Plugin {
     }
 
     const reader = modules['reader/index.js'];
+    const translator = modules['translator/index.js'];
     const packager = modules['packager/index.js'];
 
-    await this.loadSettings(reader.DEFAULTS, packager.DEFAULTS);
+    await this.loadSettings(reader.DEFAULTS, translator.DEFAULTS, packager.DEFAULTS);
 
     this.reader = new reader.Reader(this);
+    this.translator = new translator.Translator(this);
     this.packager = new packager.Packager(this);
 
     this.addSettingTab(new TrisentSettingTab(this.app, this));
@@ -170,7 +177,10 @@ module.exports = class TrisentPlugin extends Plugin {
 
   scheduleRefresh() {
     window.clearTimeout(this.refreshTimer);
-    this.refreshTimer = window.setTimeout(() => this.reader.refresh(), 200);
+    this.refreshTimer = window.setTimeout(() => {
+      this.reader.refresh();
+      this.translator.refresh();
+    }, 200);
   }
 
   /* ---------------------------------------------------------------- */
@@ -287,7 +297,7 @@ module.exports = class TrisentPlugin extends Plugin {
   /* Einstellungen laden und sichern                                   */
   /* ---------------------------------------------------------------- */
 
-  async loadSettings(readerDefaults, packagerDefaults) {
+  async loadSettings(readerDefaults, translatorDefaults, packagerDefaults) {
     const stored = (await this.loadData()) || {};
 
     this.settings = {
@@ -298,6 +308,7 @@ module.exports = class TrisentPlugin extends Plugin {
           ? stored.hideLibraryFolder
           : SHARED_DEFAULTS.hideLibraryFolder,
       reader: Object.assign({}, readerDefaults, stored.reader || {}),
+      translator: Object.assign({}, translatorDefaults, stored.translator || {}),
       packager: Object.assign({}, packagerDefaults, stored.packager || {})
     };
 
