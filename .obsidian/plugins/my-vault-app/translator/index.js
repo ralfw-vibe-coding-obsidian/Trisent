@@ -20,7 +20,7 @@ const DEFAULTS = {
      der Packager vertont. Der eine bezahlt das Üben, der andere das
      Herstellen. */
   openRouterKey: '',
-  model: 'anthropic/claude-opus-5'
+  model: 'anthropic/claude-sonnet-5'
 };
 
 class Translator {
