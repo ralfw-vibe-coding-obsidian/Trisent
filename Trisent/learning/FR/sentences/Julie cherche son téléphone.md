@@ -7,6 +7,7 @@ intoForeign: {}
 intoNative:
   s001: 1
   s002: 1
+  s003: 0/1
 updatedAt: 2026-09-18
 ---
 

@@ -265,12 +265,8 @@ class TranslatorView extends ItemView {
     const block = parent.createDiv({ cls: 'trisent-task' });
     block.dataset.sentence = sentence.id || '';
 
-    const done = Number((this.known || {})[sentence.id]) || 0;
-    if (done > 0) {
-      const badge = block.createDiv({ cls: 'trisent-task-done' });
-      setIcon(badge.createSpan(), 'check');
-      badge.createSpan({ text: done === 1 ? 'once' : done + '×' });
-    }
+    const badge = block.createDiv({ cls: 'trisent-tally' });
+    this.showTally(badge, (this.known || {})[sentence.id]);
 
     block.createDiv({ cls: 'trisent-task-prompt', text: prompt });
 
@@ -303,7 +299,7 @@ class TranslatorView extends ItemView {
           toLanguage: intoForeign ? this.data.language : this.data.fluentLanguage,
           feedbackLanguage: this.data.glossLanguage || this.data.fluentLanguage
         });
-        this.showVerdict(verdict, result, reference, sentence);
+        this.showVerdict(verdict, result, reference, sentence, badge);
       } catch (error) {
         verdict.createDiv({ cls: 'trisent-verdict-line is-bad', text: String(error.message || error) });
       }
@@ -322,7 +318,27 @@ class TranslatorView extends ItemView {
     });
   }
 
-  showVerdict(verdict, result, reference, sentence) {
+  /* Wie der Satz in dieser Richtung bisher lief: Haken für richtig,
+     Kreuz für daneben. Ohne Versuch steht da nichts. */
+  showTally(badge, tally) {
+    badge.empty();
+    const correct = (tally && tally.correct) || 0;
+    const wrong = ((tally && tally.tries) || 0) - correct;
+    if (correct <= 0 && wrong <= 0) return;
+
+    if (correct > 0) {
+      const ok = badge.createSpan({ cls: 'trisent-tally-part is-good' });
+      setIcon(ok.createSpan(), 'check');
+      ok.createSpan({ text: String(correct) });
+    }
+    if (wrong > 0) {
+      const no = badge.createSpan({ cls: 'trisent-tally-part is-bad' });
+      setIcon(no.createSpan(), 'x');
+      no.createSpan({ text: String(wrong) });
+    }
+  }
+
+  showVerdict(verdict, result, reference, sentence, badge) {
     verdict.empty();
 
     /* Drei Fälle, nicht zwei: Wenn sich das Urteil nicht lesen ließ, ist
@@ -351,10 +367,17 @@ class TranslatorView extends ItemView {
     shown.createSpan({ cls: 'trisent-verdict-label', text: 'One correct version' });
     shown.createDiv({ text: reference });
 
-    if (!result.correct) return;
+    /* Ein unlesbares Urteil geht nicht auf das Konto der Person - weder
+       als Erfolg noch als Fehlversuch. */
+    if (result.unclear) return;
 
     this.knowledge
-      .record(this.language, this.folder, this.data, this.direction, sentence.id)
+      .record(this.language, this.folder, this.data, this.direction, sentence.id, result.correct)
+      .then((tally) => {
+        if (!tally) return;
+        this.known[sentence.id] = tally;
+        this.showTally(badge, tally);
+      })
       .catch((error) => new Notice('Could not save this: ' + String(error.message || error)));
   }
 }

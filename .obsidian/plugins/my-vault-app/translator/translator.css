@@ -125,20 +125,33 @@
   cursor: default;
 }
 
-/* Wie oft dieser Satz in dieser Richtung schon saß. */
+/* Wie der Satz in dieser Richtung bisher lief. Haken und Kreuz, damit man
+   ohne Erklärung sieht, was was ist. */
 
-.trisent-task-done {
+.trisent-tally {
   position: absolute;
   top: 0;
   right: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2rem;
-  font-size: 0.68rem;
-  color: var(--tri-accent);
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
 }
 
-.trisent-task-done svg {
+.trisent-tally:empty {
+  display: none;
+}
+
+.trisent-tally-part {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.trisent-tally-part.is-good { color: var(--tri-accent); }
+.trisent-tally-part.is-bad { color: var(--tri-unknown); }
+
+.trisent-tally-part svg {
   width: 0.8em;
   height: 0.8em;
 }
