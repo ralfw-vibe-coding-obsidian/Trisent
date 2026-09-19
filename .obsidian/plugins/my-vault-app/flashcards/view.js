@@ -236,7 +236,7 @@ class DeckView extends ItemView {
       settings.size = value;
     });
     this.renderChoice(options, 'Show', [
-      { id: 'front', label: language.name }, { id: 'back', label: 'Meaning' }
+      { id: 'front', label: language.name }, { id: 'back', label: 'Translation' }
     ], settings.ask, (value) => {
       settings.ask = value;
     });
@@ -326,15 +326,15 @@ class DeckView extends ItemView {
     const face = stage.createDiv({ cls: 'trisent-face' });
 
     face.createDiv({
-      cls: 'trisent-face-line ' + (wordSide ? 'is-word' : 'is-meaning'),
+      cls: 'trisent-face-line ' + (wordSide ? 'is-word' : 'is-fluent'),
       text: session.question || '—'
     });
 
     if (session.revealed) {
       face.createDiv({ cls: 'trisent-face-rule' });
       face.createDiv({
-        cls: 'trisent-face-line ' + (wordSide ? 'is-meaning' : 'is-word'),
-        text: session.answerText || 'No meaning in this card.'
+        cls: 'trisent-face-line ' + (wordSide ? 'is-fluent' : 'is-word'),
+        text: session.answerText || 'No translation in this card.'
       });
       this.renderCardFacts(face, card);
     } else {

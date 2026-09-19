@@ -79,21 +79,14 @@
    allen Zeilen an derselben Stelle. */
 
 .trisent-card-facts {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2.8rem 2.1rem 2.1rem 5.5rem;
   align-items: center;
-  gap: 0.9rem;
+  column-gap: 0.9rem;
   flex: 0 0 auto;
   font-size: 0.75rem;
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
-}
-
-.trisent-card-facts > .trisent-level {
-  flex: 0 0 2.8rem;
-}
-
-.trisent-card-facts > .trisent-card-stat {
-  flex: 0 0 1.9rem;
 }
 
 /* Das Level als Leiter. Eine Zahl von 0 bis 9 sagt wenig, der Fortschritt
@@ -131,7 +124,6 @@
 }
 
 .trisent-card-due {
-  min-width: 5.5rem;
   text-align: right;
 }
 
@@ -351,8 +343,9 @@
   cursor: pointer;
 }
 
-/* Die Fremdsprache in der Leseschrift, die Bedeutung in der
-   Oberflächenschrift - dieselbe Trennung wie im Reader. */
+/* Die Fremdsprache in der Leseschrift, die Übersetzung in der
+   Oberflächenschrift - dieselbe Trennung wie im Reader, wo die T-Ebene
+   genauso heißt und genauso aussieht. */
 
 .trisent-face-line.is-word {
   font-family: var(--tri-read);
@@ -364,7 +357,7 @@
   word-break: break-word;
 }
 
-.trisent-face-line.is-meaning {
+.trisent-face-line.is-fluent {
   font-family: var(--tri-ui);
   font-size: 1.35rem;
   font-weight: 400;
