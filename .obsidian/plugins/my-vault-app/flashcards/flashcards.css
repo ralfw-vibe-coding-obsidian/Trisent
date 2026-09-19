@@ -37,6 +37,21 @@
   color: var(--text-faint);
 }
 
+/* Überschrift der Liste und daneben die Reihenfolge. */
+
+.trisent-deck-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 2rem 0 0.7rem;
+}
+
+.trisent-deck-head .trisent-section-label {
+  margin: 0;
+}
+
 /* Die Karten. Als Karten, nicht als Zeilen: Ein Wort mit seiner
    Übersetzung ist ein Ding, keine Tabellenzeile - und nebeneinander
    sieht man zwanzig davon, statt zwanzigmal zu scrollen. */

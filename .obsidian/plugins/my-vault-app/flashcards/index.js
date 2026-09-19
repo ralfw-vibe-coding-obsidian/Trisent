@@ -16,8 +16,10 @@ const DEFAULTS = {
   source: 'due',
   size: 20,
   /* Welche Seite gefragt wird: 'front' zeigt die Fremdsprache und fragt
-     die Bedeutung, 'back' zeigt die Bedeutung und fragt das Wort. */
-  ask: 'front'
+     die Übersetzung, 'back' zeigt die Übersetzung und fragt das Wort. */
+  ask: 'front',
+  /* Wonach die Kartei geordnet ist. */
+  sort: 'alphabetical'
 };
 
 class Flashcards {

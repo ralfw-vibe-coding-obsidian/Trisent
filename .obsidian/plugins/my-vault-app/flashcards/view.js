@@ -14,6 +14,13 @@ const {
 } = require('./schedule.js');
 const { Session } = require('./session.js');
 
+/* Wonach die Kartei geordnet wird. Bei gleicher Schwierigkeit
+   alphabetisch - sonst wechselte die Reihenfolge bei jedem Zeichnen. */
+const ORDERS = [
+  { id: 'alphabetical', label: 'A–Z' },
+  { id: 'hardest', label: 'Hardest first' }
+];
+
 const VIEW_TYPE = 'trisent-deck-view';
 const RIBBON_ICON = 'layers';
 
@@ -153,9 +160,7 @@ class DeckView extends ItemView {
       return;
     }
 
-    /* Was ansteht, zuerst - danach nach Fälligkeit. */
     const now = today();
-    cards.sort((a, b) => String(a.due || '').localeCompare(String(b.due || '')));
 
     const due = cards.filter((card) => isDue(card, now)).length;
     const fresh = cards.filter(isNew).length;
@@ -167,9 +172,49 @@ class DeckView extends ItemView {
 
     this.renderStart(page, language, cards, now);
 
-    page.createDiv({ cls: 'trisent-section-label', text: 'All cards' });
+    const listHead = page.createDiv({ cls: 'trisent-deck-head' });
+    listHead.createDiv({ cls: 'trisent-section-label', text: 'All cards' });
+    this.renderSort(listHead);
+
     const list = page.createDiv({ cls: 'trisent-deck' });
-    for (const card of cards) this.renderCard(list, card, now);
+    for (const card of this.sorted(cards, language)) this.renderCard(list, card, now);
+  }
+
+  /* Wonach die Kartei geordnet ist. Steht sichtbar da, weil eine
+     Reihenfolge, die nicht alphabetisch ist, sonst willkürlich wirkt. */
+  renderSort(head) {
+    const current = this.sortMode();
+    const row = head.createDiv({ cls: 'trisent-choice-row' });
+
+    for (const option of ORDERS) {
+      const button = row.createEl('button', {
+        cls: 'trisent-choice-option' + (option.id === current ? ' is-on' : ''),
+        text: option.label
+      });
+      button.addEventListener('click', () => {
+        if (option.id === current) return;
+        this.flashcards.settings.sort = option.id;
+        this.flashcards.saveSettings();
+        this.render();
+      });
+    }
+  }
+
+  sortMode() {
+    const mode = this.flashcards.settings.sort;
+    return ORDERS.some((order) => order.id === mode) ? mode : 'alphabetical';
+  }
+
+  /* Alphabetisch wird in der Sprache der Karten sortiert, nicht in der
+     des Rechners: Sonst landen é und ж an überraschenden Stellen. */
+  sorted(cards, language) {
+    const name = (card) => card.front || card.key || '';
+    const byName = (a, b) => name(a).localeCompare(name(b), language.code);
+
+    if (this.sortMode() === 'hardest') {
+      return cards.slice().sort((a, b) => (b.wrong - a.wrong) || byName(a, b));
+    }
+    return cards.slice().sort(byName);
   }
 
   renderCount(parent, value, label, strong) {
