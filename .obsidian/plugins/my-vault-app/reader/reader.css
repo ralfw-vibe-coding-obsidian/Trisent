@@ -509,8 +509,16 @@
   background-color: color-mix(in srgb, var(--tri-familiar) 24%, transparent);
 }
 
+/* Der Mauszeiger darf nicht aussehen wie ein Lernstand. Eine graue Fläche
+   unter dem Zeiger war genau das: Nach dem Klick auf "known" trägt das
+   Wort keine Markierung mehr - aber solange die Maus darauf stand, sah es
+   grau aus wie "vertraut", und der Stand schien sich nicht geändert zu
+   haben. Ein feiner Rahmen benutzt einen anderen Kanal als die Farben und
+   kann mit keinem Stand verwechselt werden. */
 .trisent-word:hover {
-  background: var(--background-modifier-hover);
+  outline: 1px solid var(--background-modifier-border);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* Die Wendungsklammer. Jede beteiligte Spalte trägt ein Stück der

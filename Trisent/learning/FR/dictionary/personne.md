@@ -8,7 +8,7 @@ gloss: Person, Mensch
 forms:
   - personnes
 status: known
-updatedAt: 2026-09-15
+updatedAt: 2026-09-19
 ---
 
 ## Grammar
