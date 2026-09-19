@@ -175,12 +175,13 @@
   font-weight: 600;
 }
 
-/* Drin: gefuellt, und die Stufe steht als Ziffer daneben. */
+/* Drin: still. Gruen ruft zum Handeln - hier ist nichts mehr zu tun,
+   es steht nur da, wie weit die Karte ist. */
 
 .trisent-in-deck {
-  border: 1px solid transparent;
-  background: var(--tri-accent);
-  color: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-modifier-hover);
+  color: var(--text-muted);
 }
 
 .trisent-in-deck-icon svg {
