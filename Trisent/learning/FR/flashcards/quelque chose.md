@@ -1,13 +1,13 @@
 ---
 type: flashcard
 language: fr
-key: "fr:quelque chose:PHRASE"
+key: fr:quelque chose:PHRASE
 front: quelque chose
 back: etwas
-level: 0
-seen: 0
+level: 1
+seen: 1
 wrong: 0
-due: 2026-09-19
+due: 2026-09-20
 added: 2026-09-19
 ---
 

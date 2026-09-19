@@ -203,8 +203,11 @@ class DeckView extends ItemView {
     setIcon(seen.createSpan(), 'eye');
     seen.createSpan({ text: String(card.seen) });
 
+    /* Die Spalte steht auch dann, wenn nichts darin ist. Sonst rutschte
+       in jeder zweiten Zeile alles andere zur Seite, und die Liste
+       flimmerte, statt sich lesen zu lassen. */
+    const wrong = facts.createSpan({ cls: 'trisent-card-stat is-bad' });
     if (card.wrong > 0) {
-      const wrong = facts.createSpan({ cls: 'trisent-card-stat is-bad' });
       setIcon(wrong.createSpan(), 'x');
       wrong.createSpan({ text: String(card.wrong) });
     }

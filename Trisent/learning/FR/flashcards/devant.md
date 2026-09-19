@@ -1,13 +1,13 @@
 ---
 type: flashcard
 language: fr
-key: "fr:devant:ADP"
+key: fr:devant:ADP
 front: devant
 back: vor
-level: 0
-seen: 0
-wrong: 0
-due: 2026-09-19
+level: 1
+seen: 1
+wrong: 1
+due: 2026-09-20
 added: 2026-09-19
 ---
 

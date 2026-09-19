@@ -74,6 +74,10 @@
   margin-top: 0.1rem;
 }
 
+/* Feste Spalten, nicht gepackt: Jede Angabe hat ihre Breite, ob sie
+   etwas zu sagen hat oder nicht. Nur so stehen Leiter und Zahlen in
+   allen Zeilen an derselben Stelle. */
+
 .trisent-card-facts {
   display: flex;
   align-items: center;
@@ -82,6 +86,14 @@
   font-size: 0.75rem;
   color: var(--text-faint);
   font-variant-numeric: tabular-nums;
+}
+
+.trisent-card-facts > .trisent-level {
+  flex: 0 0 2.8rem;
+}
+
+.trisent-card-facts > .trisent-card-stat {
+  flex: 0 0 1.9rem;
 }
 
 /* Das Level als Leiter. Eine Zahl von 0 bis 9 sagt wenig, der Fortschritt
