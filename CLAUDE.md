@@ -187,8 +187,10 @@ Die Aufteilung ist keine Empfehlung, sondern eine Abmachung.
 └── packager/            PREPARING - Texte zu Paketen schnüren
 ```
 
-`learning/` ist zu `core/`, was Reader und Translator gemeinsam haben: die
-Bibliothek, der Streak (je Sprache, nicht je Werkzeug) – und die **Vordertür**.
+`learning/` ist zu `core/`, was die Lernwerkzeuge gemeinsam haben: die
+Bibliothek, der Streak (je Sprache, nicht je Werkzeug), die Suche nach
+Fundstellen (`occurrences.js` – Reader und Lernkartei müssen dieselben Sätze
+finden) – und die **Vordertür**.
 
 **Die Vordertür ist `plugin.learning.importFiles(contents, label)`.** Dort
 reicht der Packager fertige Pakete hinein; geprüft wird dahinter, immer. Sie

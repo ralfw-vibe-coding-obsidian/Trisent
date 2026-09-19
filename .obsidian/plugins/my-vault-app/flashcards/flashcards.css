@@ -615,3 +615,58 @@
   background: var(--tri-accent);
   color: var(--background-primary);
 }
+
+/* ------------------------------------------------------------------ */
+/* Beispielsätze auf der Rückseite                                    */
+/* ------------------------------------------------------------------ */
+
+/* Links ausgerichtet, obwohl die Karte mittig steht: Sätze liest man an
+   einer Kante entlang, nicht um eine Mitte herum. */
+
+.trisent-examples {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  width: 100%;
+  max-width: 26rem;
+  margin: 0.4rem auto 0;
+  text-align: left;
+}
+
+.trisent-examples:empty {
+  display: none;
+}
+
+.trisent-examples-wait {
+  font-family: var(--tri-ui);
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.trisent-example {
+  padding-left: 0.7rem;
+  border-left: 2px solid var(--background-modifier-border);
+}
+
+.trisent-example-source {
+  font-family: var(--tri-read);
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+/* Die Stelle selbst - dieselbe Farbe wie das Wort, um das es geht. */
+.trisent-example-hit {
+  color: var(--tri-accent);
+  font-weight: 600;
+}
+
+.trisent-example-fluent {
+  font-family: var(--tri-read);
+  font-style: italic;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text-faint);
+  margin-top: 0.1rem;
+}

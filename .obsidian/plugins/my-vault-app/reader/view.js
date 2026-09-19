@@ -10,6 +10,9 @@ const { ItemView, TFolder, Notice, setIcon } = require('obsidian');
 const { WORD_STATUS } = require('../core/package.js');
 const { KNOWN_LANGUAGES } = require('../core/library.js');
 const { Playback, Recorder, SPEEDS } = require('./audio.js');
+const {
+  matchesIn, occurrenceOf, searchPackages
+} = require('../learning/occurrences.js');
 
 const VIEW_TYPE = 'trisent-view';
 const RIBBON_ICON = 'languages';
@@ -1456,13 +1459,13 @@ class TrisentView extends ItemView {
     };
 
     const seenPhrases = new Set();
+    const here = { title: null, path: this.packagePath };
     for (const paragraph of this.packageData.paragraphs || []) {
       for (const sentence of paragraph.sentences || []) {
-        for (const item of sentence.units || []) {
-          if (item.key === key) this.pushOccurrence(card, sentence, item, null);
+        for (const item of matchesIn(sentence, key)) {
+          card.occurrences.push(occurrenceOf(sentence, item, here));
         }
         for (const phrase of sentence.phrases || []) {
-          if (phrase.key === key) this.pushOccurrence(card, sentence, phrase, null);
           /* Wendungen, in denen dieses Wort steckt. */
           if (seenPhrases.has(phrase.key)) continue;
           const inside = (sentence.units || []).some(
@@ -1491,42 +1494,14 @@ class TrisentView extends ItemView {
      aus einzelnen Texten ein Netz: Man sieht, in wie vielen Zusammenhängen
      einem dasselbe Wort schon begegnet ist. */
   async collectOccurrences(card) {
-    const folders = this.library.packagesOf(card.language);
+    const elsewhere = await searchPackages(this.library, card.language, card.key, {
+      skipPath: this.packagePath
+    });
 
-    for (const folder of folders) {
-      if (folder.path === this.packagePath) continue;
-
-      const entry = await this.library.loadPackage(folder);
-      if (!entry || !entry.ok) continue;
-
-      const where = { title: entry.data.title || folder.name, path: folder.path };
-      for (const paragraph of entry.data.paragraphs || []) {
-        for (const sentence of paragraph.sentences || []) {
-          for (const item of sentence.units || []) {
-            if (item.key === card.key) this.pushOccurrence(card, sentence, item, where);
-          }
-          for (const phrase of sentence.phrases || []) {
-            if (phrase.key === card.key) this.pushOccurrence(card, sentence, phrase, where);
-          }
-        }
-      }
-    }
+    for (const occurrence of elsewhere) card.occurrences.push(occurrence);
 
     card.searching = false;
     this.reader.updateCard(card);
-  }
-
-  pushOccurrence(card, sentence, item, where) {
-    const source = sentence.source || '';
-    card.occurrences.push({
-      before: source.slice(0, item.start),
-      hit: source.slice(item.start, item.end),
-      after: source.slice(item.end),
-      fluent: sentence.fluent || '',
-      sentence: sentence.id,
-      title: where ? where.title : null,
-      path: where ? where.path : this.packagePath
-    });
   }
 
   /* Von einer Fundstelle in einem anderen Text dorthin springen. */

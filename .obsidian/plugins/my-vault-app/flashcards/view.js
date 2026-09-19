@@ -14,9 +14,14 @@ const {
   SOURCES, rhythm, maxLevel
 } = require('./schedule.js');
 const { Session } = require('./session.js');
+const { searchPackages } = require('../learning/occurrences.js');
 
 /* Wonach die Kartei geordnet wird. Bei gleicher Schwierigkeit
    alphabetisch - sonst wechselte die Reihenfolge bei jedem Zeichnen. */
+/* Wie viele Beispielsätze auf der Rückseite stehen. Drei: genug, um zu
+   sehen, wie das Wort sich benimmt, wenig genug, um sie zu lesen. */
+const EXAMPLES = 3;
+
 /* Wie weit der Zeitstrahl nach vorn schaut: heute und 31 Tage. Ein
    Monat - lang genug, dass man einen Berg kommen sieht, kurz genug für
    einen Strich je Tag. */
@@ -53,6 +58,7 @@ class DeckView extends ItemView {
     this.session = null;
     /* Der Streak wird je Sitzung einmal angestoßen, nicht je Karte. */
     this.counted = false;
+    this.examples = new Map();
   }
 
   getViewType() {
@@ -440,6 +446,9 @@ class DeckView extends ItemView {
   start(stack) {
     this.session = new Session(stack, { ask: this.flashcards.settings.ask });
     this.counted = false;
+    /* Einmal gesucht, für die ganze Sitzung gemerkt: Eine Karte, die
+       über "Again" wiederkommt, liest die Pakete nicht noch einmal. */
+    this.examples = new Map();
     this.render();
   }
 
@@ -499,6 +508,7 @@ class DeckView extends ItemView {
         text: session.answerText || 'No translation in this card.'
       });
       this.renderCardFacts(face, card);
+      this.renderExamples(face.createDiv({ cls: 'trisent-examples' }), card);
     } else {
       face.addClass('is-tappable');
       face.createDiv({ cls: 'trisent-face-hint', text: 'tap to turn it over' });
@@ -506,6 +516,57 @@ class DeckView extends ItemView {
     }
 
     this.renderAnswers(page, language, session);
+  }
+
+  /* Beispielsätze - erst nach dem Umdrehen. Vorher wären sie ein halber
+     Hinweis, und darum geht es beim Abfragen ja gerade nicht.
+
+     Gesucht wird über den Wissensschlüssel, mit demselben Code, den der
+     Reader für die Wortkarte benutzt. Ein Satz, der hier steht, ist also
+     derselbe, den man dort findet. */
+  renderExamples(slot, card) {
+    const found = this.examples.get(card.key);
+    if (found) {
+      this.paintExamples(slot, found);
+      return;
+    }
+
+    slot.createDiv({ cls: 'trisent-examples-wait', text: 'Looking for examples…' });
+    this.loadExamples(slot, card);
+  }
+
+  async loadExamples(slot, card) {
+    const language = this.library.languageByCode(this.languageCode);
+    if (!language) return;
+
+    let found = [];
+    try {
+      found = await searchPackages(this.library, language, card.key, { limit: EXAMPLES });
+    } catch (error) {
+      found = [];
+    }
+    this.examples.set(card.key, found);
+
+    /* Inzwischen kann die Karte weitergeblättert sein - dann gehört der
+       Kasten nicht mehr zur Seite und darf nicht mehr gefüllt werden. */
+    if (!slot.isConnected) return;
+    this.paintExamples(slot, found);
+  }
+
+  paintExamples(slot, found) {
+    slot.empty();
+    if (found.length === 0) return;
+
+    for (const occurrence of found) {
+      const row = slot.createDiv({ cls: 'trisent-example' });
+      const line = row.createDiv({ cls: 'trisent-example-source' });
+      line.createSpan({ text: occurrence.before });
+      line.createSpan({ cls: 'trisent-example-hit', text: occurrence.hit });
+      line.createSpan({ text: occurrence.after });
+      if (occurrence.fluent) {
+        row.createDiv({ cls: 'trisent-example-fluent', text: occurrence.fluent });
+      }
+    }
   }
 
   /* Was die Karte über sich weiß - erst nach dem Umdrehen, sonst wäre
