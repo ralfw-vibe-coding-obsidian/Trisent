@@ -81,6 +81,16 @@ class DeckView extends ItemView {
     const last = this.flashcards.settings.lastLanguage;
     if (last && this.library.languageByCode(last)) this.languageCode = last;
     this.registerDomEvent(document, 'keydown', (event) => this.onKey(event));
+
+    /* Ein Klick irgendwohin sonst hebt die Markierung auf: Sie ist ein
+       Lesezeichen für den Weg zurück, kein Zustand, den man wieder
+       loswerden muss. */
+    this.registerDomEvent(this.contentEl, 'click', (event) => {
+      if (!this.cameFrom) return;
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest('.trisent-card-row')) return;
+      this.clearVisited();
+    });
     this.render();
   }
 
@@ -387,12 +397,17 @@ class DeckView extends ItemView {
      anderen Reiter wieder hier an - und weiß dann nicht mehr, wo er war.
      Die Karte bleibt deshalb markiert, bis eine andere drankommt. */
   markVisited(row, key) {
+    this.clearVisited();
     this.cameFrom = key;
-    if (!this.listEl) return;
-    for (const other of this.listEl.querySelectorAll('.trisent-card-row')) {
-      other.removeClass('is-visited');
-    }
     row.addClass('is-visited');
+  }
+
+  clearVisited() {
+    this.cameFrom = null;
+    if (!this.listEl) return;
+    for (const row of this.listEl.querySelectorAll('.trisent-card-row')) {
+      row.removeClass('is-visited');
+    }
   }
 
   /* Die Wortnotiz: das Blatt der Person zu diesem Wort - Grundform,
