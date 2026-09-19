@@ -925,8 +925,9 @@
   min-width: 0;
 }
 
-/* Hören. Dasselbe Grün wie die Abspielknöpfe im Reader - überall in der
-   App heißt dieses Grün "Ton". */
+/* Hören. Genau wie die Satzknöpfe im Reader: kein Rahmen, nur das
+   Zeichen - gedämpft, solange nichts läuft. Es ist dieselbe Handlung,
+   also soll sie auch gleich aussehen. */
 
 .trisent-view .trisent-example-play {
   flex: 0 0 auto;
@@ -938,17 +939,21 @@
   margin-top: 0.05rem;
   padding: 0;
   cursor: pointer;
-  border: 1px solid var(--tri-accent);
-  border-radius: 999px;
+  border: 0;
+  border-radius: 50%;
   background: transparent;
   color: var(--tri-accent);
+  opacity: 0.5;
   box-shadow: none;
 }
 
-.trisent-view .trisent-example-play:hover,
+.trisent-view .trisent-example-play:hover {
+  opacity: 1;
+  background: var(--background-modifier-hover);
+}
+
 .trisent-view .trisent-example-play.is-playing {
-  background: var(--tri-accent);
-  color: var(--background-primary);
+  opacity: 1;
 }
 
 .trisent-example-play-icon {
@@ -956,8 +961,8 @@
 }
 
 .trisent-example-play-icon svg {
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 0.85em;
+  height: 0.85em;
 }
 
 .trisent-example-source {
