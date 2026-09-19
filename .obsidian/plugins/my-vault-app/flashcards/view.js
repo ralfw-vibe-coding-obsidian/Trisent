@@ -10,7 +10,7 @@
 
 const { ItemView, Notice, setIcon } = require('obsidian');
 const {
-  isDue, isNew, today, daysBetween, pick, SOURCES, RHYTHM, MAX_LEVEL
+  isDue, isNew, today, daysBetween, pick, SOURCES, rhythm, maxLevel
 } = require('./schedule.js');
 const { Session } = require('./session.js');
 
@@ -238,9 +238,9 @@ class DeckView extends ItemView {
        Fortschritt darin viel. */
     const level = facts.createDiv({
       cls: 'trisent-level',
-      attr: { title: 'Level ' + card.level + ' of ' + MAX_LEVEL }
+      attr: { title: 'Level ' + card.level + ' of ' + maxLevel() }
     });
-    for (let i = 1; i <= MAX_LEVEL; i++) {
+    for (let i = 1; i <= maxLevel(); i++) {
       level.createSpan({ cls: 'trisent-level-step' + (i <= card.level ? ' is-on' : '') });
     }
 
@@ -397,9 +397,9 @@ class DeckView extends ItemView {
     const facts = face.createDiv({ cls: 'trisent-face-facts' });
     const level = facts.createDiv({
       cls: 'trisent-level',
-      attr: { title: 'Level ' + card.level + ' of ' + MAX_LEVEL }
+      attr: { title: 'Level ' + card.level + ' of ' + maxLevel() }
     });
-    for (let i = 1; i <= MAX_LEVEL; i++) {
+    for (let i = 1; i <= maxLevel(); i++) {
       level.createSpan({ cls: 'trisent-level-step' + (i <= card.level ? ' is-on' : '') });
     }
     if (card.wrong > 0) {
@@ -535,7 +535,7 @@ class DeckView extends ItemView {
     if (days === 0) return 'today';
     if (days === 1) return 'tomorrow';
     if (days < 0) return days === -1 ? '1 day over' : -days + ' days over';
-    if (card.level >= MAX_LEVEL && RHYTHM[MAX_LEVEL] > 1000) return 'learned';
+    if (card.level >= maxLevel() && rhythm()[maxLevel()] > 1000) return 'learned';
     return 'in ' + days + ' days';
   }
 }

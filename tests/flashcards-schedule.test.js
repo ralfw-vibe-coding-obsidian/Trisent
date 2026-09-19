@@ -11,8 +11,9 @@ const HEUTE = '2026-09-19';
 const card = (over) => Object.assign({ level: 0, seen: 0, wrong: 0, due: null }, over);
 
 test('Rhythmus ist die vereinbarte Folge', () => {
-  is(s.RHYTHM, [1, 1, 2, 3, 5, 8, 13, 21, 34, 9999], 'Rhythmus');
-  is(s.MAX_LEVEL, 9, 'höchstes Level');
+  is(s.DEFAULT_RHYTHM, [1, 1, 2, 3, 5, 8, 13, 21, 34, 9999], 'Rhythmus');
+  is(s.rhythm(), [1, 1, 2, 3, 5, 8, 13, 21, 34, 9999], 'ohne Einstellung gilt er');
+  is(s.maxLevel(), 9, 'höchstes Level');
 });
 
 test('Tage rechnen kommt über Monats- und Jahresgrenzen', () => {
@@ -145,4 +146,66 @@ test('Mischen behält alle Karten', () => {
   const gemischt = s.shuffle(stapel, () => ((n = (n + 0.37) % 1), n));
   is(gemischt.slice().sort(), [1, 2, 3, 4, 5], 'derselbe Inhalt');
   is(stapel, [1, 2, 3, 4, 5], 'Original unberührt');
+});
+
+/* ------------------------------------------------------------------ */
+/* Der einstellbare Rhythmus                                          */
+/* ------------------------------------------------------------------ */
+
+/* Achtung: configure() wirkt auf das ganze Modul. Jeder Test hier stellt
+   am Ende wieder auf die Vorgabe zurück. */
+
+test('eine Eingabe wird gelesen, egal wie sie getrennt ist', () => {
+  is(s.parseRhythm('1, 2, 3'), [1, 2, 3], 'Kommas');
+  is(s.parseRhythm('1 2 3'), [1, 2, 3], 'Leerzeichen');
+  is(s.parseRhythm(' 1,2 ,  3 '), [1, 2, 3], 'krumm getippt');
+  is(s.parseRhythm('1;2;3'), [1, 2, 3], 'Semikolons');
+});
+
+test('Unsinn wird abgewiesen, nicht zurechtgebogen', () => {
+  is(s.parseRhythm(''), null, 'leer');
+  is(s.parseRhythm('7'), null, 'eine einzige Stufe');
+  is(s.parseRhythm('1, 0, 3'), null, 'null Tage liefe im Kreis');
+  is(s.parseRhythm('1, -2'), null, 'negativ');
+  is(s.parseRhythm('1, 2.5'), null, 'halbe Tage');
+  is(s.parseRhythm('1, zwei'), null, 'Wörter');
+  is(s.parseRhythm(null), null, 'nichts');
+  is(s.parseRhythm('1, 200000'), null, 'unfassbar lang');
+});
+
+test('ein gesetzter Rhythmus gilt für die Rechnung', () => {
+  ok(s.configure('2, 4, 8'), 'angenommen');
+  is(s.rhythm(), [2, 4, 8], 'gesetzt');
+  is(s.maxLevel(), 2, 'drei Stufen, höchste ist 2');
+
+  is(s.rate(card({ level: 0, seen: 1 }), 'known', HEUTE).due,
+    s.addDays(HEUTE, 2), 'Stufe 0 nach zwei Tagen');
+  is(s.rate(card({ level: 2, seen: 5 }), 'known', HEUTE).due,
+    s.addDays(HEUTE, 8), 'Stufe 2 nach acht Tagen');
+  is(s.rate(card({ level: 2, seen: 5 }), 'known', HEUTE).level, 2, 'bleibt oben');
+
+  s.configure(s.DEFAULT_RHYTHM);
+});
+
+test('eine kürzere Folge holt zu hohe Karten auf die neue Spitze', () => {
+  s.configure('1, 2, 3');
+  is(s.normalize(card({ level: 8, seen: 20 })).level, 2, 'gekappt');
+  s.configure(s.DEFAULT_RHYTHM);
+  is(s.normalize(card({ level: 8, seen: 20 })).level, 8, 'und wieder wie vorher');
+});
+
+test('ein abgewiesener Rhythmus lässt den alten stehen', () => {
+  ok(!s.configure('1'), 'abgewiesen');
+  is(s.rhythm(), [1, 1, 2, 3, 5, 8, 13, 21, 34, 9999], 'unverändert');
+});
+
+test('configure nimmt auch eine fertige Liste', () => {
+  ok(s.configure([3, 6, 9]), 'als Array');
+  is(s.rhythm(), [3, 6, 9], 'gesetzt');
+  s.configure(s.DEFAULT_RHYTHM);
+});
+
+test('die Anzeige einer Folge ist wieder lesbar', () => {
+  is(s.formatRhythm([1, 2, 3]), '1, 2, 3', 'formatiert');
+  is(s.parseRhythm(s.formatRhythm(s.DEFAULT_RHYTHM)), s.DEFAULT_RHYTHM, 'hin und zurück');
 });

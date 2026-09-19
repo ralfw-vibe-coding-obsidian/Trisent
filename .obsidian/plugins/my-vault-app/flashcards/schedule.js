@@ -11,10 +11,57 @@
  * Geprüft wird stattdessen in tests/flashcards-schedule.test.js.
  */
 
-/* Fibonacci, in Tagen. Der letzte Eintrag heißt "nie wieder". */
-const RHYTHM = [1, 1, 2, 3, 5, 8, 13, 21, 34, 9999];
+/* Fibonacci, in Tagen. Der letzte Eintrag heißt "nie wieder".
 
-const MAX_LEVEL = RHYTHM.length - 1;
+   Der Rhythmus ist einstellbar, deshalb steht er nicht als Konstante da,
+   sondern hinter rhythm(). Wer ihn ändert, ändert damit auch die Zahl der
+   Stufen - eine kürzere Liste heißt weniger Stufen, und normalize() holt
+   Karten, die schon höher standen, still auf die neue Spitze zurück. */
+const DEFAULT_RHYTHM = [1, 1, 2, 3, 5, 8, 13, 21, 34, 9999];
+
+let RHYTHM = DEFAULT_RHYTHM.slice();
+
+function rhythm() {
+  return RHYTHM;
+}
+
+function maxLevel() {
+  return RHYTHM.length - 1;
+}
+
+/* Aus dem, was in den Einstellungen steht, eine brauchbare Folge machen -
+   oder null, wenn es keine ist. Verlangt werden mindestens zwei Stufen,
+   ganze Tage, und keine Null: Eine Karte, die nach null Tagen wiederkommt,
+   käme heute noch einmal und liefe im Kreis. */
+function parseRhythm(input) {
+  const parts = String(input == null ? '' : input)
+    .split(/[\s,;]+/)
+    .filter((part) => part.length > 0);
+
+  if (parts.length < 2) return null;
+
+  const days = [];
+  for (const part of parts) {
+    if (!/^\d+$/.test(part)) return null;
+    const value = Number(part);
+    if (!(value >= 1) || value > 100000) return null;
+    days.push(value);
+  }
+  return days;
+}
+
+function formatRhythm(days) {
+  return (days || RHYTHM).join(', ');
+}
+
+/* Den Rhythmus setzen. Unbrauchbares wird abgewiesen, nicht zurechtgebogen -
+   sonst lernte die Person nach einer Folge, die sie nie eingegeben hat. */
+function configure(input) {
+  const days = Array.isArray(input) ? parseRhythm(input.join(' ')) : parseRhythm(input);
+  if (!days) return false;
+  RHYTHM = days;
+  return true;
+}
 
 /* Woraus eine Sitzung ihre Karten zieht. */
 const SOURCES = [
@@ -44,7 +91,7 @@ function daysBetween(from, to) {
 /* Eine Karte auf einen brauchbaren Stand bringen - auch wenn jemand von
    Hand etwas Unsinniges in die Notiz geschrieben hat. */
 function normalize(card) {
-  const level = Math.min(Math.max(Math.trunc(Number(card.level) || 0), 0), MAX_LEVEL);
+  const level = Math.min(Math.max(Math.trunc(Number(card.level) || 0), 0), maxLevel());
   return {
     level: level,
     seen: Math.max(Math.trunc(Number(card.seen) || 0), 0),
@@ -68,7 +115,7 @@ function rate(card, answer, day) {
 
   if (answer === 'known') {
     return {
-      level: Math.min(state.level + 1, MAX_LEVEL),
+      level: Math.min(state.level + 1, maxLevel()),
       seen: state.seen + 1,
       wrong: state.wrong,
       due: addDays(now, RHYTHM[state.level])
@@ -143,7 +190,8 @@ function shuffle(items, random) {
 }
 
 module.exports = {
-  RHYTHM, MAX_LEVEL, SOURCES,
+  DEFAULT_RHYTHM, SOURCES,
+  rhythm, maxLevel, parseRhythm, formatRhythm, configure,
   today, addDays, daysBetween, normalize,
   rate, isNew, isDue, pick, shuffle
 };
