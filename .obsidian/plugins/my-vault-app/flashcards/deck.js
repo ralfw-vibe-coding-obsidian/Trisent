@@ -109,20 +109,25 @@ class Deck {
       'wrong: ' + record.wrong,
       'due: ' + record.due,
       'added: ' + record.added,
-      '---',
-      /* Der Platz der Person. Was sie sich beim Üben zu dieser Karte
-         merkt, gehört zur Karte - nicht in die Wortnotiz, die dem Wort
-         gehört und die ein neues Paket ersetzen darf.
-
-         Hier stand einmal ein [[Wikilink]] auf die Wortnotiz. Er ist
-         weg: Beide Notizen heißen gleich, nur in verschiedenen Ordnern -
-         Obsidian löste ihn deshalb auf die Karte selbst auf. Der Weg zum
-         Wort führt über den Reader, nicht über einen Link, der mal
-         stimmt und mal nicht. */
-      '## My notes',
-      '',
-      ''
+      '---'
     ];
+
+    /* Der Weg zur Wortnotiz - mit ganzem Pfad. Ein kurzes [[après]]
+       ginge hier daneben: Die Karte heißt genauso, nur in einem anderen
+       Ordner, und Obsidian löst den kurzen Namen auf die nächstliegende
+       Notiz auf - also auf die Karte selbst. */
+    if (entry.note) {
+      lines.push('[[' + entry.note.path.replace(/\.md$/, '')
+        + '|' + (record.front || record.key) + ']]');
+      lines.push('');
+    }
+
+    /* Der Platz der Person. Was sie sich beim Üben zu dieser Karte
+       merkt, gehört zur Karte - nicht in die Wortnotiz, die dem Wort
+       gehört und die ein neues Paket ersetzen darf. */
+    lines.push('## My notes');
+    lines.push('');
+    lines.push('');
 
     const file = await this.app.vault.create(path, lines.join('\n'));
 

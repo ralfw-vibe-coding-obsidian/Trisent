@@ -163,12 +163,27 @@ class Reader {
   /* Ein Wort in die Lernkartei legen. Mehrfach drücken schadet nicht -
      die Kartei legt nichts doppelt an. */
   async addToDeck(card) {
+    /* Ein Wort, das in die Kartei wandert, bekommt seine Wortnotiz -
+       sonst kann die Karte nicht darauf verweisen. Angelegt wird sie mit
+       dem Stand, den das Wort ohnehin hat; sichtbar ändert sich also
+       nichts, es steht nur fest, wo es steht. */
+    if (!card.file) {
+      try {
+        card.file = await this.library.setWordStatus(
+          card.language, card.key, card.status, card.entry
+        );
+      } catch (error) {
+        card.file = null;
+      }
+    }
+
     let entry;
     try {
       entry = await this.deck.add(card.language, {
         key: card.key,
         front: card.lemma,
-        back: card.gloss
+        back: card.gloss,
+        note: card.file
       });
     } catch (error) {
       new Notice('Could not add this card: ' + String(error.message || error));
