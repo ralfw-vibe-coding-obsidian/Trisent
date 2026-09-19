@@ -39,10 +39,10 @@ class Translator {
     this.streak = plugin.learning.streak;
 
     plugin.registerView(VIEW_TYPE, (leaf) => new TranslatorView(leaf, this));
-    plugin.addRibbonIcon(RIBBON_ICON, 'Translate with Trisent', () => this.open());
+    plugin.addRibbonIcon(RIBBON_ICON, 'Trisent: Translation', () => this.open());
     plugin.addCommand({
       id: 'open-translator',
-      name: 'Translate with Trisent',
+      name: 'Translation',
       callback: () => this.open()
     });
   }

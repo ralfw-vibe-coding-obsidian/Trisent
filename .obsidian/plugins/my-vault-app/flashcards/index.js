@@ -31,10 +31,10 @@ class Flashcards {
     this.streak = plugin.learning.streak;
 
     plugin.registerView(VIEW_TYPE, (leaf) => new DeckView(leaf, this));
-    plugin.addRibbonIcon(RIBBON_ICON, 'Trisent flashcards', () => this.open());
+    plugin.addRibbonIcon(RIBBON_ICON, 'Trisent: Flashcards', () => this.open());
     plugin.addCommand({
       id: 'open-flashcards',
-      name: 'Trisent flashcards',
+      name: 'Flashcards',
       callback: () => this.open()
     });
   }

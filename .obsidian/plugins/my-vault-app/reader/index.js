@@ -40,10 +40,10 @@ class Reader {
     plugin.registerView(VIEW_TYPE, (leaf) => new TrisentView(leaf, this));
     plugin.registerView(CARD_VIEW_TYPE, (leaf) => new WordCardView(leaf, this));
 
-    plugin.addRibbonIcon(RIBBON_ICON, 'Open Trisent', () => this.open());
+    plugin.addRibbonIcon(RIBBON_ICON, 'Trisent: Reading', () => this.open());
     plugin.addCommand({
       id: 'open-reader',
-      name: 'Open Trisent',
+      name: 'Reading',
       callback: () => this.open()
     });
   }
