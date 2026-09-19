@@ -18,9 +18,9 @@ const { searchPackages } = require('../learning/occurrences.js');
 
 /* Wonach die Kartei geordnet wird. Bei gleicher Schwierigkeit
    alphabetisch - sonst wechselte die Reihenfolge bei jedem Zeichnen. */
-/* Wie viele Beispielsätze auf der Rückseite stehen. Drei: genug, um zu
-   sehen, wie das Wort sich benimmt, wenig genug, um sie zu lesen. */
-const EXAMPLES = 3;
+/* Wie viele Beispielsätze auf der Rückseite stehen. Genug, um zu sehen,
+   wie das Wort sich benimmt, wenig genug, um sie noch zu lesen. */
+const EXAMPLES = 5;
 
 /* Wie weit der Zeitstrahl nach vorn schaut: heute und 31 Tage. Ein
    Monat - lang genug, dass man einen Berg kommen sieht, kurz genug für
