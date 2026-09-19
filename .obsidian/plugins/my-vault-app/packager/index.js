@@ -688,10 +688,12 @@ class Packager {
     if (!this.visible()) return;
 
     plugin.registerView(VIEW_TYPE, (leaf) => new PackagerView(leaf, this));
-    plugin.addRibbonIcon(RIBBON_ICON, 'Open Trisent packager', () => this.open());
+    plugin.addRibbonIcon(RIBBON_ICON, 'Trisent: Packager', () => this.open());
     plugin.addCommand({
       id: 'open-packager',
-      name: 'Open packager',
+      /* Obsidian stellt den Namen der App voran: "Trisent: Packager" -
+         genauso wie "Trisent: Reading" und "Trisent: Translation". */
+      name: 'Packager',
       callback: () => this.open()
     });
 
