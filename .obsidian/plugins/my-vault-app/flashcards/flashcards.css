@@ -914,8 +914,50 @@
 }
 
 .trisent-example {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
   padding-left: 0.7rem;
   border-left: 2px solid var(--background-modifier-border);
+}
+
+.trisent-example-text {
+  min-width: 0;
+}
+
+/* Hören. Dasselbe Grün wie die Abspielknöpfe im Reader - überall in der
+   App heißt dieses Grün "Ton". */
+
+.trisent-view .trisent-example-play {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.05rem;
+  padding: 0;
+  cursor: pointer;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-example-play:hover,
+.trisent-view .trisent-example-play.is-playing {
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+.trisent-example-play-icon {
+  display: inline-flex;
+}
+
+.trisent-example-play-icon svg {
+  width: 0.7rem;
+  height: 0.7rem;
 }
 
 .trisent-example-source {

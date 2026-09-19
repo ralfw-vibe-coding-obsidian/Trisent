@@ -8,7 +8,9 @@
  * wiederkommt, steht in schedule.js, wie der Stapel läuft in session.js.
  */
 
-const { ItemView, MarkdownView, Notice, setIcon, setTooltip } = require('obsidian');
+const {
+  ItemView, MarkdownView, Notice, normalizePath, setIcon, setTooltip
+} = require('obsidian');
 const {
   isDue, isNew, today, daysBetween, pick, timeline, barHeight,
   SOURCES, rhythm, maxLevel
@@ -63,6 +65,10 @@ class DeckView extends ItemView {
     /* Der Streak wird je Sitzung einmal angestoßen, nicht je Karte. */
     this.counted = false;
     this.examples = new Map();
+    /* Der gerade laufende Satz. */
+    this.sound = null;
+    this.soundButton = null;
+    this.soundIcon = null;
   }
 
   getViewType() {
@@ -95,7 +101,7 @@ class DeckView extends ItemView {
   }
 
   async onClose() {
-    /* nichts aufzuräumen */
+    this.stopSound();
   }
 
   render() {
@@ -808,13 +814,74 @@ class DeckView extends ItemView {
 
     for (const occurrence of found) {
       const row = slot.createDiv({ cls: 'trisent-example' });
-      const line = row.createDiv({ cls: 'trisent-example-source' });
+
+      /* Hören, wie der Satz klingt. Der Ton liegt im Paket - kein Netz,
+         keine Kosten. Ist der Text nicht vertont, steht hier nichts,
+         statt eines Knopfes, der nicht kann. */
+      if (occurrence.audio) this.renderSpeaker(row, occurrence.audio);
+
+      const text = row.createDiv({ cls: 'trisent-example-text' });
+      const line = text.createDiv({ cls: 'trisent-example-source' });
       line.createSpan({ text: occurrence.before });
       line.createSpan({ cls: 'trisent-example-hit', text: occurrence.hit });
       line.createSpan({ text: occurrence.after });
       if (occurrence.fluent) {
-        row.createDiv({ cls: 'trisent-example-fluent', text: occurrence.fluent });
+        text.createDiv({ cls: 'trisent-example-fluent', text: occurrence.fluent });
       }
+    }
+  }
+
+  renderSpeaker(row, path) {
+    const button = row.createEl('button', { cls: 'trisent-example-play' });
+    const icon = button.createSpan({ cls: 'trisent-example-play-icon' });
+    setIcon(icon, 'play');
+    setTooltip(button, 'Hear this sentence');
+    button.addEventListener('click', () => this.toggleSound(button, icon, path));
+  }
+
+  /* Ein Satz zur Zeit. Derselbe Knopf hält wieder an - und ein anderer
+     Satz löst den laufenden ab, statt ihn zu übertönen. */
+  toggleSound(button, icon, path) {
+    if (this.soundButton === button) {
+      this.stopSound();
+      return;
+    }
+    this.stopSound();
+
+    let url;
+    try {
+      url = this.app.vault.adapter.getResourcePath(normalizePath(path));
+    } catch (error) {
+      new Notice('Could not find the sound for this sentence.');
+      return;
+    }
+
+    const sound = new Audio(url);
+    this.sound = sound;
+    this.soundButton = button;
+    this.soundIcon = icon;
+
+    button.addClass('is-playing');
+    setIcon(icon, 'square');
+
+    sound.addEventListener('ended', () => this.stopSound());
+    sound.addEventListener('error', () => {
+      new Notice('Could not play this sentence.');
+      this.stopSound();
+    });
+    sound.play().catch(() => this.stopSound());
+  }
+
+  stopSound() {
+    if (this.sound) {
+      this.sound.pause();
+      this.sound = null;
+    }
+    if (this.soundButton) {
+      this.soundButton.removeClass('is-playing');
+      if (this.soundIcon) setIcon(this.soundIcon, 'play');
+      this.soundButton = null;
+      this.soundIcon = null;
     }
   }
 
@@ -909,6 +976,7 @@ class DeckView extends ItemView {
   }
 
   stop() {
+    this.stopSound();
     this.session = null;
     this.render();
   }
@@ -917,6 +985,7 @@ class DeckView extends ItemView {
      Festhalten darf einen Augenblick dauern. */
   async rate(kind, language) {
     if (!this.session) return;
+    this.stopSound();
     const result = this.session.answer(kind, today());
     this.render();
     if (!result) return;

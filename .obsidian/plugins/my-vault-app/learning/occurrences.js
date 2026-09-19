@@ -31,6 +31,15 @@ function matchesIn(sentence, key) {
    suchen - die Zeichenpositionen stehen ja schon in der Einheit. */
 function occurrenceOf(sentence, item, where) {
   const source = sentence.source || '';
+  const folder = where ? where.path : null;
+
+  /* Die Tondatei gleich mit - sie liegt im Paketordner, und wer die
+     Fundstelle hat, hat sonst keinen Weg mehr dorthin. Fehlt sie, bleibt
+     das Feld leer; nicht jeder Text ist vertont. */
+  const audio = folder && sentence.audio && sentence.audio.file
+    ? folder + '/' + sentence.audio.file
+    : null;
+
   return {
     before: source.slice(0, item.start),
     hit: source.slice(item.start, item.end),
@@ -38,7 +47,8 @@ function occurrenceOf(sentence, item, where) {
     fluent: sentence.fluent || '',
     sentence: sentence.id,
     title: where ? where.title : null,
-    path: where ? where.path : null
+    path: folder,
+    audio: audio
   };
 }
 
