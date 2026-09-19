@@ -123,11 +123,12 @@ class WordCardView extends ItemView {
     const foot = page.createDiv({ cls: 'trisent-card-foot' });
     const open = foot.createEl('button', { cls: 'trisent-card-open' });
     setIcon(open.createSpan(), 'file-text');
-    /* "Dictionary entry" ist der Name, den diese Notizen überall tragen -
-       im Ordner, in der Spezifikation und auf der Karteikarte. */
-    open.createSpan({
-      text: (card.file ? 'Open' : 'Create') + ' dictionary entry'
-    });
+    /* Immer "Open", nie "Create": Den Eintrag zu diesem Wort GIBT es -
+       er steht im Paket, und die Karte zeigt ihn ja gerade an. Was beim
+       ersten Mal noch fehlt, ist bloß die Datei in der Vault, und wann
+       die entsteht, ist eine Frage der Umsetzung und keine, mit der man
+       die Person behelligt. */
+    open.createSpan({ text: 'Open dictionary entry' });
     open.addEventListener('click', () => this.reader.openWordNote(card));
   }
 
