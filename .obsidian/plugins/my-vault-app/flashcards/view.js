@@ -14,7 +14,7 @@ const {
   SOURCES, rhythm, maxLevel
 } = require('./schedule.js');
 const { Session } = require('./session.js');
-const { searchPackages, lookupWord } = require('../learning/occurrences.js');
+const { searchPackages } = require('../learning/occurrences.js');
 const { filter } = require('./find.js');
 
 /* Wonach die Kartei geordnet wird. Bei gleicher Schwierigkeit
@@ -347,7 +347,7 @@ class DeckView extends ItemView {
 
     const note = tools.createEl('button', { cls: 'trisent-card-tool' });
     setIcon(note.createSpan(), 'file-text');
-    setTooltip(note, 'Open the word note');
+    setTooltip(note, 'Open this card’s note');
     note.addEventListener('click', (event) => {
       event.stopPropagation();
       this.openNote(card);
@@ -410,37 +410,16 @@ class DeckView extends ItemView {
     }
   }
 
-  /* Die Wortnotiz: das Blatt der Person zu diesem Wort - Grundform,
-     Bedeutung, Grammatik, ihr Lernstand und Platz für eigene Notizen.
-     Sie entsteht, sobald jemand sie öffnet; vorher gibt es sie nicht,
-     denn eine Karteikarte ist noch kein Grund für eine Notiz. */
+  /* Die Notiz dieser Karte. Was man sich beim Üben merkt - eine
+     Eselsbrücke, eine Verwechslung, die immer wieder passiert -, gehört
+     zur Karte und nicht in die Wortnotiz: Die gehört dem Wort, und ein
+     besseres Paket darf sie ersetzen. Was hier steht, überlebt das. */
   async openNote(card) {
-    const language = this.library.languageByCode(this.languageCode);
-    if (!language) return;
-
-    let file = this.library.wordFileFor(language, card.key);
-    if (!file) {
-      /* Was das Paket über das Wort weiß, gehört in die neue Notiz -
-         Formen und Grammatik. Sonst stünde dort nur der Kopf, und die
-         Erklärung, die es längst gibt, bliebe unsichtbar. */
-      let entry = null;
-      try {
-        entry = await lookupWord(this.library, language, card.key);
-      } catch (error) {
-        entry = null;
-      }
-
-      try {
-        file = await this.library.setWordStatus(
-          language, card.key, 'unknown',
-          entry || { lemma: card.front, gloss: card.back }
-        );
-      } catch (error) {
-        new Notice('Could not create the note: ' + String(error.message || error));
-        return;
-      }
+    if (!card.file) {
+      new Notice('This card has no note file.');
+      return;
     }
-    if (file) await this.app.workspace.getLeaf('tab').openFile(file);
+    await this.app.workspace.getLeaf('tab').openFile(card.file);
   }
 
   /* Die erste Stelle, an der das Wort in einem Text steht - und dorthin

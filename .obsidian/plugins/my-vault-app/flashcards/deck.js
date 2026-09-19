@@ -113,6 +113,12 @@ class Deck {
       '',
       /* Nur zum Durchklicken in Obsidian - die App fragt diesen Link nie. */
       '[[' + safeName(entry.front || entry.key) + ']]',
+      '',
+      /* Der Platz der Person. Was sie sich beim Üben zu dieser Karte
+         merkt, gehört zur Karte - nicht in die Wortnotiz, die dem Wort
+         gehört und die ein neues Paket ersetzen darf. */
+      '## My notes',
+      '',
       ''
     ];
 

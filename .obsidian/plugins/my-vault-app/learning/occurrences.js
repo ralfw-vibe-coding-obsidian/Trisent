@@ -1,8 +1,7 @@
 "use strict";
 
 /*
- * Was die Pakete über ein Wort wissen: wo es vorkommt, und was im
- * Wörterbuch dazu steht.
+ * Wo ein Wort sonst noch vorkommt.
  *
  * GEMEINSAM für die Lernwerkzeuge. Der Reader zeigt damit die anderen
  * Stellen in der Wortkarte, die Lernkartei die Beispielsätze auf der
@@ -86,23 +85,4 @@ async function searchPackages(library, language, key, options) {
   return found;
 }
 
-/* Der Wörterbucheintrag zu einem Schlüssel - Grundform, Wortart,
-   Bedeutung, Formen, Grammatik. Er steht in jedem Paket, das das Wort
-   benutzt; das erste, das ihn hat, gilt.
-
-   Der Reader hat ihn im offenen Paket zur Hand. Wer von außen kommt -
-   die Lernkartei etwa -, hat kein offenes Paket und muss ihn suchen. */
-async function lookupWord(library, language, key) {
-  for (const folder of library.packagesOf(language)) {
-    const entry = await library.loadPackage(folder);
-    if (!entry || !entry.ok) continue;
-
-    const found = (entry.data.dictionary || {})[key];
-    if (found) return found;
-  }
-  return null;
-}
-
-module.exports = {
-  matchesIn, occurrenceOf, searchData, searchPackages, lookupWord
-};
+module.exports = { matchesIn, occurrenceOf, searchData, searchPackages };
