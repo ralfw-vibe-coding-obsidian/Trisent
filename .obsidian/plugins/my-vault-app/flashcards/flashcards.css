@@ -50,9 +50,9 @@
 }
 
 /* Eine einzige Linie: links alles vor heute, dann 32 Tage, rechts alles
-   danach. Die beiden Enden sind hinterlegt - sie sind Sammelplätze, keine
-   Tage -, stehen aber auf derselben Linie und werden genauso hoch
-   gerechnet. Nur so sieht man 320 Überfällige neben 10 von heute. */
+   danach. Die beiden Enden sind Sammelplätze, keine Tage - sie tragen
+   dafür einen längeren Strich -, werden aber genauso hoch gerechnet.
+   Nur so sieht man 320 Überfällige neben 10 von heute. */
 
 .trisent-tl {
   display: flex;
@@ -71,13 +71,12 @@
   flex: 0 0 1.6rem;
 }
 
-.trisent-tl-slot.is-edge .trisent-tl-stack {
-  background: var(--background-modifier-hover);
-  border-radius: 3px 3px 0 0;
-}
-
+/* Kein Hintergrund hinter den Enden: Eine Fläche über die volle Höhe
+   liest sich als Balken, der bis oben reicht - und sagt damit das
+   Gegenteil dessen, was sie soll. Die Enden erkennt man am längeren
+   Strich und an der Beschriftung. */
 .trisent-tl-slot.is-edge .trisent-tl-foot::after {
-  height: 7px;
+  height: 9px;
 }
 
 .trisent-tl-value {
