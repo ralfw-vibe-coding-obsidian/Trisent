@@ -14,7 +14,7 @@ const {
   SOURCES, rhythm, maxLevel
 } = require('./schedule.js');
 const { Session } = require('./session.js');
-const { searchPackages } = require('../learning/occurrences.js');
+const { searchPackages, lookupWord } = require('../learning/occurrences.js');
 const { filter } = require('./find.js');
 
 /* Wonach die Kartei geordnet wird. Bei gleicher Schwierigkeit
@@ -405,11 +405,21 @@ class DeckView extends ItemView {
 
     let file = this.library.wordFileFor(language, card.key);
     if (!file) {
+      /* Was das Paket über das Wort weiß, gehört in die neue Notiz -
+         Formen und Grammatik. Sonst stünde dort nur der Kopf, und die
+         Erklärung, die es längst gibt, bliebe unsichtbar. */
+      let entry = null;
       try {
-        file = await this.library.setWordStatus(language, card.key, 'unknown', {
-          lemma: card.front,
-          gloss: card.back
-        });
+        entry = await lookupWord(this.library, language, card.key);
+      } catch (error) {
+        entry = null;
+      }
+
+      try {
+        file = await this.library.setWordStatus(
+          language, card.key, 'unknown',
+          entry || { lemma: card.front, gloss: card.back }
+        );
       } catch (error) {
         new Notice('Could not create the note: ' + String(error.message || error));
         return;
@@ -438,7 +448,7 @@ class DeckView extends ItemView {
 
     const reader = this.flashcards.plugin.reader;
     if (!reader) return;
-    await reader.showSentence(language.code, found[0].path, found[0].sentence);
+    await reader.showSentence(language.code, found[0].path, found[0].sentence, card.key);
   }
 
   /* Zwei Schritte statt eines Dialogs: Die Karte selbst fragt nach, und

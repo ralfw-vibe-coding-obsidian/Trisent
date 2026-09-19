@@ -1337,6 +1337,11 @@ class TrisentView extends ItemView {
     const jump = this.jumpTo;
     this.jumpTo = null;
 
+    /* Die Wortkarte zu dem Wort, wegen dem man gekommen ist. */
+    const show = this.openAfterText;
+    this.openAfterText = null;
+    if (show) window.setTimeout(() => this.openCard(show, null), 0);
+
     const stored = jump ? { sentence: jump, offset: 0 } : this.readingPosition();
     if (!stored || !stored.sentence) return;
 
@@ -1505,9 +1510,13 @@ class TrisentView extends ItemView {
   }
 
   /* Von einer Fundstelle in einem anderen Text dorthin springen. */
-  goTo(languageCode, path, sentenceId) {
+  goTo(languageCode, path, sentenceId, key) {
     this.languageCode = languageCode;
     this.jumpTo = sentenceId;
+    /* Kommt man von außen - etwa aus der Lernkartei -, soll nicht nur
+       die Stelle dastehen, sondern auch die Erklärung dazu. Die Karte
+       kann erst auf, wenn der Text geladen ist; deshalb gemerkt. */
+    this.openAfterText = key || null;
     this.openText(path);
   }
 

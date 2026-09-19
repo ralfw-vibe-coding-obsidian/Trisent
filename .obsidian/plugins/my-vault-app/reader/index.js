@@ -123,11 +123,11 @@ class Reader {
 
   /* Von woanders her zu einer Stelle springen - der Reader muss dafür
      nicht offen sein. Wird von der Lernkartei gerufen. */
-  async showSentence(languageCode, path, sentenceId) {
+  async showSentence(languageCode, path, sentenceId, key) {
     await this.open();
     const view = this.mainView();
     if (!view) return false;
-    view.goTo(languageCode, path, sentenceId);
+    view.goTo(languageCode, path, sentenceId, key);
     return true;
   }
 
