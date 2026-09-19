@@ -796,3 +796,74 @@
   color: var(--text-faint);
   margin-top: 0.1rem;
 }
+
+/* ------------------------------------------------------------------ */
+/* Schmale Bildschirme                                                */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 720px) {
+  /* 35 Plätze auf einem Telefon sind elf Pixel je Tag - da passt keine
+     Zahl hin. Die Balken bleiben, die Zahlen verschwinden; an den
+     Enden, wo es auf die Zahl ankommt, bleiben sie stehen. */
+  .trisent-tl-slot .trisent-tl-value {
+    display: none;
+  }
+
+  .trisent-tl-slot.is-edge {
+    flex: 0 0 1.9rem;
+  }
+
+  .trisent-tl-slot.is-edge .trisent-tl-value {
+    display: block;
+  }
+
+  .trisent-tl-stack {
+    height: 3.25rem;
+  }
+
+  .trisent-tl-bar {
+    width: 78%;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Die Karte darf die ganze Breite haben - zwei Spalten auf einem
+     Telefon wären zwei zu schmale Spalten. */
+  .trisent-deck {
+    grid-template-columns: 1fr;
+  }
+
+  /* Drei Antwortknöpfe müssen nebeneinander bleiben: Untereinander
+     wandert der Daumen, und man trifft den falschen. */
+  .trisent-answers {
+    gap: 0.4rem;
+  }
+
+  .trisent-view .trisent-answer {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0.6rem 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .trisent-view .trisent-turn {
+    width: 100%;
+  }
+
+  .trisent-face-line.is-word {
+    font-size: 2.1rem;
+  }
+
+  .trisent-face-line.is-fluent {
+    font-size: 1.15rem;
+  }
+
+  .trisent-stage {
+    min-height: 34vh;
+    padding: 1rem 0 1.5rem;
+  }
+
+  .trisent-start-options {
+    gap: 0.9rem 1.2rem;
+  }
+}

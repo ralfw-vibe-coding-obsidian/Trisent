@@ -431,3 +431,42 @@
 .trisent-header .trisent-streak {
   margin-left: -0.4rem;
 }
+
+/* ------------------------------------------------------------------ */
+/* Schmale Bildschirme                                                */
+/* ------------------------------------------------------------------ */
+
+/* Die App wird auf dem Telefon gelesen. Hier steht nur das Gerüst -
+   Ränder und Kopfleiste; was ein Werkzeug eigenes hat, regelt es in
+   seiner eigenen Stilvorlage. */
+
+@media (max-width: 600px) {
+  .trisent-scroll {
+    padding: 0 1rem 5rem;
+  }
+
+  .trisent-scroll > .trisent-page {
+    padding-top: 1.1rem;
+  }
+
+  .trisent-topbar {
+    padding: 0.7rem 1rem 0.6rem;
+  }
+
+  .trisent-header {
+    gap: 0.5rem 0.7rem;
+  }
+
+  /* Ein langer Titel darf die Kopfleiste nicht sprengen - lieber
+     abgeschnitten als die Knöpfe daneben aus dem Bild geschoben. */
+  .trisent-header-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .trisent-page h1 {
+    font-size: 1.6rem;
+  }
+}

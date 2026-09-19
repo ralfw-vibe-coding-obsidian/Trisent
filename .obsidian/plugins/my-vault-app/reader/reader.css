@@ -1280,3 +1280,45 @@
   border-radius: 1px;
   background: var(--tri-accent);
 }
+
+/* ------------------------------------------------------------------ */
+/* Berührung und schmale Bildschirme                                  */
+/* ------------------------------------------------------------------ */
+
+/* Auf einem Touchscreen ist langes Drücken auf Text die Geste, mit der
+   das System Text markiert und die Lupe aufruft. Genau dieselbe Geste
+   öffnet hier die Wortkarte - deshalb muss das Markieren an den Wörtern
+   aus sein, sonst gewinnt das System. Mit Maus bleibt Markieren
+   erlaubt: Dort öffnet die rechte Taste die Karte. */
+
+@media (pointer: coarse) {
+  .trisent-word {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Die rechte Spalte der Textliste rutscht unter den Titel, statt ihm
+     zwei Drittel der Breite wegzunehmen. */
+  .trisent-t-right {
+    flex: 1 1 100%;
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 0.8rem;
+  }
+
+  .trisent-t-note {
+    text-align: left;
+  }
+
+  /* Die Leseleiste trägt Zurück, Titel, F/G/T, Palette und Fortschritt.
+     Auf 390 Pixeln ist das zu viel für eine Zeile - sie darf umbrechen,
+     und die Marken rücken enger. */
+  .trisent-header .trisent-switch {
+    padding: 0.2rem 0.55rem;
+  }
+}
