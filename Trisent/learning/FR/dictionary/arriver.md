@@ -7,8 +7,8 @@ key: fr:arriver:VERB
 gloss: ankommen, eintreffen
 forms:
   - arrive
-status: known
-updatedAt: 2026-09-15
+status: learning
+updatedAt: 2026-09-19
 ---
 
 ## Grammar

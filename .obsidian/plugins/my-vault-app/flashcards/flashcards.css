@@ -695,6 +695,26 @@
   overflow-wrap: anywhere;
 }
 
+/* Die Frage, noch einmal auf der Rückseite - klein und blass, damit sie
+   die Antwort begleitet und ihr nicht den Rang abläuft. */
+
+.trisent-face-echo {
+  font-size: 0.95rem;
+  line-height: 1.25;
+  color: var(--text-faint);
+  overflow-wrap: anywhere;
+  margin-bottom: -0.35rem;
+}
+
+.trisent-face-echo.is-word {
+  font-family: var(--tri-read);
+  font-weight: var(--tri-read-weight);
+}
+
+.trisent-face-echo.is-fluent {
+  font-family: var(--tri-ui);
+}
+
 /* Der Hinweis sitzt unten auf der Vorderseite, nicht in der Mitte -
    dort stünde er dem Wort im Weg. */
 .trisent-flip-face .trisent-face-hint {

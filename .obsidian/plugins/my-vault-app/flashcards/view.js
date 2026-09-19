@@ -573,6 +573,15 @@ class DeckView extends ItemView {
     front.createDiv({ cls: 'trisent-face-hint', text: 'tap to turn it over' });
 
     const reverse = inner.createDiv({ cls: 'trisent-flip-face is-back' });
+
+    /* Die Frage steht auch auf der Rückseite, blass: Man sieht die
+       Antwort sonst ohne das, wozu sie gehört - und beim Bewerten will
+       man beides nebeneinander gelesen haben. */
+    reverse.createDiv({
+      cls: 'trisent-face-echo ' + (wordSide ? 'is-word' : 'is-fluent'),
+      text: session.question || ''
+    });
+
     reverse.createDiv({
       cls: 'trisent-face-line ' + (wordSide ? 'is-fluent' : 'is-word'),
       text: session.answerText || 'No translation in this card.'

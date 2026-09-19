@@ -7,8 +7,8 @@ key: fr:cinéma:NOUN
 gloss: Kino, Filmkunst
 forms:
   - cinéma
-status: known
-updatedAt: 2026-09-15
+status: familiar
+updatedAt: 2026-09-19
 ---
 
 ## Grammar
