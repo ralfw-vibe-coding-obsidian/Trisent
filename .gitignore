@@ -15,3 +15,8 @@ Import-Test-*.zip
 
 # Die gebaute Fassung. Entsteht bei jedem Release neu.
 dist/
+
+# Obsidians Papierkorb. Was hier landet, ist weggeworfen - eine Karte,
+# die jemand aus der Lernkartei genommen hat. Im Repo waere es nur der
+# Schatten geloeschter Dateien.
+.trash/
