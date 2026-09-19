@@ -35,6 +35,7 @@ class Reader {
        der Translator arbeitet mit denselben. */
     this.library = plugin.learning.library;
     this.streak = plugin.learning.streak;
+    this.deck = plugin.learning.deck;
 
     plugin.registerView(VIEW_TYPE, (leaf) => new TrisentView(leaf, this));
     plugin.registerView(CARD_VIEW_TYPE, (leaf) => new WordCardView(leaf, this));
@@ -147,6 +148,24 @@ class Reader {
       if (leaf.view instanceof TrisentView && leaf.view.screen === 'text') return leaf.view;
     }
     return null;
+  }
+
+  /* Ein Wort in die Lernkartei legen. Mehrfach drücken schadet nicht -
+     die Kartei legt nichts doppelt an. */
+  async addToDeck(card) {
+    try {
+      await this.deck.add(card.language, {
+        key: card.key,
+        front: card.lemma,
+        back: card.gloss
+      });
+    } catch (error) {
+      new Notice('Could not add this card: ' + String(error.message || error));
+      return null;
+    }
+    const view = this.readerView();
+    if (view) view.markDeck(card.key);
+    return this.deck.byKey(card.language).get(card.key);
   }
 
   /* Die Wortnotiz öffnen. Gibt es sie noch nicht, entsteht sie jetzt -

@@ -3,9 +3,9 @@
 /*
  * Die Learning-Seite als Ganzes.
  *
- * Reader und Translator sind zwei Werkzeuge derselben Person am selben
- * Material. Was sie sich teilen, liegt hier: die Bibliothek und der
- * Streak. Vorher hatte jedes Werkzeug seine eigene Bibliothek auf
+ * Reader, Translator und Lernkartei sind Werkzeuge derselben Person am
+ * selben Material. Was sie sich teilen, liegt hier: die Bibliothek, der
+ * Streak und die Kartei. Vorher hatte jedes Werkzeug seine eigene Bibliothek auf
  * demselben Ordner - zwei Zwischenspeicher für dieselben Dateien.
  *
  * Und hier liegt die VORDERTÜR: Der Packager reicht fertige Pakete an
@@ -20,6 +20,7 @@
 
 const { Library } = require('../core/library.js');
 const { Streak } = require('./streak.js');
+const { Deck } = require('../flashcards/deck.js');
 
 class Learning {
   constructor(plugin) {
@@ -31,6 +32,10 @@ class Learning {
 
     /* Ein Zähler je Sprache, nicht je Werkzeug. */
     this.streak = new Streak(plugin.app);
+
+    /* Die Lernkartei. Der Reader legt Karten hinein, die Kartei fragt sie
+       ab - also gehört sie keinem von beiden allein. */
+    this.deck = new Deck(plugin.app, this.library);
   }
 
   /* Die einzige Tür in den Bereich der Lernenden.

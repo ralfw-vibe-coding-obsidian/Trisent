@@ -1250,3 +1250,22 @@
   width: 0.85em;
   height: 0.85em;
 }
+
+/* Liegt dieses Wort in der Lernkartei? Ein winziges Quadrat oben rechts -
+   ein dritter Kanal neben dem Strich unter dem Wort und der Klammer
+   darunter, und damit mit keinem von beiden zu verwechseln. */
+
+.trisent-word.is-carded {
+  position: relative;
+}
+
+.trisent-word.is-carded::after {
+  content: "";
+  position: absolute;
+  top: -0.1em;
+  right: -0.25em;
+  width: 4px;
+  height: 4px;
+  border-radius: 1px;
+  background: var(--tri-accent);
+}

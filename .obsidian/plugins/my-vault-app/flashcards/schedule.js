@@ -1,0 +1,149 @@
+"use strict";
+
+/*
+ * Wann eine Karte wieder drankommt.
+ *
+ * Diese Datei rechnet nur - sie kennt weder Obsidian noch Dateien noch
+ * die Oberfläche. Das ist Absicht: Ein Fehler in dieser Rechnung fällt
+ * sonst erst in drei Wochen auf, wenn eine Karte zum falschen Zeitpunkt
+ * erscheint oder gar nicht mehr. Von Hand ist das kaum zu prüfen.
+ *
+ * Geprüft wird stattdessen in tests/flashcards-schedule.test.js.
+ */
+
+/* Fibonacci, in Tagen. Der letzte Eintrag heißt "nie wieder". */
+const RHYTHM = [1, 1, 2, 3, 5, 8, 13, 21, 34, 9999];
+
+const MAX_LEVEL = RHYTHM.length - 1;
+
+/* Woraus eine Sitzung ihre Karten zieht. */
+const SOURCES = [
+  { id: 'due', label: 'Due' },
+  { id: 'new', label: 'New' },
+  { id: 'hard', label: 'Hardest' }
+];
+
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/* Tage auf ein Datum rechnen. Über die Zeitrechnung, nicht über Sekunden -
+   sonst geht die Sommerzeit-Umstellung schief. */
+function addDays(day, days) {
+  const date = new Date(day + 'T12:00:00Z');
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function daysBetween(from, to) {
+  const a = Date.parse(from + 'T12:00:00Z');
+  const b = Date.parse(to + 'T12:00:00Z');
+  return Math.round((b - a) / 86400000);
+}
+
+/* Eine Karte auf einen brauchbaren Stand bringen - auch wenn jemand von
+   Hand etwas Unsinniges in die Notiz geschrieben hat. */
+function normalize(card) {
+  const level = Math.min(Math.max(Math.trunc(Number(card.level) || 0), 0), MAX_LEVEL);
+  return {
+    level: level,
+    seen: Math.max(Math.trunc(Number(card.seen) || 0), 0),
+    wrong: Math.max(Math.trunc(Number(card.wrong) || 0), 0),
+    due: typeof card.due === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(card.due) ? card.due : null
+  };
+}
+
+/* Die Bewertung einer Karte. Liefert den neuen Stand, ohne die alte zu
+   verändern.
+
+   bekannt:   Wiedervorlage = heute + Rhythmus des AKTUELLEN Levels,
+              danach eine Stufe höher (bei 9 ist Schluss).
+   unbekannt: morgen wieder, zurück auf Stufe 1.
+   nochmal:   ändert nichts - die Karte geht nur ans Ende des Stapels. */
+function rate(card, answer, day) {
+  const state = normalize(card);
+  const now = day || today();
+
+  if (answer === 'again') return state;
+
+  if (answer === 'known') {
+    return {
+      level: Math.min(state.level + 1, MAX_LEVEL),
+      seen: state.seen + 1,
+      wrong: state.wrong,
+      due: addDays(now, RHYTHM[state.level])
+    };
+  }
+
+  return {
+    level: 1,
+    seen: state.seen + 1,
+    wrong: state.wrong + 1,
+    due: addDays(now, 1)
+  };
+}
+
+function isNew(card) {
+  return normalize(card).seen === 0;
+}
+
+function isDue(card, day) {
+  const state = normalize(card);
+  if (state.seen === 0) return false;
+  if (!state.due) return true;
+  return state.due <= (day || today());
+}
+
+/* Den Stapel für eine Sitzung zusammenstellen.
+
+   Reicht die gewählte Quelle nicht für den gewünschten Umfang, wird
+   aufgefüllt: Fällige mit Neuen, alles andere bleibt, wie es ist. */
+function pick(cards, source, size, day) {
+  const now = day || today();
+  const limit = Math.max(Math.trunc(Number(size) || 0), 0);
+  if (limit === 0) return [];
+
+  if (source === 'new') {
+    return cards.filter(isNew).slice(0, limit);
+  }
+
+  if (source === 'hard') {
+    return cards
+      .filter((card) => normalize(card).wrong > 0)
+      .slice()
+      .sort((a, b) => normalize(b).wrong - normalize(a).wrong)
+      .slice(0, limit);
+  }
+
+  /* Fällige zuerst, die am längsten überfälligen voran. */
+  const due = cards
+    .filter((card) => isDue(card, now))
+    .slice()
+    .sort((a, b) => String(normalize(a).due || '').localeCompare(String(normalize(b).due || '')));
+
+  if (due.length >= limit) return due.slice(0, limit);
+
+  const chosen = new Set(due);
+  const fresh = cards.filter((card) => isNew(card) && !chosen.has(card));
+  return due.concat(fresh.slice(0, limit - due.length));
+}
+
+/* Mischen. Der Zufall ist hereingereicht, damit ein Test ihn festhalten
+   kann. */
+function shuffle(items, random) {
+  const roll = random || Math.random;
+  const out = items.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(roll() * (i + 1));
+    const swap = out[i];
+    out[i] = out[j];
+    out[j] = swap;
+  }
+  return out;
+}
+
+module.exports = {
+  RHYTHM, MAX_LEVEL, SOURCES,
+  today, addDays, daysBetween, normalize,
+  rate, isNew, isDue, pick, shuffle
+};

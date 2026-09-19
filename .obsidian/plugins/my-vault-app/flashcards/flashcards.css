@@ -1,0 +1,172 @@
+/*
+ * Die Lernkartei.
+ *
+ * Gehört der Flashcard-Sitzung. Wird beim Start automatisch geladen.
+ * Farben, Schriften, Knöpfe und das Gerüst stehen in ../styles.css.
+ */
+
+/* Was ansteht, in drei Zahlen über der Liste. */
+
+.trisent-deck-summary {
+  display: flex;
+  gap: 1.75rem;
+  margin: 0.5rem 0 1.75rem;
+}
+
+.trisent-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.trisent-count-value {
+  font-family: var(--tri-read);
+  font-size: 1.6rem;
+  font-weight: var(--tri-read-weight);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+}
+
+.trisent-count.is-strong .trisent-count-value {
+  color: var(--tri-accent);
+}
+
+.trisent-count-label {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+/* Die Karten. */
+
+.trisent-deck {
+  display: flex;
+  flex-direction: column;
+}
+
+.trisent-card-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+/* Was heute dran ist, trägt einen Streifen am Rand. */
+.trisent-card-row.is-due {
+  box-shadow: -0.7rem 0 0 -0.6rem var(--tri-accent);
+}
+
+.trisent-card-words {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.trisent-card-front {
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+  color: var(--text-normal);
+}
+
+.trisent-card-back {
+  font-size: 0.8rem;
+  color: var(--text-faint);
+  margin-top: 0.1rem;
+}
+
+.trisent-card-facts {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Das Level als Leiter. Eine Zahl von 0 bis 9 sagt wenig, der Fortschritt
+   darin viel - man sieht auf einen Blick, wie weit ein Wort ist. */
+
+.trisent-level {
+  display: flex;
+  gap: 2px;
+}
+
+.trisent-level-step {
+  width: 3px;
+  height: 0.8rem;
+  border-radius: 1px;
+  background: var(--background-modifier-border);
+}
+
+.trisent-level-step.is-on {
+  background: var(--tri-accent);
+}
+
+.trisent-card-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.trisent-card-stat.is-bad {
+  color: var(--tri-unknown);
+}
+
+.trisent-card-stat svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.trisent-card-due {
+  min-width: 5.5rem;
+  text-align: right;
+}
+
+/* In der Wortkarte des Readers: hinzufügen, oder sehen, dass es drin ist. */
+
+.trisent-card-deck {
+  margin-top: 0.25rem;
+}
+
+.trisent-card-view .trisent-add-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  box-shadow: none;
+}
+
+.trisent-card-view .trisent-add-card:hover {
+  background: var(--background-modifier-hover);
+}
+
+.trisent-card-view .trisent-add-card[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.trisent-in-deck {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--tri-accent);
+}
+
+.trisent-in-deck-icon svg {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.trisent-in-deck-level {
+  color: var(--text-faint);
+}

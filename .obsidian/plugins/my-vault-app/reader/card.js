@@ -116,6 +116,12 @@ class WordCardView extends ItemView {
 
     this.renderOccurrences(page, card);
 
+    /* In die Lernkartei legen. Ist das Wort schon drin, steht hier statt
+       eines Knopfes, wie weit es ist - noch einmal hinzufügen gibt es
+       nicht, und ein Knopf, der nichts tut, wäre eine Zumutung. */
+    const deck = page.createDiv({ cls: 'trisent-card-deck' });
+    this.renderDeckState(deck, card);
+
     /* Der Weg in die eigene Notiz - dort ist Platz für alles Eigene. */
     const foot = page.createDiv({ cls: 'trisent-card-foot' });
     const open = foot.createEl('button', { cls: 'trisent-card-open' });
@@ -184,6 +190,28 @@ class WordCardView extends ItemView {
     if (card.searching) {
       section.createDiv({ cls: 'trisent-occurrence-searching', text: 'Looking in your other texts…' });
     }
+  }
+
+  renderDeckState(parent, card) {
+    parent.empty();
+    const entry = card.language ? this.reader.deck.byKey(card.language).get(card.key) : null;
+
+    if (entry) {
+      const state = parent.createDiv({ cls: 'trisent-in-deck' });
+      setIcon(state.createSpan({ cls: 'trisent-in-deck-icon' }), 'layers');
+      state.createSpan({ text: 'In your deck' });
+      state.createSpan({ cls: 'trisent-in-deck-level', text: 'level ' + entry.level });
+      return;
+    }
+
+    const button = parent.createEl('button', { cls: 'trisent-add-card' });
+    setIcon(button.createSpan(), 'layers');
+    button.createSpan({ text: 'Add to deck' });
+    button.addEventListener('click', async () => {
+      button.setAttr('disabled', 'true');
+      await this.reader.addToDeck(card);
+      this.renderDeckState(parent, card);
+    });
   }
 
   section(page, title) {

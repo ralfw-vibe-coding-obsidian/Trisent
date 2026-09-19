@@ -44,6 +44,7 @@ class TrisentView extends ItemView {
     this.reader = reader;
     this.library = reader.library;
     this.streak = reader.streak;
+    this.deck = reader.deck;
     this.screen = 'languages';
     this.languageCode = null;
     this.packagePath = null;
@@ -864,6 +865,9 @@ class TrisentView extends ItemView {
       this.dictionary = data.dictionary || {};
       this.packageData = data;
       this.statusMap = this.library.wordStatusMap(language);
+      /* Einmal je Text nachsehen, welche Wörter in der Kartei liegen -
+         nicht einmal je Wort. */
+      this.inDeck = this.deck.byKey(language);
       /* Register aller gezeichneten Vorkommen je Schlüssel. Damit kann ein
          Klick alle Stellen sofort umfärben, ohne den Text neu zu zeichnen -
          die Leseposition bleibt, wo sie ist. */
@@ -1247,7 +1251,11 @@ class TrisentView extends ItemView {
         /* Nur Wörter sind anklickbar - Satzzeichen nicht. Die Farbe sitzt
            auf dem Wort selbst, nicht auf der Spalte, damit sie den
            Wortabstand nicht mit einfärbt. */
-        wordEl = f.createSpan({ cls: 'trisent-word', text: column.f });
+        wordEl = f.createSpan({
+          cls: 'trisent-word' + (this.inDeck.has(column.unit.key) ? ' is-carded' : ''),
+          text: column.f
+        });
+        wordEl.dataset.key = column.unit.key;
         if (column.unitIndex !== undefined) wordEl.dataset.unit = String(column.unitIndex);
         this.attachTouch(wordEl, column.unit.key, column.unit);
       } else {
@@ -1526,6 +1534,16 @@ class TrisentView extends ItemView {
     this.languageCode = languageCode;
     this.jumpTo = sentenceId;
     this.openText(path);
+  }
+
+  /* Ein Wort ist in die Kartei gewandert - die Ecke sofort setzen, an
+     allen Vorkommen, ohne den Text neu zu zeichnen. */
+  markDeck(key) {
+    if (!this.scrollEl || !this.inDeck) return;
+    this.inDeck.set(key, true);
+    for (const el of this.scrollEl.querySelectorAll('.trisent-word')) {
+      if (el.dataset.key === key) el.addClass('is-carded');
+    }
   }
 
   registerOccurrence(key, parts) {

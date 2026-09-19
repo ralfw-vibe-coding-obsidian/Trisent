@@ -29,6 +29,8 @@ const MODULES = [
   'core/package.js',
   'core/library.js',
   'learning/streak.js',
+  'flashcards/schedule.js',
+  'flashcards/deck.js',
   'learning/index.js',
   'reader/audio.js',
   'reader/view.js',
@@ -39,6 +41,8 @@ const MODULES = [
   'translator/speech.js',
   'translator/view.js',
   'translator/index.js',
+  'flashcards/view.js',
+  'flashcards/index.js',
   'packager/ai.js',
   'packager/audio.js',
   'packager/build.js',
@@ -59,7 +63,12 @@ function resolvePath(from, request) {
 /* Die Stilvorlagen der Module. styles.css lädt Obsidian selbst; alles
    Weitere holen wir beim Start dazu, damit jede Seite ihre eigene Datei
    hat und wir uns nicht gegenseitig hineinschreiben. */
-const MODULE_STYLES = ['reader/reader.css', 'translator/translator.css', 'packager/packager.css'];
+const MODULE_STYLES = [
+  'reader/reader.css',
+  'translator/translator.css',
+  'flashcards/flashcards.css',
+  'packager/packager.css'
+];
 
 /* Beim Entwickeln liegen die Dateien einzeln im Plugin-Ordner und werden
    von dort gelesen. Für eine Veröffentlichung darf das nicht sein: Über
@@ -126,6 +135,7 @@ class TrisentSettingTab extends PluginSettingTab {
     /* Jedes Modul steuert bei, was nur es betrifft. */
     this.plugin.reader.addSettings(containerEl);
     this.plugin.translator.addSettings(containerEl);
+    this.plugin.flashcards.addSettings(containerEl);
     this.plugin.packager.addSettings(containerEl);
   }
 }
@@ -149,9 +159,12 @@ module.exports = class TrisentPlugin extends Plugin {
 
     const reader = modules['reader/index.js'];
     const translator = modules['translator/index.js'];
+    const flashcards = modules['flashcards/index.js'];
     const packager = modules['packager/index.js'];
 
-    await this.loadSettings(reader.DEFAULTS, translator.DEFAULTS, packager.DEFAULTS);
+    await this.loadSettings(
+      reader.DEFAULTS, translator.DEFAULTS, flashcards.DEFAULTS, packager.DEFAULTS
+    );
 
     /* Die Seite der Lernenden. Reader und Translator teilen sich, was hier
        liegt - und der Packager reicht fertige Pakete an
@@ -161,6 +174,7 @@ module.exports = class TrisentPlugin extends Plugin {
 
     this.reader = new reader.Reader(this);
     this.translator = new translator.Translator(this);
+    this.flashcards = new flashcards.Flashcards(this);
     this.packager = new packager.Packager(this);
 
     this.addSettingTab(new TrisentSettingTab(this.app, this));
@@ -189,6 +203,7 @@ module.exports = class TrisentPlugin extends Plugin {
     this.refreshTimer = window.setTimeout(() => {
       this.reader.refresh();
       this.translator.refresh();
+      this.flashcards.refresh();
     }, 200);
   }
 
@@ -306,7 +321,7 @@ module.exports = class TrisentPlugin extends Plugin {
   /* Einstellungen laden und sichern                                   */
   /* ---------------------------------------------------------------- */
 
-  async loadSettings(readerDefaults, translatorDefaults, packagerDefaults) {
+  async loadSettings(readerDefaults, translatorDefaults, flashcardDefaults, packagerDefaults) {
     const stored = (await this.loadData()) || {};
 
     this.settings = {
@@ -318,6 +333,7 @@ module.exports = class TrisentPlugin extends Plugin {
           : SHARED_DEFAULTS.hideLibraryFolder,
       reader: Object.assign({}, readerDefaults, stored.reader || {}),
       translator: Object.assign({}, translatorDefaults, stored.translator || {}),
+      flashcards: Object.assign({}, flashcardDefaults, stored.flashcards || {}),
       packager: Object.assign({}, packagerDefaults, stored.packager || {})
     };
 
