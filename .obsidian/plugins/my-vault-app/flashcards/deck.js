@@ -101,26 +101,31 @@ class Deck {
       '---',
       'type: flashcard',
       'language: ' + language.code,
-      'key: ' + yaml(record.key),
-      'front: ' + yaml(record.front),
-      'back: ' + yaml(record.back),
-      'level: ' + record.level,
-      'seen: ' + record.seen,
-      'wrong: ' + record.wrong,
-      'due: ' + record.due,
-      'added: ' + record.added,
-      '---'
+      'key: ' + yaml(record.key)
     ];
 
-    /* Der Weg zur Wortnotiz - mit ganzem Pfad. Ein kurzes [[après]]
-       ginge hier daneben: Die Karte heißt genauso, nur in einem anderen
-       Ordner, und Obsidian löst den kurzen Namen auf die nächstliegende
-       Notiz auf - also auf die Karte selbst. */
+    /* Der Weg zur Wortnotiz, als Eigenschaft: Dort steht er strukturiert
+       neben den anderen Angaben, statt im Fließtext.
+
+       Mit ganzem Pfad. Ein kurzes [[après]] ginge hier daneben - die
+       Karte heißt genauso, nur in einem anderen Ordner, und Obsidian
+       löst den kurzen Namen auf die nächstliegende Notiz auf, also auf
+       die Karte selbst. */
     if (entry.note) {
-      lines.push('Dictionary entry: [[' + entry.note.path.replace(/\.md$/, '')
-        + '|' + (record.front || record.key) + ']]');
-      lines.push('');
+      lines.push('dictionary: ' + yaml(
+        '[[' + entry.note.path.replace(/\.md$/, '')
+        + '|' + (record.front || record.key) + ']]'
+      ));
     }
+
+    lines.push('front: ' + yaml(record.front));
+    lines.push('back: ' + yaml(record.back));
+    lines.push('level: ' + record.level);
+    lines.push('seen: ' + record.seen);
+    lines.push('wrong: ' + record.wrong);
+    lines.push('due: ' + record.due);
+    lines.push('added: ' + record.added);
+    lines.push('---');
 
     /* Der Platz der Person. Was sie sich beim Üben zu dieser Karte
        merkt, gehört zur Karte - nicht in die Wortnotiz, die dem Wort
