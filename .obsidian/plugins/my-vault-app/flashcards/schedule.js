@@ -150,8 +150,16 @@ function pick(cards, source, size, day) {
   const limit = Math.max(Math.trunc(Number(size) || 0), 0);
   if (limit === 0) return [];
 
+  /* Neue in der Reihenfolge, in der sie hinzugekommen sind - was man
+     sich zuerst vorgenommen hat, kommt zuerst dran. Die Reihenfolge der
+     Dateien im Ordner wäre zufällig und sähe trotzdem nach einer
+     Reihenfolge aus. */
   if (source === 'new') {
-    return cards.filter(isNew).slice(0, limit);
+    return cards
+      .filter(isNew)
+      .slice()
+      .sort((a, b) => String(a.added || '').localeCompare(String(b.added || '')))
+      .slice(0, limit);
   }
 
   if (source === 'hard') {

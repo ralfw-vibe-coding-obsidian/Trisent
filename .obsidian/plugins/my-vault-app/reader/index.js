@@ -121,6 +121,16 @@ class Reader {
     view.goTo(languageCode, path, sentenceId);
   }
 
+  /* Von woanders her zu einer Stelle springen - der Reader muss dafür
+     nicht offen sein. Wird von der Lernkartei gerufen. */
+  async showSentence(languageCode, path, sentenceId) {
+    await this.open();
+    const view = this.mainView();
+    if (!view) return false;
+    view.goTo(languageCode, path, sentenceId);
+    return true;
+  }
+
   mainView() {
     const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0];
     return leaf && leaf.view instanceof TrisentView ? leaf.view : null;

@@ -15,6 +15,7 @@ const {
 } = require('./schedule.js');
 const { Session } = require('./session.js');
 const { searchPackages } = require('../learning/occurrences.js');
+const { filter } = require('./find.js');
 
 /* Wonach die Kartei geordnet wird. Bei gleicher Schwierigkeit
    alphabetisch - sonst wechselte die Reihenfolge bei jedem Zeichnen. */
@@ -55,6 +56,7 @@ class DeckView extends ItemView {
     this.deck = flashcards.deck;
     this.streak = flashcards.streak;
     this.languageCode = null;
+    this.query = '';
     this.session = null;
     /* Der Streak wird je Sitzung einmal angestoßen, nicht je Karte. */
     this.counted = false;
@@ -144,6 +146,7 @@ class DeckView extends ItemView {
 
       tile.addEventListener('click', () => {
         this.languageCode = language.code;
+        this.query = '';
         this.flashcards.settings.lastLanguage = language.code;
         this.flashcards.saveSettings();
         this.render();
@@ -201,10 +204,46 @@ class DeckView extends ItemView {
 
     const listHead = page.createDiv({ cls: 'trisent-deck-head' });
     listHead.createDiv({ cls: 'trisent-section-label', text: 'All cards' });
+    this.renderSearch(listHead);
     this.renderSort(listHead);
 
     const list = page.createDiv({ cls: 'trisent-deck' });
-    for (const card of this.sorted(cards, language)) this.renderCard(list, card, now);
+    this.listEl = list;
+    this.paintList(cards, language, now);
+  }
+
+  /* Suchen, ohne die Seite neu zu zeichnen: Sonst verlöre das Feld bei
+     jedem Buchstaben den Eingabefokus. */
+  paintList(cards, language, now) {
+    const list = this.listEl;
+    if (!list) return;
+    list.empty();
+
+    const found = this.sorted(filter(cards, this.query), language);
+    if (found.length === 0) {
+      list.createDiv({
+        cls: 'trisent-deck-empty',
+        text: 'Nothing here matches “' + this.query + '”.'
+      });
+      return;
+    }
+    for (const card of found) this.renderCard(list, card, now);
+  }
+
+  renderSearch(head) {
+    const box = head.createDiv({ cls: 'trisent-deck-search' });
+    setIcon(box.createSpan({ cls: 'trisent-deck-search-icon' }), 'search');
+
+    const field = box.createEl('input', {
+      cls: 'trisent-deck-search-input',
+      attr: { type: 'search', placeholder: 'Search', value: this.query || '' }
+    });
+
+    field.addEventListener('input', () => {
+      this.query = field.value;
+      const language = this.library.languageByCode(this.languageCode);
+      if (language) this.paintList(this.deck.all(language), language, today());
+    });
   }
 
   /* Wonach die Kartei geordnet ist. Steht sichtbar da, weil eine
@@ -267,8 +306,18 @@ class DeckView extends ItemView {
 
   renderCard(list, card, now) {
     const row = list.createDiv({
-      cls: 'trisent-card-row' + (isDue(card, now) ? ' is-due' : '')
+      cls: 'trisent-card-row is-clickable' + (isDue(card, now) ? ' is-due' : '')
     });
+
+    /* Die Karte führt dorthin, wo das Wort steht - das ist der häufigere
+       Wunsch als die Notiz: Man will es im Satz sehen. Einmal angemeldet,
+       nicht bei jedem Neuzeichnen des Inhalts. */
+    setTooltip(row, 'Show this word in a text');
+    row.addEventListener('click', () => {
+      if (row.hasClass('is-asking')) return;
+      this.showInText(card);
+    });
+
     this.paintCard(row, card, now);
   }
 
@@ -278,10 +327,23 @@ class DeckView extends ItemView {
 
     /* Weglegen. Klein und blass, aber immer da - auf dem Telefon gibt es
        kein Darüberfahren, unter dem sich etwas verstecken ließe. */
-    const drop = row.createEl('button', { cls: 'trisent-card-drop' });
+    const tools = row.createDiv({ cls: 'trisent-card-tools' });
+
+    const note = tools.createEl('button', { cls: 'trisent-card-tool' });
+    setIcon(note.createSpan(), 'file-text');
+    setTooltip(note, 'Open the word note');
+    note.addEventListener('click', (event) => {
+      event.stopPropagation();
+      this.openNote(card);
+    });
+
+    const drop = tools.createEl('button', { cls: 'trisent-card-tool is-drop' });
     setIcon(drop.createSpan(), 'x');
     setTooltip(drop, 'Remove from deck');
-    drop.addEventListener('click', () => this.askRemove(row, card, now));
+    drop.addEventListener('click', (event) => {
+      event.stopPropagation();
+      this.askRemove(row, card, now);
+    });
 
     const words = row.createDiv({ cls: 'trisent-card-words' });
     words.createDiv({ cls: 'trisent-card-front', text: card.front || card.key });
@@ -315,6 +377,44 @@ class DeckView extends ItemView {
     facts.createSpan({ cls: 'trisent-card-due', text: this.dueText(card, now) });
   }
 
+  /* Die Wortnotiz - dort steht, was die Person über das Wort weiß. Gibt
+     es sie noch nicht, ist das kein Fehler: Angelegt wird sie erst, wenn
+     jemand etwas hineinschreiben will. */
+  async openNote(card) {
+    const language = this.library.languageByCode(this.languageCode);
+    if (!language) return;
+
+    const file = this.library.wordFileFor(language, card.key);
+    if (!file) {
+      new Notice('No note for this word yet. Open it from a text to make one.');
+      return;
+    }
+    await this.app.workspace.getLeaf('tab').openFile(file);
+  }
+
+  /* Die erste Stelle, an der das Wort in einem Text steht - und dorthin
+     springen. Gesucht wird mit demselben Code wie für die Beispiele. */
+  async showInText(card) {
+    const language = this.library.languageByCode(this.languageCode);
+    if (!language) return;
+
+    let found = [];
+    try {
+      found = await searchPackages(this.library, language, card.key, { limit: 1 });
+    } catch (error) {
+      found = [];
+    }
+
+    if (found.length === 0) {
+      new Notice('This word is not in any of your texts right now.');
+      return;
+    }
+
+    const reader = this.flashcards.plugin.reader;
+    if (!reader) return;
+    await reader.showSentence(language.code, found[0].path, found[0].sentence);
+  }
+
   /* Zwei Schritte statt eines Dialogs: Die Karte selbst fragt nach, und
      man kann es sich anders überlegen, ohne dass etwas aufgepoppt ist.
      Der Lernstand des Wortes bleibt in jedem Fall - er steht in der
@@ -335,10 +435,14 @@ class DeckView extends ItemView {
     const buttons = row.createDiv({ cls: 'trisent-card-ask-buttons' });
 
     const keep = buttons.createEl('button', { cls: 'trisent-ask-keep', text: 'Keep' });
-    keep.addEventListener('click', () => this.paintCard(row, card, now));
+    keep.addEventListener('click', (event) => {
+      event.stopPropagation();
+      this.paintCard(row, card, now);
+    });
 
     const drop = buttons.createEl('button', { cls: 'trisent-ask-drop', text: 'Remove' });
-    drop.addEventListener('click', async () => {
+    drop.addEventListener('click', async (event) => {
+      event.stopPropagation();
       drop.setAttr('disabled', 'true');
       try {
         await this.deck.remove(card);

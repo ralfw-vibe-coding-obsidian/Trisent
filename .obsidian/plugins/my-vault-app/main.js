@@ -32,6 +32,7 @@ const MODULES = [
   'learning/occurrences.js',
   'flashcards/schedule.js',
   'flashcards/session.js',
+  'flashcards/find.js',
   'flashcards/deck.js',
   'learning/index.js',
   'reader/audio.js',

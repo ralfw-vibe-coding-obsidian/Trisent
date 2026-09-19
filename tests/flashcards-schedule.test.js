@@ -310,3 +310,20 @@ test('Unsinn ergibt keinen Balken', () => {
   is(s.barHeight('zwei'), 0, 'keine Zahl');
   is(s.barHeight(null), 0, 'nichts');
 });
+
+test('neue Karten kommen in der Reihenfolge, in der sie dazukamen', () => {
+  const neu = (name, added) =>
+    Object.assign(card({ seen: 0 }), { front: name, added: added });
+
+  const bestand = [
+    neu('drei', '2026-09-19'),
+    neu('eins', '2026-09-01'),
+    neu('zwei', '2026-09-10')
+  ];
+
+  is(s.pick(bestand, 'new', 10, HEUTE).map((c) => c.front),
+    ['eins', 'zwei', 'drei'], 'ältestes zuerst');
+  is(s.pick(bestand, 'new', 2, HEUTE).map((c) => c.front),
+    ['eins', 'zwei'], 'und der Umfang gilt');
+  is(bestand.map((c) => c.front), ['drei', 'eins', 'zwei'], 'der Bestand bleibt');
+});

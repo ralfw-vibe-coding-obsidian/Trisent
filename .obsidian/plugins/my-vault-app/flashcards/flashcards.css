@@ -205,10 +205,56 @@
 .trisent-deck-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.5rem 1rem;
+  gap: 0.5rem 0.8rem;
   margin: 2rem 0 0.7rem;
+}
+
+.trisent-deck-head .trisent-section-label {
+  margin-right: auto;
+}
+
+.trisent-deck-search {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: var(--background-primary);
+}
+
+.trisent-deck-search-icon {
+  display: inline-flex;
+  color: var(--text-faint);
+}
+
+.trisent-deck-search-icon svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.trisent-view .trisent-deck-search-input {
+  width: 8rem;
+  padding: 0.15rem 0;
+  border: none;
+  background: transparent;
+  font-family: var(--tri-ui);
+  font-size: 0.8rem;
+  color: var(--text-normal);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-deck-search-input:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.trisent-deck-empty {
+  font-family: var(--tri-ui);
+  font-size: 0.85rem;
+  color: var(--text-faint);
+  padding: 0.6rem 0;
 }
 
 .trisent-deck-head .trisent-section-label {
@@ -236,13 +282,19 @@
   background: var(--background-primary);
 }
 
-/* Weglegen. Blass, aber immer sichtbar - auf dem Telefon gibt es kein
-   Darüberfahren, unter dem sich ein Knopf verstecken ließe. */
+/* Die beiden Knöpfe oben rechts. Blass, aber immer sichtbar - auf dem
+   Telefon gibt es kein Darüberfahren, unter dem sich etwas verstecken
+   ließe. */
 
-.trisent-view .trisent-card-drop {
+.trisent-card-tools {
   position: absolute;
   top: 0.3rem;
   right: 0.3rem;
+  display: flex;
+  gap: 0.1rem;
+}
+
+.trisent-view .trisent-card-tool {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -254,19 +306,37 @@
   border-radius: 999px;
   background: transparent;
   color: var(--text-faint);
-  opacity: 0.55;
+  opacity: 0.5;
   box-shadow: none;
 }
 
-.trisent-view .trisent-card-drop:hover {
+.trisent-view .trisent-card-tool:hover {
   opacity: 1;
   background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.trisent-view .trisent-card-tool.is-drop:hover {
   color: var(--tri-unknown);
 }
 
-.trisent-card-drop svg {
+.trisent-card-tool svg {
   width: 0.8rem;
   height: 0.8rem;
+}
+
+/* Die Karte selbst ist ein Weg zum Wort im Text. */
+
+.trisent-card-row.is-clickable {
+  cursor: pointer;
+}
+
+.trisent-card-row.is-clickable:hover {
+  border-color: var(--tri-accent);
+}
+
+.trisent-card-row.is-asking.is-clickable {
+  cursor: default;
 }
 
 /* Die Karte fragt selbst nach, statt einen Dialog aufzumachen. */
@@ -338,8 +408,8 @@
 
 .trisent-card-words {
   min-width: 0;
-  /* Platz für den Knopf oben rechts. */
-  padding-right: 1.2rem;
+  /* Platz für die Knöpfe oben rechts. */
+  padding-right: 2.6rem;
 }
 
 .trisent-card-front {
@@ -932,6 +1002,14 @@
 
   .trisent-start-options {
     gap: 0.9rem 1.2rem;
+  }
+
+  .trisent-deck-search {
+    flex: 1 1 100%;
+  }
+
+  .trisent-view .trisent-deck-search-input {
+    width: 100%;
   }
 }
 
