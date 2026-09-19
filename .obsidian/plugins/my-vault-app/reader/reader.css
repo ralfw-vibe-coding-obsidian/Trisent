@@ -618,10 +618,21 @@
   gap: 1.25rem;
 }
 
+/* Links die Grundform, rechts die Lernkartei - auf einer Höhe, damit
+   beides ohne Rollen zu sehen ist. */
+
 .trisent-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.trisent-card-naming {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  min-width: 0;
 }
 
 .trisent-card-lemma {

@@ -6,7 +6,7 @@
  * Gehört dieser Sitzung.
  */
 
-const { ItemView, setIcon } = require('obsidian');
+const { ItemView, setIcon, setTooltip } = require('obsidian');
 const { WORD_STATUS, readablePos } = require('../core/package.js');
 
 const CARD_VIEW_TYPE = 'trisent-card-view';
@@ -57,10 +57,15 @@ class WordCardView extends ItemView {
     const card = this.card;
     const page = root.createDiv({ cls: 'trisent-card' });
 
-    /* Kopf: die Grundform, nicht die Form aus dem Satz. */
+    /* Kopf: die Grundform, nicht die Form aus dem Satz. Rechts daneben
+       die Lernkartei - sie gehört nach oben, weil man sie im Moment des
+       Lesens braucht und nicht erst hinter den Vorkommen suchen will. */
     const head = page.createDiv({ cls: 'trisent-card-head' });
-    head.createDiv({ cls: 'trisent-card-lemma', text: card.lemma });
-    const tags = head.createDiv({ cls: 'trisent-card-tags' });
+    const naming = head.createDiv({ cls: 'trisent-card-naming' });
+    this.renderDeckState(head.createDiv({ cls: 'trisent-card-deck' }), card);
+
+    naming.createDiv({ cls: 'trisent-card-lemma', text: card.lemma });
+    const tags = naming.createDiv({ cls: 'trisent-card-tags' });
     if (card.partOfSpeech) {
       tags.createSpan({ cls: 'trisent-chip', text: readablePos(card.partOfSpeech) });
     }
@@ -115,12 +120,6 @@ class WordCardView extends ItemView {
     }
 
     this.renderOccurrences(page, card);
-
-    /* In die Lernkartei legen. Ist das Wort schon drin, steht hier statt
-       eines Knopfes, wie weit es ist - noch einmal hinzufügen gibt es
-       nicht, und ein Knopf, der nichts tut, wäre eine Zumutung. */
-    const deck = page.createDiv({ cls: 'trisent-card-deck' });
-    this.renderDeckState(deck, card);
 
     /* Der Weg in die eigene Notiz - dort ist Platz für alles Eigene. */
     const foot = page.createDiv({ cls: 'trisent-card-foot' });
@@ -192,6 +191,8 @@ class WordCardView extends ItemView {
     }
   }
 
+  /* Ein Zeichen, kein Satz - es sitzt neben der Grundform und muss dort
+     schmal bleiben. Was es bedeutet, sagt der Hinweis beim Darüberfahren. */
   renderDeckState(parent, card) {
     parent.empty();
     const entry = card.language ? this.reader.deck.byKey(card.language).get(card.key) : null;
@@ -199,14 +200,16 @@ class WordCardView extends ItemView {
     if (entry) {
       const state = parent.createDiv({ cls: 'trisent-in-deck' });
       setIcon(state.createSpan({ cls: 'trisent-in-deck-icon' }), 'layers');
-      state.createSpan({ text: 'In your deck' });
-      state.createSpan({ cls: 'trisent-in-deck-level', text: 'level ' + entry.level });
+      state.createSpan({ cls: 'trisent-in-deck-level', text: String(entry.level) });
+      setTooltip(state, 'In your deck · level ' + entry.level);
       return;
     }
 
     const button = parent.createEl('button', { cls: 'trisent-add-card' });
-    setIcon(button.createSpan(), 'layers');
-    button.createSpan({ text: 'Add to deck' });
+    setIcon(button.createSpan({ cls: 'trisent-add-card-icon' }), 'layers');
+    button.createSpan({ cls: 'trisent-add-card-plus', text: '+' });
+    setTooltip(button, 'Add to deck');
+    button.setAttr('aria-label', 'Add to deck');
     button.addEventListener('click', async () => {
       button.setAttr('disabled', 'true');
       await this.reader.addToDeck(card);
