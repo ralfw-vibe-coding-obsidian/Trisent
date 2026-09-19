@@ -86,18 +86,29 @@ class Deck {
       path = this.folderPath(language) + '/' + name + ' ' + n + '.md';
     }
 
+    const record = {
+      key: entry.key,
+      front: entry.front || '',
+      back: entry.back || '',
+      level: 0,
+      seen: 0,
+      wrong: 0,
+      due: today(),
+      added: today()
+    };
+
     const lines = [
       '---',
       'type: flashcard',
       'language: ' + language.code,
-      'key: ' + yaml(entry.key),
-      'front: ' + yaml(entry.front || ''),
-      'back: ' + yaml(entry.back || ''),
-      'level: 0',
-      'seen: 0',
-      'wrong: 0',
-      'due: ' + today(),
-      'added: ' + today(),
+      'key: ' + yaml(record.key),
+      'front: ' + yaml(record.front),
+      'back: ' + yaml(record.back),
+      'level: ' + record.level,
+      'seen: ' + record.seen,
+      'wrong: ' + record.wrong,
+      'due: ' + record.due,
+      'added: ' + record.added,
       '---',
       '',
       /* Nur zum Durchklicken in Obsidian - die App fragt diesen Link nie. */
@@ -105,8 +116,20 @@ class Deck {
       ''
     ];
 
-    await this.app.vault.create(path, lines.join('\n'));
-    return this.byKey(language).get(entry.key);
+    const file = await this.app.vault.create(path, lines.join('\n'));
+
+    /* Die eben angelegte Karte NICHT über den Metadatenspeicher
+       zurücklesen. Der kennt die Notiz erst einen Augenblick später -
+       bis dahin käme hier nichts zurück, und die Oberfläche zeigte
+       weiter den Knopf zum Hinzufügen, als wäre nichts geschehen.
+       Wir wissen ja, was drinsteht: Wir haben es gerade geschrieben. */
+    return Object.assign(normalize(record), {
+      key: record.key,
+      front: record.front,
+      back: record.back,
+      added: record.added,
+      file: file
+    });
   }
 
   async remove(card) {

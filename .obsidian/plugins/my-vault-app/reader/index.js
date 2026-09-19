@@ -153,8 +153,9 @@ class Reader {
   /* Ein Wort in die Lernkartei legen. Mehrfach drücken schadet nicht -
      die Kartei legt nichts doppelt an. */
   async addToDeck(card) {
+    let entry;
     try {
-      await this.deck.add(card.language, {
+      entry = await this.deck.add(card.language, {
         key: card.key,
         front: card.lemma,
         back: card.gloss
@@ -165,7 +166,7 @@ class Reader {
     }
     const view = this.readerView();
     if (view) view.markDeck(card.key);
-    return this.deck.byKey(card.language).get(card.key);
+    return entry;
   }
 
   /* Die Wortnotiz öffnen. Gibt es sie noch nicht, entsteht sie jetzt -

@@ -193,9 +193,12 @@ class WordCardView extends ItemView {
 
   /* Ein Zeichen, kein Satz - es sitzt neben der Grundform und muss dort
      schmal bleiben. Was es bedeutet, sagt der Hinweis beim Darüberfahren. */
-  renderDeckState(parent, card) {
+  renderDeckState(parent, card, known) {
     parent.empty();
-    const entry = card.language ? this.reader.deck.byKey(card.language).get(card.key) : null;
+    /* Nach dem Hinzufuegen kennen wir die Karte schon - dann nicht noch
+       einmal nachschlagen, der Speicher haengt einen Wimpernschlag nach. */
+    const entry = known
+      || (card.language ? this.reader.deck.byKey(card.language).get(card.key) : null);
 
     if (entry) {
       const state = parent.createDiv({ cls: 'trisent-in-deck' });
@@ -212,8 +215,9 @@ class WordCardView extends ItemView {
     button.setAttr('aria-label', 'Add to deck');
     button.addEventListener('click', async () => {
       button.setAttr('disabled', 'true');
-      await this.reader.addToDeck(card);
-      this.renderDeckState(parent, card);
+      const added = await this.reader.addToDeck(card);
+      if (!added) button.removeAttribute('disabled');
+      this.renderDeckState(parent, card, added);
     });
   }
 
