@@ -214,6 +214,27 @@ function timeline(cards, day, span) {
   return { over: over, days: days, later: later, fresh: fresh };
 }
 
+/* Wie hoch ein Balken des Zeitstrahls steht - 0 bis knapp unter 1.
+
+   Nicht linear, sondern sättigend: n / (n + HALF). Unten ist die Kurve
+   steil, oben flach. 10 und 30 Karten unterscheiden sich deutlich
+   (33% gegen 60%), 150 und 170 kaum noch (88% gegen 90%) - und genau so
+   liest man einen solchen Strahl auch: Ob an einem Tag zehn oder dreißig
+   warten, entscheidet über den Abend. Ob hundertfünfzig oder
+   hundertsiebzig, ist dieselbe schlechte Nachricht.
+
+   Der Nebeneffekt ist, dass die Höhe nie über 1 geht. Es braucht also
+   keinen Höchstwert, gegen den gemessen wird, und der Strahl sieht
+   morgen nicht anders aus als heute, nur weil eine Spitze dazukam. */
+const BAR_HALF = 20;
+
+function barHeight(count, half) {
+  const n = Math.max(Math.trunc(Number(count) || 0), 0);
+  if (n === 0) return 0;
+  const k = Math.max(Number(half) || BAR_HALF, 1);
+  return n / (n + k);
+}
+
 /* Mischen. Der Zufall ist hereingereicht, damit ein Test ihn festhalten
    kann. */
 function shuffle(items, random) {
@@ -232,5 +253,5 @@ module.exports = {
   DEFAULT_RHYTHM, SOURCES,
   rhythm, maxLevel, parseRhythm, formatRhythm, configure,
   today, addDays, daysBetween, normalize,
-  rate, isNew, isDue, pick, shuffle, timeline
+  rate, isNew, isDue, pick, shuffle, timeline, barHeight, BAR_HALF
 };

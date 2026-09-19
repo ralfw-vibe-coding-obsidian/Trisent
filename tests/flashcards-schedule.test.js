@@ -274,3 +274,39 @@ test('ein unsinniger Umfang ergibt trotzdem einen Strahl', () => {
   is(s.timeline([], HEUTE, 0).days.length, 1, 'mindestens ein Tag');
   is(s.timeline([], HEUTE).days.length, 1, 'ohne Angabe auch');
 });
+
+test('die Balkenhöhe wächst, sättigt aber nach oben', () => {
+  is(s.barHeight(0), 0, 'nichts ist nichts');
+  ok(s.barHeight(1) > 0, 'eine Karte ist sichtbar');
+
+  const zehn = s.barHeight(10);
+  const dreissig = s.barHeight(30);
+  ok(dreissig - zehn > 0.2, '10 und 30 sind gut zu unterscheiden');
+
+  const hundertfuenfzig = s.barHeight(150);
+  const hundertsiebzig = s.barHeight(170);
+  ok(hundertsiebzig - hundertfuenfzig < 0.03, '150 und 170 kaum noch');
+
+  ok(hundertsiebzig > dreissig, 'trotzdem höher');
+  ok(s.barHeight(1000000) < 1, 'nie über die volle Höhe');
+});
+
+test('die Balkenhöhe steigt bei jeder zusätzlichen Karte', () => {
+  let vorher = 0;
+  for (let n = 1; n <= 200; n++) {
+    const jetzt = s.barHeight(n);
+    ok(jetzt > vorher, 'bei ' + n + ' Karten höher als bei ' + (n - 1));
+    vorher = jetzt;
+  }
+});
+
+test('bei HALF Karten steht der Balken auf halber Höhe', () => {
+  is(s.barHeight(s.BAR_HALF), 0.5, 'genau die Hälfte');
+  is(s.barHeight(5, 5), 0.5, 'auch mit eigenem Wert');
+});
+
+test('Unsinn ergibt keinen Balken', () => {
+  is(s.barHeight(-3), 0, 'negativ');
+  is(s.barHeight('zwei'), 0, 'keine Zahl');
+  is(s.barHeight(null), 0, 'nichts');
+});

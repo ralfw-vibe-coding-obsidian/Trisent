@@ -10,15 +10,17 @@
 
 const { ItemView, Notice, setIcon } = require('obsidian');
 const {
-  isDue, isNew, today, daysBetween, pick, timeline, SOURCES, rhythm, maxLevel
+  isDue, isNew, today, daysBetween, pick, timeline, barHeight,
+  SOURCES, rhythm, maxLevel
 } = require('./schedule.js');
 const { Session } = require('./session.js');
 
 /* Wonach die Kartei geordnet wird. Bei gleicher Schwierigkeit
    alphabetisch - sonst wechselte die Reihenfolge bei jedem Zeichnen. */
-/* Wie weit der Zeitstrahl nach vorn schaut. Vier Wochen: lang genug,
-   dass man einen Berg kommen sieht, kurz genug für einen Balken je Tag. */
-const SPAN = 28;
+/* Wie weit der Zeitstrahl nach vorn schaut: heute und 31 Tage. Ein
+   Monat - lang genug, dass man einen Berg kommen sieht, kurz genug für
+   einen Strich je Tag. */
+const SPAN = 32;
 
 const ORDERS = [
   { id: 'alphabetical', label: 'A–Z' },
@@ -113,6 +115,7 @@ class DeckView extends ItemView {
       const top = tile.createDiv({ cls: 'trisent-tile-top' });
       top.createSpan({ cls: 'trisent-flag', text: language.flag || '🏳️' });
       top.createSpan({ cls: 'trisent-tile-name', text: language.name });
+      this.renderStreak(top, language);
 
       const big = tile.createDiv({ cls: 'trisent-big' });
       big.createSpan({ cls: 'trisent-big-num', text: String(cards.length) });
@@ -150,6 +153,7 @@ class DeckView extends ItemView {
       cls: 'trisent-header-title',
       text: (language.flag || '🏳️') + ' ' + language.name
     });
+    this.renderStreak(head, language);
 
     const cards = this.deck.all(language);
     if (cards.length === 0) {
@@ -222,6 +226,21 @@ class DeckView extends ItemView {
     return cards.slice().sort(byName);
   }
 
+  /* An wie vielen Tagen hintereinander mit dieser Sprache gelernt wurde.
+     Derselbe Zähler wie im Reader und im Translator - Karten üben ist
+     dieselbe Beschäftigung mit derselben Sprache. */
+  renderStreak(parent, language) {
+    const days = this.streak.current(language);
+    if (days <= 0) return;
+
+    const badge = parent.createSpan({
+      cls: 'trisent-streak',
+      attr: { title: days + (days === 1 ? ' day in a row' : ' days in a row') }
+    });
+    setIcon(badge.createSpan({ cls: 'trisent-streak-icon' }), 'flame');
+    badge.createSpan({ text: String(days) });
+  }
+
   renderCount(parent, value, label, strong) {
     const item = parent.createDiv({ cls: 'trisent-count' + (strong ? ' is-strong' : '') });
     item.createSpan({ cls: 'trisent-count-value', text: value });
@@ -269,10 +288,11 @@ class DeckView extends ItemView {
   /* Was auf einen zukommt                                             */
   /* ---------------------------------------------------------------- */
 
-  /* Ein Balken je Tag. Die Frage, die er beantwortet, ist nicht "wie
-     viele Karten habe ich", sondern "baut sich etwas auf, das ich nicht
-     mehr schaffe". Deshalb steht das Überfällige als eigener Balken
-     davor - es ist der Berg, wenn es einen gibt. */
+  /* Ein Strich je Tag, ein Balken dort, wo etwas wartet. Die Frage, die
+     das Bild beantwortet, ist nicht "wie viele Karten habe ich", sondern
+     "baut sich etwas auf, das ich nicht mehr schaffe". Deshalb steht das
+     Überfällige als eigener Balken davor - es ist der Berg, wenn es
+     einen gibt - und alles jenseits des Monats dahinter. */
   renderTimeline(page, cards, now) {
     const strip = timeline(cards, now, SPAN);
     const counted = strip.over + strip.later
@@ -282,41 +302,54 @@ class DeckView extends ItemView {
     const section = page.createDiv({ cls: 'trisent-timeline' });
     section.createDiv({ cls: 'trisent-section-label', text: 'Coming up' });
 
-    const peak = Math.max(
-      strip.over,
-      strip.later,
-      ...strip.days.map((entry) => entry.count)
-    );
+    const plot = section.createDiv({ cls: 'trisent-tl' });
 
-    const bars = section.createDiv({ cls: 'trisent-tl-bars' });
-    this.renderBar(bars, strip.over, peak, 'is-over', strip.over + ' overdue');
+    this.renderSlot(plot, strip.over, 'is-over',
+      strip.over + (strip.over === 1 ? ' card' : ' cards') + ' overdue');
 
+    const scale = plot.createDiv({ cls: 'trisent-tl-days' });
     strip.days.forEach((entry, offset) => {
-      this.renderBar(
-        bars, entry.count, peak,
-        offset === 0 ? 'is-today' : (offset % 7 === 0 ? 'is-week' : ''),
-        entry.count + (entry.count === 1 ? ' card ' : ' cards ') + this.whenText(offset)
-      );
+      const marks = [];
+      if (offset === 0) marks.push('is-today');
+      else if (offset % 7 === 0) marks.push('is-week');
+
+      this.renderSlot(scale, entry.count, marks.join(' '),
+        entry.count === 0
+          ? 'Nothing ' + this.whenText(offset)
+          : entry.count + (entry.count === 1 ? ' card ' : ' cards ') + this.whenText(offset));
     });
 
-    this.renderBar(bars, strip.later, peak, 'is-later',
-      strip.later + ' after ' + SPAN + ' days');
+    this.renderSlot(plot, strip.later, 'is-later',
+      strip.later + (strip.later === 1 ? ' card' : ' cards')
+        + ' after ' + (SPAN - 1) + ' days');
 
     const axis = section.createDiv({ cls: 'trisent-tl-axis' });
     axis.createSpan({ text: 'overdue' });
-    axis.createSpan({ text: 'today → 4 weeks' });
+    axis.createSpan({ text: 'today → in a month' });
     axis.createSpan({ text: 'later' });
   }
 
-  renderBar(bars, count, peak, extra, title) {
-    const bar = bars.createDiv({
-      cls: 'trisent-tl-bar' + (extra ? ' ' + extra : ''),
+  /* Zahl oben, Balken darunter, Strich auf der Linie. Die leeren Tage
+     bekommen dieselben Kästen - sonst säßen die Balken der vollen Tage
+     auf verschiedenen Höhen. */
+  renderSlot(parent, count, marks, title) {
+    const slot = parent.createDiv({
+      cls: 'trisent-tl-slot' + (marks ? ' ' + marks : ''),
       attr: { title: title }
     });
-    const fill = bar.createDiv({ cls: 'trisent-tl-fill' });
-    /* Ein einzelner Balken darf nie ganz verschwinden - sonst sieht ein
-       Tag mit einer Karte aus wie ein Tag mit keiner. */
-    fill.style.height = count === 0 ? '0' : Math.max(count / peak * 100, 8) + '%';
+
+    slot.createDiv({
+      cls: 'trisent-tl-value',
+      text: count > 0 ? String(count) : ''
+    });
+
+    const stack = slot.createDiv({ cls: 'trisent-tl-stack' });
+    if (count > 0) {
+      const bar = stack.createDiv({ cls: 'trisent-tl-bar' });
+      bar.style.height = Math.max(barHeight(count) * 100, 6) + '%';
+    }
+
+    slot.createDiv({ cls: 'trisent-tl-foot' });
   }
 
   whenText(offset) {

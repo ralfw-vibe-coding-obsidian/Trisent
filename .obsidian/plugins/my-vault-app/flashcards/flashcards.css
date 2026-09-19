@@ -46,57 +46,125 @@
 }
 
 .trisent-timeline .trisent-section-label {
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.7rem;
 }
 
-.trisent-tl-bars {
+.trisent-tl {
   display: flex;
   align-items: flex-end;
-  gap: 2px;
-  height: 3.5rem;
+  gap: 0.6rem;
+}
+
+/* Die 32 Tage hängen zusammen - zwischen ihnen läuft die Linie durch.
+   Überfälliges und Späteres stehen daneben, ohne Linie: Sie sind keine
+   Tage, sondern Haufen. */
+
+.trisent-tl-days {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.trisent-tl-slot {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.trisent-tl-slot.is-over,
+.trisent-tl-slot.is-later {
+  flex: 0 0 1.5rem;
+}
+
+.trisent-tl-value {
+  height: 0.8rem;
+  line-height: 0.8rem;
+  text-align: center;
+  font-family: var(--tri-ui);
+  font-size: 0.58rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.trisent-tl-stack {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 4.25rem;
 }
 
 .trisent-tl-bar {
-  flex: 1 1 0;
-  min-width: 0;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-}
-
-.trisent-tl-fill {
-  width: 100%;
+  width: 62%;
+  min-width: 3px;
   border-radius: 2px 2px 0 0;
-  background: var(--background-modifier-border);
+  background: var(--tri-familiar);
   transition: height 160ms ease-out;
 }
 
-/* Heute ist der Akzent, alles danach bleibt still. Das Überfällige
-   trägt die Warnfarbe - es ist das Einzige hier, was ein Problem ist. */
+/* Der Fuß eines Tages trägt ein Stück der Linie und seinen Strich.
+   Nebeneinander ergeben die Stücke eine durchgehende Linie. */
 
-.trisent-tl-bar.is-today .trisent-tl-fill {
+.trisent-tl-foot {
+  position: relative;
+  height: 5px;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.trisent-tl-foot::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 3px;
+  background: var(--background-modifier-border);
+}
+
+/* Jeder siebte Tag steht etwas tiefer - so zählt man Wochen, ohne
+   Striche zu zählen. */
+.trisent-tl-slot.is-week .trisent-tl-foot::after {
+  height: 6px;
+  background: var(--text-faint);
+}
+
+/* Heute trägt den Akzent, überfällig die Warnfarbe. Sonst nichts:
+   Die übrigen Tage sind Zukunft, kein Zustand. */
+
+.trisent-tl-slot.is-today .trisent-tl-bar {
   background: var(--tri-accent);
 }
 
-.trisent-tl-bar.is-over .trisent-tl-fill {
+.trisent-tl-slot.is-today .trisent-tl-value {
+  color: var(--tri-accent);
+  font-weight: 600;
+}
+
+.trisent-tl-slot.is-today .trisent-tl-foot::after {
+  height: 7px;
+  background: var(--tri-accent);
+}
+
+.trisent-tl-slot.is-over .trisent-tl-bar {
   background: var(--tri-unknown);
 }
 
-/* Wochengrenzen: ein feiner Strich, damit man die Balken zählen kann,
-   ohne sie zu zählen. */
-.trisent-tl-bar.is-week {
-  box-shadow: inset 1px 0 0 var(--background-modifier-border);
+.trisent-tl-slot.is-over .trisent-tl-value {
+  color: var(--tri-unknown);
+  font-weight: 600;
 }
 
-.trisent-tl-bar.is-over,
-.trisent-tl-bar.is-later {
-  flex: 0 0 1.4rem;
-  margin-right: 0.5rem;
+.trisent-tl-slot.is-over .trisent-tl-foot,
+.trisent-tl-slot.is-later .trisent-tl-foot {
+  border-top: none;
 }
 
-.trisent-tl-bar.is-later {
-  margin-right: 0;
-  margin-left: 0.5rem;
+.trisent-tl-slot.is-over .trisent-tl-foot::after,
+.trisent-tl-slot.is-later .trisent-tl-foot::after {
+  content: none;
 }
 
 .trisent-tl-axis {
