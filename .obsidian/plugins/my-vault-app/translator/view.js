@@ -216,8 +216,10 @@ class TranslatorView extends ItemView {
     badge.createSpan({ text: String(days) });
   }
 
+  /* Dieselben Wörter wie im Reader und in der Kartei: die Sprache beim
+     Namen, die eigene Seite heißt überall "Translation". */
   label(language, directionId) {
-    return directionId === 'intoForeign' ? '→ ' + language.name : '→ yours';
+    return directionId === 'intoForeign' ? '→ ' + language.name : '→ Translation';
   }
 
   sentencesOf(data) {
