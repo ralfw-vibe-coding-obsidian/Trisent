@@ -125,7 +125,11 @@ class WordCardView extends ItemView {
     const foot = page.createDiv({ cls: 'trisent-card-foot' });
     const open = foot.createEl('button', { cls: 'trisent-card-open' });
     setIcon(open.createSpan(), 'file-text');
-    open.createSpan({ text: card.file ? 'Open note' : 'Create note' });
+    /* "Dictionary entry" ist der Name, den diese Notizen überall tragen -
+       im Ordner, in der Spezifikation und auf der Karteikarte. */
+    open.createSpan({
+      text: (card.file ? 'Open' : 'Create') + ' dictionary entry'
+    });
     open.addEventListener('click', () => this.reader.openWordNote(card));
   }
 

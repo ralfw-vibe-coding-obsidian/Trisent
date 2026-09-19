@@ -117,7 +117,7 @@ class Deck {
        Ordner, und Obsidian löst den kurzen Namen auf die nächstliegende
        Notiz auf - also auf die Karte selbst. */
     if (entry.note) {
-      lines.push('[[' + entry.note.path.replace(/\.md$/, '')
+      lines.push('Dictionary entry: [[' + entry.note.path.replace(/\.md$/, '')
         + '|' + (record.front || record.key) + ']]');
       lines.push('');
     }
