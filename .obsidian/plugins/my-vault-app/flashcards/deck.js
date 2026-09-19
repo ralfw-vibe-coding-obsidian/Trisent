@@ -111,12 +111,15 @@ class Deck {
       'added: ' + record.added,
       '---',
       '',
-      /* Nur zum Durchklicken in Obsidian - die App fragt diesen Link nie. */
-      '[[' + safeName(entry.front || entry.key) + ']]',
-      '',
       /* Der Platz der Person. Was sie sich beim Üben zu dieser Karte
          merkt, gehört zur Karte - nicht in die Wortnotiz, die dem Wort
-         gehört und die ein neues Paket ersetzen darf. */
+         gehört und die ein neues Paket ersetzen darf.
+
+         Hier stand einmal ein [[Wikilink]] auf die Wortnotiz. Er ist
+         weg: Beide Notizen heißen gleich, nur in verschiedenen Ordnern -
+         Obsidian löste ihn deshalb auf die Karte selbst auf. Der Weg zum
+         Wort führt über den Reader, nicht über einen Link, der mal
+         stimmt und mal nicht. */
       '## My notes',
       '',
       ''
