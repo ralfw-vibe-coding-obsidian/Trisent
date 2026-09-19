@@ -133,19 +133,45 @@ class WordCardView extends ItemView {
   }
 
   /* Die Grammatiknotiz kommt aus dem Paket und ist Markdown - in den
-     Notizen stehen Formen in `Akzenten`, Betonungen in *Sternchen*.
+     Notizen stehen Formen in `Akzenten`, Absätze durch Leerzeilen.
      Roh gezeigt sähe die Person diese Zeichen statt der Auszeichnung.
 
-     Geht das Rendern schief, steht wenigstens der Text da: Eine leere
-     Erklärung wäre schlimmer als eine mit Sternchen. */
+     Obsidian hat den Renderer unterwegs umbenannt: Neuere Fassungen
+     haben MarkdownRenderer.render, ältere nur renderMarkdown. Wir
+     nehmen, was da ist - sonst hängt das Aussehen davon ab, wann jemand
+     Obsidian zuletzt aktualisiert hat. */
   renderMarkdown(box, text, card) {
     const path = card.file ? card.file.path : '';
+
+    let job = null;
     try {
-      MarkdownRenderer.render(this.app, text, box, path, this).catch(() => {
-        box.setText(text);
-      });
+      if (typeof MarkdownRenderer.render === 'function') {
+        job = MarkdownRenderer.render(this.app, text, box, path, this);
+      } else if (typeof MarkdownRenderer.renderMarkdown === 'function') {
+        job = MarkdownRenderer.renderMarkdown(text, box, path, this);
+      }
     } catch (error) {
-      box.setText(text);
+      console.error('Trisent: could not render the grammar note', error);
+      job = null;
+    }
+
+    if (!job) {
+      this.renderPlain(box, text);
+      return;
+    }
+    job.catch((error) => {
+      console.error('Trisent: could not render the grammar note', error);
+      this.renderPlain(box, text);
+    });
+  }
+
+  /* Der Notausgang. Auszeichnungen bleiben dann sichtbar - aber die
+     Absätze wenigstens erhalten: Als ein Textblock liefe alles zu einem
+     Klumpen zusammen, weil der Browser Zeilenumbrüche verschluckt. */
+  renderPlain(box, text) {
+    box.empty();
+    for (const block of String(text).split(/\n\s*\n/)) {
+      if (block.trim()) box.createEl('p', { text: block.trim() });
     }
   }
 
