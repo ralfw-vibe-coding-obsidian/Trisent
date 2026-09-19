@@ -1565,9 +1565,7 @@ class TrisentView extends ItemView {
     this.paint(key, status, this.occurrences.get(key) || []);
 
     /* Das Schreiben läuft nebenher; die Anzeige wartet nicht darauf. */
-    this.library.setWordStatus(
-      this.language, key, status, entry, this.packagePath
-    ).catch((error) => {
+    this.library.setWordStatus(this.language, key, status, entry).catch((error) => {
       new Notice('Could not save this word: ' + String(error.message || error));
     });
   }

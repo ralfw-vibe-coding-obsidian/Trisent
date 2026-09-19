@@ -276,22 +276,22 @@ class Library {
 
   /* Der Lernstand eines Wortes oder einer Wendung.
 
-     Die Notiz entsteht beim ersten Antippen. `source` ist der Ordner des
-     Textes, bei dem das Wort der Person begegnet ist - er wird als
-     Verweis eingetragen. Gibt es die Notiz schon, wird nur der Stand
-     geändert; alles, was die Person hineingeschrieben hat, bleibt
-     unangetastet. */
-  setWordStatus(language, key, status, entry, source) {
+     Die Notiz entsteht beim ersten Antippen und enthält nur, was der
+     Person gehört. Ein Verweis auf das Paket steht NICHT darin: Das
+     Wörterbuch eines Textes liegt in einer einzigen package.json, und
+     ein Link dorthin führte in eine Datei, die niemand lesen will. Den
+     Weg zum Wort geht die App selbst - siehe Reader.showWord(). */
+  setWordStatus(language, key, status, entry) {
     const id = language.code + '|' + key;
     const previous = this.writeQueue.get(id) || Promise.resolve();
     const next = previous
       .catch(() => {})
-      .then(() => this.writeWordStatus(language, key, status, entry, source));
+      .then(() => this.writeWordStatus(language, key, status, entry));
     this.writeQueue.set(id, next);
     return next;
   }
 
-  async writeWordStatus(language, key, status, entry, source) {
+  async writeWordStatus(language, key, status, entry) {
     const existing = this.wordFileFor(language, key);
     const today = new Date().toISOString().slice(0, 10);
 
@@ -328,17 +328,6 @@ class Library {
     lines.push('lemma: ' + yamlValue(lemma));
     if (partOfSpeech) lines.push('partOfSpeech: ' + partOfSpeech);
     lines.push('key: ' + yamlValue(key));
-
-    /* Der Verweis auf das Wort selbst: Es steht im Wörterbuch des Textes,
-       bei dem es der Person zuerst begegnet ist. Mit ganzem Pfad, sonst
-       löst Obsidian den kurzen Namen auf die nächstliegende Notiz auf -
-       und das wäre diese hier. */
-    if (source) {
-      lines.push('source: ' + yamlValue(
-        '[[' + source + '/' + PACKAGE_FILE + '|' + source.split('/').pop() + ']]'
-      ));
-    }
-
     lines.push('status: ' + status);
     lines.push('updatedAt: ' + today);
     lines.push('---');

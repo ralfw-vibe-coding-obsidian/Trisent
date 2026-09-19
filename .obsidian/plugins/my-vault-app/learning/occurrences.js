@@ -95,4 +95,25 @@ async function searchPackages(library, language, key, options) {
   return found;
 }
 
-module.exports = { matchesIn, occurrenceOf, searchData, searchPackages };
+/* Der Wörterbucheintrag zu einem Schlüssel - Grundform, Wortart,
+   Bedeutung, Formen, Grammatik. Er steht im Paket, nicht in der Notiz
+   der Person; jedes Paket, das das Wort benutzt, bringt ihn mit, und das
+   erste, das ihn hat, gilt.
+
+   Der Reader hat ihn im offenen Text zur Hand. Wer von außen kommt - aus
+   einer Wortnotiz, aus der Lernkartei -, hat keinen offenen Text und
+   muss ihn suchen. */
+async function lookupWord(library, language, key) {
+  for (const folder of library.packagesOf(language)) {
+    const entry = await library.loadPackage(folder);
+    if (!entry || !entry.ok) continue;
+
+    const found = (entry.data.dictionary || {})[key];
+    if (found) return found;
+  }
+  return null;
+}
+
+module.exports = {
+  matchesIn, occurrenceOf, searchData, searchPackages, lookupWord
+};

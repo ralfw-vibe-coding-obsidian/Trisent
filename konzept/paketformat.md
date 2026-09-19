@@ -241,16 +241,17 @@ language: fr
 lemma: entrée
 partOfSpeech: NOUN
 key: "fr:entrée:NOUN"
-source: "[[Trisent/learning/FR/packages/Paul et Julie au cinéma/package.json|Paul et Julie au cinéma]]"
 status: familiar
 updatedAt: 2026-09-19
 ---
 ## My notes
 ```
 
-Also: wer das Wort ist, **wo das Wort steht**, wie weit die Person damit ist,
-und was sie sich selbst notiert. `source` zeigt auf den Text, bei dem ihr das
-Wort zuerst begegnet ist – dort steht der Wörterbucheintrag dazu. **Kein `gloss`, keine `forms`, keine `grammar`.** Die gehören dem
+Also: wer das Wort ist, wie weit die Person damit ist, und was sie sich selbst
+notiert. Auch **kein Verweis auf das Paket**: Das Wörterbuch eines Textes liegt
+in einer einzigen `package.json`, ein Link dorthin führte in eine Datei, die
+niemand lesen will. Den Weg zum Wort geht die App stattdessen selbst – wer eine
+Wortnotiz öffnet, bekommt die Erklärung in der Seitenleiste daneben. **Kein `gloss`, keine `forms`, keine `grammar`.** Die gehören dem
 Paket und dürfen sich mit einer besseren Fassung ändern; eine Abschrift daneben
 veraltete still, während die Wortkarte längst etwas anderes zeigt. Gelesen wird
 aus der Notiz ohnehin nur `key` und `status`.

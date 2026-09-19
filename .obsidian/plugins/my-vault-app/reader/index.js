@@ -8,9 +8,10 @@
  * Sitzung etwas an.
  */
 
-const { Setting, Notice } = require('obsidian');
+const { Setting, Notice, TFile } = require('obsidian');
 const { TrisentView, VIEW_TYPE, RIBBON_ICON } = require('./view.js');
 const { WordCardView, CARD_VIEW_TYPE } = require('./card.js');
+const { searchPackages, lookupWord } = require('../learning/occurrences.js');
 
 /* Alles, was der Reader sich merkt. Liegt in data.json unter "reader",
    damit der Packager daneben seinen eigenen Bereich hat. */
@@ -39,6 +40,13 @@ class Reader {
 
     plugin.registerView(VIEW_TYPE, (leaf) => new TrisentView(leaf, this));
     plugin.registerView(CARD_VIEW_TYPE, (leaf) => new WordCardView(leaf, this));
+
+    /* Wer eine Wortnotiz öffnet, will wissen, was das Wort bedeutet -
+       und das steht nicht in der Notiz, sondern im Paket. Also legt die
+       App die Erklärung daneben, ohne dass man danach suchen muss. */
+    plugin.registerEvent(
+      plugin.app.workspace.on('file-open', (file) => this.onFileOpen(file))
+    );
 
     plugin.addRibbonIcon(RIBBON_ICON, 'Trisent: Reading', () => this.open());
     plugin.addCommand({
@@ -150,7 +158,73 @@ class Reader {
       reader.setStatus(key, status, entry);
       return;
     }
-    new Notice('Open the text to change this word.');
+
+    /* Kein Text offen - dann wird der Stand eben nur geschrieben. Die
+       Karte kann auch aus einer Wortnotiz heraus offen sein, und dort
+       ist das Weiterschalten genauso sinnvoll. */
+    const card = this.cardView();
+    const language = card && card.card ? card.card.language : null;
+    if (!language) return;
+
+    this.library.setWordStatus(language, key, status, entry).catch((error) => {
+      new Notice('Could not save this word: ' + String(error.message || error));
+    });
+  }
+
+  cardView() {
+    const leaf = this.app.workspace.getLeavesOfType(CARD_VIEW_TYPE)[0];
+    return leaf && leaf.view instanceof WordCardView ? leaf.view : null;
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Die Wortkarte ohne offenen Text                                   */
+  /* ---------------------------------------------------------------- */
+
+  /* Eine Wortnotiz wurde geöffnet: Steht ein Trisent-Wort darin, kommt
+     seine Erklärung in die Seitenleiste. */
+  onFileOpen(file) {
+    if (!(file instanceof TFile) || file.extension !== 'md') return;
+
+    const fm = this.app.metadataCache.getFileCache(file)?.frontmatter;
+    if (!fm || fm.type !== 'word' || !fm.key || !fm.language) return;
+
+    const language = this.library.languageByCode(String(fm.language));
+    if (!language) return;
+
+    this.showWord(language, String(fm.key), file).catch((error) => {
+      console.error('Trisent: could not show this word', error);
+    });
+  }
+
+  /* Die Wortkarte zu einem Schlüssel, ohne dass ein Text offen sein
+     muss. Alles, was sie zeigt, wird aus den Paketen zusammengesucht -
+     die Notiz selbst weiß ja nur, wie weit die Person ist. */
+  async showWord(language, key, file) {
+    const entry = (await lookupWord(this.library, language, key)) || {};
+    const status = this.library.wordStatusMap(language).get(key) || 'unknown';
+
+    const card = {
+      key: key,
+      language: language,
+      entry: entry,
+      lemma: entry.lemma || key.split(':')[1] || key,
+      partOfSpeech: entry.partOfSpeech || key.split(':')[2] || '',
+      gloss: entry.gloss || '',
+      grammar: entry.grammar || '',
+      forms: Array.isArray(entry.forms) ? entry.forms : [],
+      surface: '',
+      status: status,
+      phrases: [],
+      occurrences: [],
+      searching: true,
+      file: file || this.library.wordFileFor(language, key)
+    };
+
+    await this.showCard(card);
+
+    card.occurrences = await searchPackages(this.library, language, key, {});
+    card.searching = false;
+    this.updateCard(card);
   }
 
   readerView() {
@@ -170,7 +244,7 @@ class Reader {
     if (!card.file) {
       try {
         card.file = await this.library.setWordStatus(
-          card.language, card.key, card.status, card.entry, card.packagePath
+          card.language, card.key, card.status, card.entry
         );
       } catch (error) {
         card.file = null;
@@ -209,7 +283,7 @@ class Reader {
     if (!file) {
       try {
         file = await this.library.setWordStatus(
-          card.language, card.key, card.status, card.entry, card.packagePath
+          card.language, card.key, card.status, card.entry
         );
       } catch (error) {
         new Notice('Could not create the note: ' + String(error.message || error));
