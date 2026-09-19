@@ -21,6 +21,7 @@
 const { Library } = require('../core/library.js');
 const { Streak } = require('./streak.js');
 const { Deck } = require('../flashcards/deck.js');
+const { Migrations } = require('./migrations.js');
 
 class Learning {
   constructor(plugin) {
@@ -36,6 +37,12 @@ class Learning {
     /* Die Lernkartei. Der Reader legt Karten hinein, die Kartei fragt sie
        ab - also gehört sie keinem von beiden allein. */
     this.deck = new Deck(plugin.app, this.library);
+  }
+
+  /* Vorhandene Notizen auf das heutige Schema bringen. Läuft einmal je
+     Vault, beim Start - siehe migrations.js. */
+  migrate() {
+    return new Migrations(this.plugin, this).run();
   }
 
   /* Die einzige Tür in den Bereich der Lernenden.

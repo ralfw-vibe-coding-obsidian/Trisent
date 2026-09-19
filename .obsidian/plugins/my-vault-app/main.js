@@ -30,6 +30,8 @@ const MODULES = [
   'core/library.js',
   'learning/streak.js',
   'learning/occurrences.js',
+  'learning/schema.js',
+  'learning/migrations.js',
   'flashcards/schedule.js',
   'flashcards/session.js',
   'flashcards/find.js',
@@ -192,7 +194,54 @@ module.exports = class TrisentPlugin extends Plugin {
     this.registerEvent(this.app.metadataCache.on('resolved', onVaultChange));
 
     await this.loadModuleStyles();
-    this.app.workspace.onLayoutReady(() => this.applyFolderVisibility());
+    this.app.workspace.onLayoutReady(() => {
+      this.applyFolderVisibility();
+      /* Erst wenn die Vault fertig eingelesen ist - vorher kennt Obsidian
+         die Eigenschaften der Notizen noch nicht. */
+      this.runMigrations();
+    });
+  }
+
+  /* Alte Notizen auf das heutige Schema bringen. Läuft einmal je Vault;
+     was dabei geschah, sagt eine Meldung - eine Migration, die stumm
+     durch die Notizen der Person geht, wäre unheimlich. */
+  async runMigrations() {
+    let report;
+    try {
+      report = await this.learning.migrate();
+    } catch (error) {
+      console.error('Trisent: migration failed', error);
+      new Notice('Trisent could not update your notes: ' + String(error.message || error), 15000);
+      return;
+    }
+    if (!report) return;
+
+    const parts = [];
+    if (report.notes > 0) parts.push(report.notes + ' word notes');
+    if (report.cards > 0) parts.push(report.cards + ' flashcards');
+
+    if (parts.length === 0) {
+      if (report.waiting > 0) {
+        new Notice(
+          'Trisent left ' + report.waiting + ' word notes alone: their texts are '
+          + 'not in your library right now. Import them and they will be tidied up.',
+          12000
+        );
+      }
+      return;
+    }
+
+    let text = 'Trisent tidied up ' + parts.join(' and ') + '.';
+    if (report.rescued > 0) {
+      text += ' ' + report.rescued
+        + (report.rescued === 1 ? ' grammar note you had changed was kept'
+                                : ' grammar notes you had changed were kept')
+        + ' under "My notes".';
+    }
+    if (report.waiting > 0) {
+      text += ' ' + report.waiting + ' more wait for texts that are not imported.';
+    }
+    new Notice(text, 12000);
   }
 
   onunload() {
@@ -334,6 +383,9 @@ module.exports = class TrisentPlugin extends Plugin {
         stored.hideLibraryFolder !== undefined
           ? stored.hideLibraryFolder
           : SHARED_DEFAULTS.hideLibraryFolder,
+      /* Die Fassung der Notizen in dieser Vault. Fehlt sie, ist die Vault
+         älter als die erste Migration - siehe learning/migrations.js. */
+      schema: Number(stored.schema) || 1,
       reader: Object.assign({}, readerDefaults, stored.reader || {}),
       translator: Object.assign({}, translatorDefaults, stored.translator || {}),
       flashcards: Object.assign({}, flashcardDefaults, stored.flashcards || {}),
