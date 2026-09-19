@@ -226,6 +226,7 @@
 }
 
 .trisent-card-row {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
@@ -235,6 +236,101 @@
   background: var(--background-primary);
 }
 
+/* Weglegen. Blass, aber immer sichtbar - auf dem Telefon gibt es kein
+   Darüberfahren, unter dem sich ein Knopf verstecken ließe. */
+
+.trisent-view .trisent-card-drop {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-faint);
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+.trisent-view .trisent-card-drop:hover {
+  opacity: 1;
+  background: var(--background-modifier-hover);
+  color: var(--tri-unknown);
+}
+
+.trisent-card-drop svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+/* Die Karte fragt selbst nach, statt einen Dialog aufzumachen. */
+
+.trisent-card-row.is-asking {
+  justify-content: center;
+  gap: 0.35rem;
+  border-color: var(--tri-unknown);
+}
+
+.trisent-card-ask {
+  font-family: var(--tri-ui);
+  font-size: 0.85rem;
+  color: var(--text-normal);
+  overflow-wrap: anywhere;
+}
+
+.trisent-card-ask-note {
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--text-faint);
+}
+
+.trisent-card-ask-buttons {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 0.3rem;
+}
+
+.trisent-view .trisent-ask-keep,
+.trisent-view .trisent-ask-drop {
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--background-modifier-border);
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ask-keep:hover {
+  color: var(--text-normal);
+  border-color: var(--text-normal);
+}
+
+.trisent-view .trisent-ask-drop {
+  border-color: var(--tri-unknown);
+  color: var(--tri-unknown);
+}
+
+.trisent-view .trisent-ask-drop:hover {
+  background: var(--tri-unknown);
+  color: var(--background-primary);
+}
+
+.trisent-view .trisent-ask-drop[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
 /* Was heute dran ist, trägt den Akzent als Rahmen. */
 .trisent-card-row.is-due {
   border-color: var(--tri-accent);
@@ -242,6 +338,8 @@
 
 .trisent-card-words {
   min-width: 0;
+  /* Platz für den Knopf oben rechts. */
+  padding-right: 1.2rem;
 }
 
 .trisent-card-front {

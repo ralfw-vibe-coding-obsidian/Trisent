@@ -169,6 +169,14 @@ class Reader {
     return entry;
   }
 
+  /* Eine Karte ist aus der Kartei verschwunden - die Ecke am Wort auch.
+     Wird von der Lernkartei gerufen; der Text muss dafür nicht offen
+     sein. */
+  forgetCard(key) {
+    const view = this.readerView();
+    if (view) view.unmarkDeck(key);
+  }
+
   /* Die Wortnotiz öffnen. Gibt es sie noch nicht, entsteht sie jetzt -
      der Stand bleibt dabei, wie er ist. */
   async openWordNote(card) {

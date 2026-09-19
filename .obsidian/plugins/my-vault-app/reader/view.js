@@ -1514,10 +1514,23 @@ class TrisentView extends ItemView {
   /* Ein Wort ist in die Kartei gewandert - die Ecke sofort setzen, an
      allen Vorkommen, ohne den Text neu zu zeichnen. */
   markDeck(key) {
+    this.setDeckMark(key, true);
+  }
+
+  /* Und wieder weg, wenn die Karte aus der Kartei verschwindet. */
+  unmarkDeck(key) {
+    this.setDeckMark(key, false);
+  }
+
+  setDeckMark(key, on) {
     if (!this.scrollEl || !this.inDeck) return;
-    this.inDeck.set(key, true);
+    if (on) this.inDeck.set(key, true);
+    else this.inDeck.delete(key);
+
     for (const el of this.scrollEl.querySelectorAll('.trisent-word')) {
-      if (el.dataset.key === key) el.addClass('is-carded');
+      if (el.dataset.key !== key) continue;
+      if (on) el.addClass('is-carded');
+      else el.removeClass('is-carded');
     }
   }
 

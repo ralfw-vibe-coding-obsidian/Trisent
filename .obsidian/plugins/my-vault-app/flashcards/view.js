@@ -8,7 +8,7 @@
  * wiederkommt, steht in schedule.js, wie der Stapel läuft in session.js.
  */
 
-const { ItemView, Notice, setIcon } = require('obsidian');
+const { ItemView, Notice, setIcon, setTooltip } = require('obsidian');
 const {
   isDue, isNew, today, daysBetween, pick, timeline, barHeight,
   SOURCES, rhythm, maxLevel
@@ -269,6 +269,19 @@ class DeckView extends ItemView {
     const row = list.createDiv({
       cls: 'trisent-card-row' + (isDue(card, now) ? ' is-due' : '')
     });
+    this.paintCard(row, card, now);
+  }
+
+  paintCard(row, card, now) {
+    row.empty();
+    row.removeClass('is-asking');
+
+    /* Weglegen. Klein und blass, aber immer da - auf dem Telefon gibt es
+       kein Darüberfahren, unter dem sich etwas verstecken ließe. */
+    const drop = row.createEl('button', { cls: 'trisent-card-drop' });
+    setIcon(drop.createSpan(), 'x');
+    setTooltip(drop, 'Remove from deck');
+    drop.addEventListener('click', () => this.askRemove(row, card, now));
 
     const words = row.createDiv({ cls: 'trisent-card-words' });
     words.createDiv({ cls: 'trisent-card-front', text: card.front || card.key });
@@ -300,6 +313,44 @@ class DeckView extends ItemView {
     }
 
     facts.createSpan({ cls: 'trisent-card-due', text: this.dueText(card, now) });
+  }
+
+  /* Zwei Schritte statt eines Dialogs: Die Karte selbst fragt nach, und
+     man kann es sich anders überlegen, ohne dass etwas aufgepoppt ist.
+     Der Lernstand des Wortes bleibt in jedem Fall - er steht in der
+     Wortnotiz, nicht in der Karte. */
+  askRemove(row, card, now) {
+    row.empty();
+    row.addClass('is-asking');
+
+    row.createDiv({
+      cls: 'trisent-card-ask',
+      text: 'Remove “' + (card.front || card.key) + '”?'
+    });
+    row.createDiv({
+      cls: 'trisent-card-ask-note',
+      text: 'The word and what you know about it stay. Only the card goes.'
+    });
+
+    const buttons = row.createDiv({ cls: 'trisent-card-ask-buttons' });
+
+    const keep = buttons.createEl('button', { cls: 'trisent-ask-keep', text: 'Keep' });
+    keep.addEventListener('click', () => this.paintCard(row, card, now));
+
+    const drop = buttons.createEl('button', { cls: 'trisent-ask-drop', text: 'Remove' });
+    drop.addEventListener('click', async () => {
+      drop.setAttr('disabled', 'true');
+      try {
+        await this.deck.remove(card);
+      } catch (error) {
+        new Notice('Could not remove this card: ' + String(error.message || error));
+        this.paintCard(row, card, now);
+        return;
+      }
+      /* Die Ecke am Wort im Text verschwindet mit. */
+      this.flashcards.plugin.reader?.forgetCard(card.key);
+      this.render();
+    });
   }
 
   /* ---------------------------------------------------------------- */
