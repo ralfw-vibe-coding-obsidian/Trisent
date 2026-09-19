@@ -123,12 +123,11 @@ class WordCardView extends ItemView {
     const foot = page.createDiv({ cls: 'trisent-card-foot' });
     const open = foot.createEl('button', { cls: 'trisent-card-open' });
     setIcon(open.createSpan(), 'file-text');
-    /* Immer "Open", nie "Create": Den Eintrag zu diesem Wort GIBT es -
-       er steht im Paket, und die Karte zeigt ihn ja gerade an. Was beim
-       ersten Mal noch fehlt, ist bloß die Datei in der Vault, und wann
-       die entsteht, ist eine Frage der Umsetzung und keine, mit der man
-       die Person behelligt. */
-    open.createSpan({ text: 'Open dictionary entry' });
+    /* "Word note" ist die Notiz der Person zu diesem Wort - nicht der
+       "Word entry", der im Paket steht und den diese Karte gerade zeigt.
+       Immer "Open", nie "Create": Dass die Datei beim ersten Mal noch
+       entsteht, ist Buchhaltung und keine Frage an die Person. */
+    open.createSpan({ text: 'Open word note' });
     open.addEventListener('click', () => this.reader.openWordNote(card));
   }
 

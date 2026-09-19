@@ -225,14 +225,15 @@ wann man es benutzt.
 | `forms` | nein | Formen, die im Paket vorkommen oder häufig sind. |
 | `grammar` | nein | Deutsche Grammatiknotiz, ein bis drei Sätze. Genau das, was man beim Lernen wissen will. **Markdown** – der Reader zeichnet sie als solches. |
 
-### Das Paket ist die einzige Quelle
+### Word entry und Word note: das Paket ist die einzige Quelle
 
-Der Reader zeigt diese Angaben auf der Wortkarte **direkt aus dem Paket**. Eine
-Wortnotiz in `dictionary/` entsteht erst, wenn die Person das Wort zum ersten
-Mal antippt – der Ordner enthält also die Wörter, mit denen sie sich befasst
+Diese Angaben heißen zusammen der **Word entry**. Der Reader zeigt sie auf der
+**Word card** direkt aus dem Paket. Eine **Word note** in `dictionary/` – dem
+Wörterbuch der Person – entsteht erst, wenn sie das Wort zum ersten Mal
+antippt – der Ordner enthält also die Wörter, mit denen sie sich befasst
 hat, nicht alle, die vorkommen.
 
-**In die Wortnotiz wird nichts kopiert, was im Paket steht.** Sie enthält nur:
+**In die Word note wird nichts kopiert, was im Word entry steht.** Sie enthält nur:
 
 ```markdown
 ---
@@ -256,7 +257,7 @@ Paket und dürfen sich mit einer besseren Fassung ändern; eine Abschrift danebe
 veraltete still, während die Wortkarte längst etwas anderes zeigt. Gelesen wird
 aus der Notiz ohnehin nur `key` und `status`.
 
-Damit erledigt sich auch die Frage, ob ein Import vorhandene Wortnotizen
+Damit erledigt sich auch die Frage, ob ein Import vorhandene Word notes
 ergänzen soll: **Es gibt dort nichts zu ergänzen.** Ein neues Paket bringt eine
 bessere Erklärung mit, und die Wortkarte zeigt sie – ohne irgendetwas
 anzufassen, das der Person gehört.

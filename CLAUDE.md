@@ -128,6 +128,27 @@ Konfiguration sind und keine Daten (der Name der Person, eine Voreinstellung,
 eine Fensterbreite). Niemals für die eigentlichen Inhalte der App. Jedes Modul
 hat dort seinen eigenen Bereich (`reader`, `packager`).
 
+### Die Begriffe
+
+Vier Dinge, die alle mit „Wort" zu tun haben und deshalb immer wieder
+verwechselt wurden. Die Namen sind abgemacht – benutze sie in der Oberfläche,
+in Kommentaren und im Gespräch mit der Person:
+
+| Begriff | Was es ist | Wo es liegt |
+|---|---|---|
+| **Word card** | die Ansicht rechts im Reader. Virtuell: Sie setzt zusammen, was Paket, Notiz und Kartei wissen. Keine Datei. | – |
+| **Word entry** | was ein Paket über ein Wort weiß: Grundform, Wortart, Bedeutung, Formen, Grammatik. Kommt vom Packager. | `dictionary` in der `package.json` eines Textes |
+| **Word note** | die Manifestation eines Wortes für die Person – ihr Knotenpunkt. Lernstand, eigene Notizen, Verweise (z. B. auf die Flashcard). | `learning/<LANG>/dictionary/` – **ihr** Wörterbuch |
+| **Flashcard** | eine Karteikarte: Vorder- und Rückseite, Level, Wiedervorlage. Verweist auf die Word note. | `learning/<LANG>/flashcards/` |
+
+Zwei Regeln fallen daraus:
+
+- **In die Word note wird nichts kopiert, was im Word entry steht.** Sonst gibt
+  es dieselbe Erklärung zweimal, und die Abschrift veraltet still. Siehe
+  `konzept/paketformat.md`.
+- **„Dictionary" heißt immer das der Person.** Was mit dem Text kommt, heißt
+  Word entry – auch wenn das Feld in der `package.json` `dictionary` heißt.
+
 ### Getrennte Bereiche in der Vault
 
 Die beiden Module haben **getrennte Datenbereiche**, und zwar vollständig

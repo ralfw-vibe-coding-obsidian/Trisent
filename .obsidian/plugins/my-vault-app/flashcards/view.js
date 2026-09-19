@@ -353,7 +353,7 @@ class DeckView extends ItemView {
 
     const note = tools.createEl('button', { cls: 'trisent-card-tool' });
     setIcon(note.createSpan(), 'file-text');
-    setTooltip(note, 'Open this card’s note');
+    setTooltip(note, 'Open this flashcard');
     note.addEventListener('click', (event) => {
       event.stopPropagation();
       this.openNote(card);
@@ -514,7 +514,7 @@ class DeckView extends ItemView {
       event.stopPropagation();
       drop.setAttr('disabled', 'true');
       try {
-        await this.deck.remove(card);
+        await this.deck.remove(this.library.languageByCode(this.languageCode), card);
       } catch (error) {
         new Notice('Could not remove this card: ' + String(error.message || error));
         this.paintCard(row, card, now);

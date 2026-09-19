@@ -104,7 +104,7 @@ class Deck {
       'key: ' + yaml(record.key)
     ];
 
-    /* Der Weg zur Wortnotiz, als Eigenschaft: Dort steht er strukturiert
+    /* Der Weg zur Word note, als Eigenschaft: Dort steht er strukturiert
        neben den anderen Angaben, statt im Fließtext.
 
        Mit ganzem Pfad. Ein kurzes [[après]] ginge hier daneben - die
@@ -112,7 +112,7 @@ class Deck {
        löst den kurzen Namen auf die nächstliegende Notiz auf, also auf
        die Karte selbst. */
     if (entry.note) {
-      lines.push('dictionary: ' + yaml(
+      lines.push('word: ' + yaml(
         '[[' + entry.note.path.replace(/\.md$/, '')
         + '|' + (record.front || record.key) + ']]'
       ));
@@ -136,6 +136,11 @@ class Deck {
 
     const file = await this.app.vault.create(path, lines.join('\n'));
 
+    /* Und zurück: Die Word note ist der Knotenpunkt eines Wortes, dort
+       gehören die Verweise hin. Obsidian zeigt beide Richtungen dann
+       auch im Graphen und in den Rückverweisen. */
+    await this.linkCard(language, entry.key, file, record.front || record.key);
+
     /* Die eben angelegte Karte NICHT über den Metadatenspeicher
        zurücklesen. Der kennt die Notiz erst einen Augenblick später -
        bis dahin käme hier nichts zurück, und die Oberfläche zeigte
@@ -150,8 +155,28 @@ class Deck {
     });
   }
 
-  async remove(card) {
-    if (card && card.file) await this.app.vault.trash(card.file, false);
+  async remove(language, card) {
+    if (!card || !card.file) return;
+    await this.app.vault.trash(card.file, false);
+    await this.linkCard(language, card.key, null);
+  }
+
+  /* Den Verweis auf die Karte in der Word note setzen oder entfernen.
+     Gibt es die Notiz nicht, ist das kein Fehler - dann gibt es eben
+     nichts zu verknüpfen. */
+  async linkCard(language, key, file, label) {
+    const note = this.library.wordFileFor(language, key);
+    if (!note) return;
+
+    try {
+      await this.app.fileManager.processFrontMatter(note, (fm) => {
+        if (!file) delete fm.flashcard;
+        else fm.flashcard = '[[' + file.path.replace(/\.md$/, '') + '|' + label + ']]';
+      });
+    } catch (error) {
+      /* Der Verweis ist Beiwerk - die Karte selbst ist wichtiger. */
+      console.error('Trisent: could not link the flashcard', error);
+    }
   }
 
   /* Den Stand nach einer Bewertung festschreiben - und ihn der Karte in
