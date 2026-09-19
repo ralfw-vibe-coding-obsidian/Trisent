@@ -209,3 +209,68 @@ test('die Anzeige einer Folge ist wieder lesbar', () => {
   is(s.formatRhythm([1, 2, 3]), '1, 2, 3', 'formatiert');
   is(s.parseRhythm(s.formatRhythm(s.DEFAULT_RHYTHM)), s.DEFAULT_RHYTHM, 'hin und zurück');
 });
+
+/* ------------------------------------------------------------------ */
+/* Der Zeitstrahl                                                     */
+/* ------------------------------------------------------------------ */
+
+test('der Zeitstrahl hat für jeden Tag einen Platz, auch einen leeren', () => {
+  const strahl = s.timeline([], HEUTE, 5);
+  is(strahl.days.length, 5, 'fünf Tage');
+  is(strahl.days[0].day, HEUTE, 'der erste ist heute');
+  is(strahl.days[4].day, '2026-09-23', 'der letzte');
+  is(strahl.days.map((d) => d.count), [0, 0, 0, 0, 0], 'alle leer');
+  is(strahl.over, 0, 'nichts überfällig');
+  is(strahl.later, 0, 'nichts später');
+});
+
+test('jede Karte landet auf ihrem Tag', () => {
+  const strahl = s.timeline([
+    card({ seen: 1, due: HEUTE }),
+    card({ seen: 1, due: HEUTE }),
+    card({ seen: 3, due: '2026-09-21' })
+  ], HEUTE, 5);
+  is(strahl.days.map((d) => d.count), [2, 0, 1, 0, 0], 'verteilt');
+});
+
+test('Überfälliges kommt vorn zusammen, Fernes hinten', () => {
+  const strahl = s.timeline([
+    card({ seen: 1, due: '2026-09-18' }),
+    card({ seen: 1, due: '2026-01-01' }),
+    card({ seen: 1, due: '2026-09-24' }),
+    card({ seen: 1, due: '2054-02-03' })
+  ], HEUTE, 5);
+  is(strahl.over, 2, 'zwei überfällig');
+  is(strahl.later, 2, 'zwei jenseits der fünf Tage');
+  is(strahl.days.map((d) => d.count), [0, 0, 0, 0, 0], 'dazwischen nichts');
+});
+
+test('der letzte Tag gehört noch dazu, der Tag danach nicht mehr', () => {
+  const strahl = s.timeline([
+    card({ seen: 1, due: '2026-09-23' }),
+    card({ seen: 1, due: '2026-09-24' })
+  ], HEUTE, 5);
+  is(strahl.days[4].count, 1, 'der fünfte Tag zählt');
+  is(strahl.later, 1, 'der sechste ist später');
+});
+
+test('neue Karten haben keinen Termin und stehen für sich', () => {
+  const strahl = s.timeline([
+    card({ seen: 0, due: HEUTE }),
+    card({ seen: 0, due: null }),
+    card({ seen: 2, due: HEUTE })
+  ], HEUTE, 5);
+  is(strahl.fresh, 2, 'zwei neue');
+  is(strahl.days[0].count, 1, 'nur die gesehene steht heute');
+  is(strahl.over, 0, 'und keine ist überfällig');
+});
+
+test('eine gesehene Karte ohne Datum ist überfällig', () => {
+  const strahl = s.timeline([card({ seen: 4, due: null })], HEUTE, 5);
+  is(strahl.over, 1, 'überfällig');
+});
+
+test('ein unsinniger Umfang ergibt trotzdem einen Strahl', () => {
+  is(s.timeline([], HEUTE, 0).days.length, 1, 'mindestens ein Tag');
+  is(s.timeline([], HEUTE).days.length, 1, 'ohne Angabe auch');
+});

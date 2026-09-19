@@ -10,12 +10,16 @@
 
 const { ItemView, Notice, setIcon } = require('obsidian');
 const {
-  isDue, isNew, today, daysBetween, pick, SOURCES, rhythm, maxLevel
+  isDue, isNew, today, daysBetween, pick, timeline, SOURCES, rhythm, maxLevel
 } = require('./schedule.js');
 const { Session } = require('./session.js');
 
 /* Wonach die Kartei geordnet wird. Bei gleicher Schwierigkeit
    alphabetisch - sonst wechselte die Reihenfolge bei jedem Zeichnen. */
+/* Wie weit der Zeitstrahl nach vorn schaut. Vier Wochen: lang genug,
+   dass man einen Berg kommen sieht, kurz genug für einen Balken je Tag. */
+const SPAN = 28;
+
 const ORDERS = [
   { id: 'alphabetical', label: 'A–Z' },
   { id: 'hardest', label: 'Hardest first' }
@@ -171,6 +175,7 @@ class DeckView extends ItemView {
     this.renderCount(summary, String(cards.length), 'in total', false);
 
     this.renderStart(page, language, cards, now);
+    this.renderTimeline(page, cards, now);
 
     const listHead = page.createDiv({ cls: 'trisent-deck-head' });
     listHead.createDiv({ cls: 'trisent-section-label', text: 'All cards' });
@@ -258,6 +263,66 @@ class DeckView extends ItemView {
     }
 
     facts.createSpan({ cls: 'trisent-card-due', text: this.dueText(card, now) });
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Was auf einen zukommt                                             */
+  /* ---------------------------------------------------------------- */
+
+  /* Ein Balken je Tag. Die Frage, die er beantwortet, ist nicht "wie
+     viele Karten habe ich", sondern "baut sich etwas auf, das ich nicht
+     mehr schaffe". Deshalb steht das Überfällige als eigener Balken
+     davor - es ist der Berg, wenn es einen gibt. */
+  renderTimeline(page, cards, now) {
+    const strip = timeline(cards, now, SPAN);
+    const counted = strip.over + strip.later
+      + strip.days.reduce((sum, entry) => sum + entry.count, 0);
+    if (counted === 0) return;
+
+    const section = page.createDiv({ cls: 'trisent-timeline' });
+    section.createDiv({ cls: 'trisent-section-label', text: 'Coming up' });
+
+    const peak = Math.max(
+      strip.over,
+      strip.later,
+      ...strip.days.map((entry) => entry.count)
+    );
+
+    const bars = section.createDiv({ cls: 'trisent-tl-bars' });
+    this.renderBar(bars, strip.over, peak, 'is-over', strip.over + ' overdue');
+
+    strip.days.forEach((entry, offset) => {
+      this.renderBar(
+        bars, entry.count, peak,
+        offset === 0 ? 'is-today' : (offset % 7 === 0 ? 'is-week' : ''),
+        entry.count + (entry.count === 1 ? ' card ' : ' cards ') + this.whenText(offset)
+      );
+    });
+
+    this.renderBar(bars, strip.later, peak, 'is-later',
+      strip.later + ' after ' + SPAN + ' days');
+
+    const axis = section.createDiv({ cls: 'trisent-tl-axis' });
+    axis.createSpan({ text: 'overdue' });
+    axis.createSpan({ text: 'today → 4 weeks' });
+    axis.createSpan({ text: 'later' });
+  }
+
+  renderBar(bars, count, peak, extra, title) {
+    const bar = bars.createDiv({
+      cls: 'trisent-tl-bar' + (extra ? ' ' + extra : ''),
+      attr: { title: title }
+    });
+    const fill = bar.createDiv({ cls: 'trisent-tl-fill' });
+    /* Ein einzelner Balken darf nie ganz verschwinden - sonst sieht ein
+       Tag mit einer Karte aus wie ein Tag mit keiner. */
+    fill.style.height = count === 0 ? '0' : Math.max(count / peak * 100, 8) + '%';
+  }
+
+  whenText(offset) {
+    if (offset === 0) return 'today';
+    if (offset === 1) return 'tomorrow';
+    return 'in ' + offset + ' days';
   }
 
   /* ---------------------------------------------------------------- */

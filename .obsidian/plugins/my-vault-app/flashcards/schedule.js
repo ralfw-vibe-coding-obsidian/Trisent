@@ -175,6 +175,45 @@ function pick(cards, source, size, day) {
   return due.concat(fresh.slice(0, limit - due.length));
 }
 
+/* Was in den nächsten Wochen auf einen zukommt: je Tag die Zahl der
+   Karten, davor das Überfällige, dahinter alles Spätere.
+
+   Neue Karten zählen nicht mit - sie haben keinen Termin, sie warten.
+   Sie würden den ersten Balken aufblähen und den Blick auf das
+   verstellen, worum es hier geht: ob sich ein Berg aufbaut. */
+function timeline(cards, day, span) {
+  const now = day || today();
+  const width = Math.max(Math.trunc(Number(span) || 0), 1);
+
+  const days = [];
+  for (let i = 0; i < width; i++) days.push({ day: addDays(now, i), count: 0 });
+
+  let over = 0;
+  let later = 0;
+  let fresh = 0;
+
+  for (const card of cards) {
+    const state = normalize(card);
+    if (state.seen === 0) {
+      fresh++;
+      continue;
+    }
+    /* Ohne Datum ist eine gesehene Karte fällig - so liest es auch
+       isDue(). Sie gehört damit zum Überfälligen. */
+    if (!state.due) {
+      over++;
+      continue;
+    }
+
+    const offset = daysBetween(now, state.due);
+    if (offset < 0) over++;
+    else if (offset >= width) later++;
+    else days[offset].count++;
+  }
+
+  return { over: over, days: days, later: later, fresh: fresh };
+}
+
 /* Mischen. Der Zufall ist hereingereicht, damit ein Test ihn festhalten
    kann. */
 function shuffle(items, random) {
@@ -193,5 +232,5 @@ module.exports = {
   DEFAULT_RHYTHM, SOURCES,
   rhythm, maxLevel, parseRhythm, formatRhythm, configure,
   today, addDays, daysBetween, normalize,
-  rate, isNew, isDue, pick, shuffle
+  rate, isNew, isDue, pick, shuffle, timeline
 };

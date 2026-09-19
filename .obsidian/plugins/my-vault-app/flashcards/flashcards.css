@@ -37,6 +37,77 @@
   color: var(--text-faint);
 }
 
+/* ------------------------------------------------------------------ */
+/* Was auf einen zukommt                                              */
+/* ------------------------------------------------------------------ */
+
+.trisent-timeline {
+  margin-top: 1.75rem;
+}
+
+.trisent-timeline .trisent-section-label {
+  margin: 0 0 0.6rem;
+}
+
+.trisent-tl-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 3.5rem;
+}
+
+.trisent-tl-bar {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.trisent-tl-fill {
+  width: 100%;
+  border-radius: 2px 2px 0 0;
+  background: var(--background-modifier-border);
+  transition: height 160ms ease-out;
+}
+
+/* Heute ist der Akzent, alles danach bleibt still. Das Überfällige
+   trägt die Warnfarbe - es ist das Einzige hier, was ein Problem ist. */
+
+.trisent-tl-bar.is-today .trisent-tl-fill {
+  background: var(--tri-accent);
+}
+
+.trisent-tl-bar.is-over .trisent-tl-fill {
+  background: var(--tri-unknown);
+}
+
+/* Wochengrenzen: ein feiner Strich, damit man die Balken zählen kann,
+   ohne sie zu zählen. */
+.trisent-tl-bar.is-week {
+  box-shadow: inset 1px 0 0 var(--background-modifier-border);
+}
+
+.trisent-tl-bar.is-over,
+.trisent-tl-bar.is-later {
+  flex: 0 0 1.4rem;
+  margin-right: 0.5rem;
+}
+
+.trisent-tl-bar.is-later {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+.trisent-tl-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+  font-family: var(--tri-ui);
+  font-size: 0.68rem;
+  color: var(--text-faint);
+}
+
 /* Überschrift der Liste und daneben die Reihenfolge. */
 
 .trisent-deck-head {
