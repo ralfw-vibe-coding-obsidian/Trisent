@@ -30,6 +30,7 @@ const MODULES = [
   'core/library.js',
   'learning/streak.js',
   'flashcards/schedule.js',
+  'flashcards/session.js',
   'flashcards/deck.js',
   'learning/index.js',
   'reader/audio.js',

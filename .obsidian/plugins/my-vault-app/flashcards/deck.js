@@ -136,7 +136,10 @@ class Deck {
     if (card && card.file) await this.app.vault.trash(card.file, false);
   }
 
-  /* Den Stand nach einer Bewertung festschreiben. */
+  /* Den Stand nach einer Bewertung festschreiben - und ihn der Karte in
+     der Hand gleich mitgeben. Sonst zeigte eine Liste, die kurz darauf
+     gezeichnet wird, noch den alten Stand: Der Metadatenspeicher hinkt
+     einem frischen Schreibvorgang hinterher. */
   async save(card, state) {
     if (!card || !card.file) return;
     await this.app.fileManager.processFrontMatter(card.file, (fm) => {
@@ -145,6 +148,10 @@ class Deck {
       fm.wrong = state.wrong;
       fm.due = state.due;
     });
+    card.level = state.level;
+    card.seen = state.seen;
+    card.wrong = state.wrong;
+    card.due = state.due;
   }
 }
 

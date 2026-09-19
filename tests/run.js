@@ -53,21 +53,40 @@ function report() {
   process.exitCode = failed > 0 ? 1 : 0;
 }
 
-/* Eine Datei des Plugins laden, ohne Obsidian. Geht nur für Dateien, die
-   nichts aus 'obsidian' brauchen - und genau das ist der Grund, warum die
-   Rechnungen dort getrennt liegen. */
-function load(relative) {
+/* Eine Datei des Plugins laden, ohne Obsidian. Ein relatives require
+   zwischen Plugin-Dateien wird aufgelöst - ein require('obsidian') nicht,
+   und genau das ist der Grund, warum die Rechnungen getrennt liegen. */
+const loaded = new Map();
+
+function pluginRoot() {
+  const path = require('path');
+  return path.join(__dirname, '..', '.obsidian', 'plugins', 'my-vault-app');
+}
+
+function loadFile(file, label) {
+  if (loaded.has(file)) return loaded.get(file).exports;
+
   const fs = require('fs');
   const path = require('path');
-  const file = path.join(__dirname, '..', '.obsidian', 'plugins', 'my-vault-app', relative);
   const unit = { exports: {} };
+  loaded.set(file, unit);
+
   new Function('module', 'exports', 'require', fs.readFileSync(file, 'utf8'))(
     unit, unit.exports,
     (name) => {
-      throw new Error(relative + ' should not require "' + name + '" - keep it free of Obsidian');
+      if (name.charAt(0) === '.') {
+        return loadFile(path.resolve(path.dirname(file), name), name);
+      }
+      throw new Error(label + ' should not require "' + name + '" - keep it free of Obsidian');
     }
   );
+
   return unit.exports;
+}
+
+function load(relative) {
+  const path = require('path');
+  return loadFile(path.join(pluginRoot(), relative), relative);
 }
 
 module.exports = { test, is, ok, report, load };

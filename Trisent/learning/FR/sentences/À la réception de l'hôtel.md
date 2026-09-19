@@ -5,8 +5,10 @@ package: fr-hotel-checkin
 title: À la réception de l'hôtel
 intoForeign: {}
 intoNative:
-  s001: 0/1
-updatedAt: 2026-09-18
+  s001: 1/2
+  s002: 1/1
+  s005: 1/1
+updatedAt: 2026-09-19
 ---
 
 Wie die Sätze dieses Textes gelaufen sind, je Richtung.

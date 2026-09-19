@@ -193,3 +193,256 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+
+/* ------------------------------------------------------------------ */
+/* Eine Sitzung beginnen                                              */
+/* ------------------------------------------------------------------ */
+
+.trisent-start {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.1rem 1.2rem 1.2rem;
+  margin: 0.25rem 0 1.75rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 14px;
+  background: var(--background-primary-alt);
+}
+
+.trisent-start-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
+}
+
+.trisent-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.trisent-choice-label {
+  font-family: var(--tri-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.trisent-choice-row {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.trisent-view .trisent-choice-option {
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: var(--background-primary);
+  color: var(--text-muted);
+  box-shadow: none;
+  white-space: nowrap;
+}
+
+.trisent-view .trisent-choice-option:hover {
+  color: var(--text-normal);
+}
+
+.trisent-view .trisent-choice-option.is-on {
+  border-color: var(--tri-accent);
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+.trisent-view .trisent-practise {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 0.55rem 1.4rem;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: var(--tri-accent);
+  color: var(--background-primary);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-practise:hover {
+  filter: brightness(1.08);
+}
+
+.trisent-view .trisent-practise[disabled] {
+  cursor: default;
+  border-color: var(--background-modifier-border);
+  background: transparent;
+  color: var(--text-faint);
+  filter: none;
+}
+
+.trisent-practise svg {
+  width: 1em;
+  height: 1em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Die laufende Sitzung                                               */
+/* ------------------------------------------------------------------ */
+
+.trisent-session-count {
+  flex: 0 0 auto;
+  font-family: var(--tri-ui);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.trisent-progress {
+  height: 2px;
+  margin-top: 0.6rem;
+  background: var(--background-modifier-border);
+}
+
+.trisent-progress-fill {
+  height: 100%;
+  background: var(--tri-accent);
+  transition: width 160ms ease-out;
+}
+
+.trisent-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46vh;
+  padding: 1.5rem 0 2rem;
+}
+
+.trisent-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  width: 100%;
+  text-align: center;
+}
+
+.trisent-face.is-tappable {
+  cursor: pointer;
+}
+
+/* Die Fremdsprache in der Leseschrift, die Bedeutung in der
+   Oberflächenschrift - dieselbe Trennung wie im Reader. */
+
+.trisent-face-line.is-word {
+  font-family: var(--tri-read);
+  font-weight: var(--tri-read-weight);
+  font-size: 2.6rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-normal);
+  word-break: break-word;
+}
+
+.trisent-face-line.is-meaning {
+  font-family: var(--tri-ui);
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--text-normal);
+  word-break: break-word;
+}
+
+.trisent-face-rule {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--background-modifier-border);
+}
+
+.trisent-face-hint {
+  font-family: var(--tri-ui);
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+.trisent-face-facts {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.3rem;
+}
+
+.trisent-answers {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding-bottom: 2rem;
+}
+
+.trisent-view .trisent-turn,
+.trisent-view .trisent-answer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  font-family: var(--tri-ui);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.6rem 1.3rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  box-shadow: none;
+}
+
+.trisent-turn svg,
+.trisent-answer svg {
+  width: 1em;
+  height: 1em;
+}
+
+.trisent-view .trisent-turn {
+  min-width: 11rem;
+  border-color: var(--tri-accent);
+  color: var(--tri-accent);
+}
+
+.trisent-view .trisent-turn:hover {
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+.trisent-view .trisent-answer.is-again:hover {
+  background: var(--background-modifier-hover);
+}
+
+.trisent-view .trisent-answer.is-unknown {
+  border-color: var(--tri-unknown);
+  color: var(--tri-unknown);
+}
+
+.trisent-view .trisent-answer.is-unknown:hover {
+  background: var(--tri-unknown);
+  color: var(--background-primary);
+}
+
+.trisent-view .trisent-answer.is-known {
+  border-color: var(--tri-accent);
+  color: var(--tri-accent);
+}
+
+.trisent-view .trisent-answer.is-known:hover {
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
