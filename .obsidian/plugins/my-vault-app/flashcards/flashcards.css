@@ -339,6 +339,16 @@
   cursor: default;
 }
 
+/* Die Karte, von der aus zuletzt ein Text geöffnet wurde. Sie trägt den
+   Akzent am Rand - damit man nach dem Hin und Her zwischen zwei Reitern
+   wieder weiß, wo man war. */
+
+.trisent-card-row.is-visited {
+  border-color: var(--tri-accent);
+  background: var(--background-modifier-hover);
+  box-shadow: inset 3px 0 0 var(--tri-accent);
+}
+
 /* Die Karte fragt selbst nach, statt einen Dialog aufzumachen. */
 
 .trisent-card-row.is-asking {

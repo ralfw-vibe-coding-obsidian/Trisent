@@ -57,6 +57,8 @@ class DeckView extends ItemView {
     this.streak = flashcards.streak;
     this.languageCode = null;
     this.query = '';
+    /* Die Karte, von der aus zuletzt ein Text geöffnet wurde. */
+    this.cameFrom = null;
     this.session = null;
     /* Der Streak wird je Sitzung einmal angestoßen, nicht je Karte. */
     this.counted = false;
@@ -147,6 +149,7 @@ class DeckView extends ItemView {
       tile.addEventListener('click', () => {
         this.languageCode = language.code;
         this.query = '';
+        this.cameFrom = null;
         this.flashcards.settings.lastLanguage = language.code;
         this.flashcards.saveSettings();
         this.render();
@@ -313,8 +316,11 @@ class DeckView extends ItemView {
        Wunsch als die Notiz: Man will es im Satz sehen. Einmal angemeldet,
        nicht bei jedem Neuzeichnen des Inhalts. */
     setTooltip(row, 'Show this word in a text');
+    if (card.key === this.cameFrom) row.addClass('is-visited');
+
     row.addEventListener('click', () => {
       if (row.hasClass('is-asking')) return;
+      this.markVisited(row, card.key);
       this.showInText(card);
     });
 
@@ -377,19 +383,39 @@ class DeckView extends ItemView {
     facts.createSpan({ cls: 'trisent-card-due', text: this.dueText(card, now) });
   }
 
-  /* Die Wortnotiz - dort steht, was die Person über das Wort weiß. Gibt
-     es sie noch nicht, ist das kein Fehler: Angelegt wird sie erst, wenn
-     jemand etwas hineinschreiben will. */
+  /* Wer von einer Karte in den Text springt, kommt später in einem
+     anderen Reiter wieder hier an - und weiß dann nicht mehr, wo er war.
+     Die Karte bleibt deshalb markiert, bis eine andere drankommt. */
+  markVisited(row, key) {
+    this.cameFrom = key;
+    if (!this.listEl) return;
+    for (const other of this.listEl.querySelectorAll('.trisent-card-row')) {
+      other.removeClass('is-visited');
+    }
+    row.addClass('is-visited');
+  }
+
+  /* Die Wortnotiz: das Blatt der Person zu diesem Wort - Grundform,
+     Bedeutung, Grammatik, ihr Lernstand und Platz für eigene Notizen.
+     Sie entsteht, sobald jemand sie öffnet; vorher gibt es sie nicht,
+     denn eine Karteikarte ist noch kein Grund für eine Notiz. */
   async openNote(card) {
     const language = this.library.languageByCode(this.languageCode);
     if (!language) return;
 
-    const file = this.library.wordFileFor(language, card.key);
+    let file = this.library.wordFileFor(language, card.key);
     if (!file) {
-      new Notice('No note for this word yet. Open it from a text to make one.');
-      return;
+      try {
+        file = await this.library.setWordStatus(language, card.key, 'unknown', {
+          lemma: card.front,
+          gloss: card.back
+        });
+      } catch (error) {
+        new Notice('Could not create the note: ' + String(error.message || error));
+        return;
+      }
     }
-    await this.app.workspace.getLeaf('tab').openFile(file);
+    if (file) await this.app.workspace.getLeaf('tab').openFile(file);
   }
 
   /* Die erste Stelle, an der das Wort in einem Text steht - und dorthin
