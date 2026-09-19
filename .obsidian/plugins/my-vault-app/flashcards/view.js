@@ -8,7 +8,7 @@
  * wiederkommt, steht in schedule.js, wie der Stapel läuft in session.js.
  */
 
-const { ItemView, Notice, setIcon, setTooltip } = require('obsidian');
+const { ItemView, MarkdownView, Notice, setIcon, setTooltip } = require('obsidian');
 const {
   isDue, isNew, today, daysBetween, pick, timeline, barHeight,
   SOURCES, rhythm, maxLevel
@@ -419,7 +419,40 @@ class DeckView extends ItemView {
       new Notice('This card has no note file.');
       return;
     }
-    await this.app.workspace.getLeaf('tab').openFile(card.file);
+
+    /* Liegt die Notiz schon in einem Reiter, wird der geholt - sonst
+       sammeln sich bei jedem Klick neue an. */
+    let leaf = this.app.workspace
+      .getLeavesOfType('markdown')
+      .find((open) => open.view && open.view.file === card.file);
+
+    if (leaf) {
+      this.app.workspace.revealLeaf(leaf);
+    } else {
+      leaf = this.app.workspace.getLeaf('tab');
+      await leaf.openFile(card.file);
+    }
+
+    this.putCursorAtEnd(leaf);
+  }
+
+  /* Wer die Notiz einer Karte öffnet, will schreiben. Der Cursor steht
+     deshalb dort, wo geschrieben wird: unter "My notes", hinter dem,
+     was schon dasteht. */
+  putCursorAtEnd(leaf) {
+    const view = leaf.view;
+    if (!(view instanceof MarkdownView) || !view.editor) return;
+
+    const editor = view.editor;
+    const lines = editor.getValue().split('\n');
+
+    /* Mehrere Leerzeilen am Ende auf eine zusammenziehen - sonst landet
+       der Cursor drei Zeilen unter dem Text. */
+    let at = lines.length - 1;
+    while (at > 0 && lines[at].trim() === '' && lines[at - 1].trim() === '') at--;
+
+    editor.setCursor({ line: at, ch: lines[at].length });
+    editor.focus();
   }
 
   /* Die erste Stelle, an der das Wort in einem Text steht - und dorthin

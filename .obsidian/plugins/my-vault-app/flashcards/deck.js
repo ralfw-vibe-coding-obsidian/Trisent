@@ -110,7 +110,6 @@ class Deck {
       'due: ' + record.due,
       'added: ' + record.added,
       '---',
-      '',
       /* Der Platz der Person. Was sie sich beim Üben zu dieser Karte
          merkt, gehört zur Karte - nicht in die Wortnotiz, die dem Wort
          gehört und die ein neues Paket ersetzen darf.
