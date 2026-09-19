@@ -315,7 +315,7 @@ class DeckView extends ItemView {
      sieht man nur, wenn beide nebeneinander stehen. */
   renderTimeline(page, cards, now) {
     const strip = timeline(cards, now, SPAN);
-    const counted = strip.over + strip.later
+    const counted = strip.fresh + strip.over + strip.later
       + strip.days.reduce((sum, entry) => sum + entry.count, 0);
     if (counted === 0) return;
 
@@ -325,6 +325,11 @@ class DeckView extends ItemView {
     section.createDiv({ cls: 'trisent-section-label', text: 'Coming up' });
 
     const plot = section.createDiv({ cls: 'trisent-tl' });
+
+    /* Neue ganz links, vor dem Überfälligen: Sie sind kein Rückstand,
+       sondern Vorrat - was man sich noch vornehmen kann. */
+    this.renderSlot(plot, strip.fresh, 'is-edge is-new',
+      this.cardsText(strip.fresh) + ' never seen');
 
     this.renderSlot(plot, strip.over, 'is-edge is-over',
       this.cardsText(strip.over) + ' before today');
@@ -345,8 +350,14 @@ class DeckView extends ItemView {
     /* Die Beschriftung nennt nur die beiden Enden. Was dazwischen liegt,
        sagt die Linie selbst - und das Datum steht am Strich, wenn man
        darauf zeigt. */
+    /* Die beiden linken Sammelplätze stehen dicht beieinander, ihre
+       Beschriftung deshalb auch - die Farbe sagt, welche zu welchem
+       gehört. */
     const axis = section.createDiv({ cls: 'trisent-tl-axis' });
-    axis.createSpan({ text: 'before today' });
+    const ends = axis.createSpan({ cls: 'trisent-tl-ends' });
+    ends.createSpan({ cls: 'trisent-tl-key is-new', text: 'new' });
+    ends.createSpan({ text: '·' });
+    ends.createSpan({ cls: 'trisent-tl-key is-over', text: 'overdue' });
     axis.createSpan({ text: 'after ' + shortDate(last) });
   }
 

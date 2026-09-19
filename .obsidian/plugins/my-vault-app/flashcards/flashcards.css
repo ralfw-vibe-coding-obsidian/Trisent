@@ -162,6 +162,22 @@
   background: var(--tri-unknown);
 }
 
+/* Neue Karten sind kein Rückstand, sondern Vorrat - deshalb die Farbe
+   des Lernens und nicht die der Warnung. */
+
+.trisent-tl-slot.is-new .trisent-tl-bar {
+  background: var(--tri-learning);
+}
+
+.trisent-tl-slot.is-new .trisent-tl-value {
+  color: var(--tri-learning);
+  font-weight: 600;
+}
+
+.trisent-tl-slot.is-new .trisent-tl-foot::after {
+  background: var(--tri-learning);
+}
+
 .trisent-tl-axis {
   display: flex;
   justify-content: space-between;
@@ -169,6 +185,19 @@
   font-family: var(--tri-ui);
   font-size: 0.68rem;
   color: var(--text-faint);
+}
+
+.trisent-tl-ends {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
+.trisent-tl-key.is-new {
+  color: var(--tri-learning);
+}
+
+.trisent-tl-key.is-over {
+  color: var(--tri-unknown);
 }
 
 /* Überschrift der Liste und daneben die Reihenfolge. */
