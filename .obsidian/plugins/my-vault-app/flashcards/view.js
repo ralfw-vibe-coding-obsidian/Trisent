@@ -22,6 +22,18 @@ const { Session } = require('./session.js');
    einen Strich je Tag. */
 const SPAN = 32;
 
+/* Ein kurzes Datum wie "20 Oct". Mittags gerechnet, damit keine
+   Zeitzone den Tag verschiebt. */
+function shortDate(day) {
+  try {
+    return new Date(day + 'T12:00:00Z').toLocaleDateString('en', {
+      day: 'numeric', month: 'short', timeZone: 'UTC'
+    });
+  } catch (error) {
+    return day;
+  }
+}
+
 const ORDERS = [
   { id: 'alphabetical', label: 'A–Z' },
   { id: 'hardest', label: 'Hardest first' }
@@ -288,45 +300,48 @@ class DeckView extends ItemView {
   /* Was auf einen zukommt                                             */
   /* ---------------------------------------------------------------- */
 
-  /* Ein Strich je Tag, ein Balken dort, wo etwas wartet. Die Frage, die
-     das Bild beantwortet, ist nicht "wie viele Karten habe ich", sondern
-     "baut sich etwas auf, das ich nicht mehr schaffe". Deshalb steht das
-     Überfällige als eigener Balken davor - es ist der Berg, wenn es
-     einen gibt - und alles jenseits des Monats dahinter. */
+  /* Ein Strich je Tag, ein Balken dort, wo etwas wartet.
+
+     Ganz links steht alles vor heute, ganz rechts alles nach dem Monat -
+     zwei Sammelplätze am Ende einer Linie, auf der sonst je ein Tag
+     steht. Sie stehen auf derselben Linie und in derselben Höhe wie die
+     Tage, denn genau darum geht es: 320 Überfällige neben 10 von heute
+     sieht man nur, wenn beide nebeneinander stehen. */
   renderTimeline(page, cards, now) {
     const strip = timeline(cards, now, SPAN);
     const counted = strip.over + strip.later
       + strip.days.reduce((sum, entry) => sum + entry.count, 0);
     if (counted === 0) return;
 
+    const last = strip.days[strip.days.length - 1].day;
+
     const section = page.createDiv({ cls: 'trisent-timeline' });
     section.createDiv({ cls: 'trisent-section-label', text: 'Coming up' });
 
     const plot = section.createDiv({ cls: 'trisent-tl' });
 
-    this.renderSlot(plot, strip.over, 'is-over',
-      strip.over + (strip.over === 1 ? ' card' : ' cards') + ' overdue');
+    this.renderSlot(plot, strip.over, 'is-edge is-over',
+      this.cardsText(strip.over) + ' before today');
 
-    const scale = plot.createDiv({ cls: 'trisent-tl-days' });
     strip.days.forEach((entry, offset) => {
-      const marks = [];
-      if (offset === 0) marks.push('is-today');
-      else if (offset % 7 === 0) marks.push('is-week');
+      const marks = offset === 0 ? 'is-today' : (offset % 7 === 0 ? 'is-week' : '');
+      const when = this.whenText(offset) + ' · ' + shortDate(entry.day);
 
-      this.renderSlot(scale, entry.count, marks.join(' '),
+      this.renderSlot(plot, entry.count, marks,
         entry.count === 0
-          ? 'Nothing ' + this.whenText(offset)
-          : entry.count + (entry.count === 1 ? ' card ' : ' cards ') + this.whenText(offset));
+          ? 'Nothing ' + when
+          : this.cardsText(entry.count) + ' ' + when);
     });
 
-    this.renderSlot(plot, strip.later, 'is-later',
-      strip.later + (strip.later === 1 ? ' card' : ' cards')
-        + ' after ' + (SPAN - 1) + ' days');
+    this.renderSlot(plot, strip.later, 'is-edge is-later',
+      this.cardsText(strip.later) + ' after ' + shortDate(last));
 
+    /* Die Beschriftung nennt nur die beiden Enden. Was dazwischen liegt,
+       sagt die Linie selbst - und das Datum steht am Strich, wenn man
+       darauf zeigt. */
     const axis = section.createDiv({ cls: 'trisent-tl-axis' });
-    axis.createSpan({ text: 'overdue' });
-    axis.createSpan({ text: 'today → in a month' });
-    axis.createSpan({ text: 'later' });
+    axis.createSpan({ text: 'before today' });
+    axis.createSpan({ text: 'after ' + shortDate(last) });
   }
 
   /* Zahl oben, Balken darunter, Strich auf der Linie. Die leeren Tage
@@ -350,6 +365,10 @@ class DeckView extends ItemView {
     }
 
     slot.createDiv({ cls: 'trisent-tl-foot' });
+  }
+
+  cardsText(count) {
+    return count + (count === 1 ? ' card' : ' cards');
   }
 
   whenText(offset) {

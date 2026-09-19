@@ -49,20 +49,14 @@
   margin: 0 0 0.7rem;
 }
 
+/* Eine einzige Linie: links alles vor heute, dann 32 Tage, rechts alles
+   danach. Die beiden Enden sind hinterlegt - sie sind Sammelplätze, keine
+   Tage -, stehen aber auf derselben Linie und werden genauso hoch
+   gerechnet. Nur so sieht man 320 Überfällige neben 10 von heute. */
+
 .trisent-tl {
   display: flex;
   align-items: flex-end;
-  gap: 0.6rem;
-}
-
-/* Die 32 Tage hängen zusammen - zwischen ihnen läuft die Linie durch.
-   Überfälliges und Späteres stehen daneben, ohne Linie: Sie sind keine
-   Tage, sondern Haufen. */
-
-.trisent-tl-days {
-  display: flex;
-  flex: 1 1 0;
-  min-width: 0;
 }
 
 .trisent-tl-slot {
@@ -73,9 +67,17 @@
   min-width: 0;
 }
 
-.trisent-tl-slot.is-over,
-.trisent-tl-slot.is-later {
-  flex: 0 0 1.5rem;
+.trisent-tl-slot.is-edge {
+  flex: 0 0 1.6rem;
+}
+
+.trisent-tl-slot.is-edge .trisent-tl-stack {
+  background: var(--background-modifier-hover);
+  border-radius: 3px 3px 0 0;
+}
+
+.trisent-tl-slot.is-edge .trisent-tl-foot::after {
+  height: 7px;
 }
 
 .trisent-tl-value {
@@ -131,7 +133,7 @@
   background: var(--text-faint);
 }
 
-/* Heute trägt den Akzent, überfällig die Warnfarbe. Sonst nichts:
+/* Heute trägt den Akzent, alles vor heute die Warnfarbe. Sonst nichts:
    Die übrigen Tage sind Zukunft, kein Zustand. */
 
 .trisent-tl-slot.is-today .trisent-tl-bar {
@@ -157,14 +159,8 @@
   font-weight: 600;
 }
 
-.trisent-tl-slot.is-over .trisent-tl-foot,
-.trisent-tl-slot.is-later .trisent-tl-foot {
-  border-top: none;
-}
-
-.trisent-tl-slot.is-over .trisent-tl-foot::after,
-.trisent-tl-slot.is-later .trisent-tl-foot::after {
-  content: none;
+.trisent-tl-slot.is-over .trisent-tl-foot::after {
+  background: var(--tri-unknown);
 }
 
 .trisent-tl-axis {
