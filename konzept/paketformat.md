@@ -223,18 +223,40 @@ wann man es benutzt.
 | `partOfSpeech` | ja | Wie oben. |
 | `gloss` | ja | Deutsche Grundbedeutung. Darf ausführlicher sein als die Glosse im Satz. |
 | `forms` | nein | Formen, die im Paket vorkommen oder häufig sind. |
-| `grammar` | nein | Deutsche Grammatiknotiz, ein bis drei Sätze. Genau das, was man beim Lernen wissen will. |
+| `grammar` | nein | Deutsche Grammatiknotiz, ein bis drei Sätze. Genau das, was man beim Lernen wissen will. **Markdown** – der Reader zeichnet sie als solches. |
 
-Der Reader zeigt diese Angaben auf der Wortkarte direkt aus dem Paket. Eine
+### Das Paket ist die einzige Quelle
+
+Der Reader zeigt diese Angaben auf der Wortkarte **direkt aus dem Paket**. Eine
 Wortnotiz in `dictionary/` entsteht erst, wenn die Person das Wort zum ersten
 Mal antippt – der Ordner enthält also die Wörter, mit denen sie sich befasst
 hat, nicht alle, die vorkommen.
 
-**Vorhandene Wortnotizen werden beim Import nicht verändert.** Auch nicht
-ergänzt. Das ist Absicht und zurückgestellt: Solange es kein Regelwerk dafür
-gibt, was in einer `grammar`-Notiz je Wortart und je Sprache zu stehen hat,
-würde ein späteres Paket die Notizen der Person zufällig umschreiben – mal
-besser, mal anders. Wenn dieses Regelwerk steht, reden wir erneut darüber.
+**In die Wortnotiz wird nichts kopiert, was im Paket steht.** Sie enthält nur:
+
+```markdown
+---
+type: word
+language: fr
+lemma: entrée
+partOfSpeech: NOUN
+key: "fr:entrée:NOUN"
+status: familiar
+updatedAt: 2026-09-19
+---
+## My notes
+```
+
+Also: wer das Wort ist, wie weit die Person damit ist, und was sie sich selbst
+notiert. **Kein `gloss`, keine `forms`, keine `grammar`.** Die gehören dem
+Paket und dürfen sich mit einer besseren Fassung ändern; eine Abschrift daneben
+veraltete still, während die Wortkarte längst etwas anderes zeigt. Gelesen wird
+aus der Notiz ohnehin nur `key` und `status`.
+
+Damit erledigt sich auch die Frage, ob ein Import vorhandene Wortnotizen
+ergänzen soll: **Es gibt dort nichts zu ergänzen.** Ein neues Paket bringt eine
+bessere Erklärung mit, und die Wortkarte zeigt sie – ohne irgendetwas
+anzufassen, das der Person gehört.
 
 ## Audio
 

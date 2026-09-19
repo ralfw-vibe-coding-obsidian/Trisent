@@ -310,26 +310,26 @@ class Library {
     const partOfSpeech = (entry && entry.partOfSpeech) || key.split(':')[2] || '';
     const path = this.freeWordPath(folder, lemma, partOfSpeech);
 
+    /* In die Wortnotiz kommt NICHTS, was schon im Paket steht.
+
+       Bedeutung, Formen und Grammatik gehören dem Paket und dürfen sich
+       mit einer besseren Fassung ändern. Stünden sie hier auch, gäbe es
+       sie zweimal - und die Abschrift veraltete still, während die
+       Wortkarte längst etwas anderes zeigt. Genau das war passiert.
+
+       Hier steht nur, was der Person gehört: wer das Wort ist (Schlüssel
+       und Grundform, beides unveränderlich), wie weit sie damit ist, und
+       was sie sich selbst notiert. Gelesen wird von alldem ohnehin nur
+       `key` und `status`. */
     const lines = ['---'];
     lines.push('type: word');
     lines.push('language: ' + language.code);
     lines.push('lemma: ' + yamlValue(lemma));
     if (partOfSpeech) lines.push('partOfSpeech: ' + partOfSpeech);
     lines.push('key: ' + yamlValue(key));
-    if (entry && entry.gloss) lines.push('gloss: ' + yamlValue(entry.gloss));
-    if (entry && Array.isArray(entry.forms) && entry.forms.length > 0) {
-      lines.push('forms: [' + entry.forms.map(yamlValue).join(', ') + ']');
-    }
     lines.push('status: ' + status);
     lines.push('updatedAt: ' + today);
     lines.push('---');
-    lines.push('');
-    if (entry && entry.grammar) {
-      lines.push('## Grammar');
-      lines.push('');
-      lines.push(entry.grammar);
-      lines.push('');
-    }
     lines.push('## My notes');
     lines.push('');
 
