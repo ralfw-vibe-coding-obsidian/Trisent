@@ -555,29 +555,40 @@ class DeckView extends ItemView {
     const card = session.card;
     const wordSide = session.ask === 'front';
 
+    /* Eine angedeutete Karte, die sich dreht. Beide Seiten stehen von
+       Anfang an da - die hintere ist nur weggedreht. Nur so gibt es eine
+       Bewegung statt eines Sprungs, und nur deshalb zeichnet das
+       Umdrehen die Seite nicht neu. */
     const stage = page.createDiv({ cls: 'trisent-stage' });
-    const face = stage.createDiv({ cls: 'trisent-face' });
+    const flip = stage.createDiv({
+      cls: 'trisent-flip' + (session.revealed ? ' is-turned' : '')
+    });
+    const inner = flip.createDiv({ cls: 'trisent-flip-inner' });
 
-    face.createDiv({
+    const front = inner.createDiv({ cls: 'trisent-flip-face is-front' });
+    front.createDiv({
       cls: 'trisent-face-line ' + (wordSide ? 'is-word' : 'is-fluent'),
       text: session.question || '—'
     });
+    front.createDiv({ cls: 'trisent-face-hint', text: 'tap to turn it over' });
 
-    if (session.revealed) {
-      face.createDiv({ cls: 'trisent-face-rule' });
-      face.createDiv({
-        cls: 'trisent-face-line ' + (wordSide ? 'is-fluent' : 'is-word'),
-        text: session.answerText || 'No translation in this card.'
-      });
-      this.renderCardFacts(face, card);
-      this.renderExamples(face.createDiv({ cls: 'trisent-examples' }), card);
-    } else {
-      face.addClass('is-tappable');
-      face.createDiv({ cls: 'trisent-face-hint', text: 'tap to turn it over' });
-      face.addEventListener('click', () => this.turn());
-    }
+    const reverse = inner.createDiv({ cls: 'trisent-flip-face is-back' });
+    reverse.createDiv({
+      cls: 'trisent-face-line ' + (wordSide ? 'is-fluent' : 'is-word'),
+      text: session.answerText || 'No translation in this card.'
+    });
+    this.renderCardFacts(reverse, card);
 
-    this.renderAnswers(page, language, session);
+    flip.addEventListener('click', () => this.turn());
+    this.flipEl = flip;
+
+    /* Die Beispielsätze stehen unter der Karte, nicht darauf: Eine Karte
+       hat eine feste Größe, fünf Sätze haben das nicht. */
+    this.extrasEl = page.createDiv({ cls: 'trisent-examples' });
+    if (session.revealed) this.renderExamples(this.extrasEl, card);
+
+    this.answersEl = page.createDiv({ cls: 'trisent-answers' });
+    this.paintAnswers(language);
   }
 
   /* Beispielsätze - erst nach dem Umdrehen. Vorher wären sie ein halber
@@ -649,8 +660,11 @@ class DeckView extends ItemView {
     }
   }
 
-  renderAnswers(page, language, session) {
-    const row = page.createDiv({ cls: 'trisent-answers' });
+  paintAnswers(language) {
+    const session = this.session;
+    const row = this.answersEl;
+    if (!session || !row) return;
+    row.empty();
 
     if (!session.revealed) {
       const turn = row.createEl('button', { cls: 'trisent-turn' });
@@ -707,10 +721,15 @@ class DeckView extends ItemView {
     again.addEventListener('click', () => this.stop());
   }
 
+  /* Umdrehen zeichnet die Seite NICHT neu - sonst entstünde die Karte
+     neu und stünde sofort auf der Rückseite, ohne Bewegung. */
   turn() {
     if (!this.session || this.session.revealed) return;
     this.session.reveal();
-    this.render();
+
+    if (this.flipEl) this.flipEl.addClass('is-turned');
+    if (this.extrasEl) this.renderExamples(this.extrasEl, this.session.card);
+    this.paintAnswers(this.library.languageByCode(this.languageCode));
   }
 
   stop() {
