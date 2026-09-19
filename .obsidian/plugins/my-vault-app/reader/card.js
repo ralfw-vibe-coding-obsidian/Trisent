@@ -6,7 +6,7 @@
  * Gehört dieser Sitzung.
  */
 
-const { ItemView, setIcon, setTooltip } = require('obsidian');
+const { ItemView, MarkdownRenderer, setIcon, setTooltip } = require('obsidian');
 const { WORD_STATUS, readablePos } = require('../core/package.js');
 
 const CARD_VIEW_TYPE = 'trisent-card-view';
@@ -101,10 +101,8 @@ class WordCardView extends ItemView {
     }
 
     if (card.grammar) {
-      this.section(page, 'Grammar').createDiv({
-        cls: 'trisent-card-text',
-        text: card.grammar
-      });
+      const box = this.section(page, 'Grammar').createDiv({ cls: 'trisent-card-text' });
+      this.renderMarkdown(box, card.grammar, card);
     }
 
     /* Wendungen, zu denen dieses Wort gehört. Der Weg zur Klammer, wenn
@@ -131,6 +129,23 @@ class WordCardView extends ItemView {
       text: (card.file ? 'Open' : 'Create') + ' dictionary entry'
     });
     open.addEventListener('click', () => this.reader.openWordNote(card));
+  }
+
+  /* Die Grammatiknotiz kommt aus dem Paket und ist Markdown - in den
+     Notizen stehen Formen in `Akzenten`, Betonungen in *Sternchen*.
+     Roh gezeigt sähe die Person diese Zeichen statt der Auszeichnung.
+
+     Geht das Rendern schief, steht wenigstens der Text da: Eine leere
+     Erklärung wäre schlimmer als eine mit Sternchen. */
+  renderMarkdown(box, text, card) {
+    const path = card.file ? card.file.path : '';
+    try {
+      MarkdownRenderer.render(this.app, text, box, path, this).catch(() => {
+        box.setText(text);
+      });
+    } catch (error) {
+      box.setText(text);
+    }
   }
 
   /* Alle Stellen, an denen das Wort vorkommt - nach Text gruppiert, der

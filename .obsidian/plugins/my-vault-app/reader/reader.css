@@ -732,6 +732,45 @@
   color: var(--text-muted);
 }
 
+/* Die Grammatiknotiz wird als Markdown gezeichnet. Obsidians Vorgaben
+   für Absätze und Listen sind für eine ganze Seite gemacht, nicht für
+   einen schmalen Streifen neben dem Text - deshalb hier enger. */
+
+.trisent-card-text p {
+  margin: 0 0 0.5rem;
+}
+
+.trisent-card-text p:last-child {
+  margin-bottom: 0;
+}
+
+.trisent-card-text ul,
+.trisent-card-text ol {
+  margin: 0.3rem 0;
+  padding-left: 1.1rem;
+}
+
+.trisent-card-text li {
+  margin: 0;
+}
+
+/* In den Notizen stehen Wortformen in Akzenten. Sie sind kein Code,
+   sondern Sprache - also die Leseschrift, nur abgesetzt. */
+
+.trisent-card-text code {
+  font-family: var(--tri-read);
+  font-size: 0.95em;
+  font-style: normal;
+  padding: 0.05em 0.25em;
+  border-radius: 3px;
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.trisent-card-text strong {
+  color: var(--text-normal);
+}
+
 .trisent-topics {
   display: flex;
   flex-wrap: wrap;
