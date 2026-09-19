@@ -1458,6 +1458,8 @@ class TrisentView extends ItemView {
       forms: Array.isArray(entry.forms) ? entry.forms : [],
       surface: unit ? unit.surface : '',
       status: this.statusMap.get(key) || 'unknown',
+      /* Woher das Wort stammt - für den Verweis in der Wortnotiz. */
+      packagePath: this.packagePath,
       phrases: [],
       occurrences: [],
       searching: true
@@ -1563,7 +1565,9 @@ class TrisentView extends ItemView {
     this.paint(key, status, this.occurrences.get(key) || []);
 
     /* Das Schreiben läuft nebenher; die Anzeige wartet nicht darauf. */
-    this.library.setWordStatus(this.language, key, status, entry).catch((error) => {
+    this.library.setWordStatus(
+      this.language, key, status, entry, this.packagePath
+    ).catch((error) => {
       new Notice('Could not save this word: ' + String(error.message || error));
     });
   }

@@ -170,7 +170,7 @@ class Reader {
     if (!card.file) {
       try {
         card.file = await this.library.setWordStatus(
-          card.language, card.key, card.status, card.entry
+          card.language, card.key, card.status, card.entry, card.packagePath
         );
       } catch (error) {
         card.file = null;
@@ -209,7 +209,7 @@ class Reader {
     if (!file) {
       try {
         file = await this.library.setWordStatus(
-          card.language, card.key, card.status, card.entry
+          card.language, card.key, card.status, card.entry, card.packagePath
         );
       } catch (error) {
         new Notice('Could not create the note: ' + String(error.message || error));
