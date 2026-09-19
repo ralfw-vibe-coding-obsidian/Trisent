@@ -216,8 +216,23 @@ class Reader {
         return;
       }
       card.file = file;
+      /* Die Karte neu zeichnen: Aus "Create" wird "Open" - sonst stünde
+         dort weiter ein Knopf, der etwas anlegen will, das es nun gibt. */
+      this.updateCard(card);
     }
-    if (file) await this.app.workspace.getLeaf('tab').openFile(file);
+    if (!file) return;
+
+    /* Liegt die Notiz schon in einem Reiter, wird der geholt - sonst
+       sammeln sich bei jedem Klick neue an. */
+    const open = this.app.workspace
+      .getLeavesOfType('markdown')
+      .find((leaf) => leaf.view && leaf.view.file === file);
+
+    if (open) {
+      this.app.workspace.revealLeaf(open);
+      return;
+    }
+    await this.app.workspace.getLeaf('tab').openFile(file);
   }
 
   /* Was der Reader zu den Einstellungen der App beisteuert. */
