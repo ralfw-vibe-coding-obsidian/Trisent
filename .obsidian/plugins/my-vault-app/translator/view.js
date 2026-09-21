@@ -222,6 +222,27 @@ class TranslatorView extends ItemView {
     return directionId === 'intoForeign' ? '→ ' + language.name : '→ Translation';
   }
 
+  /* Auf dem Telefon schiebt sich die Tastatur über die halbe Seite. Ist
+     der Satz der letzte, kann die Seite nicht weit genug rollen - dann
+     bleibt das Feld darunter verborgen, und man tippt blind.
+
+     Also: solange geschrieben wird, unten Platz schaffen und den Satz
+     nach oben holen. Beim Verlassen des Feldes wird der Platz wieder
+     eingezogen, sonst stünde man immer vor einer halb leeren Seite. */
+  keepVisible(block, field) {
+    field.addEventListener('focus', () => {
+      if (this.scrollEl) this.scrollEl.addClass('is-typing');
+      /* Die Tastatur fährt herein; erst danach stimmen die Maße. */
+      window.setTimeout(() => {
+        block.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }, 350);
+    });
+
+    field.addEventListener('blur', () => {
+      if (this.scrollEl) this.scrollEl.removeClass('is-typing');
+    });
+  }
+
   sentencesOf(data) {
     const all = [];
     for (const paragraph of data.paragraphs || []) {
@@ -309,6 +330,7 @@ class TranslatorView extends ItemView {
       cls: 'trisent-task-input',
       attr: { rows: '2', placeholder: 'Your translation' }
     });
+    this.keepVisible(block, field);
 
     const row = block.createDiv({ cls: 'trisent-task-row' });
     const check = row.createEl('button', { cls: 'trisent-check', text: 'Check' });

@@ -332,3 +332,20 @@
   .trisent-view .trisent-dictate.is-working svg { animation: none; }
 }
 
+/* ------------------------------------------------------------------ */
+/* Schreiben auf dem Telefon                                          */
+/* ------------------------------------------------------------------ */
+
+/* Platz unter dem letzten Satz, solange getippt wird - sonst lässt sich
+   ein Feld am Seitenende nicht über die Tastatur hinaufrollen. */
+
+.trisent-scroll.is-typing {
+  padding-bottom: 75vh;
+}
+
+@media (min-width: 601px) {
+  /* Am großen Bildschirm gibt es keine Tastatur, die etwas verdeckt. */
+  .trisent-scroll.is-typing {
+    padding-bottom: 5rem;
+  }
+}
