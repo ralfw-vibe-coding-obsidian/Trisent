@@ -336,6 +336,24 @@ function whyNot(result) {
   return said ? 'Claude stopped: ' + said : 'Claude stopped without saying why.';
 }
 
+/* Gefunden heißt noch nicht benutzbar.
+
+   "claude --version" antwortet auch dann, wenn niemand angemeldet ist -
+   und dann meldet der Test "Found", während jeder echte Aufruf scheitert.
+   Genau das ist passiert: Die Person hat an der falschen Stelle gesucht,
+   weil der Test grünes Licht gab. Also wird einmal wirklich gefragt. */
+async function alsoSignedIn(command, found) {
+  const result = await run(command, ['-p', '--model', 'sonnet'], {
+    input: 'Reply with exactly: ok\n',
+    timeoutMs: 60000
+  });
+
+  if (result.code === 0 && /ok/i.test(result.out)) {
+    return Object.assign(found, { text: found.text + ' Signed in.' });
+  }
+  return Object.assign(found, { ok: false, text: whyNot(result) });
+}
+
 /* Der Testknopf. Findet er das Programm woanders, trägt der Aufrufer den
    Fund ein - besser, als die Person suchen zu schicken. */
 async function check(command) {
@@ -344,15 +362,15 @@ async function check(command) {
   }
 
   const direct = await version(command);
-  if (direct) return { ok: true, text: 'Found: ' + direct };
+  if (direct) return await alsoSignedIn(command, { ok: true, text: 'Found: ' + direct });
 
   const found = await locate(command);
   if (found) {
-    return {
+    return await alsoSignedIn(found.path, {
       ok: true,
       path: found.path,
       text: 'Found at ' + found.path + ': ' + found.version + '. Filled in for you.'
-    };
+    });
   }
 
   return {
