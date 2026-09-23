@@ -53,6 +53,9 @@ Zwei Dinge fallen damit an einer Stelle zusammen:
 ZIP verbraucht und Ingest wird wieder anklickbar. Vorher nicht. Kein
 Buchführen, kein Vergleichen von Zwischenständen.
 
+In der Werkstatt heißt es immer `package.zip`; einen sprechenden Namen
+bekommt erst die Kopie, die hinausgeht - beim Deploy und beim Export.
+
 **Das ZIP ist zugleich das Gedächtnis.** Wer einen Absatz ändert, muss nicht
 alles neu bezahlen: Was im alten ZIP steht, gilt weiter, solange der Satz
 derselbe ist – das gilt für die Übersetzung wie für die Tonspur, die ohnehin
@@ -61,7 +64,13 @@ wegzuräumen.
 
 ## Die Schemaversion am Eintrag
 
-Jeder Wörterbucheintrag trägt, nach welchem Bauplan er entstanden ist. Daran
+Der Bauplan `meta/schema.md` trägt eine Nummer. Jeder Eintrag merkt sich, mit
+welcher Nummer er geschrieben wurde. Wird der Bauplan besser, steigt die
+Nummer - zentral, im Repo, für alle.
+
+Sie steht **am einzelnen Eintrag**, nicht am Paket. Das folgt aus der Regel,
+dass *index* nur nachschlägt, was fehlt: Ein frisch gebautes Paket enthält
+zwangsläufig Einträge aus mehreren Zeitaltern. Daran
 – und nur daran – entscheidet der Import, ob er einen vorhandenen Eintrag
 ersetzt: **Eine höhere Schemaversion gewinnt, eine gleiche oder niedrigere
 lässt liegen.**
@@ -78,16 +87,18 @@ nicht.
 
 ```text
 packager/FR/
-├── rules.md              Hausregeln: wie aus einer Wortform ein Schlüssel wird
-├── word-notes.md         der Bauplan: was in einer Beschreibung steht
+├── meta/
+│   ├── rules.md          Hausregeln: wie aus einer Wortform ein Schlüssel wird
+│   └── schema.md         der Bauplan: was in einer Beschreibung steht, je Wortart
 ├── dictionary.json       DER Wortvorrat - ein Eintrag je Schlüssel, für alle Texte
 └── <Titel>/
     ├── text.md           der Ausgangstext. Ohne ihn geht nichts wieder von vorn.
+    ├── work.md           die lesbare Werkbank - hier kann von Hand korrigiert werden
     ├── text.json         die Zerlegung
     ├── dictionary.json   die Einträge, die in DIESEM Text vorkommen
     ├── package.json      Kopf
     ├── audio/
-    └── <Titel>.zip       das Erzeugnis
+    └── package.zip       das Erzeugnis
 ```
 
 Das eine `dictionary.json` im Sprachordner ist die Ordnung, um die es geht:
@@ -141,9 +152,6 @@ die Bedeutung von damals ein, und kein besseres Paket taut sie wieder auf.
 - **Der Ton liegt zweimal**, lose im Textordner und im ZIP. Vorschlag: Nach
   dem Verschnüren darf das lose `audio/` weg - Record packt sich aus dem ZIP,
   was es behalten will.
-- **Wie heißt das ZIP?** Benennt jemand den Textordner um, stimmt der Name
-  nicht mehr. Entweder fest `package.zip` (der Titel steht im Kopf) oder beim
-  Umbenennen mitziehen.
 - **Was wird aus Einträgen, deren Paket gelöscht wird?** Vorschlag: Sie
   bleiben. Es ist ihr Wörterbuch, nicht das des Textes.
 - **Bestehende Vaults.** Es gibt Pakete im alten Format auf fremden Rechnern.
