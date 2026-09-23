@@ -70,7 +70,7 @@ Wörtlich das, was bisher unter `paragraphs` in der Paketdatei stand.
     "gloss": "Hund",
     "forms": ["куче", "кучето", "кучета"],
     "grammar": "Neutrum. Bestimmte Form: кучето. Plural: кучета.",
-    "schema": 3
+    "entrySchema": 3
   }
 }
 ```
@@ -96,8 +96,8 @@ Fehlt `schema`, gilt `0`.
 Für jeden Schlüssel aus dem Paket:
 
 - Steht er noch nicht im zentralen Wörterbuch: **aufnehmen**.
-- Steht er schon dort: **ersetzen, wenn `schema` höher ist**, sonst liegen
-  lassen.
+- Steht er schon dort: **ersetzen, wenn `entrySchema` höher ist**, sonst
+  liegen lassen.
 
 Mehr nicht. Kein Zusammenführen einzelner Felder, keine Rückfrage. Im
 zentralen Wörterbuch steht nichts, was die Person geschrieben hat – es ist
@@ -111,7 +111,7 @@ Wörterbuch, nicht das des Textes.
 Pakete der ersten Fassung liegen auf fremden Rechnern und müssen weiter
 importierbar sein. Erkennungsmerkmal ist `schemaVersion`. Bei `1` werden
 `paragraphs` und `dictionary` aus der Paketdatei gelesen und wie oben
-behandelt; die Einträge zählen als `schema: 0` und werden deshalb von jedem
+behandelt; die Einträge zählen als `entrySchema: 0` und werden deshalb von jedem
 neueren Paket abgelöst.
 
 ## Was gelesen wird

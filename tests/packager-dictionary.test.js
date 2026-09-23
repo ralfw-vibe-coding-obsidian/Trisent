@@ -35,7 +35,7 @@ test('aus einer Wortnotiz wird ein Eintrag', () => {
   is(made.entry.lemma, 'chercher', 'die Grundform');
   is(made.entry.forms, ['cherche', 'cherchons'], 'die Formen');
   is(made.entry.grammar, 'Regelmäßig auf -er.', 'die Beschreibung');
-  is(made.entry.schema, 0, 'eine alte Notiz zählt als Bauplan null');
+  is(made.entry.entrySchema, 0, 'eine alte Notiz zählt als Bauplan null');
 });
 
 test('eine Notiz ohne Grundform ergibt keinen Eintrag', () => {
@@ -44,16 +44,16 @@ test('eine Notiz ohne Grundform ergibt keinen Eintrag', () => {
 
 test('was schon da ist, wird nicht überschrieben', () => {
   const vorrat = {
-    'fr:chercher:VERB': dictionary.entry({ lemma: 'chercher', partOfSpeech: 'VERB', gloss: 'suchen', schema: 3 })
+    'fr:chercher:VERB': dictionary.entry({ lemma: 'chercher', partOfSpeech: 'VERB', gloss: 'suchen', entrySchema: 3 })
   };
   const added = dictionary.addMissing(vorrat, {
-    'fr:chercher:VERB': { lemma: 'chercher', partOfSpeech: 'VERB', gloss: 'etwas ganz anderes', schema: 9 },
-    'fr:trouver:VERB': { lemma: 'trouver', partOfSpeech: 'VERB', gloss: 'finden', schema: 3 }
+    'fr:chercher:VERB': { lemma: 'chercher', partOfSpeech: 'VERB', gloss: 'etwas ganz anderes', entrySchema: 9 },
+    'fr:trouver:VERB': { lemma: 'trouver', partOfSpeech: 'VERB', gloss: 'finden', entrySchema: 3 }
   });
 
   is(added, ['fr:trouver:VERB'], 'nur das Fehlende kam dazu');
   is(vorrat['fr:chercher:VERB'].gloss, 'suchen', 'der vorhandene Eintrag blieb unangetastet');
-  is(vorrat['fr:chercher:VERB'].schema, 3, 'auch seine Bauplannummer');
+  is(vorrat['fr:chercher:VERB'].entrySchema, 3, 'auch seine Bauplannummer');
 });
 
 test('fehlende Schlüssel werden benannt', () => {
@@ -95,7 +95,7 @@ test('dieselben Einträge ergeben dieselbe Datei', () => {
 
 test('gelesen wird, was lesbar ist - der Rest wird gemeldet', () => {
   const result = dictionary.parse(JSON.stringify({
-    'fr:chercher:VERB': { lemma: 'chercher', partOfSpeech: 'VERB', gloss: 'suchen', schema: 2 },
+    'fr:chercher:VERB': { lemma: 'chercher', partOfSpeech: 'VERB', gloss: 'suchen', entrySchema: 2 },
     'fr:kaputt:VERB': { gloss: 'ohne Grundform' },
     'fr:auch:ADV': 'gar kein Eintrag'
   }));

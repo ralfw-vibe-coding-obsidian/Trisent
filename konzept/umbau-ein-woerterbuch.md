@@ -64,8 +64,9 @@ wegzuräumen.
 
 ## Die Schemaversion am Eintrag
 
-Der Bauplan `meta/schema.md` trägt eine Nummer. Jeder Eintrag merkt sich, mit
-welcher Nummer er geschrieben wurde. Wird der Bauplan besser, steigt die
+Der Bauplan `meta/schema.md` trägt eine Nummer. Jeder Eintrag merkt sich in
+`entrySchema`, mit welcher Nummer er geschrieben wurde - der Name hält sie
+auseinander von `schemaVersion`, der Fassung des Paketformats. Wird der Bauplan besser, steigt die
 Nummer - zentral, im Repo, für alle.
 
 Sie steht **am einzelnen Eintrag**, nicht am Paket. Das folgt aus der Regel,

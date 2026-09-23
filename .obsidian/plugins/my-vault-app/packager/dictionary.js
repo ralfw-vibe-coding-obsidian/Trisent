@@ -18,7 +18,7 @@ const { parseWordNote } = require('./build.js');
 /* Die Reihenfolge der Felder in einem Eintrag. Fest, damit dieselben
    Einträge immer dieselbe Datei ergeben - sonst sähe jeder Lauf nach
    Änderung aus. */
-const FIELDS = ['lemma', 'partOfSpeech', 'gloss', 'forms', 'grammar', 'schema'];
+const FIELDS = ['lemma', 'partOfSpeech', 'gloss', 'forms', 'grammar', 'entrySchema'];
 
 /* Ein Eintrag, wie er ins Wörterbuch gehört. Was nicht dazugehört, fällt
    weg; leere Felder werden gar nicht erst geschrieben. */
@@ -37,7 +37,12 @@ function entry(source) {
   const grammar = String(source.grammar || '').trim();
   if (grammar) clean.grammar = grammar;
 
-  clean.schema = Number.isFinite(source.schema) ? source.schema : 0;
+  /* Nach welchem Bauplan diese Beschreibung geschrieben wurde. Heißt
+     absichtlich nicht "schema": Im Kopf eines Pakets steht bereits
+     "schemaVersion", und das ist etwas ganz anderes - die Fassung des
+     Paketformats. */
+  const written = Number(source.entrySchema);
+  clean.entrySchema = Number.isFinite(written) && written >= 0 ? Math.floor(written) : 0;
   return clean;
 }
 
