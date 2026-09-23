@@ -130,9 +130,10 @@ async function deflate(bytes) {
    Frage "hat sich etwas geändert?" lässt sich am Archiv beantworten,
    statt seinen Inhalt zu vergleichen.
 
-   Was sich nicht lohnt zu packen, wird unkomprimiert abgelegt. Tonspuren
-   sind bereits komprimiert; sie durch den Packer zu schicken, macht sie
-   nur größer. */
+   Jede Datei kommt ins Archiv - die Frage ist nur, ob zusammengedrückt
+   oder unverändert abgelegt. Tonspuren sind bereits komprimiert; sie
+   durch den Packer zu schicken, macht sie nur größer. Sie liegen deshalb
+   unverändert drin und kommen beim Auspacken heil wieder heraus. */
 async function writeZip(files) {
   const encoder = new TextEncoder();
   const names = [...files.keys()].sort();
