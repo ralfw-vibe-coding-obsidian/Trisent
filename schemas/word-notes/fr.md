@@ -17,6 +17,25 @@ Regular -er verb. Takes its object without a preposition.
 
 Labels in bold, the value on the same line, forms separated by `·`.
 
+## The stems to keep in view
+
+- the **present stem**, which changes in the persons that carry the
+  stress: *venir → je viens / nous venons*, *boire → je bois / nous
+  buvons*, *prendre → je prends / nous prenons*.
+- the **future stem**, which is the infinitive for regular verbs and a
+  different word for the common irregular ones: *aller → ir-*, *avoir →
+  aur-*, *être → ser-*, *faire → fer-*, *pouvoir → pourr-*, *venir →
+  viendr-*, *voir → verr-*, *vouloir → voudr-*. The conditional uses the
+  same stem, so learning it once buys two tenses.
+- the **participe passé**, together with its auxiliary. *être* is the one
+  learners get wrong, and with *être* the participle agrees: *elle est
+  allée*.
+- the **imparfait stem**, which is simply the *nous* form without
+  *-ons* - worth saying once, because it is the one thing in the French
+  verb that is always regular (except *être*).
+
+Name whichever of these is not predictable from the infinitive.
+
 ## Per part of speech
 
 **NOUN** — gender shown through the definite article (`le livre`,
