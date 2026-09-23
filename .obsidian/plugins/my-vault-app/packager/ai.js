@@ -521,6 +521,14 @@ function parseEntries(block) {
 
   for (const raw of block.split(/\r?\n/)) {
     const line = raw.trim();
+
+    /* Die Beschreibung ist Markdown und lebt von ihren Zeilen: erst die
+       beschrifteten, dann eine Leerzeile, dann die Bemerkung. Wer sie zu
+       einem Absatz zusammenzieht, macht aus einer Tabelle Fließtext. */
+    if (field === 'grammar' && current && !/^(lemma|gloss|forms|grammar)\s*:/i.test(line) && !/^#+\s/.test(line)) {
+      current.grammar += '\n' + raw.replace(/\s+$/, '');
+      continue;
+    }
     const heading = line.match(/^#+\s*(\S.*)$/);
     if (heading) {
       if (current) entries.push(current);
@@ -538,8 +546,6 @@ function parseEntries(block) {
       else current[field] = value;
       continue;
     }
-    /* Fortsetzungszeilen gehören zur Grammatiknotiz. */
-    if (field === 'grammar' && line) current.grammar += ' ' + line;
   }
   if (current) entries.push(current);
   return entries;
