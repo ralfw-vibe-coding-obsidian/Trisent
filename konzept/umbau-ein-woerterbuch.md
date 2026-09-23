@@ -139,6 +139,38 @@ Der Schlüssel steht im Kopf der Notiz. Und weil zwei Einträge dasselbe Lemma
 haben können (`être` als VERB und als AUX), braucht der zweite Dateiname
 einen Zusatz.
 
+### Gleich geschrieben, nicht dasselbe Wort
+
+Zwei Fälle, die leicht durcheinandergehen.
+
+**Gleiches Lemma, verschiedene Wortart** - `après` als Präposition und als
+Adverb, `ce` als Artikelwort und als Pronomen. Das sind zwei Schlüssel und
+zwei Einträge. Nur der Dateiname ist knapp; der zweite bekommt einen Zusatz:
+`après.md` und `après (ADV).md`. Kein Problem, weil die Wahrheit im Kopf der
+Notiz steht und nicht im Namen.
+
+**Gleiches Lemma, gleiche Wortart** - `le tour` (der Rundgang) und `la tour`
+(der Turm), `le livre` (das Buch) und `la livre` (das Pfund). Hier hilft kein
+Dateiname: **Der Schlüssel selbst kann die beiden nicht unterscheiden.**
+
+Dabei bleibt es. Der Schlüssel muss sich mechanisch aus Grundform und
+Wortart ergeben - überall, von jedem, auch in einem Jahr. Sobald er eine
+Entscheidung enthielte ("ist das Bedeutung 1 oder 2?"), würden zwei
+Werkstätten sie verschieden treffen, und der Lernstand der Person zerfiele in
+zwei Hälften. Genau davor soll der Schlüssel schützen. Ein Paket von einem
+Fremden muss denselben Schlüssel bilden wie das eigene.
+
+Also: **ein Eintrag, der beide Bedeutungen nennt** - und das, woran man sie
+auseinanderhält. Im Französischen ist es der Artikel, und der gehört ohnehin
+in die Beschreibung eines Substantivs. Für die Lernende ist das eher ein
+Gewinn: `le tour` und `la tour` nebeneinander zu sehen ist genau das, was man
+wissen muss.
+
+Der Preis ist ehrlich zu nennen: Beide teilen sich einen Lernstand und eine
+Karteikarte. Wer den Turm kennt, gilt auch beim Rundgang als kundig.
+
+Im Bauplan einer Sprache sollte stehen, wie so ein Eintrag aussieht.
+
 **Die Notiz ist eine Notiz.** Lernstand, eigene Gedanken, Verweise - und der
 Schlüssel. Nichts aus dem Wörterbuch wird hineinkopiert.
 
