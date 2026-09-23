@@ -818,6 +818,34 @@
   margin-top: 0.3rem;
 }
 
+/* Nachsehen, was die App über das Wort weiß. Blass wie die Leiter
+   daneben - es ist eine Auskunft, keine Handlung der Sitzung. */
+
+.trisent-view .trisent-face-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  cursor: pointer;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-faint);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-face-more:hover {
+  color: var(--tri-accent);
+  background: var(--background-modifier-hover);
+}
+
+.trisent-face-more svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
 .trisent-answers {
   display: flex;
   justify-content: center;

@@ -331,13 +331,13 @@ class DeckView extends ItemView {
     /* Die Karte führt dorthin, wo das Wort steht - das ist der häufigere
        Wunsch als die Notiz: Man will es im Satz sehen. Einmal angemeldet,
        nicht bei jedem Neuzeichnen des Inhalts. */
-    setTooltip(row, 'Show this word in a text');
+    setTooltip(row, 'Show the details of this word');
     if (card.key === this.cameFrom) row.addClass('is-visited');
 
     row.addEventListener('click', () => {
       if (row.hasClass('is-asking')) return;
       this.markVisited(row, card.key);
-      this.showInText(card);
+      this.showDetails(card);
     });
 
     this.paintCard(row, card, now);
@@ -461,27 +461,25 @@ class DeckView extends ItemView {
     editor.focus();
   }
 
-  /* Die erste Stelle, an der das Wort in einem Text steht - und dorthin
-     springen. Gesucht wird mit demselben Code wie für die Beispiele. */
-  async showInText(card) {
+  /* Alles, was über das Wort bekannt ist - Bedeutung, Grammatik, Formen,
+     Lernstand, alle Fundstellen - in der Word card rechts. Dieselbe
+     Ansicht wie im Reader, und von dort führt jede Fundstelle mit einem
+     Klick in ihren Text.
+
+     Absichtlich nicht gleich in den Text springen: "kurz nachsehen" soll
+     die Kartei nicht verlassen. */
+  async showDetails(card) {
     const language = this.library.languageByCode(this.languageCode);
     if (!language) return;
 
-    let found = [];
-    try {
-      found = await searchPackages(this.library, language, card.key, { limit: 1 });
-    } catch (error) {
-      found = [];
-    }
-
-    if (found.length === 0) {
-      new Notice('This word is not in any of your texts right now.');
-      return;
-    }
-
     const reader = this.flashcards.plugin.reader;
     if (!reader) return;
-    await reader.showSentence(language.code, found[0].path, found[0].sentence, card.key);
+
+    try {
+      await reader.showWord(language, card.key);
+    } catch (error) {
+      new Notice('Could not show this word: ' + String(error.message || error));
+    }
   }
 
   /* Zwei Schritte statt eines Dialogs: Die Karte selbst fragt nach, und
@@ -901,6 +899,17 @@ class DeckView extends ItemView {
       setIcon(wrong.createSpan(), 'x');
       wrong.createSpan({ text: String(card.wrong) });
     }
+
+    /* Nachsehen, warum ein Wort nicht sitzt - der häufigste Wunsch genau
+       in diesem Moment. Erst nach dem Umdrehen, und als eigenes Zeichen,
+       damit niemand es beim Greifen nach den Knöpfen trifft. */
+    const more = facts.createEl('button', { cls: 'trisent-face-more' });
+    setIcon(more.createSpan(), 'info');
+    setTooltip(more, 'Show the details of this word');
+    more.addEventListener('click', (event) => {
+      event.stopPropagation();
+      this.showDetails(card);
+    });
   }
 
   paintAnswers(language) {
