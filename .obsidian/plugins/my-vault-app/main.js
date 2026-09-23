@@ -54,6 +54,7 @@ const MODULES = [
   'packager/audio.js',
   'packager/build.js',
   'packager/dictionary.js',
+  'packager/migrations.js',
   'packager/index.js'
 ];
 

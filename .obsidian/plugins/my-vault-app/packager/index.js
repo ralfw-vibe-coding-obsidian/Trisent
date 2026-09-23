@@ -20,6 +20,7 @@ const { ItemView, Modal, Notice, Platform, Setting, TFile, TFolder, normalizePat
 const { parseWork, splitNote, buildPackage, nameFor } = require('./build.js');
 const { keyFor } = require('../core/package.js');
 const store = require('./dictionary.js');
+const { Migrations } = require('./migrations.js');
 const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
 const audio = require('./audio.js');
@@ -85,6 +86,8 @@ const RETRY_MS = 4000;
    Person; er merkt es sich an seinen eigenen Sachen. */
 const DEFAULTS = {
   enabled: false,
+  /* Wie weit die Werkstatt umgebaut ist - siehe migrations.js. */
+  schema: 0,
   sent: {},
   claudePath: 'claude',
   /* Fingerabdruck der abgelegten Regelwerke, je Pfad - damit das
@@ -728,6 +731,10 @@ class Packager {
        ihn gar nicht erst sehen - und auf dem Handy kann er ohnehin nicht
        arbeiten, weil er dort kein Programm starten kann. */
     if (!this.visible()) return;
+
+    /* Erst wenn die Vault eingelesen ist - vorher kennt Obsidian die
+       Ordner der Werkstatt noch nicht. */
+    plugin.app.workspace.onLayoutReady(() => this.migrate());
 
     plugin.registerView(VIEW_TYPE, (leaf) => new PackagerView(leaf, this));
     plugin.addRibbonIcon(RIBBON_ICON, 'Trisent: Packager', () => this.open());
@@ -1872,6 +1879,27 @@ class Packager {
     };
   }
 
+  /* Die Werkstatt auf das heutige Schema bringen. Einmal je Vault; was
+     dabei geschah, sagt eine Meldung. */
+  async migrate() {
+    let report;
+    try {
+      report = await new Migrations(this).run();
+    } catch (error) {
+      console.error('Trisent packager: migration failed', error);
+      new Notice('Trisent could not update the workshop: ' + String(error.message || error), 15000);
+      return;
+    }
+    if (!report || report.languages === 0) return;
+
+    new Notice(
+      'Trisent gathered ' + report.words + ' words into ' +
+      (report.languages === 1 ? 'one dictionary' : report.languages + ' dictionaries') +
+      '. The old word notes were left alone.',
+      12000
+    );
+  }
+
   /* ---------------------------------------------------------------- */
   /* Der Wortvorrat                                                    */
   /* ---------------------------------------------------------------- */
@@ -1915,23 +1943,15 @@ class Packager {
     return this.put(this.dictionaryPath(code), store.serialize(dictionary));
   }
 
-  /* Wie viele Wörter eine Sprache kennt.
-
-     Hier findet auch der Umzug statt: Liegt noch kein Wortvorrat da, aber
-     ein Ordner voller alter Wortnotizen, entsteht er jetzt. Einmalige
-     Aufräumarbeit - danach ist die Datei da, und dieser Zweig läuft nie
-     wieder. Die Notizen bleiben liegen. */
+  /* Wie viele Wörter eine Sprache kennt. Legt nichts an - das hier läuft
+     bei jedem Neuzeichnen. Den Umzug erledigt die Migration beim Start. */
   async wordCount(folder) {
-    const code = folder.name.toLowerCase();
     const file = this.file(folder.path + '/' + DICTIONARY_FILE);
     if (file) {
       return Object.keys(store.parse(await this.app.vault.cachedRead(file)).dictionary).length;
     }
-
     const words = this.folder(folder.path + '/' + WORDS_DIR);
-    if (!words || !words.children.some((one) => one instanceof TFile)) return 0;
-
-    return Object.keys(await this.loadDictionary(code)).length;
+    return words ? words.children.filter((one) => one instanceof TFile).length : 0;
   }
 
   /* Was der Bau braucht: Schlüssel auf Eintrag, mit sicheren Feldern. */
