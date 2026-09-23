@@ -72,40 +72,78 @@ Das ist die Antwort auf die Frage, die bisher keine hatte. „Nie
 Wörterbuch besser, sobald ein Paket etwas Besseres mitbringt, und sonst
 nicht.
 
-## Die Seite der Lernenden danach
+## Wo was liegt
+
+### Die Werkstatt
+
+```text
+packager/FR/
+├── rules.md              Hausregeln: wie aus einer Wortform ein Schlüssel wird
+├── word-notes.md         der Bauplan: was in einer Beschreibung steht
+├── dictionary.json       DER Wortvorrat - ein Eintrag je Schlüssel, für alle Texte
+└── <Titel>/
+    ├── text.md           der Ausgangstext. Ohne ihn geht nichts wieder von vorn.
+    ├── text.json         die Zerlegung
+    ├── dictionary.json   die Einträge, die in DIESEM Text vorkommen
+    ├── package.json      Kopf
+    ├── audio/
+    └── <Titel>.zip       das Erzeugnis
+```
+
+Das eine `dictionary.json` im Sprachordner ist die Ordnung, um die es geht:
+*index* schlägt nur nach, was dort fehlt. Das `dictionary.json` im Textordner
+ist nur der Auszug daraus, der mitreisen muss.
+
+Alles im Textordner außer `text.md` und dem ZIP ist Zwischenprodukt und darf
+verschwinden.
+
+### Die Seite der Lernenden
 
 ```text
 learning/FR/
 ├── language.md
 ├── dictionary.json       das Wörterbuch: alles, was je importiert wurde
-├── dictionary/           Notizen – nur zu Wörtern, mit denen sie sich befasst
-├── packages/<Titel>/     package.json (Kopf), text.json, audio/
-├── flashcards/
-└── sentences/
+├── notes/                Notizen - on demand, nur zu Wörtern, mit denen sie arbeitet
+├── flashcards/           nur zu Einträgen, die sie lernen will
+├── sentences/            was der Übersetzer je Text festhält
+└── packages/<Titel>/
+    ├── package.json      Kopf
+    ├── text.json
+    └── audio/
 ```
 
-Beim Import wird das ZIP ausgepackt, `dictionary.json` in das zentrale
-Wörterbuch eingearbeitet und **fällt weg**. Im Paketordner bleiben der
-strukturierte Text und die Tonspuren. Das ZIP selbst wird nicht aufgehoben.
+Beim Import wird das ZIP ausgepackt, sein `dictionary.json` mit dem zentralen
+abgeglichen und **fällt weg**. Das ZIP selbst wird nicht aufgehoben.
 
 **Gelesen wird ab dann ausschließlich aus dem zentralen Wörterbuch.** Ein
-Wort, eine Erklärung – im Text, auf der Wortkarte, auf der Karteikarte.
+Wort, eine Erklärung - im Text, auf der Wortkarte, auf der Karteikarte.
 
-**Die Notiz ist eine Notiz.** Lernstand, eigene Gedanken, Verweise. Sie nennt
-ihren Schlüssel und sonst nichts aus dem Wörterbuch. Das gilt heute schon und
-bleibt.
+### Was sie verbindet
+
+Der Schlüssel, `fr:accord:NOUN`. Wörterbucheintrag, Notiz und Karteikarte
+hängen an ihm und an nichts anderem.
+
+Nicht am Dateinamen: Doppelpunkte sind in Dateinamen nicht überall erlaubt.
+Der Schlüssel steht im Kopf der Notiz. Und weil zwei Einträge dasselbe Lemma
+haben können (`être` als VERB und als AUX), braucht der zweite Dateiname
+einen Zusatz.
+
+**Die Notiz ist eine Notiz.** Lernstand, eigene Gedanken, Verweise - und der
+Schlüssel. Nichts aus dem Wörterbuch wird hineinkopiert.
 
 **Die Karteikarte führt ihren eigenen Zustand.** Level und Wiedervorlage
 gehören ihr. Vorder- und Rückseite holt sie sich über den Schlüssel aus dem
-Wörterbuch, statt sie beim Anlegen abzuschreiben – heute friert eine Karte
+Wörterbuch, statt sie beim Anlegen abzuschreiben - heute friert eine Karte
 die Bedeutung von damals ein, und kein besseres Paket taut sie wieder auf.
 
 ## Offen
 
-- **Notiz für jedes importierte Wort oder nur für angefasste?** Vorschlag:
-  nur für angefasste, wie heute. Eine Notiz ohne Lernstand und ohne eigenen
-  Text sagt nichts, und zweitausend davon verstopfen Suche und Graph. Das
-  vollständige Verzeichnis ist das Wörterbuch.
+- **Der Ton liegt zweimal**, lose im Textordner und im ZIP. Vorschlag: Nach
+  dem Verschnüren darf das lose `audio/` weg - Record packt sich aus dem ZIP,
+  was es behalten will.
+- **Wie heißt das ZIP?** Benennt jemand den Textordner um, stimmt der Name
+  nicht mehr. Entweder fest `package.zip` (der Titel steht im Kopf) oder beim
+  Umbenennen mitziehen.
 - **Was wird aus Einträgen, deren Paket gelöscht wird?** Vorschlag: Sie
   bleiben. Es ist ihr Wörterbuch, nicht das des Textes.
 - **Bestehende Vaults.** Es gibt Pakete im alten Format auf fremden Rechnern.
