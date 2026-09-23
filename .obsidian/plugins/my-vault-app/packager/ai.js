@@ -179,12 +179,21 @@ function wordInstructions(options) {
     '  (names!), nothing else.',
     '- gloss is the word\'s basic meaning, not the gloss from one particular',
     '  sentence. It may be broader.',
-    '- grammar is what you actually want to know while learning: gender,',
-    '  irregular forms, what the word is used with, what it is confused with.',
-    '  No textbook prose, no examples without a point.',
-    '- For a phrase (part of speech PHRASE), grammar says what it literally',
-    '  says and when it is used. Its lemma line carries the citation form:',
-    '  lower case, straight apostrophe.',
+    '- grammar is the description of the word. It is Markdown, and it follows',
+    '  the recipe below - the one for that part of speech, not a mixture.',
+    '- For a phrase (part of speech PHRASE), the lemma line carries the',
+    '  citation form: lower case, straight apostrophe.',
+    ''
+  );
+
+  /* Der Bauplan ist der eigentliche Auftrag: Er sagt, was eine
+     Beschreibung je Wortart enthalten muss. Ohne ihn entsteht mal eine
+     Konjugation, mal eine Bemerkung, mal beides - und die Person sieht
+     auf jeder Karte etwas anderes. */
+  parts.push(
+    'THE RECIPE FOR A DESCRIPTION',
+    '',
+    (options.recipe || '').trim() || 'Two or three labelled lines, then at most two sentences.',
     ''
   );
 
@@ -308,6 +317,25 @@ async function locate(preferred) {
   return null;
 }
 
+/* Warum der Aufruf nicht durchkam.
+
+   Die CLI schreibt ihren Grund auf die AUSGABE, nicht auf die Fehlerspur -
+   wer nur die Fehlerspur liest, bekommt "no message" und sucht bei sich
+   selbst. Einmal stand dort "OAuth session expired", einmal ein
+   Guthaben-Limit; beides haette man sofort beheben koennen. */
+function whyNot(result) {
+  const said = (result.err.trim() || result.out.trim() || '').slice(0, 300);
+
+  if (/authenticate|oauth|logged in|login/i.test(said)) {
+    return 'Claude is not signed in on this computer. Open a terminal, run "claude", ' +
+      'and sign in again - then come back. (' + said.split('\n')[0] + ')';
+  }
+  if (/credit|quota|usage limit|rate limit/i.test(said)) {
+    return 'Claude refused the request: ' + said.split('\n')[0];
+  }
+  return said ? 'Claude stopped: ' + said : 'Claude stopped without saying why.';
+}
+
 /* Der Testknopf. Findet er das Programm woanders, trägt der Aufrufer den
    Fund ein - besser, als die Person suchen zu schicken. */
 async function check(command) {
@@ -356,7 +384,7 @@ async function prepare(options) {
 
   if (result.code === -2) throw new Error('Claude did not answer within five minutes.');
   if (result.code !== 0) {
-    throw new Error('Claude stopped with an error: ' + (result.err.trim() || result.out.trim() || 'no message'));
+    throw new Error(whyNot(result));
   }
 
   const block = between(result.out);
@@ -457,7 +485,7 @@ async function words(options) {
 
   if (result.code === -2) throw new Error('Claude did not answer within five minutes.');
   if (result.code !== 0) {
-    throw new Error('Claude stopped with an error: ' + (result.err.trim() || 'no message'));
+    throw new Error(whyNot(result));
   }
 
   const block = between(result.out);
@@ -539,4 +567,48 @@ function tempDir() {
   return os ? os.tmpdir() : undefined;
 }
 
-module.exports = { available, check, locate, prepare, words, learnRules, instructions, tempDir, MODEL };
+/* Der eingebaute Grundbauplan. Er gilt, solange für eine Sprache nichts
+   aus dem Repo geholt werden konnte - offline zum Beispiel. Die
+   ausführlichen Fassungen je Sprache liegen unter schemas/word-notes/. */
+const DEFAULT_RECIPE = [
+  '# What a word description contains',
+  '',
+  'One recipe per part of speech, so that a description does not come out',
+  'better or worse by accident.',
+  '',
+  '## Shape',
+  '',
+  'Two or three **labelled lines**, then at most two sentences of remark.',
+  'Labels in bold, the value on the same line, forms separated by `·`.',
+  'Leave a line out when the language does not have that category - never',
+  'write "none" or "not applicable".',
+  '',
+  '## Per part of speech',
+  '',
+  '**NOUN** - gender with its article; plural; the indefinite article.',
+  '**PROPN** - pronunciation only, and only if there is something to say.',
+  '**VERB** - the base form; the full present tense, all persons; one past',
+  'form as it is actually used; which pattern it follows.',
+  '**AUX** - the full present tense.',
+  '**ADJ** - every form the language distinguishes; where it stands.',
+  '**ADV** - whether it changes; where it stands.',
+  '**PRON** - the whole series it belongs to; one example with translation.',
+  '**DET** - the whole series; elision or contraction.',
+  '**ADP** - one example per meaning, each with its translation.',
+  '**NUM** - how it is spoken, binding or sound changes.',
+  '**CCONJ**, **SCONJ** - what it joins, and one example.',
+  '**PART** - what it does, and one example.',
+  '**INTJ** - when it is said, and how formal it is.',
+  '**PHRASE** - what it says literally, and when it is used.',
+  '',
+  '## Always',
+  '',
+  '- Name what the word is confused with, when there is such a partner.',
+  '- Leave out: the meaning again, examples without a point, textbook',
+  '  prose, etymology.'
+].join('\n');
+
+module.exports = {
+  available, check, locate, prepare, words, learnRules, instructions,
+  tempDir, MODEL, DEFAULT_RECIPE
+};

@@ -16,7 +16,7 @@
  * Was hier nicht durchkommt, käme beim Empfänger auch nicht durch.
  */
 
-const { ItemView, Modal, Notice, Platform, Setting, TFile, TFolder, normalizePath } = require('obsidian');
+const { ItemView, Modal, Notice, Platform, Setting, TFile, TFolder, normalizePath, requestUrl } = require('obsidian');
 const { parseWork, parseWordNote, splitNote, buildPackage, nameFor } = require('./build.js');
 const { keyFor } = require('../core/package.js');
 const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
@@ -35,6 +35,12 @@ const AUDIO_DIR = 'audio';
    sie fertig ausgerechnet an den Sätzen, nicht als Rohdaten daneben. */
 const TIMING_DIR = 'timing';
 const RULES_FILE = 'rules.md';
+/* Der Bauplan für Wortbeschreibungen: was je Wortart darin stehen muss.
+   Liegt als Notiz beim Sprachordner - abgeholt aus dem Repo, sobald eine
+   Sprache zum ersten Mal verpackt wird, und danach die der Person. */
+const RECIPE_FILE = 'word-notes.md';
+const RECIPE_URL =
+  'https://raw.githubusercontent.com/ralfw-vibe-coding-obsidian/Trisent/main/schemas/word-notes/';
 /* Die Vorlage, aus der die Hausregeln einer neuen Sprache entstehen.
    Sie liegt als Notiz da, damit die Person sie ändern kann. */
 const TEMPLATE_FILE = 'rules-template.md';
@@ -932,6 +938,52 @@ class Packager {
     text.text = note;
   }
 
+  /* Der Bauplan für die Wortbeschreibungen dieser Sprache.
+
+     Drei Stufen mit Rückfall: die Notiz in der Werkstatt, wenn es sie
+     gibt - sonst die Fassung aus dem Repo, die dann als Notiz abgelegt
+     wird - sonst der eingebaute Grundbauplan. So gibt es immer einen,
+     auch ohne Netz, und wer eine Sprache besser kennt als das Repo,
+     ändert einfach die Notiz. */
+  async ensureRecipe(code) {
+    const path = this.languagePath(code) + '/' + RECIPE_FILE;
+
+    const here = this.file(path);
+    if (here) {
+      const { body } = splitNote(await this.app.vault.read(here));
+      if (body.trim()) return body;
+    }
+
+    let fetched = '';
+    try {
+      const answer = await requestUrl({
+        url: RECIPE_URL + String(code).toLowerCase() + '.md',
+        throw: false
+      });
+      if (answer.status === 200 && String(answer.text).trim()) fetched = answer.text;
+    } catch (error) {
+      /* Kein Netz, kein Drama - dann gilt der eingebaute Bauplan. */
+    }
+
+    const body = fetched || ai.DEFAULT_RECIPE;
+    await this.ensureFolder(this.languagePath(code));
+    await this.put(path, [
+      '---',
+      'type: packager-word-notes',
+      'language: ' + String(code).toLowerCase(),
+      '---',
+      '',
+      '<!-- Was in der Beschreibung eines Wortes steht, je Wortart.',
+      '     ' + (fetched ? 'Aus dem Trisent-Repo geholt.' : 'Eingebauter Grundbauplan.'),
+      '     Ändere hier, was dir fehlt - diese Notiz gilt, nicht das Repo. -->',
+      '',
+      body.trim(),
+      ''
+    ].join('\n'));
+
+    return body;
+  }
+
   /* Hausregeln, falls die Sprache von Hand angelegt wurde. Ohne sie
      entscheidet jeder Lauf neu - und genau das sollen sie verhindern. */
   async ensureRules(code) {
@@ -1336,6 +1388,7 @@ class Packager {
     const here = this.languagePath(text.code);
     const languageFolder = this.basePath() + '/' + here;
     const rules = await this.readIfThere(here + '/' + RULES_FILE);
+    const recipe = await this.ensureRecipe(text.code);
     const folder = await this.ensureWordsFolder(text.code);
 
     const size = 8;
@@ -1351,6 +1404,7 @@ class Packager {
         batches.slice(from, from + AT_ONCE).map(async (batch) => {
           const result = await this.ask(() => ai.words({
             into: this.myLanguageName(),
+            recipe: recipe,
             command: this.settings.claudePath || 'claude',
             temp: ai.tempDir(),
             folder: languageFolder,
