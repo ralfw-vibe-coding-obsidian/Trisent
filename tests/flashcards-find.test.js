@@ -72,3 +72,56 @@ test('Karten ohne Übersetzung bringen die Suche nicht um', () => {
   is(namen(f.filter(stumm, 'mot')), ['mot'], 'gefunden');
   is(f.filter(stumm, 'nichts').length, 0, 'und nichts Falsches');
 });
+
+/* ------------------------------------------------------------------ */
+/* Seitenweise                                                        */
+/* ------------------------------------------------------------------ */
+
+const zahlen = (n) => Array.from({ length: n }, (_, i) => i + 1);
+
+test('eine volle Seite wird geschnitten', () => {
+  const s = f.page(zahlen(10), 0, 4);
+  is(s.items, [1, 2, 3, 4], 'die ersten vier');
+  is(s.page, 0, 'Seite null');
+  is(s.pages, 3, 'drei Seiten');
+  is(s.from, 1, 'von');
+  is(s.to, 4, 'bis');
+  is(s.count, 10, 'insgesamt');
+});
+
+test('die letzte Seite darf angebrochen sein', () => {
+  const s = f.page(zahlen(10), 2, 4);
+  is(s.items, [9, 10], 'der Rest');
+  is(s.from, 9, 'von');
+  is(s.to, 10, 'bis - nicht 12');
+});
+
+test('eine Seite, die es nicht gibt, wird zur letzten', () => {
+  const s = f.page(zahlen(10), 7, 4);
+  is(s.page, 2, 'auf die letzte gerückt');
+  is(s.items, [9, 10], 'und deren Inhalt');
+});
+
+test('eine leere Liste hat trotzdem eine Seite', () => {
+  const s = f.page([], 3, 4);
+  is(s.items, [], 'nichts');
+  is(s.pages, 1, 'eine Seite');
+  is(s.page, 0, 'die erste');
+  is(s.from, 0, 'von null');
+  is(s.to, 0, 'bis null');
+});
+
+test('Unsinn bringt die Rechnung nicht um', () => {
+  is(f.page(zahlen(5), -3, 2).page, 0, 'negative Seite');
+  is(f.page(zahlen(5), 1, 0).items.length, 1, 'Seitengröße null ergibt eine je Seite');
+  is(f.page(null, 0, 4).items, [], 'gar keine Liste');
+});
+
+test('jede Karte kommt auf genau einer Seite vor', () => {
+  const alle = [];
+  const bestand = zahlen(23);
+  for (let at = 0; at < f.page(bestand, 0, 5).pages; at++) {
+    for (const item of f.page(bestand, at, 5).items) alle.push(item);
+  }
+  is(alle, bestand, 'vollständig und ohne Doppelte');
+});

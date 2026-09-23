@@ -38,4 +38,33 @@ function filter(cards, query) {
   return cards.filter((card) => matches(card, needle));
 }
 
-module.exports = { fold, matches, filter };
+/* Wie viele Karten auf eine Seite gehen. Bei drei Spalten sind das acht
+   Reihen - genug, um sich umzusehen, wenig genug, um nicht zu rollen,
+   bis man vergessen hat, wonach man suchte. */
+const PAGE = 24;
+
+/* Eine Seite aus einer Liste schneiden.
+
+   Robust gegen eine Seitenzahl, die es nicht mehr gibt: Wer auf Seite 5
+   steht und dann sucht, landet auf der letzten vorhandenen Seite statt
+   vor einer leeren Liste. Die zurückgegebene `page` ist die, die
+   wirklich gilt - der Aufrufer übernimmt sie. */
+function page(items, at, size) {
+  const all = Array.isArray(items) ? items : [];
+  const perPage = Math.max(Math.trunc(Number(size) || 0), 1);
+  const pages = Math.max(Math.ceil(all.length / perPage), 1);
+  const current = Math.min(Math.max(Math.trunc(Number(at) || 0), 0), pages - 1);
+  const from = current * perPage;
+
+  return {
+    items: all.slice(from, from + perPage),
+    page: current,
+    pages: pages,
+    count: all.length,
+    /* Von-bis zum Anzeigen, 1-basiert. Bei nichts bleibt es bei 0. */
+    from: all.length === 0 ? 0 : from + 1,
+    to: Math.min(from + perPage, all.length)
+  };
+}
+
+module.exports = { fold, matches, filter, page, PAGE };

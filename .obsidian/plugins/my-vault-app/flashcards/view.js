@@ -17,7 +17,7 @@ const {
 } = require('./schedule.js');
 const { Session } = require('./session.js');
 const { searchPackages } = require('../learning/occurrences.js');
-const { filter } = require('./find.js');
+const { filter, page: pageOf, PAGE } = require('./find.js');
 
 /* Wonach die Kartei geordnet wird. Bei gleicher Schwierigkeit
    alphabetisch - sonst wechselte die Reihenfolge bei jedem Zeichnen. */
@@ -59,6 +59,9 @@ class DeckView extends ItemView {
     this.streak = flashcards.streak;
     this.languageCode = null;
     this.query = '';
+    /* Welche Seite der Kartei gerade zu sehen ist. Keine Einstellung -
+       eine Seitenzahl merkt man sich nicht über Tage. */
+    this.at = 0;
     /* Die Karte, von der aus zuletzt ein Text geöffnet wurde. */
     this.cameFrom = null;
     this.session = null;
@@ -165,6 +168,7 @@ class DeckView extends ItemView {
       tile.addEventListener('click', () => {
         this.languageCode = language.code;
         this.query = '';
+        this.at = 0;
         this.cameFrom = null;
         this.flashcards.settings.lastLanguage = language.code;
         this.flashcards.saveSettings();
@@ -228,6 +232,7 @@ class DeckView extends ItemView {
 
     const list = page.createDiv({ cls: 'trisent-deck' });
     this.listEl = list;
+    this.pagerEl = page.createDiv({ cls: 'trisent-pager' });
     this.paintList(cards, language, now);
   }
 
@@ -237,6 +242,7 @@ class DeckView extends ItemView {
     const list = this.listEl;
     if (!list) return;
     list.empty();
+    if (this.pagerEl) this.pagerEl.empty();
 
     const found = this.sorted(filter(cards, this.query), language);
     if (found.length === 0) {
@@ -246,7 +252,43 @@ class DeckView extends ItemView {
       });
       return;
     }
-    for (const card of found) this.renderCard(list, card, now);
+
+    /* Seitenweise. Bei tausend Karten ist eine vollständige Liste keine
+       Übersicht mehr, sondern eine Wand. */
+    const slice = pageOf(found, this.at, PAGE);
+    this.at = slice.page;
+
+    for (const card of slice.items) this.renderCard(list, card, now);
+    this.renderPager(slice, cards, language, now);
+  }
+
+  renderPager(slice, cards, language, now) {
+    const bar = this.pagerEl;
+    if (!bar || slice.pages <= 1) return;
+
+    const step = (to) => {
+      this.at = to;
+      this.paintList(cards, language, now);
+      /* Eine neue Seite fängt oben an - sonst steht man mitten in ihr. */
+      if (this.listEl) this.listEl.scrollIntoView({ block: 'start' });
+    };
+
+    const back = bar.createEl('button', { cls: 'trisent-page-step' });
+    setIcon(back.createSpan(), 'chevron-left');
+    setTooltip(back, 'Previous page');
+    if (slice.page === 0) back.setAttr('disabled', 'true');
+    else back.addEventListener('click', () => step(slice.page - 1));
+
+    bar.createSpan({
+      cls: 'trisent-page-count',
+      text: slice.from + '–' + slice.to + ' of ' + slice.count
+    });
+
+    const next = bar.createEl('button', { cls: 'trisent-page-step' });
+    setIcon(next.createSpan(), 'chevron-right');
+    setTooltip(next, 'Next page');
+    if (slice.page >= slice.pages - 1) next.setAttr('disabled', 'true');
+    else next.addEventListener('click', () => step(slice.page + 1));
   }
 
   renderSearch(head) {
@@ -260,6 +302,7 @@ class DeckView extends ItemView {
 
     field.addEventListener('input', () => {
       this.query = field.value;
+      this.at = 0;
       const language = this.library.languageByCode(this.languageCode);
       if (language) this.paintList(this.deck.all(language), language, today());
     });
@@ -279,6 +322,7 @@ class DeckView extends ItemView {
       button.addEventListener('click', () => {
         if (option.id === current) return;
         this.flashcards.settings.sort = option.id;
+        this.at = 0;
         this.flashcards.saveSettings();
         this.render();
       });

@@ -250,6 +250,62 @@
   outline: none;
 }
 
+/* Blättern. Nur da, wenn es mehr als eine Seite gibt - ein Knopfpaar,
+   das nie etwas tut, ist schlimmer als keins. */
+
+.trisent-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1.1rem;
+}
+
+.trisent-pager:empty {
+  display: none;
+}
+
+.trisent-view .trisent-page-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  padding: 0;
+  cursor: pointer;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-page-step:hover {
+  border-color: var(--tri-accent);
+  color: var(--tri-accent);
+}
+
+.trisent-view .trisent-page-step[disabled] {
+  cursor: default;
+  opacity: 0.35;
+  border-color: var(--background-modifier-border);
+  color: var(--text-faint);
+}
+
+.trisent-page-step svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+.trisent-page-count {
+  font-family: var(--tri-ui);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+  min-width: 7rem;
+  text-align: center;
+}
+
 .trisent-deck-empty {
   font-family: var(--tri-ui);
   font-size: 0.85rem;
