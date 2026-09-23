@@ -19,7 +19,7 @@
 const { ItemView, Modal, Notice, Platform, Setting, TFile, TFolder, normalizePath, requestUrl } = require('obsidian');
 const { parseWork, parseWordNote, splitNote, buildPackage, nameFor } = require('./build.js');
 const { keyFor } = require('../core/package.js');
-const { Library, sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
+const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
 const audio = require('./audio.js');
 
@@ -70,9 +70,14 @@ const RETRY_MS = 4000;
 
    Von Haus aus ist er AUS. Die meisten, die Trisent benutzen, lesen nur -
    für sie wäre die Werkstatt ein zweites Symbol in der Leiste, das sie
-   nie brauchen. Wer Texte herstellt, schaltet sie einmal ein. */
+   nie brauchen. Wer Texte herstellt, schaltet sie einmal ein.
+
+   "sent" hält fest, welche Fassung eines Pakets schon abgeliefert wurde -
+   je Paketkennung. Der Packager schaut dafür nicht in die Bibliothek der
+   Person; er merkt es sich an seinen eigenen Sachen. */
 const DEFAULTS = {
   enabled: false,
+  sent: {},
   claudePath: 'claude',
   /* Fingerabdruck der abgelegten Regelwerke, je Pfad - damit das
      Auffrischen eine Notiz in Ruhe lässt, die die Person geändert hat. */
@@ -711,11 +716,6 @@ class Packager {
     this.plugin = plugin;
     this.app = plugin.app;
 
-    /* Ein Blick in die Bibliothek der Person - nur zum Nachsehen, ob ein
-       Paket dort schon liegt. Geschrieben wird dorthin ausschließlich
-       durch die Vordertür. */
-    this.shelf = new Library(plugin.app, plugin, 'learning');
-
     /* Der Packager ist Werkstatt, nicht Lesesaal. Wer nur liest, soll
        ihn gar nicht erst sehen - und auf dem Handy kann er ohnehin nicht
        arbeiten, weil er dort kein Programm starten kann. */
@@ -807,14 +807,14 @@ class Packager {
         folder: child,
         rules: !!this.file(child.path + '/' + RULES_FILE),
         words: words ? words.children.filter((f) => f instanceof TFile).length : 0,
-        texts: await this.textsOf(child, await this.deployed(child.name))
+        texts: await this.textsOf(child)
       });
     }
     return result.sort((a, b) => a.code.localeCompare(b.code));
   }
 
   /* Ein Ordner mit einer work.md darin ist ein Text in Arbeit. */
-  async textsOf(languageFolder, shelf) {
+  async textsOf(languageFolder) {
     const result = [];
 
     /* Eine Notiz, die einfach im Sprachordner liegt, ist ein Text, der
@@ -883,7 +883,7 @@ class Packager {
         package: built,
         title: (front && front.title) || child.name,
         version: head ? head.version : 0,
-        sent: head ? (shelf || new Map()).get(head.id) || 0 : 0,
+        sent: head ? this.sentVersion(head.id, child.path) : 0,
         done: work ? parseWork(await this.app.vault.cachedRead(work)).paragraphs.length : 0,
         sentences: sentences,
         spoken: spoken,
@@ -912,25 +912,17 @@ class Packager {
     }
   }
 
-  /* Was von dieser Sprache schon in der Bibliothek liegt: Kennung des
-     Pakets auf die Fassung, die dort steht.
+  /* Welche Fassung dieses Pakets der Packager schon abgeliefert hat.
+     Seine eigene Erinnerung - drüben in der Bibliothek schaut er nicht
+     nach.
 
-     Nachsehen statt Buch führen. Eine Notiz in den Einstellungen wüsste
-     nichts von Paketen, die vor ihr abgelegt wurden, nichts von einer
-     Vault, in die jemand eine ZIP-Datei von Hand importiert hat, und
-     nichts davon, dass die Person ein Paket wieder gelöscht hat. */
-  async deployed(code) {
-    const map = new Map();
-    const language = this.shelf.languageByCode(code);
-    if (!language) return map;
-
-    for (const folder of this.shelf.packagesOf(language)) {
-      const entry = await this.shelf.loadPackage(folder);
-      if (!entry || !entry.ok || !entry.data || !entry.data.id) continue;
-      const version = Number.isFinite(entry.data.version) ? entry.data.version : 0;
-      map.set(String(entry.data.id), version);
-    }
-    return map;
+     Gemerkt wird an der Kennung des Pakets, nicht am Ordnerpfad: Wer
+     einen Text umbenennt oder einsortiert, hat ihn deshalb nicht neu
+     abzuliefern. Alte Einträge stehen noch unter dem Pfad - die gelten
+     weiter, bis das Paket das nächste Mal hinübergeht. */
+  sentVersion(id, folderPath) {
+    const book = this.settings.sent || {};
+    return book[id] || book[folderPath] || 0;
   }
 
   /* ---------------------------------------------------------------- */
@@ -1941,6 +1933,12 @@ class Packager {
        Werkzeug - hinter ihr liegt dieselbe Prüfung wie bei einem Paket
        von einem Fremden. */
     const result = await this.plugin.learning.importFiles(contents, text.folder.name);
+
+    if (!this.settings.sent) this.settings.sent = {};
+    const head = await this.headOf(text.package);
+    this.settings.sent[head.id || text.folder.path] = result.version;
+    if (head.id) delete this.settings.sent[text.folder.path];
+    await this.saveSettings();
 
     return (result.updated ? 'Updated "' : 'Added "') + result.title + '" in ' +
            result.language.name + ' — version ' + result.version + '.';
