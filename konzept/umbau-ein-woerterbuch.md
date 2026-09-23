@@ -134,10 +134,10 @@ Wort, eine Erklärung - im Text, auf der Wortkarte, auf der Karteikarte.
 Der Schlüssel, `fr:accord:NOUN`. Wörterbucheintrag, Notiz und Karteikarte
 hängen an ihm und an nichts anderem.
 
-Nicht am Dateinamen: Doppelpunkte sind in Dateinamen nicht überall erlaubt.
-Der Schlüssel steht im Kopf der Notiz. Und weil zwei Einträge dasselbe Lemma
-haben können (`être` als VERB und als AUX), braucht der zweite Dateiname
-einen Zusatz.
+Nicht am Dateinamen. Das Wörterbuch braucht ohnehin keinen: Es ist eine
+Datei, in der der Schlüssel danebensteht. Dateinamen gibt es nur noch für
+Notizen und Karteikarten, und dort ist der Name eine Beschriftung für die
+Person - der Schlüssel steht im Kopf.
 
 ### Gleich geschrieben, nicht dasselbe Wort
 
@@ -145,9 +145,10 @@ Zwei Fälle, die leicht durcheinandergehen.
 
 **Gleiches Lemma, verschiedene Wortart** - `après` als Präposition und als
 Adverb, `ce` als Artikelwort und als Pronomen. Das sind zwei Schlüssel und
-zwei Einträge. Nur der Dateiname ist knapp; der zweite bekommt einen Zusatz:
-`après.md` und `après (ADV).md`. Kein Problem, weil die Wahrheit im Kopf der
-Notiz steht und nicht im Namen.
+zwei Einträge; im Wörterbuch stehen sie ohne Weiteres nebeneinander. Eng wird
+es nur, wenn beide eine Notiz oder eine Karteikarte bekommen - dann trägt die
+zweite Datei einen Zusatz: `après.md` und `après (ADV).md`. Kein Problem,
+weil die Wahrheit im Kopf der Notiz steht und nicht im Namen.
 
 **Gleiches Lemma, gleiche Wortart** - `le tour` (der Rundgang) und `la tour`
 (der Turm), `le livre` (das Buch) und `la livre` (das Pfund). Hier hilft kein
