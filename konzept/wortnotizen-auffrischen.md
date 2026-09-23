@@ -1,99 +1,107 @@
-# Wortnotizen auffrischen
+# Worterklärungen in der Bibliothek nachführen
 
-Die Beschreibungen in `Trisent/packager/<SPRACHE>/words/` sind älter als der
-Bauplan, nach dem der Packager heute schreibt. Wer eine Sprache lange
-bearbeitet, hat Karten aus mehreren Zeitaltern.
+Was die Person auf einer Wortkarte liest, kommt aus dem Paket: im
+`package.json` eines Lerntextes steht unter `dictionary` je Schlüssel ein
+Eintrag mit Bedeutung, Formen und Beschreibung. Der Packager hat ihn dort
+hineingeschrieben – und zwar so, wie er es zum Zeitpunkt des Verpackens
+konnte.
 
-Dieser Auftrag bringt sie auf einen Stand – **in einer Vault, in der der
-Packager nicht läuft**, mit Claudian oder einem anderen Agenten. Der Bauplan
-kommt dabei einmalig aus dem Repo.
+Ältere Pakete tragen deshalb Beschreibungen aus einer Zeit vor dem Bauplan:
+mal eine Konjugation, mal eine Bemerkung, mal beides. Dieser Auftrag führt
+sie nach, **in der Vault der Lernenden**, mit Claudian oder einem anderen
+Agenten. Den Bauplan holt er sich einmalig aus dem Repo.
+
+Nichts wird dabei neu verpackt und nichts wird neu deployt. Die Pakete
+liegen schon da, wo sie hingehören; geändert wird nur, was in ihnen steht.
 
 Die Sprache steht nur in der ersten Zeile. Alles Weitere bezieht sich darauf,
 damit beim Kopieren nichts übrig bleibt, was nicht passt.
-
-Danach müssen die Texte der Sprache noch einmal durch **Package** und
-**Deploy**: Die Worteinträge reisen im Paket, nicht einzeln.
 
 ---
 
 ## Der Auftrag zum Kopieren
 
 ```text
-Frische die Wortnotizen einer Sprache auf.
+Führe die Worterklärungen in den Lernpaketen einer Sprache nach.
 
 SPRACHE: FR
 
 Unten steht <SPRACHE> für dieses Kürzel groß und <sprache> für dasselbe klein.
 
-Arbeite nur in Trisent/packager/<SPRACHE>/ - den Ordner Trisent/learning/
-fasst du nicht an.
+Du änderst ausschließlich das Feld "dictionary" in den Dateien
+Trisent/learning/<SPRACHE>/packages/*/package.json - beliebig tief.
+
+Nicht angefasst wird:
+- Trisent/learning/<SPRACHE>/dictionary/ - das sind die eigenen Notizen der
+  Person, ihr Lernstand. Sie gehören ihr, nicht dem Paket.
+- flashcards/, sentences/, language.md
+- Trisent/packager/, falls es das hier überhaupt gibt
+- in den package.json alles außer "dictionary": paragraphs, sentences, units,
+  Zeitmarken, id, version, title, die Sprachfelder. Zeichen für Zeichen.
 
 SCHRITT 1 - Den Bauplan besorgen
 
-Nimm Trisent/packager/<SPRACHE>/word-notes.md, wenn es die Notiz gibt.
-Sonst hole sie einmalig hier und lege sie dort ab:
+Hole ihn hier:
 https://raw.githubusercontent.com/ralfw-vibe-coding-obsidian/Trisent/main/schemas/word-notes/<sprache>.md
 Gibt es die Sprache dort nicht, nimm default.md aus demselben Ordner.
 
-Hole dir genauso die Hausregeln, wenn Trisent/packager/<SPRACHE>/rules.md fehlt:
+Dazu die Hausregeln, damit du die Schlüssel verstehst:
 https://raw.githubusercontent.com/ralfw-vibe-coding-obsidian/Trisent/main/schemas/rules/<sprache>.md
+
+Leg beides nicht in der Vault ab - du brauchst es nur für diesen Lauf.
 
 Der Bauplan ist der eigentliche Auftrag. Er sagt je Wortart, was in einer
 Beschreibung stehen muss, in welcher Form - und was nicht hineingehört.
 
-SCHRITT 2 - Die Notizen durchgehen
+SCHRITT 2 - Alle Einträge einsammeln
 
-Jede Datei in Trisent/packager/<SPRACHE>/words/ mit "type: packager-word" im
-Kopf. Andere Notizen lässt du in Ruhe, rules.md und word-notes.md auch.
+Geh alle package.json der Sprache durch und sammle die Einträge aus
+"dictionary" nach ihrem Schlüssel ein.
 
-UNVERÄNDERT BLEIBEN, Zeichen für Zeichen:
-  type, language, lemma, partOfSpeech, key
-Am Schlüssel hängt der Lernstand der Person. Eine Notiz unter einem neuen
-Schlüssel wäre schlimmer als eine veraltete: Sie sieht richtig aus und
-trägt den Lernstand ins Leere. Scheint dir eine Grundform falsch, lässt du
-sie trotzdem stehen und schreibst nichts weiter dazu.
+Derselbe Schlüssel kommt in mehreren Paketen vor. Er bekommt überall
+dieselbe Beschreibung - sonst wird dasselbe Wort der Person je nach Text
+anders erklärt.
 
-forms: darf wachsen, nie schrumpfen. Was dort steht, stammt aus Texten.
+SCHRITT 3 - Beschreiben
 
-NEU ENTSTEHEN:
-  gloss: die Grundbedeutung auf Deutsch, ein bis drei Wörter,
-         Alternativen mit Komma. Nicht die Bedeutung aus einem
-         bestimmten Satz - die allgemeine.
-  Der Abschnitt "## Grammar": die Beschreibung nach dem Bauplan,
-         auf Deutsch, in der Form, die dort für diese Wortart steht -
-         nicht in einer Mischung aus mehreren.
+Je Schlüssel eine neue Beschreibung: das Feld "grammar", nach dem Bauplan,
+auf Deutsch, in der Form, die dort für genau diese Wortart steht - nicht in
+einer Mischung aus mehreren. Markdown ist erlaubt.
 
-Andere Abschnitte in der Notiz lässt du stehen, wie sie sind.
-Gibt es noch keinen Abschnitt "## Grammar", legst du ihn an.
+UNVERÄNDERT BLEIBEN:
+- der Schlüssel selbst. An ihm hängt der Lernstand der Person. Ein Eintrag
+  unter einem neuen Schlüssel wäre schlimmer als eine veraltete Beschreibung:
+  Er sieht richtig aus und trägt den Lernstand ins Leere. Scheint dir eine
+  Grundform falsch, lässt du sie trotzdem stehen.
+- "lemma" und "partOfSpeech" - aus ihnen ist der Schlüssel entstanden.
+- "gloss" - die Bedeutung. Nur ergänzen, wenn sie fehlt.
+- "forms" - und zwar je Paket einzeln. Dort stehen die Formen, die in
+  DIESEM Text vorkommen. Sie sind absichtlich verschieden und werden nicht
+  vereinheitlicht.
 
-Eine fertige Notiz sieht so aus:
+SCHRITT 4 - Zurückschreiben
 
----
-type: packager-word
-language: <sprache>
-lemma: <unverändert>
-partOfSpeech: <unverändert>
-key: "<unverändert>"
-gloss: "<neu>"
-forms: [<unverändert, höchstens ergänzt>]
----
+Trag die neue Beschreibung in jedes Paket ein, das den Schlüssel hat.
+Die Datei bleibt gültiges JSON und behält ihr Aussehen: zwei Leerzeichen
+Einrückung, ein Zeilenumbruch am Ende.
 
-## Grammar
+SCHRITT 5 - Durchhalten
 
-<die Beschreibung nach dem Bauplan für genau diese Wortart>
-
-SCHRITT 3 - Durchhalten
-
-Geh in Gruppen von etwa zwanzig Notizen vor und arbeite alle ab, ohne
-zwischendurch zu fragen. Sag am Ende, wie viele du neu geschrieben hast und
-bei welchen du unsicher warst.
+Fang mit einem einzigen Paket an und zeig, wie drei Einträge danach
+aussehen. Wenn das passt, arbeite den Rest in Gruppen von etwa zwanzig
+Schlüsseln ab, ohne zwischendurch zu fragen. Sag am Ende, wie viele
+Schlüssel du neu beschrieben hast, in wie vielen Paketen, und bei welchen
+du unsicher warst.
 ```
 
 ---
 
 ## Was danach gilt
 
-Die aufgefrischten Notizen liegen in der Werkstatt. In die Bibliothek der
-Person kommen sie erst mit dem nächsten Paket: Für jeden Text der Sprache
-einmal **Package**, dann **Deploy**. Das Deployen ist wiederholbar – Lernstand,
-eigene Notizen und Lesestelle bleiben unberührt.
+Die Karten zeigen die neuen Beschreibungen, sobald der Reader das Paket
+wieder liest. Lernstand, eigene Notizen, Karteikarten und Lesestelle sind
+davon unberührt – sie liegen woanders.
+
+Der Packager bleibt außen vor. Was er künftig verpackt, entsteht ohnehin nach
+dem Bauplan; seine alten Notizen in der Werkstatt brauchen dafür nicht
+angerührt zu werden.
