@@ -125,3 +125,92 @@ test('ein Link mitten im Satz ist kein Verweis', () => {
   is(ergebnis.target, null, 'nicht angefasst');
   is(ergebnis.body, text, 'unverändert');
 });
+
+/* ------------------------------------------------------------------ */
+/* Welche Schritte anstehen                                           */
+/* ------------------------------------------------------------------ */
+
+test('eine alte Vault läuft durch alle Schritte', () => {
+  is(s.pendingSteps(1, [2, 3, 4]), [2, 3, 4], 'von ganz unten');
+});
+
+test('eine halb umgebaute Vault macht dort weiter', () => {
+  is(s.pendingSteps(2, [2, 3, 4]), [3, 4], 'die erledigten nicht noch einmal');
+  is(s.pendingSteps(3, [2, 3, 4]), [4], 'nur der letzte');
+});
+
+test('eine Vault auf dem neuesten Stand tut nichts', () => {
+  is(s.pendingSteps(4, [2, 3, 4]), [], 'nichts zu tun');
+});
+
+test('eine Vault aus der Zukunft wird in Ruhe gelassen', () => {
+  /* Dort war jemand mit einer neueren Fassung unterwegs. Rückwärts
+     umzubauen wäre schlimmer als gar nichts. */
+  is(s.pendingSteps(9, [2, 3]), [], 'kein Rückbau');
+});
+
+test('die Schritte kommen der Reihe nach, wie man sie auch hinschreibt', () => {
+  is(s.pendingSteps(1, [4, 2, 3]), [2, 3, 4], 'sortiert');
+});
+
+test('Unsinn als Stand zählt als ganz unten', () => {
+  is(s.pendingSteps(null, [2]), [2], 'nichts');
+  is(s.pendingSteps('zwei', [2]), [2], 'ein Wort');
+  is(s.pendingSteps(1, null), [], 'keine Schritte');
+});
+
+/* ------------------------------------------------------------------ */
+/* Den Kopf einer Notiz lesen                                         */
+/* ------------------------------------------------------------------ */
+
+const kopf = [
+  '---',
+  'type: word',
+  'language: fr',
+  'lemma: entrée',
+  'key: "fr:entrée:NOUN"',
+  'forms:',
+  '  - entrée',
+  '  - entrées',
+  'status: familiar',
+  '---',
+  ''
+].join('\n');
+
+test('die einfachen Zeilen werden gelesen', () => {
+  const front = s.frontmatterOf(kopf);
+  is(front.type, 'word', 'Art');
+  is(front.key, 'fr:entrée:NOUN', 'Schlüssel, ohne Anführungszeichen');
+  is(front.lemma, 'entrée', 'Grundform');
+  is(front.status, 'familiar', 'Lernstand');
+});
+
+test('eine Liste über mehrere Zeilen ist bekannt, aber ohne Wert', () => {
+  const front = s.frontmatterOf(kopf);
+  ok('forms' in front, 'der Name ist da');
+  is(front.forms, null, 'der Wert nicht');
+  ok(!('entrée' in front), 'die eingerückten Zeilen sind keine Eigenschaften');
+});
+
+test('was nicht dasteht, ist undefined - und das heißt "nicht da"', () => {
+  const front = s.frontmatterOf(kopf);
+  is(front.gloss, undefined, 'keine Bedeutung');
+  ok(front.grammar === undefined, 'keine Beschreibung');
+});
+
+test('ein Wikilink als Wert bleibt heil', () => {
+  const front = s.frontmatterOf('---\nflashcard: "[[Trisent/learning/FR/flashcards/après|après]]"\n---\n');
+  is(front.flashcard, '[[Trisent/learning/FR/flashcards/après|après]]', 'ganz');
+});
+
+test('ein leerer oder fehlender Kopf ergibt nichts', () => {
+  is(Object.keys(s.frontmatterOf('')), [], 'leer');
+  is(Object.keys(s.frontmatterOf(null)), [], 'gar nichts');
+  is(Object.keys(s.frontmatterOf('---\n---\n')), [], 'nur die Striche');
+});
+
+test('Text ohne Doppelpunkt ist keine Eigenschaft', () => {
+  const front = s.frontmatterOf('---\ntype: word\nirgendein Satz ohne alles\n---\n');
+  is(front.type, 'word', 'das Gute ist da');
+  is(Object.keys(front).length, 1, 'und sonst nichts');
+});

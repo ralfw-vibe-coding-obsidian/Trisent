@@ -312,8 +312,18 @@ nicht, dass neue richtig entstehen – die vorhandenen liegen auf fremden
 Rechnern. Dafür gibt es `learning/migrations.js`: Beim Start einmal durch,
 umschreiben, die Nummer in `data.json` unter `schema` hochsetzen. Drei Regeln:
 
+- **Nummerierte Schritte, einzeln vermerkt.** `Migrations.steps()` ist eine
+  Liste; jeder Schritt bringt die Vault von der Nummer davor auf seine eigene,
+  und die Nummer wird nach JEDEM Schritt gespeichert. Bricht ein späterer ab,
+  bleibt der frühere erledigt. Eine Vault mit höherer Nummer wird in Ruhe
+  gelassen – dort war jemand mit einer neueren Fassung unterwegs.
 - **Der Umbau darf beliebig oft laufen.** Was schon umgebaut ist, wird nicht
   noch einmal angefasst.
+- **Nicht den Metadatenspeicher fragen.** Beim Start liest Obsidian die Vault
+  womöglich noch ein; eine Notiz, die es dann nicht kennt, sähe aus wie eine
+  ohne Schlüssel, und der Umbau ginge an ihr vorbei – ein einziges Mal,
+  unwiederbringlich. Der Kopf wird aus der Datei gelesen (`frontmatterOf` in
+  `learning/schema.js`).
 - **Nichts wegwerfen, was die Person geschrieben hat.** Lässt sich nicht
   entscheiden, ob ein Text von ihr stammt, wird er aufgehoben – oder die Notiz
   bleibt ganz in Ruhe und der Umbau versucht es beim nächsten Start erneut.

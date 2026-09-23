@@ -1,0 +1,547 @@
+{
+  "bg:бързо:ADV": {
+    "lemma": "бързо",
+    "partOfSpeech": "ADV",
+    "gloss": "schnell",
+    "forms": [
+      "бързо"
+    ],
+    "grammar": "Adverb. Es sieht aus wie die Neutrumform des Adjektivs бърз – das ist im Bulgarischen die Regel.",
+    "entrySchema": 0
+  },
+  "bg:в:ADP": {
+    "lemma": "в",
+    "partOfSpeech": "ADP",
+    "gloss": "in",
+    "forms": [
+      "в"
+    ],
+    "grammar": "Vor Wörtern, die mit в oder ф beginnen, wird daraus във.",
+    "entrySchema": 0
+  },
+  "bg:виждам:VERB": {
+    "lemma": "виждам",
+    "partOfSpeech": "VERB",
+    "gloss": "sehen",
+    "forms": [
+      "вижда"
+    ],
+    "grammar": "Regelmäßig auf -ам: виждам, виждаш, вижда.",
+    "entrySchema": 0
+  },
+  "bg:вкъщи:ADV": {
+    "lemma": "вкъщи",
+    "partOfSpeech": "ADV",
+    "gloss": "nach Hause, zu Hause",
+    "forms": [
+      "вкъщи"
+    ],
+    "grammar": "Ein festes Adverb, zusammengeschrieben. Es steht ohne Präposition.",
+    "entrySchema": 0
+  },
+  "bg:вървя:VERB": {
+    "lemma": "вървя",
+    "partOfSpeech": "VERB",
+    "gloss": "gehen, laufen",
+    "forms": [
+      "върви"
+    ],
+    "grammar": "Meint das Gehen als Bewegung, nicht das Hingehen zu einem Ziel – dafür steht отивам.",
+    "entrySchema": 0
+  },
+  "bg:гледам:VERB": {
+    "lemma": "гледам",
+    "partOfSpeech": "VERB",
+    "gloss": "schauen, ansehen",
+    "forms": [
+      "гледа"
+    ],
+    "grammar": "Regelmäßig auf -ам. Braucht keine Präposition: гледам кучето.",
+    "entrySchema": 0
+  },
+  "bg:град:NOUN": {
+    "lemma": "град",
+    "partOfSpeech": "NOUN",
+    "gloss": "Stadt",
+    "forms": [
+      "град"
+    ],
+    "grammar": "Maskulinum. Bestimmte Form: градът/града. Plural: градове.",
+    "entrySchema": 0
+  },
+  "bg:да:PART": {
+    "lemma": "да",
+    "partOfSpeech": "PART",
+    "gloss": "ja",
+    "forms": [
+      "да"
+    ],
+    "grammar": "Als Antwortwort „ja“. Dasselbe Wort leitet auch Nebensätze ein – das ist dann eine andere Funktion.",
+    "entrySchema": 0
+  },
+  "bg:давам:VERB": {
+    "lemma": "давам",
+    "partOfSpeech": "VERB",
+    "gloss": "geben",
+    "forms": [
+      "дава"
+    ],
+    "grammar": "Der Empfänger steht mit на: давам хляб на кучето.",
+    "entrySchema": 0
+  },
+  "bg:днес:ADV": {
+    "lemma": "днес",
+    "partOfSpeech": "ADV",
+    "gloss": "heute",
+    "forms": [
+      "днес"
+    ],
+    "grammar": "Zeitadverb, steht gern am Satzanfang.",
+    "entrySchema": 0
+  },
+  "bg:до:ADP": {
+    "lemma": "до",
+    "partOfSpeech": "ADP",
+    "gloss": "bei, neben, bis",
+    "forms": [
+      "до"
+    ],
+    "grammar": "Räumlich „dicht bei“, zeitlich „bis“.",
+    "entrySchema": 0
+  },
+  "bg:дом:NOUN": {
+    "lemma": "дом",
+    "partOfSpeech": "NOUN",
+    "gloss": "Zuhause, Heim",
+    "forms": [
+      "дом"
+    ],
+    "grammar": "Maskulinum. Bestimmte Form: домът/дома. Meint das Zuhause, nicht das Gebäude (къща).",
+    "entrySchema": 0
+  },
+  "bg:дърво:NOUN": {
+    "lemma": "дърво",
+    "partOfSpeech": "NOUN",
+    "gloss": "Baum, Holz",
+    "forms": [
+      "дърво"
+    ],
+    "grammar": "Neutrum. Bestimmte Form: дървото. Plural: дървета.",
+    "entrySchema": 0
+  },
+  "bg:един:DET": {
+    "lemma": "един",
+    "partOfSpeech": "DET",
+    "gloss": "ein",
+    "forms": [
+      "един",
+      "едно"
+    ],
+    "grammar": "Unbestimmter Artikel und Zahlwort zugleich: един (m), една (f), едно (n).",
+    "entrySchema": 0
+  },
+  "bg:живея:VERB": {
+    "lemma": "живея",
+    "partOfSpeech": "VERB",
+    "gloss": "wohnen, leben",
+    "forms": [
+      "живее"
+    ],
+    "grammar": "Präsens: живея, живееш, живее, живеем, живеете, живеят.",
+    "entrySchema": 0
+  },
+  "bg:животно:NOUN": {
+    "lemma": "животно",
+    "partOfSpeech": "NOUN",
+    "gloss": "Tier",
+    "forms": [
+      "животните"
+    ],
+    "grammar": "Neutrum. Plural: животни. Bestimmter Plural: животните – das -те am Ende ist der Artikel.",
+    "entrySchema": 0
+  },
+  "bg:за:ADP": {
+    "lemma": "за",
+    "partOfSpeech": "ADP",
+    "gloss": "für, nach, über",
+    "forms": [
+      "за"
+    ],
+    "grammar": "Nach питам bezeichnet за das Thema der Frage.",
+    "entrySchema": 0
+  },
+  "bg:и:CCONJ": {
+    "lemma": "и",
+    "partOfSpeech": "CCONJ",
+    "gloss": "und",
+    "forms": [
+      "и"
+    ],
+    "grammar": "Die einfachste Verbindung zwischen Wörtern und Sätzen.",
+    "entrySchema": 0
+  },
+  "bg:иван:PROPN": {
+    "lemma": "Иван",
+    "partOfSpeech": "PROPN",
+    "gloss": "Iwan (männlicher Vorname)",
+    "forms": [
+      "Иван"
+    ],
+    "grammar": "Eigenname. Bulgarische Eigennamen bekommen keinen bestimmten Artikel.",
+    "entrySchema": 0
+  },
+  "bg:имам:VERB": {
+    "lemma": "имам",
+    "partOfSpeech": "VERB",
+    "gloss": "haben",
+    "forms": [
+      "има"
+    ],
+    "grammar": "Präsens: имам, имаш, има. Verneint heißt es нямам.",
+    "entrySchema": 0
+  },
+  "bg:име:NOUN": {
+    "lemma": "име",
+    "partOfSpeech": "NOUN",
+    "gloss": "Name",
+    "forms": [
+      "име"
+    ],
+    "grammar": "Neutrum. Bestimmte Form: името. Plural: имена.",
+    "entrySchema": 0
+  },
+  "bg:казвам:VERB": {
+    "lemma": "казвам",
+    "partOfSpeech": "VERB",
+    "gloss": "sagen; (mit се) heißen",
+    "forms": [
+      "казва"
+    ],
+    "grammar": "Mit се bedeutet es „heißen“: казвам се Иван. Ohne се heißt es schlicht „sagen“.",
+    "entrySchema": 0
+  },
+  "bg:кафяв:ADJ": {
+    "lemma": "кафяв",
+    "partOfSpeech": "ADJ",
+    "gloss": "braun",
+    "forms": [
+      "кафяво"
+    ],
+    "grammar": "Formen: кафяв (m), кафява (f), кафяво (n), кафяви (Pl.).",
+    "entrySchema": 0
+  },
+  "bg:куче:NOUN": {
+    "lemma": "куче",
+    "partOfSpeech": "NOUN",
+    "gloss": "Hund",
+    "forms": [
+      "куче",
+      "кучето"
+    ],
+    "grammar": "Neutrum. Bestimmte Form: кучето. Plural: кучета. Das -то ist der nachgestellte Artikel.",
+    "entrySchema": 0
+  },
+  "bg:малко:ADV": {
+    "lemma": "малко",
+    "partOfSpeech": "ADV",
+    "gloss": "ein wenig, kurz",
+    "forms": [
+      "малко"
+    ],
+    "grammar": "Geschrieben wie die Neutrumform von малък, hier aber als Adverb gebraucht: „ein bisschen“.",
+    "entrySchema": 0
+  },
+  "bg:малък:ADJ": {
+    "lemma": "малък",
+    "partOfSpeech": "ADJ",
+    "gloss": "klein",
+    "forms": [
+      "малко",
+      "малък"
+    ],
+    "grammar": "Richtet sich nach dem Substantiv: малък (m), малка (f), малко (n), малки (Pl.).",
+    "entrySchema": 0
+  },
+  "bg:мама:NOUN": {
+    "lemma": "мама",
+    "partOfSpeech": "NOUN",
+    "gloss": "Mama",
+    "forms": [
+      "мама"
+    ],
+    "grammar": "Femininum. Bestimmte Form: мамата. Von der eigenen Mutter spricht man meist ohne Artikel, einfach мама.",
+    "entrySchema": 0
+  },
+  "bg:махам:VERB": {
+    "lemma": "махам",
+    "partOfSpeech": "VERB",
+    "gloss": "wedeln, winken",
+    "forms": [
+      "маха"
+    ],
+    "grammar": "Mit с: махам с опашка, махам с ръка.",
+    "entrySchema": 0
+  },
+  "bg:мисля:VERB": {
+    "lemma": "мисля",
+    "partOfSpeech": "VERB",
+    "gloss": "denken, nachdenken",
+    "forms": [
+      "мисли"
+    ],
+    "grammar": "Präsens: мисля, мислиш, мисли.",
+    "entrySchema": 0
+  },
+  "bg:момче:NOUN": {
+    "lemma": "момче",
+    "partOfSpeech": "NOUN",
+    "gloss": "Junge",
+    "forms": [
+      "момче",
+      "момчето"
+    ],
+    "grammar": "Neutrum. Bestimmte Form: момчето. Plural: момчета. Der Artikel -то hängt hinten am Wort.",
+    "entrySchema": 0
+  },
+  "bg:мръсен:ADJ": {
+    "lemma": "мръсен",
+    "partOfSpeech": "ADJ",
+    "gloss": "schmutzig",
+    "forms": [
+      "мръсно",
+      "мръсното"
+    ],
+    "grammar": "Das е fällt bei den anderen Formen weg: мръсна, мръсно, мръсни. Bestimmt: мръсният, мръсната, мръсното.",
+    "entrySchema": 0
+  },
+  "bg:на:ADP": {
+    "lemma": "на",
+    "partOfSpeech": "ADP",
+    "gloss": "zu, an, von",
+    "forms": [
+      "на"
+    ],
+    "grammar": "Die häufigste Präposition. Sie zeigt sowohl den Empfänger (dem Hund) als auch die Zugehörigkeit (des Jungen).",
+    "entrySchema": 0
+  },
+  "bg:но:CCONJ": {
+    "lemma": "но",
+    "partOfSpeech": "CCONJ",
+    "gloss": "aber",
+    "forms": [
+      "но"
+    ],
+    "grammar": "Verbindet zwei Hauptsätze und stellt sie einander gegenüber.",
+    "entrySchema": 0
+  },
+  "bg:нямам:VERB": {
+    "lemma": "нямам",
+    "partOfSpeech": "VERB",
+    "gloss": "nicht haben",
+    "forms": [
+      "няма"
+    ],
+    "grammar": "Die Verneinung von имам steckt schon im Wort: не + имам = нямам. Ein zweites не ist falsch.",
+    "entrySchema": 0
+  },
+  "bg:обичам:VERB": {
+    "lemma": "обичам",
+    "partOfSpeech": "VERB",
+    "gloss": "lieben, mögen",
+    "forms": [
+      "обича"
+    ],
+    "grammar": "Regelmäßiges Verb auf -ам. Präsens: обичам, обичаш, обича.",
+    "entrySchema": 0
+  },
+  "bg:опашка:NOUN": {
+    "lemma": "опашка",
+    "partOfSpeech": "NOUN",
+    "gloss": "Schwanz, Schlange (Warteschlange)",
+    "forms": [
+      "опашка"
+    ],
+    "grammar": "Femininum. Bestimmte Form: опашката. Plural: опашки.",
+    "entrySchema": 0
+  },
+  "bg:отивам:VERB": {
+    "lemma": "отивам",
+    "partOfSpeech": "VERB",
+    "gloss": "hingehen",
+    "forms": [
+      "отиват"
+    ],
+    "grammar": "Betont das Ziel der Bewegung, anders als вървя.",
+    "entrySchema": 0
+  },
+  "bg:питам:VERB": {
+    "lemma": "питам",
+    "partOfSpeech": "VERB",
+    "gloss": "fragen",
+    "forms": [
+      "пита"
+    ],
+    "grammar": "Die Person wird direkt angeschlossen (питам мама), das Thema mit за.",
+    "entrySchema": 0
+  },
+  "bg:по:ADP": {
+    "lemma": "по",
+    "partOfSpeech": "ADP",
+    "gloss": "entlang, auf",
+    "forms": [
+      "по"
+    ],
+    "grammar": "Sehr vielseitige Präposition; mit Wegen und Straßen heißt sie „entlang“.",
+    "entrySchema": 0
+  },
+  "bg:приятел:NOUN": {
+    "lemma": "приятел",
+    "partOfSpeech": "NOUN",
+    "gloss": "Freund",
+    "forms": [
+      "приятел"
+    ],
+    "grammar": "Maskulinum. Bestimmte Form: приятелят/приятеля. Plural: приятели. Weiblich: приятелка.",
+    "entrySchema": 0
+  },
+  "bg:рекс:PROPN": {
+    "lemma": "Рекс",
+    "partOfSpeech": "PROPN",
+    "gloss": "Rex (Hundename)",
+    "forms": [
+      "Рекс"
+    ],
+    "grammar": "Eigenname. Bleibt in allen Sätzen unverändert.",
+    "entrySchema": 0
+  },
+  "bg:с:ADP": {
+    "lemma": "с",
+    "partOfSpeech": "ADP",
+    "gloss": "mit",
+    "forms": [
+      "с"
+    ],
+    "grammar": "Vor Wörtern, die mit с oder з beginnen, wird daraus със.",
+    "entrySchema": 0
+  },
+  "bg:се казва:PHRASE": {
+    "lemma": "се казва",
+    "partOfSpeech": "PHRASE",
+    "gloss": "heißt",
+    "forms": [
+      "се казва"
+    ],
+    "grammar": "Wörtlich 'sich nennt'. So sagt man, wie jemand oder etwas heißt – das 'се' gehört fest zum Verb und steht vor ihm. Gefragt wird: 'Как се казваш?' ('Wie heißt du?').",
+    "entrySchema": 0
+  },
+  "bg:се:PRON": {
+    "lemma": "се",
+    "partOfSpeech": "PRON",
+    "gloss": "sich",
+    "forms": [
+      "се"
+    ],
+    "grammar": "Reflexivteilchen. Steht vor dem Verb und bleibt für alle Personen gleich.",
+    "entrySchema": 0
+  },
+  "bg:сега:ADV": {
+    "lemma": "сега",
+    "partOfSpeech": "ADV",
+    "gloss": "jetzt",
+    "forms": [
+      "сега"
+    ],
+    "grammar": "Zeitadverb, steht gern am Satzanfang.",
+    "entrySchema": 0
+  },
+  "bg:седя:VERB": {
+    "lemma": "седя",
+    "partOfSpeech": "VERB",
+    "gloss": "sitzen",
+    "forms": [
+      "седи"
+    ],
+    "grammar": "Präsens: седя, седиш, седи. Beschreibt den Zustand, nicht das Hinsetzen.",
+    "entrySchema": 0
+  },
+  "bg:след:ADP": {
+    "lemma": "след",
+    "partOfSpeech": "ADP",
+    "gloss": "hinter, nach",
+    "forms": [
+      "след"
+    ],
+    "grammar": "Räumlich „hinterher“, zeitlich „nach“.",
+    "entrySchema": 0
+  },
+  "bg:съм:AUX": {
+    "lemma": "съм",
+    "partOfSpeech": "AUX",
+    "gloss": "sein",
+    "forms": [
+      "е"
+    ],
+    "grammar": "Unregelmäßig und das häufigste Verb überhaupt: съм, си, е, сме, сте, са. Die 3. Person Singular ist е.",
+    "entrySchema": 0
+  },
+  "bg:то:PRON": {
+    "lemma": "то",
+    "partOfSpeech": "PRON",
+    "gloss": "es",
+    "forms": [
+      "то"
+    ],
+    "grammar": "Personalpronomen 3. Person Singular neutrum. Für куче (Neutrum) sagt man deshalb то, nicht той.",
+    "entrySchema": 0
+  },
+  "bg:той:PRON": {
+    "lemma": "той",
+    "partOfSpeech": "PRON",
+    "gloss": "er",
+    "forms": [
+      "той"
+    ],
+    "grammar": "Personalpronomen 3. Person Singular maskulin. Steht meist nur zur Betonung, weil die Verbendung die Person schon zeigt.",
+    "entrySchema": 0
+  },
+  "bg:улица:NOUN": {
+    "lemma": "улица",
+    "partOfSpeech": "NOUN",
+    "gloss": "Straße",
+    "forms": [
+      "улицата"
+    ],
+    "grammar": "Femininum. Bestimmte Form: улицата. Plural: улици.",
+    "entrySchema": 0
+  },
+  "bg:усмихвам:VERB": {
+    "lemma": "усмихвам",
+    "partOfSpeech": "VERB",
+    "gloss": "lächeln",
+    "forms": [
+      "усмихва"
+    ],
+    "grammar": "Kommt fast nur mit се vor: усмихвам се, усмихваш се, усмихва се.",
+    "entrySchema": 0
+  },
+  "bg:хляб:NOUN": {
+    "lemma": "хляб",
+    "partOfSpeech": "NOUN",
+    "gloss": "Brot",
+    "forms": [
+      "хляб"
+    ],
+    "grammar": "Maskulinum. Bestimmte Form: хлябът/хляба. Das я wird im Plural zu е: хлебове.",
+    "entrySchema": 0
+  },
+  "bg:ям:VERB": {
+    "lemma": "ям",
+    "partOfSpeech": "VERB",
+    "gloss": "essen, fressen",
+    "forms": [
+      "яде"
+    ],
+    "grammar": "Unregelmäßig: ям, ядеш, яде, ядем, ядете, ядат.",
+    "entrySchema": 0
+  }
+}

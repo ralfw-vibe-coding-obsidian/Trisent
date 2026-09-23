@@ -82,4 +82,59 @@ function cleanFlashcard(body) {
   return { body: withMyNotes(lines.join('\n')), target: target };
 }
 
-module.exports = { sameText, takeSection, withMyNotes, cleanWordNote, cleanFlashcard };
+/* ------------------------------------------------------------------ */
+/* Welche Umbauschritte noch anstehen                                 */
+/* ------------------------------------------------------------------ */
+
+/* Aus "die Vault steht auf 1" und "es gibt die Schritte 2 und 3" wird
+   "2 und 3 sind zu tun". Eine Vault, die weiter ist als die App, bleibt
+   in Ruhe - dort war jemand mit einer neueren Fassung unterwegs, und
+   rückwärts umzubauen wäre schlimmer als gar nichts.
+
+   Jeder Schritt wird einzeln vermerkt. Bricht der dritte ab, bleibt der
+   zweite erledigt; beim nächsten Start geht es dort weiter. */
+function pendingSteps(from, versions) {
+  const at = Math.trunc(Number(from)) || 0;
+  return (versions || [])
+    .map((value) => Math.trunc(Number(value)))
+    .filter((value) => Number.isFinite(value) && value > at)
+    .sort((a, b) => a - b);
+}
+
+/* ------------------------------------------------------------------ */
+/* Frontmatter lesen, ohne Obsidian zu fragen                         */
+/* ------------------------------------------------------------------ */
+
+/* Beim Umbau darf nicht der Metadatenspeicher die Quelle sein: Der ist
+   beim Start womöglich noch beim Einlesen, und was er dann nicht kennt,
+   sähe aus wie eine Notiz ohne Schlüssel. Der Umbau hielte sie für
+   nichts und ginge weiter - einmal, unwiederbringlich.
+
+   Deshalb wird hier der Kopf der Datei selbst gelesen. Nur einfache
+   Zeilen `name: wert`; eine Liste über mehrere Zeilen ergibt null, der
+   Name ist aber bekannt. Mehr braucht der Umbau nicht. */
+function frontmatterOf(head) {
+  const found = {};
+  const lines = String(head == null ? '' : head).split('\n');
+
+  for (const line of lines) {
+    if (line === '---') continue;
+    /* Eingerückte Zeilen gehören zum Wert darüber. */
+    if (/^\s/.test(line)) continue;
+
+    const at = line.indexOf(':');
+    if (at <= 0) continue;
+
+    const name = line.slice(0, at).trim();
+    if (!name || /\s/.test(name)) continue;
+
+    const raw = line.slice(at + 1).trim();
+    found[name] = raw === '' ? null : raw.replace(/^["']|["']$/g, '');
+  }
+  return found;
+}
+
+module.exports = {
+  sameText, takeSection, withMyNotes, cleanWordNote, cleanFlashcard,
+  pendingSteps, frontmatterOf
+};
