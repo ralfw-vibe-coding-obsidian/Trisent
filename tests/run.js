@@ -12,6 +12,7 @@
  */
 
 const results = [];
+const pending = [];
 let current = null;
 
 function test(name, fn) {
@@ -25,16 +26,42 @@ function test(name, fn) {
   current = null;
 }
 
-function is(actual, expected, what) {
+/* Ein Test, der warten muss - etwa auf den Packer des Browsers.
+
+   Seine Prüfungen bekommt er mitgereicht, statt sie sich aus einem
+   gemeinsamen "gerade laufenden Test" zu nehmen: Zwischen zwei
+   Wartepunkten kann ein anderer Test laufen, und dann landeten die
+   Fehler beim falschen. */
+function testAsync(name, fn) {
+  const mine = { name: name, failures: [] };
+  results.push(mine);
+  pending.push(
+    Promise.resolve()
+      .then(() => fn({ is: (a, b, what) => compare(mine, a, b, what), ok: (v, what) => truth(mine, v, what) }))
+      .catch((error) => {
+        mine.failures.push('threw: ' + (error && error.stack ? error.stack : error));
+      })
+  );
+}
+
+function compare(into, actual, expected, what) {
   const a = JSON.stringify(actual);
   const b = JSON.stringify(expected);
   if (a === b) return;
-  current.failures.push((what || 'value') + '\n      expected ' + b + '\n      but got  ' + a);
+  into.failures.push((what || 'value') + '\n      expected ' + b + '\n      but got  ' + a);
+}
+
+function truth(into, value, what) {
+  if (value) return;
+  into.failures.push((what || 'condition') + ' was not true');
+}
+
+function is(actual, expected, what) {
+  compare(current, actual, expected, what);
 }
 
 function ok(value, what) {
-  if (value) return;
-  current.failures.push((what || 'condition') + ' was not true');
+  truth(current, value, what);
 }
 
 function report() {
@@ -89,7 +116,7 @@ function load(relative) {
   return loadFile(path.join(pluginRoot(), relative), relative);
 }
 
-module.exports = { test, is, ok, report, load };
+module.exports = { test, testAsync, is, ok, report, load };
 
 /* Direkt aufgerufen: alle Testdateien nacheinander. */
 if (require.main === module) {
@@ -101,5 +128,6 @@ if (require.main === module) {
     require(path.join(__dirname, name));
     console.log('');
   }
-  report();
+  /* Erst berichten, wenn auch die wartenden Tests fertig sind. */
+  Promise.all(pending).then(report);
 }
