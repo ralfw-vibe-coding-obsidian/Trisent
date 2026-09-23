@@ -204,6 +204,17 @@ function fingerprint(text) {
   return a.toString(16) + ':' + clean.length;
 }
 
+/* Regelwerk und Bauplan sind kein Lesestoff, liegen aber im selben
+   Ordner. Am Namen allein ist das nicht zu erkennen - das Auffrischen
+   legt eine zweite Fassung mit anderem Namen daneben -, im Kopf der
+   Notiz schon. */
+function isSchemaNote(file, raw) {
+  const name = String(file.name).toLowerCase();
+  if (name === RULES_FILE || name === RECIPE_FILE) return true;
+  const type = splitNote(raw).front.type;
+  return typeof type === 'string' && type.indexOf('packager-') === 0;
+}
+
 /* Aus einem Ordnernamen eine Kennung machen: klein, ohne Sonderzeichen. */
 function slug(name) {
   return String(name)
@@ -811,9 +822,9 @@ class Packager {
        hierher schieben, statt ihn in den Dialog einzufügen. */
     for (const child of languageFolder.children) {
       if (!(child instanceof TFile) || child.extension !== 'md') continue;
-      if (child.name === RULES_FILE) continue;
 
       const raw = await this.app.vault.cachedRead(child);
+      if (isSchemaNote(child, raw)) continue;
       result.push({
         folder: languageFolder,
         loose: child,
