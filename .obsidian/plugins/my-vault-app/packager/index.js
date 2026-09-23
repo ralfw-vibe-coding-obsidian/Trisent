@@ -39,8 +39,11 @@ const RULES_FILE = 'rules.md';
    Liegt als Notiz beim Sprachordner - abgeholt aus dem Repo, sobald eine
    Sprache zum ersten Mal verpackt wird, und danach die der Person. */
 const RECIPE_FILE = 'word-notes.md';
-const RECIPE_URL =
-  'https://raw.githubusercontent.com/ralfw-vibe-coding-obsidian/Trisent/main/schemas/word-notes/';
+/* Das Repo als Quelle vorbereiteter Regelwerke. Geholt wird von "main",
+   nicht von einem Release: Was wir dort einarbeiten, steht damit sofort
+   jedem Packager zur Verfügung, ohne dass jemand das Plugin erneuert. */
+const SCHEMA_URL =
+  'https://raw.githubusercontent.com/ralfw-vibe-coding-obsidian/Trisent/main/schemas/';
 /* Die Vorlage, aus der die Hausregeln einer neuen Sprache entstehen.
    Sie liegt als Notiz da, damit die Person sie ändern kann. */
 const TEMPLATE_FILE = 'rules-template.md';
@@ -76,6 +79,9 @@ const DEFAULTS = {
   enabled: false,
   sent: {},
   claudePath: 'claude',
+  /* Fingerabdruck der abgelegten Regelwerke, je Pfad - damit das
+     Auffrischen eine Notiz in Ruhe lässt, die die Person geändert hat. */
+  schemas: {},
   /* Die Sprache der Person: in ihr stehen Glossen, Übersetzungen und
      Grammatiknotizen. Sie steckte früher fest im Programm - damit konnte
      nur lernen, wer Deutsch spricht. */
@@ -185,6 +191,17 @@ function fillTemplate(body, code, into) {
       .replace(/\{\{yourLanguage\}\}/g, into || 'German')
       .replace(/^\s+/, '')
   ].join('\n');
+}
+
+/* Ein kurzer Fingerabdruck eines Textes. Reicht, um zu erkennen, ob
+   jemand eine Notiz angefasst hat - mehr soll er nicht. */
+function fingerprint(text) {
+  let a = 0x811c9dc5;
+  const clean = String(text).replace(/\s+/g, ' ').trim();
+  for (let i = 0; i < clean.length; i++) {
+    a = Math.imul(a ^ clean.charCodeAt(i), 16777619) >>> 0;
+  }
+  return a.toString(16) + ':' + clean.length;
 }
 
 /* Aus einem Ordnernamen eine Kennung machen: klein, ohne Sonderzeichen. */
@@ -946,7 +963,19 @@ class Packager {
      auch ohne Netz, und wer eine Sprache besser kennt als das Repo,
      ändert einfach die Notiz. */
   async ensureRecipe(code) {
-    const path = this.languagePath(code) + '/' + RECIPE_FILE;
+    return this.ensureSchema(code, 'word-notes');
+  }
+
+  /* Ein vorbereitetes Regelwerk aus dem Repo holen und als Notiz ablegen.
+
+     Drei Stufen: die Notiz in der Werkstatt, wenn es sie gibt - sonst
+     die Fassung aus dem Repo für diese Sprache - sonst die allgemeine
+     Fassung von dort - sonst die eingebaute. So gibt es immer eine, auch
+     ohne Netz, und wer eine Sprache besser kennt als das Repo, ändert
+     einfach die Notiz. */
+  async ensureSchema(code, kind) {
+    const file = kind === 'rules' ? RULES_FILE : RECIPE_FILE;
+    const path = this.languagePath(code) + '/' + file;
 
     const here = this.file(path);
     if (here) {
@@ -954,46 +983,122 @@ class Packager {
       if (body.trim()) return body;
     }
 
-    let fetched = '';
-    try {
-      const answer = await requestUrl({
-        url: RECIPE_URL + String(code).toLowerCase() + '.md',
-        throw: false
-      });
-      if (answer.status === 200 && String(answer.text).trim()) fetched = answer.text;
-    } catch (error) {
-      /* Kein Netz, kein Drama - dann gilt der eingebaute Bauplan. */
-    }
+    const fetched = await this.fetchSchema(code, kind);
+    const body = fetched || this.builtIn(kind, code);
 
-    const body = fetched || ai.DEFAULT_RECIPE;
     await this.ensureFolder(this.languagePath(code));
-    await this.put(path, [
+    await this.put(path, this.schemaNote(code, kind, body, !!fetched));
+    this.rememberSchema(path, body);
+    return body;
+  }
+
+  /* Erst die Sprache, dann die allgemeine Fassung. */
+  async fetchSchema(code, kind) {
+    for (const name of [String(code).toLowerCase(), 'default']) {
+      try {
+        const answer = await requestUrl({ url: SCHEMA_URL + kind + '/' + name + '.md', throw: false });
+        if (answer.status === 200 && String(answer.text).trim()) return answer.text;
+      } catch (error) {
+        /* Kein Netz - dann eben die eingebaute Fassung. */
+        return '';
+      }
+    }
+    return '';
+  }
+
+  /* Was beim Ablegen dringestanden hat. Daran erkennt das Auffrischen
+     später, ob die Person die Notiz seither angefasst hat - und hält
+     dann die Finger davon. */
+  rememberSchema(path, body) {
+    if (!this.settings.schemas) this.settings.schemas = {};
+    this.settings.schemas[path] = fingerprint(body);
+    return this.saveSettings();
+  }
+
+  /* Zentral dazugelernte Regeln nachholen.
+
+     Was die Person geändert hat, wird NICHT überschrieben - die neue
+     Fassung landet dann als eigene Notiz daneben, und sie entscheidet
+     selbst, was sie übernimmt. */
+  async refreshSchemas(step) {
+    const root = this.folder(this.rootPath);
+    if (!root) return { updated: [], kept: [], missing: [] };
+
+    const updated = [];
+    const kept = [];
+    const missing = [];
+
+    for (const child of root.children) {
+      if (!(child instanceof TFolder)) continue;
+      if (!/^[a-z]{2,3}$/i.test(child.name)) continue;
+
+      const code = child.name.toLowerCase();
+      for (const kind of ['rules', 'word-notes']) {
+        if (step) step('Fetching ' + code.toUpperCase() + ' ' + kind + '…');
+
+        const fetched = await this.fetchSchema(code, kind);
+        if (!fetched) { missing.push(code.toUpperCase() + ' ' + kind); continue; }
+
+        const file = kind === 'rules' ? RULES_FILE : RECIPE_FILE;
+        const path = child.path + '/' + file;
+        const note = this.file(path);
+        const fresh = this.schemaNote(code, kind, fetched, true);
+
+        if (!note) {
+          await this.put(path, fresh);
+          await this.rememberSchema(path, fetched);
+          updated.push(code.toUpperCase() + ' ' + kind);
+          continue;
+        }
+
+        const { body } = splitNote(await this.app.vault.read(note));
+        const known = (this.settings.schemas || {})[path];
+        const touched = !known || known !== fingerprint(body);
+
+        if (touched) {
+          await this.put(child.path + '/' + file.replace(/\.md$/, '') + ' (from the repo).md', fresh);
+          kept.push(code.toUpperCase() + ' ' + kind);
+        } else {
+          await this.put(path, fresh);
+          await this.rememberSchema(path, fetched);
+          updated.push(code.toUpperCase() + ' ' + kind);
+        }
+      }
+    }
+    return { updated: updated, kept: kept, missing: missing };
+  }
+
+  builtIn(kind, code) {
+    return kind === 'rules' ? templateBody() : ai.DEFAULT_RECIPE;
+  }
+
+  schemaNote(code, kind, body, fromRepo) {
+    const what = kind === 'rules'
+      ? 'Wie aus einer Wortform ein Wissensschlüssel wird.'
+      : 'Was in der Beschreibung eines Wortes steht, je Wortart.';
+
+    return [
       '---',
-      'type: packager-word-notes',
+      'type: packager-' + kind,
       'language: ' + String(code).toLowerCase(),
       '---',
       '',
-      '<!-- Was in der Beschreibung eines Wortes steht, je Wortart.',
-      '     ' + (fetched ? 'Aus dem Trisent-Repo geholt.' : 'Eingebauter Grundbauplan.'),
+      '<!-- ' + what,
+      '     ' + (fromRepo ? 'Aus dem Trisent-Repo geholt.' : 'Eingebaute Fassung.'),
       '     Ändere hier, was dir fehlt - diese Notiz gilt, nicht das Repo. -->',
       '',
-      body.trim(),
+      fillTemplate(body, code, this.myLanguageName())
+        .replace(/^---[\s\S]*?---\n+/, '')
+        .trim(),
       ''
-    ].join('\n'));
-
-    return body;
+    ].join('\n');
   }
 
   /* Hausregeln, falls die Sprache von Hand angelegt wurde. Ohne sie
      entscheidet jeder Lauf neu - und genau das sollen sie verhindern. */
   async ensureRules(code) {
-    const base = this.languagePath(code);
-    const path = base + '/' + RULES_FILE;
-    if (this.file(path)) return;
-
-    const template = await this.ensureTemplate();
-    await this.ensureFolder(base);
-    await this.put(path, fillTemplate(template, code, this.myLanguageName()));
+    if (this.file(this.languagePath(code) + '/' + RULES_FILE)) return;
+    await this.ensureSchema(code, 'rules');
   }
 
   /* Legt Sprachordner, Wortvorrat, Hausregeln und den Textordner an und
@@ -1901,6 +2006,34 @@ class Packager {
           await this.saveSettings();
         });
       });
+
+    new Setting(containerEl)
+      .setName('Rules and recipes')
+      .setDesc(
+        'How a word form becomes a key, and what a word description contains - prepared per ' +
+        'language in the Trisent repository. Fetching brings central improvements to this vault. ' +
+        'A file you have changed yourself is never overwritten; the new version is put beside it.'
+      )
+      .addButton((button) =>
+        button.setButtonText('Fetch').onClick(async () => {
+          button.setButtonText('Fetching…');
+          try {
+            const result = await this.refreshSchemas();
+            const said = [];
+            if (result.updated.length) said.push('Updated: ' + result.updated.join(', ') + '.');
+            if (result.kept.length) {
+              said.push('Left alone because you changed them: ' + result.kept.join(', ') +
+                ' - the new version is beside them.');
+            }
+            if (!said.length) said.push('Nothing to fetch. Add a language first.');
+            new Notice(said.join(' '), 15000);
+          } catch (error) {
+            console.error('Trisent packager', error);
+            new Notice(String(error.message || error), 10000);
+          }
+          button.setButtonText('Fetch');
+        })
+      );
 
     this.addVoiceSettings(containerEl);
   }
