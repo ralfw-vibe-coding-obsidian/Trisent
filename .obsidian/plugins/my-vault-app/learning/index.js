@@ -21,6 +21,7 @@
 const { Library } = require('../core/library.js');
 const { Streak } = require('./streak.js');
 const { Deck } = require('../flashcards/deck.js');
+const { Dictionary } = require('./dictionary.js');
 const { Migrations } = require('./migrations.js');
 
 class Learning {
@@ -33,6 +34,16 @@ class Learning {
 
     /* Ein Zähler je Sprache, nicht je Werkzeug. */
     this.streak = new Streak(plugin.app);
+
+    /* Das Wörterbuch der Person: eine Datei je Sprache, gefüllt durch
+       die Importe. Ab hier kommt jede Worterklärung von hier - im Text,
+       auf der Word card, auf der Flashcard. */
+    this.dictionary = new Dictionary(plugin.app, this.library);
+
+    /* Wer es von Hand ändert, soll das auch sehen. */
+    plugin.registerEvent(
+      plugin.app.vault.on('modify', (file) => this.dictionary.forget(file && file.path))
+    );
 
     /* Die Lernkartei. Der Reader legt Karten hinein, die Kartei fragt sie
        ab - also gehört sie keinem von beiden allein. */
