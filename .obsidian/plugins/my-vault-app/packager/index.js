@@ -17,8 +17,9 @@
  */
 
 const { ItemView, Modal, Notice, Platform, Setting, TFile, TFolder, normalizePath, requestUrl } = require('obsidian');
-const { parseWork, parseWordNote, splitNote, buildPackage, nameFor } = require('./build.js');
+const { parseWork, splitNote, buildPackage, nameFor } = require('./build.js');
 const { keyFor } = require('../core/package.js');
+const store = require('./dictionary.js');
 const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
 const audio = require('./audio.js');
@@ -30,6 +31,13 @@ const WORK_FILE = 'work.md';
 const TEXT_FILE = 'text.md';
 const PACKAGE_FILE = 'package.json';
 const WORDS_DIR = 'words';
+const DICTIONARY_FILE = 'dictionary.json';
+
+/* Die Nummer des Bauplans, nach dem heute Beschreibungen entstehen.
+   Später steht sie im Bauplan selbst (meta/schema.md); bis dahin hier.
+   Alte Beschreibungen aus der Zeit davor zählen als 0 und werden so von
+   jeder neueren Fassung abgelöst. */
+const RECIPE_SCHEMA = 1;
 const AUDIO_DIR = 'audio';
 /* Die Zeitmarken je Satz. Bleiben in der Werkstatt - im Paket stehen
    sie fertig ausgerechnet an den Sätzen, nicht als Rohdaten daneben. */
@@ -801,12 +809,11 @@ class Packager {
       if (!(child instanceof TFolder)) continue;
       if (!/^[a-z]{2,3}$/i.test(child.name)) continue;
 
-      const words = this.folder(child.path + '/' + WORDS_DIR);
       result.push({
         code: child.name.toLowerCase(),
         folder: child,
         rules: !!this.file(child.path + '/' + RULES_FILE),
-        words: words ? words.children.filter((f) => f instanceof TFile).length : 0,
+        words: await this.countEntries(child),
         texts: await this.textsOf(child)
       });
     }
@@ -1131,7 +1138,6 @@ class Packager {
     await this.ensureFolder(this.rootPath);
     const here = this.languagePath(code);
     await this.ensureFolder(here);
-    await this.ensureWordsFolder(code);
 
     await this.ensureRules(code);
 
@@ -1518,8 +1524,6 @@ class Packager {
     const languageFolder = this.basePath() + '/' + here;
     const rules = await this.readIfThere(here + '/' + RULES_FILE);
     const recipe = await this.ensureRecipe(text.code);
-    const folder = await this.ensureWordsFolder(text.code);
-
     const size = 8;
     const batches = [];
     for (let at = 0; at < entries.length; at += size) batches.push(entries.slice(at, at + size));
@@ -1549,85 +1553,58 @@ class Packager {
     }
 
     const byKey = new Map(entries.map((one) => [one.key, one]));
+    const dictionary = await this.loadDictionary(text.code);
     let written = 0;
+
     for (const answer of [].concat.apply([], answers)) {
-      if (await this.writeWordNote(folder, text.code, answer, byKey.get(answer.key))) written += 1;
+      const made = this.entryFrom(text.code, answer, byKey.get(answer.key));
+      if (!made) continue;
+      /* Was schon im Wortvorrat steht, bleibt, wie es ist. Ein Wort wird
+         einmal beschrieben, nicht einmal je Text. */
+      if (Object.prototype.hasOwnProperty.call(dictionary, made.key)) continue;
+      dictionary[made.key] = made.entry;
+      written += 1;
     }
+
+    if (written > 0) await this.saveDictionary(text.code, dictionary);
     return written;
   }
 
-  /* Geschrieben wird nur, was zum Schlüssel passt. Eine Notiz unter dem
-     falschen Schlüssel wäre schlimmer als gar keine: Sie sieht richtig
-     aus und trägt den Lernstand ins Leere.
+  /* Aufgenommen wird nur, was zum Schlüssel passt. Ein Eintrag unter dem
+     falschen Schlüssel wäre schlimmer als gar keiner: Er sieht richtig aus
+     und trägt den Lernstand ins Leere.
 
-     Weicht aber nur die vorgeschlagene Grundform ab, wird der Eintrag
+     Weicht aber nur die vorgeschlagene Grundform ab, wird die Antwort
      nicht weggeworfen: Es gilt die Grundform aus dem Text, denn aus ihr
      ist der Schlüssel entstanden. Sonst fehlte das Wort weiterhin, der
      nächste Anlauf bekäme dieselbe Antwort, und die Person käme aus der
      Schleife nicht heraus. (Spanisch: im Text steht "la", vorgeschlagen
      wird "el" - beides vertretbar, aber der Schlüssel hat Vorrang.) */
-  async writeWordNote(folder, code, answer, asked) {
+  entryFrom(code, answer, asked) {
     const parts = String(answer.key).split(':');
-    if (parts.length < 3) return false;
+    if (parts.length < 3) return null;
 
     const partOfSpeech = parts[2].toUpperCase();
     let lemma = answer.lemma || parts[1];
 
     if (keyFor(code, lemma, partOfSpeech) !== answer.key) {
       const fromText = asked && asked.lemma;
-      if (!fromText || keyFor(code, fromText, partOfSpeech) !== answer.key) return false;
+      if (!fromText || keyFor(code, fromText, partOfSpeech) !== answer.key) return null;
       lemma = fromText;
     }
-    if (!answer.gloss) return false;
+    if (!answer.gloss) return null;
 
-    const base = sanitizeFileName(lemma);
-
-    const lines = [
-      '---',
-      'type: packager-word',
-      'language: ' + code,
-      'lemma: ' + yamlValue(lemma),
-      'partOfSpeech: ' + partOfSpeech,
-      'key: ' + yamlValue(answer.key),
-      'gloss: ' + yamlValue(answer.gloss)
-    ];
-    if (answer.forms.length > 0) {
-      lines.push('forms: [' + answer.forms.map(yamlValue).join(', ') + ']');
-    }
-    lines.push('---', '');
-    if (answer.grammar) lines.push('## Grammar', '', answer.grammar.trim(), '');
-
-    return this.writeNote(folder, base, partOfSpeech, lines.join('\n'));
-  }
-
-  /* Eine Wortnotiz anlegen, ohne über einen Namen zu stolpern.
-
-     Zwei Fallen: Groß- und Kleinschreibung ist dem Dateisystem egal,
-     Obsidians Verzeichnis aber nicht - und eine Datei, die gerade eben
-     entstanden ist, steht dort womöglich noch gar nicht. Deshalb wird
-     gegen die tatsächlichen Namen im Ordner geprüft, und wenn es trotzdem
-     schiefgeht, der nächste Name genommen. */
-  async writeNote(folder, base, partOfSpeech, body) {
-    const taken = new Set(folder.children.map((child) => child.name.toLowerCase()));
-
-    const names = [base + '.md', base + ' (' + partOfSpeech + ').md'];
-    for (let n = 2; n < 50; n++) names.push(base + ' ' + n + '.md');
-
-    for (const name of names) {
-      if (taken.has(name.toLowerCase())) continue;
-      try {
-        await this.app.vault.create(folder.path + '/' + name, body);
-        return true;
-      } catch (error) {
-        if (!/exist/i.test(String(error.message || error))) throw error;
-        taken.add(name.toLowerCase());
-      }
-    }
-    return false;
-  }
-
-  async ensureWordsFolder(code) {
-    return this.ensureFolder(this.languagePath(code) + '/' + WORDS_DIR);
+    return {
+      key: answer.key,
+      entry: store.entry({
+        lemma: lemma,
+        partOfSpeech: partOfSpeech,
+        gloss: answer.gloss,
+        forms: answer.forms,
+        grammar: answer.grammar,
+        entrySchema: RECIPE_SCHEMA
+      })
+    };
   }
 
   /* Die Antwort durch denselben Rechner schicken, der später das Paket
@@ -1895,16 +1872,76 @@ class Packager {
     };
   }
 
-  /* Der Wortvorrat einer Sprache, nach Schlüssel. */
-  async wordsOf(code) {
-    const map = new Map();
+  /* ---------------------------------------------------------------- */
+  /* Der Wortvorrat                                                    */
+  /* ---------------------------------------------------------------- */
+
+  dictionaryPath(code) {
+    return this.languagePath(code) + '/' + DICTIONARY_FILE;
+  }
+
+  /* Der Wortvorrat einer Sprache: eine Datei, ein Eintrag je Schlüssel,
+     gültig über alle Texte hinweg.
+
+     Gibt es ihn noch nicht, entsteht er aus den alten Wortnotizen - eine
+     Notiz je Wort war dasselbe Wörterbuch, nur auf zweihundert Dateien
+     verteilt. Die Notizen bleiben dabei liegen; weggeworfen wird nichts,
+     bevor die Person gesehen hat, dass die eine Datei stimmt. */
+  async loadDictionary(code) {
+    const file = this.file(this.dictionaryPath(code));
+    if (file) return store.parse(await this.app.vault.read(file)).dictionary;
+
+    const gathered = await this.gatherFromNotes(code);
+    await this.saveDictionary(code, gathered);
+    return gathered;
+  }
+
+  async gatherFromNotes(code) {
+    const dictionary = {};
     const folder = this.folder(this.languagePath(code) + '/' + WORDS_DIR);
-    if (!folder) return map;
+    if (!folder) return dictionary;
 
     for (const child of folder.children) {
       if (!(child instanceof TFile) || child.extension !== 'md') continue;
-      const note = parseWordNote(await this.app.vault.cachedRead(child));
-      if (note.key) map.set(note.key, note);
+      const made = store.fromNote(await this.app.vault.cachedRead(child), code);
+      /* Zwei Notizen unter demselben Schlüssel: Die erste gilt. Das kann
+         vorkommen, wenn eine Notiz von Hand kopiert wurde. */
+      if (made && !dictionary[made.key]) dictionary[made.key] = made.entry;
+    }
+    return dictionary;
+  }
+
+  saveDictionary(code, dictionary) {
+    return this.put(this.dictionaryPath(code), store.serialize(dictionary));
+  }
+
+  /* Wie viele Wörter eine Sprache kennt - ohne dabei etwas anzulegen.
+     Das hier läuft bei jedem Neuzeichnen. */
+  async countEntries(folder) {
+    const file = this.file(folder.path + '/' + DICTIONARY_FILE);
+    if (file) {
+      return Object.keys(store.parse(await this.app.vault.cachedRead(file)).dictionary).length;
+    }
+    const words = this.folder(folder.path + '/' + WORDS_DIR);
+    return words ? words.children.filter((one) => one instanceof TFile).length : 0;
+  }
+
+  /* Was der Bau braucht: Schlüssel auf Eintrag, mit sicheren Feldern. */
+  async wordsOf(code) {
+    const map = new Map();
+    const dictionary = await this.loadDictionary(code);
+
+    for (const key of Object.keys(dictionary)) {
+      const one = dictionary[key];
+      map.set(key, {
+        key: key,
+        lemma: one.lemma,
+        partOfSpeech: one.partOfSpeech,
+        gloss: one.gloss,
+        forms: Array.isArray(one.forms) ? one.forms : [],
+        grammar: one.grammar || '',
+        entrySchema: one.entrySchema || 0
+      });
     }
     return map;
   }
