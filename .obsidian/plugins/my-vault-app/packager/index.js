@@ -19,7 +19,7 @@
 const { ItemView, Modal, Notice, Platform, Setting, TFile, TFolder, normalizePath, requestUrl } = require('obsidian');
 const { parseWork, parseWordNote, splitNote, buildPackage, nameFor } = require('./build.js');
 const { keyFor } = require('../core/package.js');
-const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
+const { Library, sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
 const audio = require('./audio.js');
 
@@ -70,14 +70,9 @@ const RETRY_MS = 4000;
 
    Von Haus aus ist er AUS. Die meisten, die Trisent benutzen, lesen nur -
    für sie wäre die Werkstatt ein zweites Symbol in der Leiste, das sie
-   nie brauchen. Wer Texte herstellt, schaltet sie einmal ein.
-
-   "sent" hält fest, welche Fassung eines Textes schon in der Bibliothek
-   angekommen ist. Das kann der Packager nicht selbst nachsehen - dort
-   drüben schaut er nicht hinein. */
+   nie brauchen. Wer Texte herstellt, schaltet sie einmal ein. */
 const DEFAULTS = {
   enabled: false,
-  sent: {},
   claudePath: 'claude',
   /* Fingerabdruck der abgelegten Regelwerke, je Pfad - damit das
      Auffrischen eine Notiz in Ruhe lässt, die die Person geändert hat. */
@@ -716,6 +711,11 @@ class Packager {
     this.plugin = plugin;
     this.app = plugin.app;
 
+    /* Ein Blick in die Bibliothek der Person - nur zum Nachsehen, ob ein
+       Paket dort schon liegt. Geschrieben wird dorthin ausschließlich
+       durch die Vordertür. */
+    this.shelf = new Library(plugin.app, plugin, 'learning');
+
     /* Der Packager ist Werkstatt, nicht Lesesaal. Wer nur liest, soll
        ihn gar nicht erst sehen - und auf dem Handy kann er ohnehin nicht
        arbeiten, weil er dort kein Programm starten kann. */
@@ -807,14 +807,14 @@ class Packager {
         folder: child,
         rules: !!this.file(child.path + '/' + RULES_FILE),
         words: words ? words.children.filter((f) => f instanceof TFile).length : 0,
-        texts: await this.textsOf(child)
+        texts: await this.textsOf(child, await this.deployed(child.name))
       });
     }
     return result.sort((a, b) => a.code.localeCompare(b.code));
   }
 
   /* Ein Ordner mit einer work.md darin ist ein Text in Arbeit. */
-  async textsOf(languageFolder) {
+  async textsOf(languageFolder, shelf) {
     const result = [];
 
     /* Eine Notiz, die einfach im Sprachordner liegt, ist ein Text, der
@@ -856,6 +856,7 @@ class Packager {
       }
 
       const built = this.file(child.path + '/' + PACKAGE_FILE);
+      const head = built ? await this.headOf(built) : null;
       const front = work ? this.app.metadataCache.getFileCache(work)?.frontmatter : null;
       const source = this.file(child.path + '/' + TEXT_FILE);
       const raw = source ? await this.app.vault.cachedRead(source) : '';
@@ -881,8 +882,8 @@ class Packager {
         text: source,
         package: built,
         title: (front && front.title) || child.name,
-        version: built ? await this.versionOf(built) : 0,
-        sent: this.sentVersion(child.path),
+        version: head ? head.version : 0,
+        sent: head ? (shelf || new Map()).get(head.id) || 0 : 0,
         done: work ? parseWork(await this.app.vault.cachedRead(work)).paragraphs.length : 0,
         sentences: sentences,
         spoken: spoken,
@@ -898,18 +899,38 @@ class Packager {
     return result;
   }
 
-  /* Die Fassung steht im gebauten Paket selbst. */
-  async versionOf(file) {
+  /* Kennung und Fassung stehen im gebauten Paket selbst. */
+  async headOf(file) {
     try {
       const data = JSON.parse(await this.app.vault.cachedRead(file));
-      return Number.isFinite(data.version) ? data.version : 0;
+      return {
+        id: String(data.id || ''),
+        version: Number.isFinite(data.version) ? data.version : 0
+      };
     } catch (error) {
-      return 0;
+      return { id: '', version: 0 };
     }
   }
 
-  sentVersion(folderPath) {
-    return (this.settings.sent || {})[folderPath] || 0;
+  /* Was von dieser Sprache schon in der Bibliothek liegt: Kennung des
+     Pakets auf die Fassung, die dort steht.
+
+     Nachsehen statt Buch führen. Eine Notiz in den Einstellungen wüsste
+     nichts von Paketen, die vor ihr abgelegt wurden, nichts von einer
+     Vault, in die jemand eine ZIP-Datei von Hand importiert hat, und
+     nichts davon, dass die Person ein Paket wieder gelöscht hat. */
+  async deployed(code) {
+    const map = new Map();
+    const language = this.shelf.languageByCode(code);
+    if (!language) return map;
+
+    for (const folder of this.shelf.packagesOf(language)) {
+      const entry = await this.shelf.loadPackage(folder);
+      if (!entry || !entry.ok || !entry.data || !entry.data.id) continue;
+      const version = Number.isFinite(entry.data.version) ? entry.data.version : 0;
+      map.set(String(entry.data.id), version);
+    }
+    return map;
   }
 
   /* ---------------------------------------------------------------- */
@@ -1920,10 +1941,6 @@ class Packager {
        Werkzeug - hinter ihr liegt dieselbe Prüfung wie bei einem Paket
        von einem Fremden. */
     const result = await this.plugin.learning.importFiles(contents, text.folder.name);
-
-    if (!this.settings.sent) this.settings.sent = {};
-    this.settings.sent[text.folder.path] = result.version;
-    await this.saveSettings();
 
     return (result.updated ? 'Updated "' : 'Added "') + result.title + '" in ' +
            result.language.name + ' — version ' + result.version + '.';
