@@ -813,7 +813,7 @@ class Packager {
         code: child.name.toLowerCase(),
         folder: child,
         rules: !!this.file(child.path + '/' + RULES_FILE),
-        words: await this.countEntries(child),
+        words: await this.wordCount(child),
         texts: await this.textsOf(child)
       });
     }
@@ -1915,15 +1915,23 @@ class Packager {
     return this.put(this.dictionaryPath(code), store.serialize(dictionary));
   }
 
-  /* Wie viele Wörter eine Sprache kennt - ohne dabei etwas anzulegen.
-     Das hier läuft bei jedem Neuzeichnen. */
-  async countEntries(folder) {
+  /* Wie viele Wörter eine Sprache kennt.
+
+     Hier findet auch der Umzug statt: Liegt noch kein Wortvorrat da, aber
+     ein Ordner voller alter Wortnotizen, entsteht er jetzt. Einmalige
+     Aufräumarbeit - danach ist die Datei da, und dieser Zweig läuft nie
+     wieder. Die Notizen bleiben liegen. */
+  async wordCount(folder) {
+    const code = folder.name.toLowerCase();
     const file = this.file(folder.path + '/' + DICTIONARY_FILE);
     if (file) {
       return Object.keys(store.parse(await this.app.vault.cachedRead(file)).dictionary).length;
     }
+
     const words = this.folder(folder.path + '/' + WORDS_DIR);
-    return words ? words.children.filter((one) => one instanceof TFile).length : 0;
+    if (!words || !words.children.some((one) => one instanceof TFile)) return 0;
+
+    return Object.keys(await this.loadDictionary(code)).length;
   }
 
   /* Was der Bau braucht: Schlüssel auf Eintrag, mit sicheren Feldern. */
