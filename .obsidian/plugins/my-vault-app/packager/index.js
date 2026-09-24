@@ -97,14 +97,12 @@ const RETRY_MS = 4000;
    für sie wäre die Werkstatt ein zweites Symbol in der Leiste, das sie
    nie brauchen. Wer Texte herstellt, schaltet sie einmal ein.
 
-   "sent" hält fest, welche Fassung eines Pakets schon abgeliefert wurde -
-   je Paketkennung. Der Packager schaut dafür nicht in die Bibliothek der
-   Person; er merkt es sich an seinen eigenen Sachen. */
+   Was schon in der Bibliothek liegt, merkt er sich nicht - er fragt an
+   der Vordertür danach (siehe deployedVersion). */
 const DEFAULTS = {
   enabled: false,
   /* Wie weit die Werkstatt umgebaut ist - siehe migrations.js. */
   schema: 0,
-  sent: {},
   claudePath: 'claude',
   /* Fingerabdruck der abgelegten Regelwerke, je Pfad - damit das
      Auffrischen eine Notiz in Ruhe lässt, die die Person geändert hat. */
@@ -940,7 +938,7 @@ class Packager {
         package: built,
         title: (front && front.title) || child.name,
         version: head ? head.version : 0,
-        sent: head ? this.sentVersion(head.id, child.path) : 0,
+        sent: head ? await this.deployedVersion(head.id) : 0,
         /* Wie viele Absätze des Textes die Werkbank schon kennt - am
            Wortlaut erkannt, nicht an der Zahl. */
         done: plan(paragraphs, splitWork(workText).blocks).filter((one) => one.block).length,
@@ -976,17 +974,22 @@ class Packager {
     }
   }
 
-  /* Welche Fassung dieses Pakets der Packager schon abgeliefert hat.
-     Seine eigene Erinnerung - drüben in der Bibliothek schaut er nicht
-     nach.
+  /* Welche Fassung dieses Pakets in der Bibliothek liegt - 0, wenn keine.
 
-     Gemerkt wird an der Kennung des Pakets, nicht am Ordnerpfad: Wer
-     einen Text umbenennt oder einsortiert, hat ihn deshalb nicht neu
-     abzuliefern. Alte Einträge stehen noch unter dem Pfad - die gelten
-     weiter, bis das Paket das nächste Mal hinübergeht. */
-  sentVersion(id, folderPath) {
-    const book = this.settings.sent || {};
-    return book[id] || book[folderPath] || 0;
+     Gefragt an der Vordertür, nicht in ihren Ordnern nachgesehen: Wie es
+     dort drüben aussieht, gehört der Learning-Seite. Und nicht aus eigener
+     Erinnerung: Die wüsste nichts davon, dass die Person einen Text dort
+     gelöscht hat - er käme dann nie wieder hinüber, und der Knopf
+     behauptete, er sei längst da. */
+  async deployedVersion(id) {
+    if (!id) return 0;
+    try {
+      const version = await this.plugin.learning.versionOf(id);
+      return typeof version === 'number' && version > 0 ? version : 0;
+    } catch (error) {
+      console.error('Trisent packager', error);
+      return 0;
+    }
   }
 
   /* ---------------------------------------------------------------- */
@@ -1964,8 +1967,8 @@ class Packager {
       }
       return {
         kind: 'ok',
-        headline: '"' + result.data.title + '" is up to date, version ' + held + '.',
-        detail: 'Nothing has changed in its content since the last build.'
+        headline: 'Nothing new in the text. The package stays at version ' + held + '.',
+        detail: 'Whether your library has it, the Deploy button says.'
       };
     }
 
@@ -2200,12 +2203,6 @@ class Packager {
        einem Fremden kommt. Geprüft wird dahinter, immer. */
     const bytes = await this.app.vault.readBinary(archive);
     const result = await this.plugin.learning.importArchive(bytes, text.title || text.folder.name);
-
-    if (!this.settings.sent) this.settings.sent = {};
-    const head = await this.headOf(text.package);
-    this.settings.sent[head.id || text.folder.path] = result.version;
-    if (head.id) delete this.settings.sent[text.folder.path];
-    await this.saveSettings();
 
     return (result.updated ? 'Updated "' : 'Added "') + result.title + '" in ' +
            result.language.name + ' — version ' + result.version + '.';
