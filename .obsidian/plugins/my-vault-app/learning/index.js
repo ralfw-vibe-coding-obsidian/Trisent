@@ -97,6 +97,23 @@ class Learning {
   importArchive(bytes, label) {
     return this.importer.importArchive(bytes, label);
   }
+
+  /* Liegt ein Paket in der Bibliothek, und in welcher Fassung?
+   *
+   * Liefert die Fassungsnummer (`version` aus dem Kopf, 0 wenn es keine
+   * trägt) - oder null, wenn das Paket nicht da ist.
+   *
+   * Für den Packager, der wissen muss, ob ein Deploy nötig ist. Er soll
+   * dafür nicht in den Bereich der Lernenden schauen: Wie die Ablage dort
+   * aussieht, hat sich eben erst geändert und wird sich wieder ändern.
+   * Die Frage gehört an die Tür, wie der Import auch. */
+  async versionOf(id) {
+    for (const language of this.library.languages()) {
+      const found = await this.library.folderForPackageId(language, id);
+      if (found) return typeof found.version === 'number' ? found.version : 0;
+    }
+    return null;
+  }
 }
 
 module.exports = { Learning };
