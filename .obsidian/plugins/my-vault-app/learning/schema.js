@@ -134,7 +134,43 @@ function frontmatterOf(head) {
   return found;
 }
 
+/* ------------------------------------------------------------------ */
+/* Ein Paket der ersten Fassung aufteilen                             */
+/* ------------------------------------------------------------------ */
+
+/* Bisher lag alles in einer Datei: Kopf, Text und Wörterbuch. Künftig
+   liegt der Text daneben, und das Wörterbuch wird in das der Person
+   eingearbeitet und verschwindet aus dem Paket.
+
+   Hier wird nur geteilt - nichts geht verloren, nichts kommt hinzu,
+   außer der Fassungsnummer. Was im Kopf stand und weder Text noch
+   Wörterbuch ist, bleibt im Kopf, in seiner Reihenfolge. Auch Felder,
+   die diese App nicht kennt: Ein Paket geht durch viele Hände.
+
+   `split` sagt, ob es überhaupt etwas zu teilen gab. Ein Paket, das
+   schon geteilt ist, wird nicht noch einmal angefasst. */
+function splitPackage(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
+
+  const split = Array.isArray(data.paragraphs);
+  const head = {};
+  for (const [name, value] of Object.entries(data)) {
+    if (name === 'paragraphs' || name === 'dictionary') continue;
+    head[name] = value;
+  }
+  if (split) head.schemaVersion = 2;
+
+  return {
+    split: split,
+    head: head,
+    text: { paragraphs: split ? data.paragraphs : [] },
+    dictionary: data.dictionary && typeof data.dictionary === 'object' && !Array.isArray(data.dictionary)
+      ? data.dictionary
+      : {}
+  };
+}
+
 module.exports = {
   sameText, takeSection, withMyNotes, cleanWordNote, cleanFlashcard,
-  pendingSteps, frontmatterOf
+  pendingSteps, frontmatterOf, splitPackage
 };

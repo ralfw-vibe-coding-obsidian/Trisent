@@ -214,3 +214,77 @@ test('Text ohne Doppelpunkt ist keine Eigenschaft', () => {
   is(front.type, 'word', 'das Gute ist da');
   is(Object.keys(front).length, 1, 'und sonst nichts');
 });
+
+/* ------------------------------------------------------------------ */
+/* Ein Paket aufteilen                                                */
+/* ------------------------------------------------------------------ */
+
+const paketV1 = () => ({
+  schemaVersion: 1,
+  id: 'fr-cafe',
+  version: 3,
+  title: 'Paul et Julie au café',
+  language: 'fr',
+  level: 'A1',
+  paragraphs: [{ id: 'p1', sentences: [{ id: 's1', source: 'Bonjour.' }] }],
+  dictionary: { 'fr:bonjour:INTJ': { lemma: 'bonjour', gloss: 'Hallo' } }
+});
+
+test('Kopf, Text und Wörterbuch kommen auseinander', () => {
+  const teil = s.splitPackage(paketV1());
+  ok(teil.split, 'es gab etwas zu teilen');
+  is(teil.text.paragraphs[0].id, 'p1', 'der Text ist im Text');
+  ok('fr:bonjour:INTJ' in teil.dictionary, 'das Wörterbuch im Wörterbuch');
+  ok(!('paragraphs' in teil.head), 'kein Text im Kopf');
+  ok(!('dictionary' in teil.head), 'kein Wörterbuch im Kopf');
+});
+
+test('der Kopf behält alles andere, in seiner Reihenfolge', () => {
+  const teil = s.splitPackage(paketV1());
+  is(Object.keys(teil.head), ['schemaVersion', 'id', 'version', 'title', 'language', 'level'], 'Reihenfolge');
+  is(teil.head.title, 'Paul et Julie au café', 'Titel');
+  is(teil.head.version, 3, 'die Fassung des Textes bleibt');
+});
+
+test('die Fassungsnummer des Formats steigt auf zwei', () => {
+  is(s.splitPackage(paketV1()).head.schemaVersion, 2, 'zwei');
+});
+
+test('unbekannte Felder reisen mit', () => {
+  /* Ein Paket geht durch viele Hände. Was diese App nicht kennt, ist
+     nicht deshalb überflüssig. */
+  const paket = Object.assign(paketV1(), { author: 'Jemand', note: 'für Anfänger' });
+  const teil = s.splitPackage(paket);
+  is(teil.head.author, 'Jemand', 'fremdes Feld');
+  is(teil.head.note, 'für Anfänger', 'noch eins');
+});
+
+test('ein schon geteiltes Paket wird nicht angefasst', () => {
+  const geteilt = { schemaVersion: 2, id: 'fr-cafe', title: 'Paul et Julie au café' };
+  const teil = s.splitPackage(geteilt);
+  ok(!teil.split, 'nichts zu teilen');
+  is(teil.head.schemaVersion, 2, 'die Nummer bleibt, wie sie ist');
+  is(teil.text.paragraphs, [], 'kein erfundener Text');
+});
+
+test('das übergebene Paket bleibt, wie es war', () => {
+  const paket = paketV1();
+  s.splitPackage(paket);
+  ok(Array.isArray(paket.paragraphs), 'Text noch drin');
+  ok('dictionary' in paket, 'Wörterbuch noch drin');
+  is(paket.schemaVersion, 1, 'Nummer unverändert');
+});
+
+test('ein Paket ohne Wörterbuch ergibt ein leeres', () => {
+  const paket = paketV1();
+  delete paket.dictionary;
+  is(s.splitPackage(paket).dictionary, {}, 'leer statt kaputt');
+  paket.dictionary = ['keine', 'Sammlung'];
+  is(s.splitPackage(paket).dictionary, {}, 'auch bei Unsinn');
+});
+
+test('was kein Paket ist, wird keins', () => {
+  is(s.splitPackage(null), null, 'nichts');
+  is(s.splitPackage('Text'), null, 'bloßer Text');
+  is(s.splitPackage([1, 2]), null, 'eine Liste');
+});

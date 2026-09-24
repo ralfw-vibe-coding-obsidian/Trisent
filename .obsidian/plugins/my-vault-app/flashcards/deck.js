@@ -118,8 +118,10 @@ class Deck {
       ));
     }
 
-    lines.push('front: ' + yaml(record.front));
-    lines.push('back: ' + yaml(record.back));
+    /* Keine Vorder- und Rückseite im Kopf. Die kommen aus dem Wörterbuch
+       der Person, über den Schlüssel - eine abgeschriebene Bedeutung
+       friert den Stand von heute ein, und kein besseres Paket taut sie
+       wieder auf. */
     lines.push('level: ' + record.level);
     lines.push('seen: ' + record.seen);
     lines.push('wrong: ' + record.wrong);

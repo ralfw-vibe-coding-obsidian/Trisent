@@ -202,3 +202,49 @@ test('derselbe Bestand ergibt immer dieselbe Datei', () => {
   const b = e.toObject(sammlung([['fr:a:NOUN', eintrag('a', 1)], ['fr:b:NOUN', eintrag('b', 1)]]));
   is(JSON.stringify(a), JSON.stringify(b), 'Zeichen für Zeichen gleich');
 });
+
+/* ------------------------------------------------------------------ */
+/* Der Sonderfall beim Umbau alter Pakete                             */
+/* ------------------------------------------------------------------ */
+
+const alt = (forms, over) => Object.assign({
+  lemma: 'aller', partOfSpeech: 'VERB', gloss: 'gehen',
+  grammar: 'Unregelmäßig.', forms: forms, entrySchema: 0
+}, over);
+
+test('alte Pakete: die Formen verschiedener Texte werden vereinigt', () => {
+  const erg = e.mergeLegacy(
+    sammlung([['fr:aller:VERB', alt(['vont'])]]),
+    sammlung([['fr:aller:VERB', alt(['vont', 'va', 'vais'])]])
+  );
+  is(erg.get('fr:aller:VERB').forms, ['vont', 'va', 'vais'], 'alle da, ohne Doppelte');
+});
+
+test('alte Pakete: die Reihenfolge bleibt, wie sie zuerst kam', () => {
+  const erg = e.mergeLegacy(
+    sammlung([['fr:aller:VERB', alt(['va', 'vont'])]]),
+    sammlung([['fr:aller:VERB', alt(['vais', 'va'])]])
+  );
+  is(erg.get('fr:aller:VERB').forms, ['va', 'vont', 'vais'], 'die ersten vorn, die neuen hinten');
+});
+
+test('alte Pakete: sonst bleibt der erste Eintrag, wie er ist', () => {
+  const erg = e.mergeLegacy(
+    sammlung([['fr:aller:VERB', alt(['vont'], { gloss: 'gehen' })]]),
+    sammlung([['fr:aller:VERB', alt(['va'], { gloss: 'fahren', grammar: 'Anders.' })]])
+  );
+  is(erg.get('fr:aller:VERB').gloss, 'gehen', 'Bedeutung vom ersten');
+  is(erg.get('fr:aller:VERB').grammar, 'Unregelmäßig.', 'Beschreibung vom ersten');
+});
+
+test('alte Pakete: ein unbekanntes Wort wird einfach aufgenommen', () => {
+  const erg = e.mergeLegacy(sammlung([]), sammlung([['fr:aller:VERB', alt(['va'])]]));
+  is(erg.get('fr:aller:VERB').forms, ['va'], 'drin');
+});
+
+test('alte Pakete: der Bestand wird nicht verändert', () => {
+  const vorher = alt(['vont']);
+  const bestand = sammlung([['fr:aller:VERB', vorher]]);
+  e.mergeLegacy(bestand, sammlung([['fr:aller:VERB', alt(['va'])]]));
+  is(vorher.forms, ['vont'], 'die Liste des Bestands ist dieselbe geblieben');
+});

@@ -22,7 +22,12 @@ const TEXT_FILE = 'text.json';
 /* Ein Ordner ist eine Sprache, wenn diese Notiz darin liegt - nicht
    durch Raten am Namen. */
 const LANGUAGE_NOTE = 'language.md';
-const DICTIONARY_DIR = 'dictionary';
+/* Die Word notes der Person. Bis Schema 3 hieß der Ordner "dictionary" -
+   dort liegen aber Notizen, nicht das Wörterbuch; das Wörterbuch ist
+   seitdem die Datei dictionary.json daneben. Der alte Name wird noch
+   gelesen, bis der Umbau den Ordner umbenannt hat. */
+const NOTES_DIR = 'notes';
+const LEGACY_NOTES_DIR = 'dictionary';
 const PACKAGES_DIR = 'packages';
 
 /* Angebot beim Anlegen einer Sprache. Lucide hat keine Flaggen, deshalb Emoji.
@@ -191,9 +196,15 @@ class Library {
     return found;
   }
 
+  /* Der Ordner der Word notes - der neue Name, sonst der alte. */
+  notesFolder(language) {
+    return this.childFolder(language.folder, NOTES_DIR)
+      || this.childFolder(language.folder, LEGACY_NOTES_DIR);
+  }
+
   /* Alle Wortnotizen einer Sprache. */
   wordsOf(language) {
-    const folder = this.childFolder(language.folder, DICTIONARY_DIR);
+    const folder = this.notesFolder(language);
     if (!folder) return [];
     return folder.children.filter(
       (child) => child instanceof TFile && child.extension === 'md'
@@ -324,9 +335,12 @@ class Library {
       return existing;
     }
 
+    /* Dorthin, wo die anderen liegen. Gibt es noch keinen Ordner, den
+       neuen - nie beide nebeneinander, sonst zerfiele das Wörterbuch der
+       Person in zwei Hälften. */
     const folder =
-      this.childFolder(language.folder, DICTIONARY_DIR) ||
-      (await this.ensureFolder(language.path + '/' + DICTIONARY_DIR));
+      this.notesFolder(language) ||
+      (await this.ensureFolder(language.path + '/' + NOTES_DIR));
 
     const lemma = (entry && entry.lemma) || key.split(':')[1] || key;
     const partOfSpeech = (entry && entry.partOfSpeech) || key.split(':')[2] || '';
@@ -620,7 +634,7 @@ class Library {
     }
 
     await this.ensureFolder(base);
-    await this.ensureFolder(base + '/' + DICTIONARY_DIR);
+    await this.ensureFolder(base + '/' + NOTES_DIR);
     await this.ensureFolder(base + '/' + PACKAGES_DIR);
 
     const front = [
@@ -652,7 +666,9 @@ class Library {
 module.exports = {
   Library,
   LANGUAGE_NOTE,
-  DICTIONARY_DIR,
+  NOTES_DIR,
+  LEGACY_NOTES_DIR,
+  TEXT_FILE,
   PACKAGES_DIR,
   KNOWN_LANGUAGES,
   sanitizeFileName,

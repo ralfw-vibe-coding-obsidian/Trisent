@@ -231,34 +231,10 @@ module.exports = class TrisentPlugin extends Plugin {
       new Notice('Trisent could not update your notes: ' + String(error.message || error), 15000);
       return;
     }
-    if (!report) return;
-
-    const parts = [];
-    if (report.notes > 0) parts.push(report.notes + ' word notes');
-    if (report.cards > 0) parts.push(report.cards + ' flashcards');
-
-    if (parts.length === 0) {
-      if (report.waiting > 0) {
-        new Notice(
-          'Trisent left ' + report.waiting + ' word notes alone: their texts are '
-          + 'not in your library right now. Import them and they will be tidied up.',
-          12000
-        );
-      }
-      return;
-    }
-
-    let text = 'Trisent tidied up ' + parts.join(' and ') + '.';
-    if (report.rescued > 0) {
-      text += ' ' + report.rescued
-        + (report.rescued === 1 ? ' grammar note you had changed was kept'
-                                : ' grammar notes you had changed were kept')
-        + ' under "My notes".';
-    }
-    if (report.waiting > 0) {
-      text += ' ' + report.waiting + ' more wait for texts that are not imported.';
-    }
-    new Notice(text, 12000);
+    /* Was gesagt wird, entscheidet die Learning-Seite - sie weiß, was
+       sie umgebaut hat. */
+    const text = this.learning.describeMigration(report);
+    if (text) new Notice(text, 15000);
   }
 
   onunload() {

@@ -22,7 +22,7 @@ const { Library } = require('../core/library.js');
 const { Streak } = require('./streak.js');
 const { Deck } = require('../flashcards/deck.js');
 const { Dictionary } = require('./dictionary.js');
-const { Migrations } = require('./migrations.js');
+const { Migrations, describe } = require('./migrations.js');
 
 class Learning {
   constructor(plugin) {
@@ -54,6 +54,11 @@ class Learning {
      Vault, beim Start - siehe migrations.js. */
   migrate() {
     return new Migrations(this.plugin, this).run();
+  }
+
+  /* Was dabei geschah, als Satz für die Person - oder nichts. */
+  describeMigration(report) {
+    return describe(report);
   }
 
   /* Die einzige Tür in den Bereich der Lernenden.

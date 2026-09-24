@@ -109,6 +109,42 @@ function mergeEntries(current, incoming) {
   return { entries: entries, report: report };
 }
 
+/* Der Sonderfall beim Umbau alter Pakete - und NUR dort.
+
+   Pakete der ersten Fassung listen unter `forms` die Formen, die in
+   IHREM Text vorkommen. Dasselbe Wort hat in zwei Texten deshalb zwei
+   verschiedene Listen, obwohl Bedeutung und Beschreibung Wort für Wort
+   gleich sind (nachgezählt: 28 von 65 mehrfachen Wörtern, alle nur in
+   den Formen). Nach der Regel oben gewönne die erste Liste, und die
+   Formen aus den anderen Texten gingen verloren.
+
+   Hier werden sie deshalb vereinigt: Der erste Eintrag bleibt, wie er
+   ist, und bekommt die Formen der anderen dazu, die ihm fehlen. Das ist
+   verlustfrei. Für neue Pakete gilt es nicht - die Werkstatt hat einen
+   Wortvorrat je Sprache und schickt vollständige Formen mit, und dort
+   bleibt es bei "ein Eintrag als Ganzes". */
+function mergeLegacy(current, incoming) {
+  const entries = new Map(current || []);
+
+  for (const [key, entry] of incoming || []) {
+    const have = entries.get(key);
+    if (!have) {
+      entries.set(key, entry);
+      continue;
+    }
+
+    const forms = have.forms.slice();
+    for (const form of entry.forms || []) {
+      if (!forms.includes(form)) forms.push(form);
+    }
+    if (forms.length !== have.forms.length) {
+      entries.set(key, Object.assign({}, have, { forms: forms }));
+    }
+  }
+
+  return entries;
+}
+
 /* Zum Schreiben: eine Sammlung als schlichtes Objekt, nach Schlüssel
    sortiert. Die Sortierung ist kein Schmuck - so ergibt derselbe
    Bestand immer dieselbe Datei, und was sich in der Versionsgeschichte
@@ -122,5 +158,5 @@ function toObject(entries) {
 }
 
 module.exports = {
-  ENTRY_SCHEMA, schemaOf, normalizeEntry, normalizeAll, mergeEntries, toObject
+  ENTRY_SCHEMA, schemaOf, normalizeEntry, normalizeAll, mergeEntries, mergeLegacy, toObject
 };

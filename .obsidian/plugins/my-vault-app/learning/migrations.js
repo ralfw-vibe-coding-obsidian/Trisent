@@ -17,10 +17,15 @@
  * und gezählt.
  */
 
-const { TFile, TFolder } = require('obsidian');
+const { TFile, TFolder, normalizePath } = require('obsidian');
 const {
-  cleanWordNote, cleanFlashcard, pendingSteps, frontmatterOf
+  cleanWordNote, cleanFlashcard, pendingSteps, frontmatterOf, splitPackage
 } = require('./schema.js');
+const { normalizeAll, mergeLegacy } = require('./entries.js');
+const {
+  NOTES_DIR, LEGACY_NOTES_DIR, TEXT_FILE
+} = require('../core/library.js');
+const { PACKAGE_FILE } = require('../core/package.js');
 
 /* Frontmatter und Rumpf trennen. Die Eigenschaften ändert Obsidian
    selbst (processFrontMatter); hier geht es nur um den Text darunter. */
@@ -40,6 +45,7 @@ class Migrations {
     this.app = plugin.app;
     this.library = learning.library;
     this.deck = learning.deck;
+    this.dictionary = learning.dictionary;
   }
 
   /* Die Umbauschritte, in der Reihenfolge ihrer Nummern. Jeder bringt
@@ -51,7 +57,8 @@ class Migrations {
      wieder. */
   steps() {
     return [
-      { to: 2, run: (report) => this.decoupleNotes(report) }
+      { to: 2, run: (report) => this.decoupleNotes(report) },
+      { to: 3, run: (report) => this.centralDictionary(report) }
     ];
   }
 
@@ -61,7 +68,9 @@ class Migrations {
     if (todo.length === 0) return null;
 
     const report = {
-      from: from, to: from, notes: 0, rescued: 0, cards: 0, links: 0, waiting: 0
+      from: from, to: from,
+      notes: 0, rescued: 0, cards: 0, links: 0, leftAlone: 0,
+      entries: 0, packages: 0, moved: 0, freed: 0
     };
 
     for (const step of this.steps()) {
@@ -91,8 +100,11 @@ class Migrations {
       await this.cleanCards(language, report);
     }
 
-    /* Warten noch Notizen auf ihren Text, ist der Schritt nicht durch. */
-    return report.waiting === 0;
+    /* Notizen zu Wörtern, die kein Text mehr kennt, sind liegen geblieben -
+       unangetastet. Der Schritt ist trotzdem durch: Würde er auf sie
+       warten, käme eine Vault, aus der ein Text gelöscht wurde, nie über
+       Schritt 2 hinaus und bekäme keinen späteren Umbau mehr. */
+    return true;
   }
 
   /* Den Kopf einer Notiz lesen - aus der Datei, nicht aus dem
@@ -129,10 +141,10 @@ class Migrations {
 
       /* Kein Paket kennt dieses Wort mehr - dann lässt sich nicht
          entscheiden, ob die Grammatik in der Notiz eine Abschrift war
-         oder etwas Eigenes. Also nichts anfassen und später wiederkommen:
-         Vielleicht ist der Text nur gerade nicht importiert. */
+         oder etwas Eigenes. Also nichts anfassen: lieber ein alter Absatz
+         zu viel als ein eigener Satz zu wenig. */
       if (!entry && /^##\s+Grammar\s*$/m.test(head.split.body)) {
-        report.waiting += 1;
+        report.leftAlone += 1;
         continue;
       }
 
@@ -217,6 +229,146 @@ class Migrations {
     return map;
   }
 
+  /* ---------------------------------------------------------------- */
+  /* Schritt 3: ein Wörterbuch je Sprache                              */
+  /* ---------------------------------------------------------------- */
+
+  /* Bisher brachte jeder Text sein eigenes Wörterbuch mit, und niemand
+     führte sie zusammen. Jetzt:
+
+     1. Aus allen vorhandenen Paketen das Wörterbuch der Person bauen.
+        ZUERST - solange die Pakete ihr Wissen noch enthalten.
+     2. Die Pakete teilen: Kopf, Text daneben, das Wörterbuch fällt weg.
+     3. Den Ordner der Word notes von "dictionary" in "notes" umbenennen.
+     4. Die Flashcards von ihrer abgeschriebenen Vorder- und Rückseite
+        befreien und neu mit ihrer Word note verknüpfen.
+
+     Jeder Teil erkennt, was schon erledigt ist. Bricht der Umbau in der
+     Mitte ab, läuft er beim nächsten Start von vorn und findet den Rest. */
+  async centralDictionary(report) {
+    for (const language of this.library.languages()) {
+      await this.buildDictionary(language, report);
+      await this.splitPackages(language, report);
+      await this.moveNotes(language, report);
+      await this.freeCards(language, report);
+    }
+    return true;
+  }
+
+  async buildDictionary(language, report) {
+    /* Erst alles im Speicher sammeln, dann einmal schreiben. Einträge
+       aus Paketen der ersten Fassung tragen keine Nummer und zählen als
+       0 - jedes neuere Paket löst sie später ab. Unter gleich alten
+       bleibt der erste, bekommt aber die Formen der anderen dazu: Jeder
+       alte Text hat nur die Formen gelistet, die in ihm vorkommen. */
+    let incoming = new Map();
+    for (const folder of this.library.packagesOf(language)) {
+      const data = await this.readJson(this.fileIn(folder, PACKAGE_FILE));
+      if (!data || !data.dictionary) continue;
+      incoming = mergeLegacy(incoming, normalizeAll(data.dictionary));
+    }
+    if (incoming.size === 0) return;
+
+    const done = await this.dictionary.merge(language, incoming);
+    report.entries += done.added + done.replaced;
+  }
+
+  async splitPackages(language, report) {
+    for (const folder of this.library.packagesOf(language)) {
+      const file = this.fileIn(folder, PACKAGE_FILE);
+      const data = await this.readJson(file);
+      const parts = splitPackage(data);
+      if (!parts || !parts.split) continue;
+
+      /* Zuerst den Text daneben legen, dann den Kopf kürzen. Bricht es
+         dazwischen ab, steht der Text noch im Kopf und die App liest ihn
+         von dort - nichts ist verloren, und der nächste Lauf macht weiter. */
+      await this.writeJson(folder, TEXT_FILE, parts.text);
+      await this.app.vault.modify(file, JSON.stringify(parts.head, null, 2) + '\n');
+      report.packages += 1;
+    }
+  }
+
+  async moveNotes(language, report) {
+    const old = this.library.childFolder(language.folder, LEGACY_NOTES_DIR);
+    if (!old) return;
+
+    const target = normalizePath(language.path + '/' + NOTES_DIR);
+    const existing = this.library.childFolder(language.folder, NOTES_DIR);
+
+    /* Der Normalfall: den ganzen Ordner umbenennen. */
+    if (!existing) {
+      report.moved += old.children.length;
+      await this.app.fileManager.renameFile(old, target);
+      return;
+    }
+
+    /* Beide gibt es - ein halber Umbau, oder jemand hat von Hand einen
+       angelegt. Dann einzeln hinüber; liegt dort schon eine gleich
+       benannte Notiz, bleibt die alte, wo sie ist. Nichts wird
+       überschrieben. */
+    for (const child of [...old.children]) {
+      if (!(child instanceof TFile)) continue;
+      const to = normalizePath(target + '/' + child.name);
+      if (this.app.vault.getAbstractFileByPath(to)) continue;
+      await this.app.fileManager.renameFile(child, to);
+      report.moved += 1;
+    }
+    if (old.children.length === 0) await this.app.vault.delete(old);
+  }
+
+  async freeCards(language, report) {
+    const notes = await this.noteFiles(language);
+
+    for (const file of this.cardFiles(language)) {
+      const head = await this.headOf(file);
+      if (head.front.type !== 'flashcard' || !head.front.key) continue;
+
+      const key = String(head.front.key);
+      const note = notes.get(key) || null;
+      const label = key.split(':')[1] || key;
+
+      /* Der Verweis auf die Word note wird neu geschrieben, weil ihr
+         Ordner eben umbenannt wurde - ob Obsidian Links beim Umbenennen
+         mitzieht, ist eine Einstellung der Person, auf die wir uns nicht
+         verlassen. */
+      const link = note ? '[[' + note.path.replace(/\.md$/, '') + '|' + label + ']]' : null;
+      const stale = head.front.front !== undefined || head.front.back !== undefined;
+      const relink = link && head.front.word !== link;
+      if (!stale && !relink) continue;
+
+      await this.app.fileManager.processFrontMatter(file, (fm) => {
+        delete fm.front;
+        delete fm.back;
+        if (link) fm.word = link;
+      });
+      if (stale) report.freed += 1;
+    }
+  }
+
+  fileIn(folder, name) {
+    return folder.children.find((child) => child instanceof TFile && child.name === name) || null;
+  }
+
+  async readJson(file) {
+    if (!(file instanceof TFile)) return null;
+    try {
+      return JSON.parse(await this.app.vault.read(file));
+    } catch (error) {
+      /* Ein kaputtes Paket wird übersprungen, nicht repariert - es
+         bleibt, wie es ist, und die App zeigt es als kaputt an. */
+      console.error('Trisent: could not read ' + file.path, error);
+      return null;
+    }
+  }
+
+  async writeJson(folder, name, value) {
+    const text = JSON.stringify(value, null, 2) + '\n';
+    const existing = this.fileIn(folder, name);
+    if (existing) await this.app.vault.modify(existing, text);
+    else await this.app.vault.create(normalizePath(folder.path + '/' + name), text);
+  }
+
   cardFiles(language) {
     const folder = this.app.vault.getAbstractFileByPath(this.deck.folderPath(language));
     if (!(folder instanceof TFolder)) return [];
@@ -226,4 +378,43 @@ class Migrations {
   }
 }
 
-module.exports = { Migrations, splitFile };
+/* Was der Umbau getan hat, in ein paar Sätzen für die Person. Eine
+   Migration, die stumm durch ihre Notizen geht, wäre unheimlich - und
+   eine, die in Fachsprache berichtet, auch. */
+function describe(report) {
+  if (!report) return null;
+  const said = [];
+  const n = (count, one, many) => count + ' ' + (count === 1 ? one : many);
+
+  const tidied = [];
+  if (report.notes > 0) tidied.push(n(report.notes, 'word note', 'word notes'));
+  if (report.cards > 0) tidied.push(n(report.cards, 'flashcard', 'flashcards'));
+  if (tidied.length > 0) said.push('Trisent tidied up ' + tidied.join(' and ') + '.');
+
+  if (report.rescued > 0) {
+    said.push(n(report.rescued, 'grammar note you had changed was', 'grammar notes you had changed were')
+      + ' kept under "My notes".');
+  }
+
+  if (report.entries > 0 || report.packages > 0) {
+    const parts = [];
+    if (report.entries > 0) parts.push('your dictionary now holds ' + n(report.entries, 'word', 'words'));
+    if (report.packages > 0) parts.push(n(report.packages, 'text was', 'texts were') + ' rearranged');
+    said.push(parts.join('; ').replace(/^./, (c) => c.toUpperCase()) + '.');
+  }
+
+  if (report.moved > 0) said.push('Word notes now live in the folder "notes".');
+  if (report.freed > 0) {
+    said.push(n(report.freed, 'flashcard now takes its', 'flashcards now take their')
+      + ' meaning from your dictionary.');
+  }
+
+  if (report.leftAlone > 0) {
+    said.push(n(report.leftAlone, 'word note kept its', 'word notes kept their')
+      + ' old grammar text - no text explains those words any more.');
+  }
+
+  return said.length > 0 ? said.join(' ') : null;
+}
+
+module.exports = { Migrations, splitFile, describe };
