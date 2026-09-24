@@ -1,0 +1,460 @@
+{
+  "fr:aimer:VERB": {
+    "lemma": "aimer",
+    "partOfSpeech": "VERB",
+    "gloss": "lieben, mögen",
+    "forms": [
+      "aime"
+    ],
+    "grammar": "Regelmäßig auf -er. Heißt je nach Gegenstand lieben oder mögen: j'aime Julie, j'aime la musique."
+  },
+  "fr:ami:NOUN": {
+    "lemma": "ami",
+    "partOfSpeech": "NOUN",
+    "gloss": "Freund, Freundin",
+    "forms": [
+      "amis",
+      "amie"
+    ],
+    "grammar": "Männlich ami, weiblich amie - beide gleich ausgesprochen. Plural amis, amies."
+  },
+  "fr:appeler:VERB": {
+    "lemma": "appeler",
+    "partOfSpeech": "VERB",
+    "gloss": "nennen, rufen",
+    "forms": [
+      "appelle"
+    ],
+    "grammar": "Mit Reflexivpronomen heißt es „heißen“: je m'appelle, tu t'appelles, il s'appelle. Das l verdoppelt sich."
+  },
+  "fr:aussi:ADV": {
+    "lemma": "aussi",
+    "partOfSpeech": "ADV",
+    "gloss": "auch",
+    "forms": [
+      "aussi"
+    ],
+    "grammar": "Steht meist hinter dem Verb: Paul aime aussi la musique. Allein am Satzanfang: Moi aussi."
+  },
+  "fr:avec:ADP": {
+    "lemma": "avec",
+    "partOfSpeech": "ADP",
+    "gloss": "mit",
+    "forms": [
+      "avec"
+    ],
+    "grammar": "Unveränderlich. Danach steht die betonte Form des Pronomens: avec moi, avec toi."
+  },
+  "fr:avoir:VERB": {
+    "lemma": "avoir",
+    "partOfSpeech": "VERB",
+    "gloss": "haben",
+    "forms": [
+      "avez",
+      "ai",
+      "a"
+    ],
+    "grammar": "Das wichtigste unregelmäßige Verb: j'ai, tu as, il a, nous avons, vous avez, ils ont."
+  },
+  "fr:beaucoup:ADV": {
+    "lemma": "beaucoup",
+    "partOfSpeech": "ADV",
+    "gloss": "viel, sehr",
+    "forms": [
+      "beaucoup"
+    ],
+    "grammar": "Steht hinter dem Wort, das es verstärkt: merci beaucoup."
+  },
+  "fr:connaître:VERB": {
+    "lemma": "connaître",
+    "partOfSpeech": "VERB",
+    "gloss": "kennen, kennenlernen",
+    "forms": [
+      "connaître"
+    ],
+    "grammar": "Unregelmäßig, mit Zirkumflex vor t: il connaît. Meint kennen im Sinne von vertraut sein - Tatsachen weiß man mit savoir."
+  },
+  "fr:content:ADJ": {
+    "lemma": "content",
+    "partOfSpeech": "ADJ",
+    "gloss": "froh, zufrieden",
+    "forms": [
+      "content"
+    ],
+    "grammar": "Weibliche Form contente. Vor einem Infinitiv steht de: content de te connaître."
+  },
+  "fr:danser:VERB": {
+    "lemma": "danser",
+    "partOfSpeech": "VERB",
+    "gloss": "tanzen",
+    "forms": [
+      "dansent"
+    ],
+    "grammar": "Regelmäßig auf -er: je danse, tu danses, ils dansent."
+  },
+  "fr:de:ADP": {
+    "lemma": "de",
+    "partOfSpeech": "ADP",
+    "gloss": "von, aus",
+    "forms": [
+      "d'",
+      "de",
+      "d’"
+    ],
+    "grammar": "Zeigt Herkunft und Zugehörigkeit. Vor Vokal wird es zu d', mit le verschmilzt es zu du, mit les zu des."
+  },
+  "fr:demander:VERB": {
+    "lemma": "demander",
+    "partOfSpeech": "VERB",
+    "gloss": "fragen, bitten um",
+    "forms": [
+      "demande"
+    ],
+    "grammar": "Regelmäßig auf -er. Heißt fragen und bitten um - nicht fordern."
+  },
+  "fr:dire:VERB": {
+    "lemma": "dire",
+    "partOfSpeech": "VERB",
+    "gloss": "sagen",
+    "forms": [
+      "dit"
+    ],
+    "grammar": "Unregelmäßig: je dis, tu dis, il dit, nous disons, vous dites, ils disent."
+  },
+  "fr:elle:PRON": {
+    "lemma": "elle",
+    "partOfSpeech": "PRON",
+    "gloss": "sie",
+    "forms": [
+      "elle",
+      "Elle"
+    ],
+    "grammar": "Steht für jedes weibliche Wort, auch für Dinge: la chambre → elle."
+  },
+  "fr:ensemble:ADV": {
+    "lemma": "ensemble",
+    "partOfSpeech": "ADV",
+    "gloss": "zusammen",
+    "forms": [
+      "ensemble"
+    ],
+    "grammar": "Unveränderlich, steht hinter dem Verb: ils dansent ensemble."
+  },
+  "fr:et:CCONJ": {
+    "lemma": "et",
+    "partOfSpeech": "CCONJ",
+    "gloss": "und",
+    "forms": [
+      "et",
+      "Et"
+    ],
+    "grammar": "Verbindet Wörter und Sätze. Anders als im Deutschen steht davor kein Komma: Paul et Julie."
+  },
+  "fr:fin:NOUN": {
+    "lemma": "fin",
+    "partOfSpeech": "NOUN",
+    "gloss": "Ende",
+    "forms": [
+      "fin"
+    ],
+    "grammar": "Weiblich: la fin. Meist in der Wendung à la fin de - am Ende von."
+  },
+  "fr:fête:NOUN": {
+    "lemma": "fête",
+    "partOfSpeech": "NOUN",
+    "gloss": "Fest, Party",
+    "forms": [
+      "fête"
+    ],
+    "grammar": "Weiblich: la fête. Meint Fest, Feier und Feiertag gleichermaßen."
+  },
+  "fr:habiter:VERB": {
+    "lemma": "habiter",
+    "partOfSpeech": "VERB",
+    "gloss": "wohnen",
+    "forms": [
+      "habites",
+      "habite"
+    ],
+    "grammar": "Regelmäßig auf -er. In einer Stadt wohnt man à: habiter à Paris."
+  },
+  "fr:il y a:PHRASE": {
+    "lemma": "il y a",
+    "partOfSpeech": "PHRASE",
+    "gloss": "es gibt",
+    "forms": [
+      "il y a",
+      "Il y a"
+    ],
+    "grammar": "Wörtlich 'es hat da'. Entspricht dem deutschen 'es gibt', im Singular wie im Plural. In der Vergangenheit: 'il y avait'."
+  },
+  "fr:il:PRON": {
+    "lemma": "il",
+    "partOfSpeech": "PRON",
+    "gloss": "er, es",
+    "forms": [
+      "il",
+      "Il",
+      "Ils",
+      "ils"
+    ],
+    "grammar": "Steht auch als unpersönliches „es“ ohne eigene Bedeutung: il y a, s'il vous plaît."
+  },
+  "fr:je m'appelle:PHRASE": {
+    "lemma": "je m'appelle",
+    "partOfSpeech": "PHRASE",
+    "gloss": "ich heiße",
+    "forms": [
+      "Je m'appelle",
+      "je m'appelle",
+      "Je m’appelle"
+    ],
+    "grammar": "Wörtlich 'ich rufe mich'. So nennt man seinen Namen. Gefragt wird mit 'Comment vous appelez-vous ?'"
+  },
+  "fr:je:PRON": {
+    "lemma": "je",
+    "partOfSpeech": "PRON",
+    "gloss": "ich",
+    "forms": [
+      "je",
+      "j'",
+      "Je",
+      "J’",
+      "j’"
+    ],
+    "grammar": "Vor einem Vokal oder stummem h wird es zu j': j'ai, j'habite."
+  },
+  "fr:julie:PROPN": {
+    "lemma": "Julie",
+    "partOfSpeech": "PROPN",
+    "gloss": "Julie (Vorname)",
+    "forms": [
+      "Julie"
+    ],
+    "grammar": "Weiblicher Eigenname. Betont wird die letzte Silbe."
+  },
+  "fr:le:DET": {
+    "lemma": "le",
+    "partOfSpeech": "DET",
+    "gloss": "der, die, das",
+    "forms": [
+      "l'",
+      "la",
+      "le",
+      "l’",
+      "les",
+      "La",
+      "Le"
+    ],
+    "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur."
+  },
+  "fr:me:PRON": {
+    "lemma": "me",
+    "partOfSpeech": "PRON",
+    "gloss": "mich, mir",
+    "forms": [
+      "m'",
+      "m’"
+    ],
+    "grammar": "Reflexiv- und Objektpronomen. Steht vor dem Verb und wird vor Vokal zu m': je m'appelle."
+  },
+  "fr:moi:PRON": {
+    "lemma": "moi",
+    "partOfSpeech": "PRON",
+    "gloss": "ich, mich (betont)",
+    "forms": [
+      "Moi",
+      "moi"
+    ],
+    "grammar": "Betonte Form von je. Steht allein oder nach einer Präposition: Moi aussi. - avec moi."
+  },
+  "fr:musique:NOUN": {
+    "lemma": "musique",
+    "partOfSpeech": "NOUN",
+    "gloss": "Musik",
+    "forms": [
+      "musique"
+    ],
+    "grammar": "Weiblich: la musique. Steht meist mit Artikel, wo im Deutschen keiner steht: j'aime la musique."
+  },
+  "fr:où:ADV": {
+    "lemma": "où",
+    "partOfSpeech": "ADV",
+    "gloss": "wo, wohin",
+    "forms": [
+      "où"
+    ],
+    "grammar": "Fragewort für Ort und Richtung. Der Akzent unterscheidet es von ou - oder."
+  },
+  "fr:paris:PROPN": {
+    "lemma": "Paris",
+    "partOfSpeech": "PROPN",
+    "gloss": "Paris",
+    "forms": [
+      "Paris"
+    ],
+    "grammar": "Die Hauptstadt Frankreichs. Das s am Ende bleibt stumm."
+  },
+  "fr:parler:VERB": {
+    "lemma": "parler",
+    "partOfSpeech": "VERB",
+    "gloss": "sprechen, reden",
+    "forms": [
+      "parle",
+      "parlent"
+    ],
+    "grammar": "Regelmäßig auf -er: je parle, tu parles, il parle, nous parlons, vous parlez, ils parlent."
+  },
+  "fr:paul:PROPN": {
+    "lemma": "Paul",
+    "partOfSpeech": "PROPN",
+    "gloss": "Paul (Vorname)",
+    "forms": [
+      "Paul"
+    ],
+    "grammar": "Eigenname. Das l am Ende wird gesprochen."
+  },
+  "fr:personne:NOUN": {
+    "lemma": "personne",
+    "partOfSpeech": "NOUN",
+    "gloss": "Person, Mensch",
+    "forms": [
+      "personnes"
+    ],
+    "grammar": "Weiblich, auch wenn ein Mann gemeint ist: une personne. Ohne Artikel heißt personne dagegen niemand."
+  },
+  "fr:rire:VERB": {
+    "lemma": "rire",
+    "partOfSpeech": "VERB",
+    "gloss": "lachen",
+    "forms": [
+      "rient"
+    ],
+    "grammar": "Unregelmäßig: je ris, tu ris, il rit, nous rions, vous riez, ils rient."
+  },
+  "fr:répondre:VERB": {
+    "lemma": "répondre",
+    "partOfSpeech": "VERB",
+    "gloss": "antworten",
+    "forms": [
+      "répond"
+    ],
+    "grammar": "Auf -re: je réponds, il répond, ils répondent. Man antwortet à jemandem."
+  },
+  "fr:salut:INTJ": {
+    "lemma": "salut",
+    "partOfSpeech": "INTJ",
+    "gloss": "hallo, tschüss",
+    "forms": [
+      "Salut"
+    ],
+    "grammar": "Unter Freunden, beim Kommen wie beim Gehen. Förmlicher ist bonjour."
+  },
+  "fr:son:DET": {
+    "lemma": "son",
+    "partOfSpeech": "DET",
+    "gloss": "sein, ihr",
+    "forms": [
+      "ses",
+      "sa",
+      "son"
+    ],
+    "grammar": "Richtet sich nach dem besessenen Ding, nicht nach dem Besitzer: son ami (m), sa fête (f), ses amis (Pl.). Heißt sowohl sein als auch ihr."
+  },
+  "fr:sourire:VERB": {
+    "lemma": "sourire",
+    "partOfSpeech": "VERB",
+    "gloss": "lächeln",
+    "forms": [
+      "sourit"
+    ],
+    "grammar": "Geht wie rire: il sourit, ils sourient. Auch als Hauptwort: un sourire - ein Lächeln."
+  },
+  "fr:te:PRON": {
+    "lemma": "te",
+    "partOfSpeech": "PRON",
+    "gloss": "dich, dir",
+    "forms": [
+      "te"
+    ],
+    "grammar": "Unbetonte Form von tu und steht vor dem Verb: je te vois. Vor einem Vokal wird es t'."
+  },
+  "fr:toi:PRON": {
+    "lemma": "toi",
+    "partOfSpeech": "PRON",
+    "gloss": "du, dich (betont)",
+    "forms": [
+      "toi"
+    ],
+    "grammar": "Betonte Form von tu. Steht allein oder nach einer Präposition: Et toi ? - avec toi."
+  },
+  "fr:tu:PRON": {
+    "lemma": "tu",
+    "partOfSpeech": "PRON",
+    "gloss": "du",
+    "forms": [
+      "Tu"
+    ],
+    "grammar": "Das vertraute Du - für Freunde, Familie und junge Leute. Gegenüber Fremden benutzt man vous."
+  },
+  "fr:un:DET": {
+    "lemma": "un",
+    "partOfSpeech": "DET",
+    "gloss": "ein, eine",
+    "forms": [
+      "une",
+      "un"
+    ],
+    "grammar": "Unbestimmter Artikel: un vor männlichen, une vor weiblichen Wörtern. Man sieht also am Artikel das Geschlecht."
+  },
+  "fr:voir:VERB": {
+    "lemma": "voir",
+    "partOfSpeech": "VERB",
+    "gloss": "sehen",
+    "forms": [
+      "vois",
+      "voir",
+      "voit"
+    ],
+    "grammar": "Unregelmäßig: je vois, tu vois, il voit, nous voyons, vous voyez, ils voient."
+  },
+  "fr:y:PRON": {
+    "lemma": "y",
+    "partOfSpeech": "PRON",
+    "gloss": "da, dorthin",
+    "forms": [
+      "y"
+    ],
+    "grammar": "Steht vor dem Verb. Il y a heißt wörtlich „es hat da“ und bedeutet „es gibt“."
+  },
+  "fr:à la fin:PHRASE": {
+    "lemma": "à la fin",
+    "partOfSpeech": "PHRASE",
+    "gloss": "am Ende",
+    "forms": [
+      "À la fin"
+    ],
+    "grammar": "Wörtlich an dem Ende. Meist mit de: à la fin de la fête."
+  },
+  "fr:à:ADP": {
+    "lemma": "à",
+    "partOfSpeech": "ADP",
+    "gloss": "zu, in, an, bis",
+    "forms": [
+      "à",
+      "À"
+    ],
+    "grammar": "Sehr vielseitig. Mit le verschmilzt es zu au, mit les zu aux."
+  },
+  "fr:être:AUX": {
+    "lemma": "être",
+    "partOfSpeech": "AUX",
+    "gloss": "sein",
+    "forms": [
+      "est",
+      "sommes",
+      "suis"
+    ],
+    "grammar": "Das unregelmäßigste Verb: je suis, tu es, il est, nous sommes, vous êtes, ils sont."
+  }
+}

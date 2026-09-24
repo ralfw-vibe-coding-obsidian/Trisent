@@ -34,7 +34,8 @@
     "partOfSpeech": "INTJ",
     "gloss": "ah, ach",
     "forms": [
-      "ah"
+      "ah",
+      "Ah"
     ],
     "grammar": "Ausruf des Erkennens oder Überraschens.",
     "entrySchema": 0
@@ -126,7 +127,8 @@
     "partOfSpeech": "VERB",
     "gloss": "ankommen, eintreffen",
     "forms": [
-      "arrive"
+      "arrive",
+      "arrivent"
     ],
     "grammar": "Regelmäßiges Verb auf -er: arrive, arrives, arrive, arrivons, arrivez, arrivent. Bildet die zusammengesetzten Zeiten mit être (il est arrivé), nicht mit avoir. Heißt auch „passieren, geschehen\": qu'est-ce qui arrive ?",
     "entrySchema": 0
@@ -309,7 +311,8 @@
     "partOfSpeech": "INTJ",
     "gloss": "guten Tag, hallo",
     "forms": [
-      "bonjour"
+      "bonjour",
+      "Bonjour"
     ],
     "grammar": "Wörtlich „guter Tag“ (bon + jour). Ab dem frühen Abend sagt man bonsoir.",
     "entrySchema": 0
@@ -391,7 +394,8 @@
     "gloss": "suchen",
     "forms": [
       "cherche",
-      "cherches"
+      "cherches",
+      "cherchent"
     ],
     "grammar": "Regelmäßiges Verb auf -er: cherche, cherches, cherche, cherchons, cherchez, cherchent. Steht ohne Präposition vor dem Objekt - je cherche mon téléphone, nicht „chercher pour\". Mit venir/aller davor heißt es „abholen\": aller chercher quelqu'un.",
     "entrySchema": 0
@@ -583,7 +587,8 @@
     "gloss": "von, aus",
     "forms": [
       "d'",
-      "de"
+      "de",
+      "d’"
     ],
     "grammar": "Zeigt Herkunft und Zugehörigkeit. Vor Vokal wird es zu d', mit le verschmilzt es zu du, mit les zu des.",
     "entrySchema": 0
@@ -743,7 +748,8 @@
     "partOfSpeech": "PRON",
     "gloss": "sie",
     "forms": [
-      "elle"
+      "elle",
+      "Elle"
     ],
     "grammar": "Steht für jedes weibliche Wort, auch für Dinge: la chambre → elle.",
     "entrySchema": 0
@@ -988,7 +994,8 @@
     "partOfSpeech": "PHRASE",
     "gloss": "es gibt",
     "forms": [
-      "il y a"
+      "il y a",
+      "Il y a"
     ],
     "grammar": "Wörtlich 'es hat da'. Entspricht dem deutschen 'es gibt', im Singular wie im Plural. In der Vergangenheit: 'il y avait'.",
     "entrySchema": 0
@@ -998,7 +1005,10 @@
     "partOfSpeech": "PRON",
     "gloss": "er, es",
     "forms": [
-      "il"
+      "il",
+      "Il",
+      "Ils",
+      "ils"
     ],
     "grammar": "Steht auch als unpersönliches „es“ ohne eigene Bedeutung: il y a, s'il vous plaît.",
     "entrySchema": 0
@@ -1019,7 +1029,8 @@
     "gloss": "ich heiße",
     "forms": [
       "Je m'appelle",
-      "je m'appelle"
+      "je m'appelle",
+      "Je m’appelle"
     ],
     "grammar": "Wörtlich 'ich rufe mich'. So nennt man seinen Namen. Gefragt wird mit 'Comment vous appelez-vous ?'",
     "entrySchema": 0
@@ -1052,7 +1063,10 @@
     "gloss": "ich",
     "forms": [
       "je",
-      "j'"
+      "j'",
+      "Je",
+      "J’",
+      "j’"
     ],
     "grammar": "Vor einem Vokal oder stummem h wird es zu j': j'ai, j'habite.",
     "entrySchema": 0
@@ -1094,7 +1108,11 @@
     "forms": [
       "l'",
       "la",
-      "le"
+      "le",
+      "l’",
+      "les",
+      "La",
+      "Le"
     ],
     "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur.",
     "entrySchema": 0
@@ -1204,7 +1222,8 @@
     "partOfSpeech": "PRON",
     "gloss": "mich, mir",
     "forms": [
-      "m'"
+      "m'",
+      "m’"
     ],
     "grammar": "Reflexiv- und Objektpronomen. Steht vor dem Verb und wird vor Vokal zu m': je m'appelle.",
     "entrySchema": 0
@@ -1244,7 +1263,8 @@
     "partOfSpeech": "PRON",
     "gloss": "ich, mich (betont)",
     "forms": [
-      "Moi"
+      "Moi",
+      "moi"
     ],
     "grammar": "Betonte Form von je. Steht allein oder nach einer Präposition: Moi aussi. - avec moi.",
     "entrySchema": 0
@@ -1344,6 +1364,9 @@
     "lemma": "nous",
     "partOfSpeech": "PRON",
     "gloss": "wir, uns",
+    "forms": [
+      "Nous"
+    ],
     "grammar": "Dient als Subjekt („wir\") und als Objekt („uns\"), die Form bleibt gleich: `nous sommes` - `il nous voit`. Das zugehörige Verb steht in der 1. Person Mehrzahl, meist auf `-ons` (`prenons`, `entrons`), Ausnahme `nous sommes`.",
     "entrySchema": 0
   },
@@ -1403,7 +1426,8 @@
     "partOfSpeech": "INTJ",
     "gloss": "ja",
     "forms": [
-      "oui"
+      "oui",
+      "Oui"
     ],
     "grammar": "Auf eine verneinte Frage antwortet man stattdessen mit si.",
     "entrySchema": 0
@@ -1715,7 +1739,8 @@
     "partOfSpeech": "VERB",
     "gloss": "schauen, ansehen",
     "forms": [
-      "regarde"
+      "regarde",
+      "regardent"
     ],
     "grammar": "Regelmäßiges Verb auf -er: `je regarde`, `tu regardes`, `il/elle regarde`, `nous regardons`, `vous regardez`, `ils regardent`. Nimmt das Objekt ohne Präposition: `regarder la télé`. Gegen `voir` abgrenzen: `regarder` ist das absichtliche Hinsehen, `voir` das bloße Sehen.",
     "entrySchema": 0
@@ -1825,7 +1850,8 @@
     "partOfSpeech": "PHRASE",
     "gloss": "bitte",
     "forms": [
-      "s'il vous plaît"
+      "s'il vous plaît",
+      "s’il vous plaît"
     ],
     "grammar": "Wörtlich 'wenn es Ihnen gefällt'. Die höfliche Standardform von 'bitte' beim Siezen; beim Duzen 's'il te plaît'.",
     "entrySchema": 0
@@ -1875,7 +1901,8 @@
     "partOfSpeech": "PRON",
     "gloss": "sich",
     "forms": [
-      "s'"
+      "s'",
+      "s’"
     ],
     "grammar": "Reflexivpronomen der 3. Person, für Einzahl und Mehrzahl gleich: il se lève, ils s'assoient. Vor Vokal oder stummem h wird es zu `s'` – eigenes Wort mit der Grundform `se`. Steht immer vor dem gebeugten Verb; in der 1. und 2. Person heißt es `me`, `te`, `nous`, `vous`.",
     "entrySchema": 0
@@ -1915,7 +1942,8 @@
     "partOfSpeech": "SCONJ",
     "gloss": "wenn, falls",
     "forms": [
-      "s'"
+      "s'",
+      "s’"
     ],
     "grammar": "Nur vor il und ils wird si zu s' – daher s'il vous plaît, wörtlich „wenn es Ihnen gefällt“.",
     "entrySchema": 0
@@ -1955,7 +1983,9 @@
     "partOfSpeech": "DET",
     "gloss": "sein, ihr",
     "forms": [
-      "ses"
+      "ses",
+      "sa",
+      "son"
     ],
     "grammar": "Richtet sich nach dem besessenen Ding, nicht nach dem Besitzer: son ami (m), sa fête (f), ses amis (Pl.). Heißt sowohl sein als auch ihr.",
     "entrySchema": 0
@@ -2227,7 +2257,9 @@
     "partOfSpeech": "VERB",
     "gloss": "sehen",
     "forms": [
-      "vois"
+      "vois",
+      "voir",
+      "voit"
     ],
     "grammar": "Unregelmäßig: je vois, tu vois, il voit, nous voyons, vous voyez, ils voient.",
     "entrySchema": 0
@@ -2248,7 +2280,8 @@
     "gloss": "wollen, möchten",
     "forms": [
       "voudrais",
-      "voulez"
+      "voulez",
+      "veux"
     ],
     "grammar": "Unregelmäßig: je veux, tu veux, il veut, nous voulons, vous voulez, ils veulent. Die höfliche Form je voudrais heißt „ich hätte gern“.",
     "entrySchema": 0
@@ -2348,7 +2381,8 @@
     "partOfSpeech": "ADP",
     "gloss": "zu, in, an, bis",
     "forms": [
-      "à"
+      "à",
+      "À"
     ],
     "grammar": "Sehr vielseitig. Mit le verschmilzt es zu au, mit les zu aux.",
     "entrySchema": 0
@@ -2398,7 +2432,9 @@
     "partOfSpeech": "AUX",
     "gloss": "sein",
     "forms": [
-      "est"
+      "est",
+      "sommes",
+      "suis"
     ],
     "grammar": "Das unregelmäßigste Verb: je suis, tu es, il est, nous sommes, vous êtes, ils sont.",
     "entrySchema": 0

@@ -1,0 +1,3247 @@
+{
+  "paragraphs": [
+    {
+      "id": "p001",
+      "sentences": [
+        {
+          "id": "s001",
+          "source": "Paul et Julie se retrouvent dans un café.",
+          "fluent": "Paul und Julie treffen sich in einem Café.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 7,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 8,
+              "end": 13,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 14,
+              "end": 16,
+              "surface": "se",
+              "gloss": "sich",
+              "lemma": "se",
+              "partOfSpeech": "PRON",
+              "key": "fr:se:PRON"
+            },
+            {
+              "start": 17,
+              "end": 27,
+              "surface": "retrouvent",
+              "gloss": "wiedertreffen",
+              "lemma": "retrouver",
+              "partOfSpeech": "VERB",
+              "key": "fr:retrouver:VERB"
+            },
+            {
+              "start": 28,
+              "end": 32,
+              "surface": "dans",
+              "gloss": "in",
+              "lemma": "dans",
+              "partOfSpeech": "ADP",
+              "key": "fr:dans:ADP"
+            },
+            {
+              "start": 33,
+              "end": 35,
+              "surface": "un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 36,
+              "end": 40,
+              "surface": "café",
+              "gloss": "Café",
+              "lemma": "café",
+              "partOfSpeech": "NOUN",
+              "key": "fr:café:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/deeae2336a7130eb.mp3",
+            "durationMs": 2229,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 267
+              },
+              {
+                "unit": 1,
+                "startMs": 337,
+                "endMs": 383
+              },
+              {
+                "unit": 2,
+                "startMs": 430,
+                "endMs": 685
+              },
+              {
+                "unit": 3,
+                "startMs": 731,
+                "endMs": 824
+              },
+              {
+                "unit": 4,
+                "startMs": 871,
+                "endMs": 1265
+              },
+              {
+                "unit": 5,
+                "startMs": 1289,
+                "endMs": 1416
+              },
+              {
+                "unit": 6,
+                "startMs": 1486,
+                "endMs": 1533
+              },
+              {
+                "unit": 7,
+                "startMs": 1567,
+                "endMs": 1950
+              }
+            ]
+          }
+        },
+        {
+          "id": "s002",
+          "source": "Ils sont contents de se revoir après la fête.",
+          "fluent": "Sie sind froh, sich nach dem Fest wiederzusehen.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 4,
+              "end": 8,
+              "surface": "sont",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 9,
+              "end": 17,
+              "surface": "contents",
+              "gloss": "froh",
+              "lemma": "content",
+              "partOfSpeech": "ADJ",
+              "key": "fr:content:ADJ"
+            },
+            {
+              "start": 18,
+              "end": 20,
+              "surface": "de",
+              "gloss": "zu",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 21,
+              "end": 23,
+              "surface": "se",
+              "gloss": "sich",
+              "lemma": "se",
+              "partOfSpeech": "PRON",
+              "key": "fr:se:PRON"
+            },
+            {
+              "start": 24,
+              "end": 30,
+              "surface": "revoir",
+              "gloss": "wiedersehen",
+              "lemma": "revoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:revoir:VERB"
+            },
+            {
+              "start": 31,
+              "end": 36,
+              "surface": "après",
+              "gloss": "nach",
+              "lemma": "après",
+              "partOfSpeech": "ADP",
+              "key": "fr:après:ADP"
+            },
+            {
+              "start": 37,
+              "end": 39,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 40,
+              "end": 44,
+              "surface": "fête",
+              "gloss": "Fest",
+              "lemma": "fête",
+              "partOfSpeech": "NOUN",
+              "key": "fr:fête:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/94adae95a66f94b5.mp3",
+            "durationMs": 2461,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 186
+              },
+              {
+                "unit": 1,
+                "startMs": 209,
+                "endMs": 360
+              },
+              {
+                "unit": 2,
+                "startMs": 395,
+                "endMs": 755
+              },
+              {
+                "unit": 3,
+                "startMs": 778,
+                "endMs": 848
+              },
+              {
+                "unit": 4,
+                "startMs": 906,
+                "endMs": 1010
+              },
+              {
+                "unit": 5,
+                "startMs": 1068,
+                "endMs": 1370
+              },
+              {
+                "unit": 6,
+                "startMs": 1428,
+                "endMs": 1649
+              },
+              {
+                "unit": 7,
+                "startMs": 1672,
+                "endMs": 1741
+              },
+              {
+                "unit": 8,
+                "startMs": 1811,
+                "endMs": 2148
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p002",
+      "sentences": [
+        {
+          "id": "s003",
+          "source": "Paul dit : « Salut Julie !",
+          "fluent": "Paul sagt: „Hallo Julie!",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 13,
+              "end": 18,
+              "surface": "Salut",
+              "gloss": "hallo",
+              "lemma": "salut",
+              "partOfSpeech": "INTJ",
+              "key": "fr:salut:INTJ"
+            },
+            {
+              "start": 19,
+              "end": 24,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            }
+          ],
+          "audio": {
+            "file": "audio/ae5af70a5d7ad533.mp3",
+            "durationMs": 1950,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 337
+              },
+              {
+                "unit": 1,
+                "startMs": 418,
+                "endMs": 592
+              },
+              {
+                "unit": 2,
+                "startMs": 917,
+                "endMs": 1312
+              },
+              {
+                "unit": 3,
+                "startMs": 1347,
+                "endMs": 1637
+              }
+            ]
+          }
+        },
+        {
+          "id": "s004",
+          "source": "Comment ça va ? »",
+          "fluent": "Wie geht es dir?\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 7,
+              "surface": "Comment",
+              "gloss": "wie",
+              "lemma": "comment",
+              "partOfSpeech": "ADV",
+              "key": "fr:comment:ADV"
+            },
+            {
+              "start": 8,
+              "end": 10,
+              "surface": "ça",
+              "gloss": "das",
+              "lemma": "ça",
+              "partOfSpeech": "PRON",
+              "key": "fr:ça:PRON"
+            },
+            {
+              "start": 11,
+              "end": 13,
+              "surface": "va",
+              "gloss": "gehen",
+              "lemma": "aller",
+              "partOfSpeech": "VERB",
+              "key": "fr:aller:VERB"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 13,
+              "surface": "Comment ça va",
+              "gloss": "wie-geht-es",
+              "lemma": "comment ça va",
+              "key": "fr:comment ça va:PHRASE"
+            }
+          ],
+          "audio": {
+            "file": "audio/a3967c479bfae6c7.mp3",
+            "durationMs": 1347,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 453
+              },
+              {
+                "unit": 1,
+                "startMs": 488,
+                "endMs": 592
+              },
+              {
+                "unit": 2,
+                "startMs": 650,
+                "endMs": 778
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p003",
+      "sentences": [
+        {
+          "id": "s005",
+          "source": "Julie répond : « Ça va bien, merci.",
+          "fluent": "Julie antwortet: »Mir geht es gut, danke.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 12,
+              "surface": "répond",
+              "gloss": "antworten",
+              "lemma": "répondre",
+              "partOfSpeech": "VERB",
+              "key": "fr:répondre:VERB"
+            },
+            {
+              "start": 17,
+              "end": 19,
+              "surface": "Ça",
+              "gloss": "das",
+              "lemma": "ça",
+              "partOfSpeech": "PRON",
+              "key": "fr:ça:PRON"
+            },
+            {
+              "start": 20,
+              "end": 22,
+              "surface": "va",
+              "gloss": "gehen",
+              "lemma": "aller",
+              "partOfSpeech": "VERB",
+              "key": "fr:aller:VERB"
+            },
+            {
+              "start": 23,
+              "end": 27,
+              "surface": "bien",
+              "gloss": "gut",
+              "lemma": "bien",
+              "partOfSpeech": "ADV",
+              "key": "fr:bien:ADV"
+            },
+            {
+              "start": 29,
+              "end": 34,
+              "surface": "merci",
+              "gloss": "danke",
+              "lemma": "merci",
+              "partOfSpeech": "INTJ",
+              "key": "fr:merci:INTJ"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 17,
+              "end": 22,
+              "surface": "Ça va",
+              "gloss": "es-geht",
+              "lemma": "ça va",
+              "key": "fr:ça va:PHRASE"
+            }
+          ],
+          "audio": {
+            "file": "audio/201eddb23eddda37.mp3",
+            "durationMs": 2461,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 348
+              },
+              {
+                "unit": 1,
+                "startMs": 395,
+                "endMs": 766
+              },
+              {
+                "unit": 2,
+                "startMs": 1126,
+                "endMs": 1300
+              },
+              {
+                "unit": 3,
+                "startMs": 1347,
+                "endMs": 1428
+              },
+              {
+                "unit": 4,
+                "startMs": 1498,
+                "endMs": 1672
+              },
+              {
+                "unit": 5,
+                "startMs": 1718,
+                "endMs": 2125
+              }
+            ]
+          }
+        },
+        {
+          "id": "s006",
+          "source": "Et toi ? »",
+          "fluent": "Und dir?«",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 3,
+              "end": 6,
+              "surface": "toi",
+              "gloss": "du",
+              "lemma": "toi",
+              "partOfSpeech": "PRON",
+              "key": "fr:toi:PRON"
+            }
+          ],
+          "audio": {
+            "file": "audio/c65ae7e8c9358adf.mp3",
+            "durationMs": 1022,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 313
+              },
+              {
+                "unit": 1,
+                "startMs": 360,
+                "endMs": 569
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p004",
+      "sentences": [
+        {
+          "id": "s007",
+          "source": "« Très bien ! »",
+          "fluent": "Sehr gut!",
+          "units": [
+            {
+              "start": 2,
+              "end": 6,
+              "surface": "Très",
+              "gloss": "sehr",
+              "lemma": "très",
+              "partOfSpeech": "ADV",
+              "key": "fr:très:ADV"
+            },
+            {
+              "start": 7,
+              "end": 11,
+              "surface": "bien",
+              "gloss": "gut",
+              "lemma": "bien",
+              "partOfSpeech": "ADV",
+              "key": "fr:bien:ADV"
+            }
+          ],
+          "audio": {
+            "file": "audio/a3da39232936d732.mp3",
+            "durationMs": 1393,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 337,
+                "endMs": 662
+              },
+              {
+                "unit": 1,
+                "startMs": 685,
+                "endMs": 894
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p005",
+      "sentences": [
+        {
+          "id": "s008",
+          "source": "Ils s’assoient à une table.",
+          "fluent": "Sie setzen sich an einen Tisch.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 4,
+              "end": 6,
+              "surface": "s’",
+              "gloss": "sich",
+              "lemma": "se",
+              "partOfSpeech": "PRON",
+              "key": "fr:se:PRON"
+            },
+            {
+              "start": 6,
+              "end": 14,
+              "surface": "assoient",
+              "gloss": "setzen",
+              "lemma": "asseoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:asseoir:VERB"
+            },
+            {
+              "start": 15,
+              "end": 16,
+              "surface": "à",
+              "gloss": "an",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 17,
+              "end": 20,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 21,
+              "end": 26,
+              "surface": "table",
+              "gloss": "Tisch",
+              "lemma": "table",
+              "partOfSpeech": "NOUN",
+              "key": "fr:table:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/66836043beea2d4a.mp3",
+            "durationMs": 1672,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 186
+              },
+              {
+                "unit": 1,
+                "startMs": 209,
+                "endMs": 302
+              },
+              {
+                "unit": 2,
+                "startMs": 302,
+                "endMs": 743
+              },
+              {
+                "unit": 3,
+                "startMs": 801,
+                "endMs": 836
+              },
+              {
+                "unit": 4,
+                "startMs": 871,
+                "endMs": 987
+              },
+              {
+                "unit": 5,
+                "startMs": 1022,
+                "endMs": 1347
+              }
+            ]
+          }
+        },
+        {
+          "id": "s009",
+          "source": "Le serveur arrive.",
+          "fluent": "Der Kellner kommt.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 10,
+              "surface": "serveur",
+              "gloss": "Kellner",
+              "lemma": "serveur",
+              "partOfSpeech": "NOUN",
+              "key": "fr:serveur:NOUN"
+            },
+            {
+              "start": 11,
+              "end": 17,
+              "surface": "arrive",
+              "gloss": "ankommen",
+              "lemma": "arriver",
+              "partOfSpeech": "VERB",
+              "key": "fr:arriver:VERB"
+            }
+          ],
+          "audio": {
+            "file": "audio/f0dff6fde92cf2b0.mp3",
+            "durationMs": 1300,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 174
+              },
+              {
+                "unit": 1,
+                "startMs": 232,
+                "endMs": 615
+              },
+              {
+                "unit": 2,
+                "startMs": 685,
+                "endMs": 1033
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p006",
+      "sentences": [
+        {
+          "id": "s010",
+          "source": "Julie commande un thé et un croissant.",
+          "fluent": "Julie bestellt einen Tee und ein Croissant.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 14,
+              "surface": "commande",
+              "gloss": "bestellen",
+              "lemma": "commander",
+              "partOfSpeech": "VERB",
+              "key": "fr:commander:VERB"
+            },
+            {
+              "start": 15,
+              "end": 17,
+              "surface": "un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 18,
+              "end": 21,
+              "surface": "thé",
+              "gloss": "Tee",
+              "lemma": "thé",
+              "partOfSpeech": "NOUN",
+              "key": "fr:thé:NOUN"
+            },
+            {
+              "start": 22,
+              "end": 24,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 25,
+              "end": 27,
+              "surface": "un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 28,
+              "end": 37,
+              "surface": "croissant",
+              "gloss": "Croissant",
+              "lemma": "croissant",
+              "partOfSpeech": "NOUN",
+              "key": "fr:croissant:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/24c09d2030d291f7.mp3",
+            "durationMs": 2415,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 337
+              },
+              {
+                "unit": 1,
+                "startMs": 383,
+                "endMs": 801
+              },
+              {
+                "unit": 2,
+                "startMs": 824,
+                "endMs": 882
+              },
+              {
+                "unit": 3,
+                "startMs": 964,
+                "endMs": 1138
+              },
+              {
+                "unit": 4,
+                "startMs": 1312,
+                "endMs": 1474
+              },
+              {
+                "unit": 5,
+                "startMs": 1556,
+                "endMs": 1602
+              },
+              {
+                "unit": 6,
+                "startMs": 1660,
+                "endMs": 2101
+              }
+            ]
+          }
+        },
+        {
+          "id": "s011",
+          "source": "Paul commande un café et un sandwich.",
+          "fluent": "Paul bestellt einen Kaffee und ein Sandwich.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 13,
+              "surface": "commande",
+              "gloss": "bestellen",
+              "lemma": "commander",
+              "partOfSpeech": "VERB",
+              "key": "fr:commander:VERB"
+            },
+            {
+              "start": 14,
+              "end": 16,
+              "surface": "un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 17,
+              "end": 21,
+              "surface": "café",
+              "gloss": "Kaffee",
+              "lemma": "café",
+              "partOfSpeech": "NOUN",
+              "key": "fr:café:NOUN"
+            },
+            {
+              "start": 22,
+              "end": 24,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 25,
+              "end": 27,
+              "surface": "un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 28,
+              "end": 36,
+              "surface": "sandwich",
+              "gloss": "Sandwich",
+              "lemma": "sandwich",
+              "partOfSpeech": "NOUN",
+              "key": "fr:sandwich:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/18da38fca4273274.mp3",
+            "durationMs": 2461,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 255
+              },
+              {
+                "unit": 1,
+                "startMs": 337,
+                "endMs": 743
+              },
+              {
+                "unit": 2,
+                "startMs": 766,
+                "endMs": 813
+              },
+              {
+                "unit": 3,
+                "startMs": 859,
+                "endMs": 1242
+              },
+              {
+                "unit": 4,
+                "startMs": 1335,
+                "endMs": 1451
+              },
+              {
+                "unit": 5,
+                "startMs": 1509,
+                "endMs": 1556
+              },
+              {
+                "unit": 6,
+                "startMs": 1614,
+                "endMs": 2101
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p007",
+      "sentences": [
+        {
+          "id": "s012",
+          "source": "Après, ils parlent de leur journée.",
+          "fluent": "Danach sprechen sie über ihren Tag.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Après",
+              "gloss": "danach",
+              "lemma": "après",
+              "partOfSpeech": "ADV",
+              "key": "fr:après:ADV"
+            },
+            {
+              "start": 7,
+              "end": 10,
+              "surface": "ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 11,
+              "end": 18,
+              "surface": "parlent",
+              "gloss": "sprechen",
+              "lemma": "parler",
+              "partOfSpeech": "VERB",
+              "key": "fr:parler:VERB"
+            },
+            {
+              "start": 19,
+              "end": 21,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 22,
+              "end": 26,
+              "surface": "leur",
+              "gloss": "ihre",
+              "lemma": "leur",
+              "partOfSpeech": "DET",
+              "key": "fr:leur:DET"
+            },
+            {
+              "start": 27,
+              "end": 34,
+              "surface": "journée",
+              "gloss": "Tag",
+              "lemma": "journée",
+              "partOfSpeech": "NOUN",
+              "key": "fr:journée:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/d975e02649aa2259.mp3",
+            "durationMs": 1811,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 383
+              },
+              {
+                "unit": 1,
+                "startMs": 430,
+                "endMs": 534
+              },
+              {
+                "unit": 2,
+                "startMs": 557,
+                "endMs": 813
+              },
+              {
+                "unit": 3,
+                "startMs": 848,
+                "endMs": 906
+              },
+              {
+                "unit": 4,
+                "startMs": 975,
+                "endMs": 1103
+              },
+              {
+                "unit": 5,
+                "startMs": 1161,
+                "endMs": 1556
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p008",
+      "sentences": [
+        {
+          "id": "s013",
+          "source": "Julie dit : « Aujourd’hui, je travaille beaucoup.",
+          "fluent": "Julie sagt: „Heute arbeite ich viel.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 14,
+              "end": 25,
+              "surface": "Aujourd’hui",
+              "gloss": "heute",
+              "lemma": "aujourd'hui",
+              "partOfSpeech": "ADV",
+              "key": "fr:aujourd'hui:ADV"
+            },
+            {
+              "start": 27,
+              "end": 29,
+              "surface": "je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 30,
+              "end": 39,
+              "surface": "travaille",
+              "gloss": "arbeiten",
+              "lemma": "travailler",
+              "partOfSpeech": "VERB",
+              "key": "fr:travailler:VERB"
+            },
+            {
+              "start": 40,
+              "end": 48,
+              "surface": "beaucoup",
+              "gloss": "viel",
+              "lemma": "beaucoup",
+              "partOfSpeech": "ADV",
+              "key": "fr:beaucoup:ADV"
+            }
+          ],
+          "audio": {
+            "file": "audio/0d31e6fc6af05d94.mp3",
+            "durationMs": 3111,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 395
+              },
+              {
+                "unit": 1,
+                "startMs": 441,
+                "endMs": 697
+              },
+              {
+                "unit": 2,
+                "startMs": 1068,
+                "endMs": 1660
+              },
+              {
+                "unit": 3,
+                "startMs": 1788,
+                "endMs": 1892
+              },
+              {
+                "unit": 4,
+                "startMs": 1939,
+                "endMs": 2368
+              },
+              {
+                "unit": 5,
+                "startMs": 2392,
+                "endMs": 2740
+              }
+            ]
+          }
+        },
+        {
+          "id": "s014",
+          "source": "Je commence à huit heures.",
+          "fluent": "Ich fange um acht Uhr an.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 3,
+              "end": 11,
+              "surface": "commence",
+              "gloss": "anfangen",
+              "lemma": "commencer",
+              "partOfSpeech": "VERB",
+              "key": "fr:commencer:VERB"
+            },
+            {
+              "start": 12,
+              "end": 13,
+              "surface": "à",
+              "gloss": "um",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 14,
+              "end": 18,
+              "surface": "huit",
+              "gloss": "acht",
+              "lemma": "huit",
+              "partOfSpeech": "NUM",
+              "key": "fr:huit:NUM"
+            },
+            {
+              "start": 19,
+              "end": 25,
+              "surface": "heures",
+              "gloss": "Stunden",
+              "lemma": "heure",
+              "partOfSpeech": "NOUN",
+              "key": "fr:heure:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/c47449855669c892.mp3",
+            "durationMs": 1440,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 163
+              },
+              {
+                "unit": 1,
+                "startMs": 221,
+                "endMs": 592
+              },
+              {
+                "unit": 2,
+                "startMs": 627,
+                "endMs": 650
+              },
+              {
+                "unit": 3,
+                "startMs": 708,
+                "endMs": 894
+              },
+              {
+                "unit": 4,
+                "startMs": 929,
+                "endMs": 1126
+              }
+            ]
+          }
+        },
+        {
+          "id": "s015",
+          "source": "À midi, je mange avec une collègue.",
+          "fluent": "Mittags esse ich mit einer Kollegin.",
+          "units": [
+            {
+              "start": 0,
+              "end": 1,
+              "surface": "À",
+              "gloss": "um",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 2,
+              "end": 6,
+              "surface": "midi",
+              "gloss": "Mittag",
+              "lemma": "midi",
+              "partOfSpeech": "NOUN",
+              "key": "fr:midi:NOUN"
+            },
+            {
+              "start": 8,
+              "end": 10,
+              "surface": "je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 11,
+              "end": 16,
+              "surface": "mange",
+              "gloss": "essen",
+              "lemma": "manger",
+              "partOfSpeech": "VERB",
+              "key": "fr:manger:VERB"
+            },
+            {
+              "start": 17,
+              "end": 21,
+              "surface": "avec",
+              "gloss": "mit",
+              "lemma": "avec",
+              "partOfSpeech": "ADP",
+              "key": "fr:avec:ADP"
+            },
+            {
+              "start": 22,
+              "end": 25,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 26,
+              "end": 34,
+              "surface": "collègue",
+              "gloss": "Kollegin",
+              "lemma": "collègue",
+              "partOfSpeech": "NOUN",
+              "key": "fr:collègue:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/3f8afc679c7b9d24.mp3",
+            "durationMs": 2183,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 104
+              },
+              {
+                "unit": 1,
+                "startMs": 197,
+                "endMs": 488
+              },
+              {
+                "unit": 2,
+                "startMs": 546,
+                "endMs": 639
+              },
+              {
+                "unit": 3,
+                "startMs": 720,
+                "endMs": 975
+              },
+              {
+                "unit": 4,
+                "startMs": 998,
+                "endMs": 1196
+              },
+              {
+                "unit": 5,
+                "startMs": 1265,
+                "endMs": 1358
+              },
+              {
+                "unit": 6,
+                "startMs": 1393,
+                "endMs": 1869
+              }
+            ]
+          }
+        },
+        {
+          "id": "s016",
+          "source": "Après le travail, je rentre à la maison et je me repose un peu. »",
+          "fluent": "Nach der Arbeit gehe ich nach Hause und ruhe mich ein bisschen aus.\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Après",
+              "gloss": "nach",
+              "lemma": "après",
+              "partOfSpeech": "ADP",
+              "key": "fr:après:ADP"
+            },
+            {
+              "start": 6,
+              "end": 8,
+              "surface": "le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 9,
+              "end": 16,
+              "surface": "travail",
+              "gloss": "Arbeit",
+              "lemma": "travail",
+              "partOfSpeech": "NOUN",
+              "key": "fr:travail:NOUN"
+            },
+            {
+              "start": 18,
+              "end": 20,
+              "surface": "je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 21,
+              "end": 27,
+              "surface": "rentre",
+              "gloss": "zurückkehren",
+              "lemma": "rentrer",
+              "partOfSpeech": "VERB",
+              "key": "fr:rentrer:VERB"
+            },
+            {
+              "start": 28,
+              "end": 29,
+              "surface": "à",
+              "gloss": "zu",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 30,
+              "end": 32,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 33,
+              "end": 39,
+              "surface": "maison",
+              "gloss": "Haus",
+              "lemma": "maison",
+              "partOfSpeech": "NOUN",
+              "key": "fr:maison:NOUN"
+            },
+            {
+              "start": 40,
+              "end": 42,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 43,
+              "end": 45,
+              "surface": "je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 46,
+              "end": 48,
+              "surface": "me",
+              "gloss": "mich",
+              "lemma": "me",
+              "partOfSpeech": "PRON",
+              "key": "fr:me:PRON"
+            },
+            {
+              "start": 49,
+              "end": 55,
+              "surface": "repose",
+              "gloss": "ausruhen",
+              "lemma": "reposer",
+              "partOfSpeech": "VERB",
+              "key": "fr:reposer:VERB"
+            },
+            {
+              "start": 56,
+              "end": 58,
+              "surface": "un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 59,
+              "end": 62,
+              "surface": "peu",
+              "gloss": "wenig",
+              "lemma": "peu",
+              "partOfSpeech": "ADV",
+              "key": "fr:peu:ADV"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 28,
+              "end": 39,
+              "surface": "à la maison",
+              "gloss": "nach-Hause",
+              "lemma": "à la maison",
+              "key": "fr:à la maison:PHRASE"
+            },
+            {
+              "start": 56,
+              "end": 62,
+              "surface": "un peu",
+              "gloss": "ein-bisschen",
+              "lemma": "un peu",
+              "key": "fr:un peu:PHRASE"
+            }
+          ],
+          "audio": {
+            "file": "audio/8773bd3299207e02.mp3",
+            "durationMs": 3622,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 348
+              },
+              {
+                "unit": 1,
+                "startMs": 372,
+                "endMs": 453
+              },
+              {
+                "unit": 2,
+                "startMs": 488,
+                "endMs": 917
+              },
+              {
+                "unit": 3,
+                "startMs": 998,
+                "endMs": 1103
+              },
+              {
+                "unit": 4,
+                "startMs": 1161,
+                "endMs": 1428
+              },
+              {
+                "unit": 5,
+                "startMs": 1451,
+                "endMs": 1474
+              },
+              {
+                "unit": 6,
+                "startMs": 1509,
+                "endMs": 1579
+              },
+              {
+                "unit": 7,
+                "startMs": 1660,
+                "endMs": 2009
+              },
+              {
+                "unit": 8,
+                "startMs": 2125,
+                "endMs": 2287
+              },
+              {
+                "unit": 9,
+                "startMs": 2334,
+                "endMs": 2403
+              },
+              {
+                "unit": 10,
+                "startMs": 2450,
+                "endMs": 2531
+              },
+              {
+                "unit": 11,
+                "startMs": 2601,
+                "endMs": 3030
+              },
+              {
+                "unit": 12,
+                "startMs": 3053,
+                "endMs": 3111
+              },
+              {
+                "unit": 13,
+                "startMs": 3170,
+                "endMs": 3332
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p009",
+      "sentences": [
+        {
+          "id": "s017",
+          "source": "Paul dit : « Moi, je vais à l’université.",
+          "fluent": "Paul sagt: „Ich gehe zur Universität.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 13,
+              "end": 16,
+              "surface": "Moi",
+              "gloss": "ich",
+              "lemma": "moi",
+              "partOfSpeech": "PRON",
+              "key": "fr:moi:PRON"
+            },
+            {
+              "start": 18,
+              "end": 20,
+              "surface": "je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 21,
+              "end": 25,
+              "surface": "vais",
+              "gloss": "gehen",
+              "lemma": "aller",
+              "partOfSpeech": "VERB",
+              "key": "fr:aller:VERB"
+            },
+            {
+              "start": 26,
+              "end": 27,
+              "surface": "à",
+              "gloss": "zu",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 28,
+              "end": 30,
+              "surface": "l’",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 30,
+              "end": 40,
+              "surface": "université",
+              "gloss": "Universität",
+              "lemma": "université",
+              "partOfSpeech": "NOUN",
+              "key": "fr:université:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/dd9a56ff62edeb37.mp3",
+            "durationMs": 2554,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 267
+              },
+              {
+                "unit": 1,
+                "startMs": 337,
+                "endMs": 534
+              },
+              {
+                "unit": 2,
+                "startMs": 836,
+                "endMs": 1080
+              },
+              {
+                "unit": 3,
+                "startMs": 1138,
+                "endMs": 1219
+              },
+              {
+                "unit": 4,
+                "startMs": 1277,
+                "endMs": 1393
+              },
+              {
+                "unit": 5,
+                "startMs": 1416,
+                "endMs": 1451
+              },
+              {
+                "unit": 6,
+                "startMs": 1486,
+                "endMs": 1556
+              },
+              {
+                "unit": 7,
+                "startMs": 1556,
+                "endMs": 2264
+              }
+            ]
+          }
+        },
+        {
+          "id": "s018",
+          "source": "J’ai deux cours le matin.",
+          "fluent": "Ich habe zwei Kurse am Vormittag.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "J’",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 2,
+              "end": 4,
+              "surface": "ai",
+              "gloss": "haben",
+              "lemma": "avoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:avoir:VERB"
+            },
+            {
+              "start": 5,
+              "end": 9,
+              "surface": "deux",
+              "gloss": "zwei",
+              "lemma": "deux",
+              "partOfSpeech": "NUM",
+              "key": "fr:deux:NUM"
+            },
+            {
+              "start": 10,
+              "end": 15,
+              "surface": "cours",
+              "gloss": "Kurse",
+              "lemma": "cours",
+              "partOfSpeech": "NOUN",
+              "key": "fr:cours:NOUN"
+            },
+            {
+              "start": 16,
+              "end": 18,
+              "surface": "le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 19,
+              "end": 24,
+              "surface": "matin",
+              "gloss": "Vormittag",
+              "lemma": "matin",
+              "partOfSpeech": "NOUN",
+              "key": "fr:matin:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/175bc7caf911a5e6.mp3",
+            "durationMs": 1393,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 128
+              },
+              {
+                "unit": 1,
+                "startMs": 128,
+                "endMs": 174
+              },
+              {
+                "unit": 2,
+                "startMs": 232,
+                "endMs": 360
+              },
+              {
+                "unit": 3,
+                "startMs": 395,
+                "endMs": 580
+              },
+              {
+                "unit": 4,
+                "startMs": 604,
+                "endMs": 662
+              },
+              {
+                "unit": 5,
+                "startMs": 708,
+                "endMs": 1033
+              }
+            ]
+          }
+        },
+        {
+          "id": "s019",
+          "source": "À midi, je mange avec mes amis.",
+          "fluent": "Mittags esse ich mit meinen Freunden.",
+          "units": [
+            {
+              "start": 0,
+              "end": 1,
+              "surface": "À",
+              "gloss": "zu",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 2,
+              "end": 6,
+              "surface": "midi",
+              "gloss": "Mittag",
+              "lemma": "midi",
+              "partOfSpeech": "NOUN",
+              "key": "fr:midi:NOUN"
+            },
+            {
+              "start": 8,
+              "end": 10,
+              "surface": "je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 11,
+              "end": 16,
+              "surface": "mange",
+              "gloss": "essen",
+              "lemma": "manger",
+              "partOfSpeech": "VERB",
+              "key": "fr:manger:VERB"
+            },
+            {
+              "start": 17,
+              "end": 21,
+              "surface": "avec",
+              "gloss": "mit",
+              "lemma": "avec",
+              "partOfSpeech": "ADP",
+              "key": "fr:avec:ADP"
+            },
+            {
+              "start": 22,
+              "end": 25,
+              "surface": "mes",
+              "gloss": "meine",
+              "lemma": "mon",
+              "partOfSpeech": "DET",
+              "key": "fr:mon:DET"
+            },
+            {
+              "start": 26,
+              "end": 30,
+              "surface": "amis",
+              "gloss": "Freunde",
+              "lemma": "ami",
+              "partOfSpeech": "NOUN",
+              "key": "fr:ami:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/8c82ea67d3b01fb6.mp3",
+            "durationMs": 1858,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 93
+              },
+              {
+                "unit": 1,
+                "startMs": 186,
+                "endMs": 464
+              },
+              {
+                "unit": 2,
+                "startMs": 522,
+                "endMs": 604
+              },
+              {
+                "unit": 3,
+                "startMs": 673,
+                "endMs": 917
+              },
+              {
+                "unit": 4,
+                "startMs": 940,
+                "endMs": 1126
+              },
+              {
+                "unit": 5,
+                "startMs": 1184,
+                "endMs": 1300
+              },
+              {
+                "unit": 6,
+                "startMs": 1382,
+                "endMs": 1556
+              }
+            ]
+          }
+        },
+        {
+          "id": "s020",
+          "source": "L’après-midi, je fais mes devoirs à la bibliothèque. »",
+          "fluent": "Am Nachmittag mache ich meine Hausaufgaben in der Bibliothek.\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "L’",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 2,
+              "end": 12,
+              "surface": "après-midi",
+              "gloss": "Nachmittag",
+              "lemma": "après-midi",
+              "partOfSpeech": "NOUN",
+              "key": "fr:après-midi:NOUN"
+            },
+            {
+              "start": 14,
+              "end": 16,
+              "surface": "je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 17,
+              "end": 21,
+              "surface": "fais",
+              "gloss": "machen",
+              "lemma": "faire",
+              "partOfSpeech": "VERB",
+              "key": "fr:faire:VERB"
+            },
+            {
+              "start": 22,
+              "end": 25,
+              "surface": "mes",
+              "gloss": "meine",
+              "lemma": "mon",
+              "partOfSpeech": "DET",
+              "key": "fr:mon:DET"
+            },
+            {
+              "start": 26,
+              "end": 33,
+              "surface": "devoirs",
+              "gloss": "Hausaufgaben",
+              "lemma": "devoir",
+              "partOfSpeech": "NOUN",
+              "key": "fr:devoir:NOUN"
+            },
+            {
+              "start": 34,
+              "end": 35,
+              "surface": "à",
+              "gloss": "in",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 36,
+              "end": 38,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 39,
+              "end": 51,
+              "surface": "bibliothèque",
+              "gloss": "Bibliothek",
+              "lemma": "bibliothèque",
+              "partOfSpeech": "NOUN",
+              "key": "fr:bibliothèque:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/f67f86116083a1b2.mp3",
+            "durationMs": 3065,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 139
+              },
+              {
+                "unit": 1,
+                "startMs": 139,
+                "endMs": 720
+              },
+              {
+                "unit": 2,
+                "startMs": 789,
+                "endMs": 882
+              },
+              {
+                "unit": 3,
+                "startMs": 940,
+                "endMs": 1080
+              },
+              {
+                "unit": 4,
+                "startMs": 1115,
+                "endMs": 1231
+              },
+              {
+                "unit": 5,
+                "startMs": 1265,
+                "endMs": 1683
+              },
+              {
+                "unit": 6,
+                "startMs": 1741,
+                "endMs": 1800
+              },
+              {
+                "unit": 7,
+                "startMs": 1881,
+                "endMs": 1939
+              },
+              {
+                "unit": 8,
+                "startMs": 1997,
+                "endMs": 2740
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p010",
+      "sentences": [
+        {
+          "id": "s021",
+          "source": "Julie demande : « Tu es fatigué ? »",
+          "fluent": "Julie fragt: „Bist du müde?\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 13,
+              "surface": "demande",
+              "gloss": "fragen",
+              "lemma": "demander",
+              "partOfSpeech": "VERB",
+              "key": "fr:demander:VERB"
+            },
+            {
+              "start": 18,
+              "end": 20,
+              "surface": "Tu",
+              "gloss": "du",
+              "lemma": "tu",
+              "partOfSpeech": "PRON",
+              "key": "fr:tu:PRON"
+            },
+            {
+              "start": 21,
+              "end": 23,
+              "surface": "es",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 24,
+              "end": 31,
+              "surface": "fatigué",
+              "gloss": "müde",
+              "lemma": "fatigué",
+              "partOfSpeech": "ADJ",
+              "key": "fr:fatigué:ADJ"
+            }
+          ],
+          "audio": {
+            "file": "audio/47cbc0e7ffa9f5b6.mp3",
+            "durationMs": 2368,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 360
+              },
+              {
+                "unit": 1,
+                "startMs": 383,
+                "endMs": 778
+              },
+              {
+                "unit": 2,
+                "startMs": 1231,
+                "endMs": 1405
+              },
+              {
+                "unit": 3,
+                "startMs": 1474,
+                "endMs": 1533
+              },
+              {
+                "unit": 4,
+                "startMs": 1567,
+                "endMs": 2101
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p011",
+      "sentences": [
+        {
+          "id": "s022",
+          "source": "Paul répond : « Un peu, mais je suis content de te voir. »",
+          "fluent": "Paul antwortet: „Ein bisschen, aber ich bin froh, dich zu sehen.\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 11,
+              "surface": "répond",
+              "gloss": "antworten",
+              "lemma": "répondre",
+              "partOfSpeech": "VERB",
+              "key": "fr:répondre:VERB"
+            },
+            {
+              "start": 16,
+              "end": 18,
+              "surface": "Un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 19,
+              "end": 22,
+              "surface": "peu",
+              "gloss": "wenig",
+              "lemma": "peu",
+              "partOfSpeech": "ADV",
+              "key": "fr:peu:ADV"
+            },
+            {
+              "start": 24,
+              "end": 28,
+              "surface": "mais",
+              "gloss": "aber",
+              "lemma": "mais",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:mais:CCONJ"
+            },
+            {
+              "start": 29,
+              "end": 31,
+              "surface": "je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 32,
+              "end": 36,
+              "surface": "suis",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 37,
+              "end": 44,
+              "surface": "content",
+              "gloss": "froh",
+              "lemma": "content",
+              "partOfSpeech": "ADJ",
+              "key": "fr:content:ADJ"
+            },
+            {
+              "start": 45,
+              "end": 47,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 48,
+              "end": 50,
+              "surface": "te",
+              "gloss": "dich",
+              "lemma": "te",
+              "partOfSpeech": "PRON",
+              "key": "fr:te:PRON"
+            },
+            {
+              "start": 51,
+              "end": 55,
+              "surface": "voir",
+              "gloss": "sehen",
+              "lemma": "voir",
+              "partOfSpeech": "VERB",
+              "key": "fr:voir:VERB"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 16,
+              "end": 22,
+              "surface": "Un peu",
+              "gloss": "ein-bisschen",
+              "lemma": "un peu",
+              "key": "fr:un peu:PHRASE"
+            }
+          ],
+          "audio": {
+            "file": "audio/5484e678d5391fe7.mp3",
+            "durationMs": 3204,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 232
+              },
+              {
+                "unit": 1,
+                "startMs": 302,
+                "endMs": 639
+              },
+              {
+                "unit": 2,
+                "startMs": 1057,
+                "endMs": 1231
+              },
+              {
+                "unit": 3,
+                "startMs": 1289,
+                "endMs": 1486
+              },
+              {
+                "unit": 4,
+                "startMs": 1556,
+                "endMs": 1672
+              },
+              {
+                "unit": 5,
+                "startMs": 1707,
+                "endMs": 1776
+              },
+              {
+                "unit": 6,
+                "startMs": 1823,
+                "endMs": 1950
+              },
+              {
+                "unit": 7,
+                "startMs": 1974,
+                "endMs": 2276
+              },
+              {
+                "unit": 8,
+                "startMs": 2310,
+                "endMs": 2380
+              },
+              {
+                "unit": 9,
+                "startMs": 2438,
+                "endMs": 2519
+              },
+              {
+                "unit": 10,
+                "startMs": 2577,
+                "endMs": 2833
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p012",
+      "sentences": [
+        {
+          "id": "s023",
+          "source": "Julie sourit.",
+          "fluent": "Julie lächelt.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 12,
+              "surface": "sourit",
+              "gloss": "lächeln",
+              "lemma": "sourire",
+              "partOfSpeech": "VERB",
+              "key": "fr:sourire:VERB"
+            }
+          ],
+          "audio": {
+            "file": "audio/5959a40829cf77be.mp3",
+            "durationMs": 1115,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 372
+              },
+              {
+                "unit": 1,
+                "startMs": 418,
+                "endMs": 789
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p013",
+      "sentences": [
+        {
+          "id": "s024",
+          "source": "Ils finissent leur thé, leur café et leur repas.",
+          "fluent": "Sie beenden ihren Tee, ihren Kaffee und ihre Mahlzeit.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 4,
+              "end": 13,
+              "surface": "finissent",
+              "gloss": "beenden",
+              "lemma": "finir",
+              "partOfSpeech": "VERB",
+              "key": "fr:finir:VERB"
+            },
+            {
+              "start": 14,
+              "end": 18,
+              "surface": "leur",
+              "gloss": "ihr",
+              "lemma": "leur",
+              "partOfSpeech": "DET",
+              "key": "fr:leur:DET"
+            },
+            {
+              "start": 19,
+              "end": 22,
+              "surface": "thé",
+              "gloss": "Tee",
+              "lemma": "thé",
+              "partOfSpeech": "NOUN",
+              "key": "fr:thé:NOUN"
+            },
+            {
+              "start": 24,
+              "end": 28,
+              "surface": "leur",
+              "gloss": "ihr",
+              "lemma": "leur",
+              "partOfSpeech": "DET",
+              "key": "fr:leur:DET"
+            },
+            {
+              "start": 29,
+              "end": 33,
+              "surface": "café",
+              "gloss": "Kaffee",
+              "lemma": "café",
+              "partOfSpeech": "NOUN",
+              "key": "fr:café:NOUN"
+            },
+            {
+              "start": 34,
+              "end": 36,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 37,
+              "end": 41,
+              "surface": "leur",
+              "gloss": "ihr",
+              "lemma": "leur",
+              "partOfSpeech": "DET",
+              "key": "fr:leur:DET"
+            },
+            {
+              "start": 42,
+              "end": 47,
+              "surface": "repas",
+              "gloss": "Mahlzeit",
+              "lemma": "repas",
+              "partOfSpeech": "NOUN",
+              "key": "fr:repas:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/3312df545536ace4.mp3",
+            "durationMs": 2926,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 163
+              },
+              {
+                "unit": 1,
+                "startMs": 186,
+                "endMs": 615
+              },
+              {
+                "unit": 2,
+                "startMs": 650,
+                "endMs": 778
+              },
+              {
+                "unit": 3,
+                "startMs": 894,
+                "endMs": 1115
+              },
+              {
+                "unit": 4,
+                "startMs": 1242,
+                "endMs": 1382
+              },
+              {
+                "unit": 5,
+                "startMs": 1440,
+                "endMs": 1869
+              },
+              {
+                "unit": 6,
+                "startMs": 1950,
+                "endMs": 2043
+              },
+              {
+                "unit": 7,
+                "startMs": 2090,
+                "endMs": 2206
+              },
+              {
+                "unit": 8,
+                "startMs": 2252,
+                "endMs": 2601
+              }
+            ]
+          }
+        },
+        {
+          "id": "s025",
+          "source": "Ensuite, Paul demande l’addition.",
+          "fluent": "Danach bittet Paul um die Rechnung.",
+          "units": [
+            {
+              "start": 0,
+              "end": 7,
+              "surface": "Ensuite",
+              "gloss": "danach",
+              "lemma": "ensuite",
+              "partOfSpeech": "ADV",
+              "key": "fr:ensuite:ADV"
+            },
+            {
+              "start": 9,
+              "end": 13,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 14,
+              "end": 21,
+              "surface": "demande",
+              "gloss": "bitten-um",
+              "lemma": "demander",
+              "partOfSpeech": "VERB",
+              "key": "fr:demander:VERB"
+            },
+            {
+              "start": 22,
+              "end": 24,
+              "surface": "l’",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 24,
+              "end": 32,
+              "surface": "addition",
+              "gloss": "Rechnung",
+              "lemma": "addition",
+              "partOfSpeech": "NOUN",
+              "key": "fr:addition:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/76800649db6ce28b.mp3",
+            "durationMs": 1950,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 522
+              },
+              {
+                "unit": 1,
+                "startMs": 592,
+                "endMs": 778
+              },
+              {
+                "unit": 2,
+                "startMs": 836,
+                "endMs": 1115
+              },
+              {
+                "unit": 3,
+                "startMs": 1149,
+                "endMs": 1196
+              },
+              {
+                "unit": 4,
+                "startMs": 1196,
+                "endMs": 1614
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p014",
+      "sentences": [
+        {
+          "id": "s026",
+          "source": "Le serveur apporte l’addition.",
+          "fluent": "Der Kellner bringt die Rechnung.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 10,
+              "surface": "serveur",
+              "gloss": "Kellner",
+              "lemma": "serveur",
+              "partOfSpeech": "NOUN",
+              "key": "fr:serveur:NOUN"
+            },
+            {
+              "start": 11,
+              "end": 18,
+              "surface": "apporte",
+              "gloss": "bringen",
+              "lemma": "apporter",
+              "partOfSpeech": "VERB",
+              "key": "fr:apporter:VERB"
+            },
+            {
+              "start": 19,
+              "end": 21,
+              "surface": "l’",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 21,
+              "end": 29,
+              "surface": "addition",
+              "gloss": "Rechnung",
+              "lemma": "addition",
+              "partOfSpeech": "NOUN",
+              "key": "fr:addition:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/18e07cc0e6dc391d.mp3",
+            "durationMs": 1858,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 186
+              },
+              {
+                "unit": 1,
+                "startMs": 244,
+                "endMs": 639
+              },
+              {
+                "unit": 2,
+                "startMs": 697,
+                "endMs": 987
+              },
+              {
+                "unit": 3,
+                "startMs": 1022,
+                "endMs": 1068
+              },
+              {
+                "unit": 4,
+                "startMs": 1068,
+                "endMs": 1486
+              }
+            ]
+          }
+        },
+        {
+          "id": "s027",
+          "source": "Paul et Julie paient.",
+          "fluent": "Paul und Julie bezahlen.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 7,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 8,
+              "end": 13,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 14,
+              "end": 20,
+              "surface": "paient",
+              "gloss": "bezahlen",
+              "lemma": "payer",
+              "partOfSpeech": "VERB",
+              "key": "fr:payer:VERB"
+            }
+          ],
+          "audio": {
+            "file": "audio/e49944b6ea1c3fb8.mp3",
+            "durationMs": 1393,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 279
+              },
+              {
+                "unit": 1,
+                "startMs": 372,
+                "endMs": 464
+              },
+              {
+                "unit": 2,
+                "startMs": 511,
+                "endMs": 824
+              },
+              {
+                "unit": 3,
+                "startMs": 871,
+                "endMs": 1103
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p015",
+      "sentences": [
+        {
+          "id": "s028",
+          "source": "Puis ils quittent le café ensemble.",
+          "fluent": "Dann verlassen sie das Café zusammen.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Puis",
+              "gloss": "dann",
+              "lemma": "puis",
+              "partOfSpeech": "ADV",
+              "key": "fr:puis:ADV"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 9,
+              "end": 17,
+              "surface": "quittent",
+              "gloss": "verlassen",
+              "lemma": "quitter",
+              "partOfSpeech": "VERB",
+              "key": "fr:quitter:VERB"
+            },
+            {
+              "start": 18,
+              "end": 20,
+              "surface": "le",
+              "gloss": "das",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 21,
+              "end": 25,
+              "surface": "café",
+              "gloss": "Café",
+              "lemma": "café",
+              "partOfSpeech": "NOUN",
+              "key": "fr:café:NOUN"
+            },
+            {
+              "start": 26,
+              "end": 34,
+              "surface": "ensemble",
+              "gloss": "zusammen",
+              "lemma": "ensemble",
+              "partOfSpeech": "ADV",
+              "key": "fr:ensemble:ADV"
+            }
+          ],
+          "audio": {
+            "file": "audio/fd270599441114fa.mp3",
+            "durationMs": 1858,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 267
+              },
+              {
+                "unit": 1,
+                "startMs": 302,
+                "endMs": 395
+              },
+              {
+                "unit": 2,
+                "startMs": 418,
+                "endMs": 662
+              },
+              {
+                "unit": 3,
+                "startMs": 685,
+                "endMs": 743
+              },
+              {
+                "unit": 4,
+                "startMs": 789,
+                "endMs": 1080
+              },
+              {
+                "unit": 5,
+                "startMs": 1115,
+                "endMs": 1567
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p016",
+      "sentences": [
+        {
+          "id": "s029",
+          "source": "Julie dit : « Maintenant, on va au cinéma ? »",
+          "fluent": "Julie sagt: „Gehen wir jetzt ins Kino?\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 14,
+              "end": 24,
+              "surface": "Maintenant",
+              "gloss": "jetzt",
+              "lemma": "maintenant",
+              "partOfSpeech": "ADV",
+              "key": "fr:maintenant:ADV"
+            },
+            {
+              "start": 26,
+              "end": 28,
+              "surface": "on",
+              "gloss": "man",
+              "lemma": "on",
+              "partOfSpeech": "PRON",
+              "key": "fr:on:PRON"
+            },
+            {
+              "start": 29,
+              "end": 31,
+              "surface": "va",
+              "gloss": "gehen",
+              "lemma": "aller",
+              "partOfSpeech": "VERB",
+              "key": "fr:aller:VERB"
+            },
+            {
+              "start": 32,
+              "end": 34,
+              "surface": "au",
+              "gloss": "zu-dem",
+              "lemma": "au",
+              "partOfSpeech": "ADP",
+              "key": "fr:au:ADP"
+            },
+            {
+              "start": 35,
+              "end": 41,
+              "surface": "cinéma",
+              "gloss": "Kino",
+              "lemma": "cinéma",
+              "partOfSpeech": "NOUN",
+              "key": "fr:cinéma:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/01084530f5ad0670.mp3",
+            "durationMs": 2926,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 464
+              },
+              {
+                "unit": 1,
+                "startMs": 499,
+                "endMs": 766
+              },
+              {
+                "unit": 2,
+                "startMs": 1057,
+                "endMs": 1579
+              },
+              {
+                "unit": 3,
+                "startMs": 1660,
+                "endMs": 1765
+              },
+              {
+                "unit": 4,
+                "startMs": 1823,
+                "endMs": 1904
+              },
+              {
+                "unit": 5,
+                "startMs": 1939,
+                "endMs": 1997
+              },
+              {
+                "unit": 6,
+                "startMs": 2032,
+                "endMs": 2450
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p017",
+      "sentences": [
+        {
+          "id": "s030",
+          "source": "Paul répond : « Oui, bonne idée ! »",
+          "fluent": "Paul antwortet: „Ja, gute Idee!\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 11,
+              "surface": "répond",
+              "gloss": "antworten",
+              "lemma": "répondre",
+              "partOfSpeech": "VERB",
+              "key": "fr:répondre:VERB"
+            },
+            {
+              "start": 16,
+              "end": 19,
+              "surface": "Oui",
+              "gloss": "ja",
+              "lemma": "oui",
+              "partOfSpeech": "INTJ",
+              "key": "fr:oui:INTJ"
+            },
+            {
+              "start": 21,
+              "end": 26,
+              "surface": "bonne",
+              "gloss": "gut",
+              "lemma": "bon",
+              "partOfSpeech": "ADJ",
+              "key": "fr:bon:ADJ"
+            },
+            {
+              "start": 27,
+              "end": 31,
+              "surface": "idée",
+              "gloss": "Idee",
+              "lemma": "idée",
+              "partOfSpeech": "NOUN",
+              "key": "fr:idée:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/d7f052641575155b.mp3",
+            "durationMs": 2136,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 232
+              },
+              {
+                "unit": 1,
+                "startMs": 302,
+                "endMs": 673
+              },
+              {
+                "unit": 2,
+                "startMs": 1022,
+                "endMs": 1254
+              },
+              {
+                "unit": 3,
+                "startMs": 1312,
+                "endMs": 1567
+              },
+              {
+                "unit": 4,
+                "startMs": 1591,
+                "endMs": 1823
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p018",
+      "sentences": [
+        {
+          "id": "s031",
+          "source": "Ils marchent vers le cinéma et parlent encore ensemble.",
+          "fluent": "Sie gehen zum Kino und unterhalten sich noch immer.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 4,
+              "end": 12,
+              "surface": "marchent",
+              "gloss": "gehen",
+              "lemma": "marcher",
+              "partOfSpeech": "VERB",
+              "key": "fr:marcher:VERB"
+            },
+            {
+              "start": 13,
+              "end": 17,
+              "surface": "vers",
+              "gloss": "zu",
+              "lemma": "vers",
+              "partOfSpeech": "ADP",
+              "key": "fr:vers:ADP"
+            },
+            {
+              "start": 18,
+              "end": 20,
+              "surface": "le",
+              "gloss": "das",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 21,
+              "end": 27,
+              "surface": "cinéma",
+              "gloss": "Kino",
+              "lemma": "cinéma",
+              "partOfSpeech": "NOUN",
+              "key": "fr:cinéma:NOUN"
+            },
+            {
+              "start": 28,
+              "end": 30,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 31,
+              "end": 38,
+              "surface": "parlent",
+              "gloss": "sprechen",
+              "lemma": "parler",
+              "partOfSpeech": "VERB",
+              "key": "fr:parler:VERB"
+            },
+            {
+              "start": 39,
+              "end": 45,
+              "surface": "encore",
+              "gloss": "noch",
+              "lemma": "encore",
+              "partOfSpeech": "ADV",
+              "key": "fr:encore:ADV"
+            },
+            {
+              "start": 46,
+              "end": 54,
+              "surface": "ensemble",
+              "gloss": "zusammen",
+              "lemma": "ensemble",
+              "partOfSpeech": "ADV",
+              "key": "fr:ensemble:ADV"
+            }
+          ],
+          "audio": {
+            "file": "audio/1f7244070c0b7320.mp3",
+            "durationMs": 3111,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 197
+              },
+              {
+                "unit": 1,
+                "startMs": 221,
+                "endMs": 499
+              },
+              {
+                "unit": 2,
+                "startMs": 522,
+                "endMs": 662
+              },
+              {
+                "unit": 3,
+                "startMs": 685,
+                "endMs": 766
+              },
+              {
+                "unit": 4,
+                "startMs": 813,
+                "endMs": 1324
+              },
+              {
+                "unit": 5,
+                "startMs": 1440,
+                "endMs": 1602
+              },
+              {
+                "unit": 6,
+                "startMs": 1649,
+                "endMs": 1927
+              },
+              {
+                "unit": 7,
+                "startMs": 2009,
+                "endMs": 2334
+              },
+              {
+                "unit": 8,
+                "startMs": 2357,
+                "endMs": 2821
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
