@@ -1,46 +1,76 @@
-# Spezifikation: Textpaket (schemaVersion 1)
+# Spezifikation: Textpaket (schemaVersion 2)
 
-Verbindlich für die Verpackungsanwendung *und* für das Obsidian-Plugin.
+Verbindlich für die Werkstatt (Packager) *und* für die Bibliothek (Learning).
 Feldnamen sind englisch. Lerninhalte (Glossen, Übersetzungen, Grammatiknotizen)
-sind deutsch.
+stehen in der Sprache der Person.
 
-## Ablage in der Vault
+Geprüft wird beides mit demselben Code: `core/package.js`. Was dort
+durchgeht, gilt als Paket - auf beiden Seiten.
+
+## Ein Paket ist ein ZIP
 
 ```text
-Trisent/                      ← einstellbar, Vorgabe: Trisent
-├── reader/                   ← Bereich des Readers
-│   └── BG/                   ← Sprachordner, erkennbar an language.md
-│       ├── language.md
-│       ├── dictionary/       ← Wortnotizen, gehören der Person
-│       └── packages/
-│           └── Beliebig/Tief/Verschachtelt/
-│               └── Der Junge und der Hund/
-│                   ├── package.json
-│                   └── audio/            ← optional
-└── packager/                 ← Bereich des Packagers
+package.zip
+├── package.json      Kopf
+├── text.json         der Text
+├── dictionary.json   ein Eintrag je Schlüssel, der im Text vorkommt
+└── audio/            eine Datei je Satz, optional
 ```
 
-Die beiden Bereiche sind getrennt. **Ein Paket gelangt nur über den Import in
-den Bereich des Readers** – und damit nur, wenn es die Prüfregeln am Ende
-dieses Dokuments besteht. Auch ein Paket vom Packager nimmt diesen Weg.
+Der Name des Archivs ist frei. In der Werkstatt heißt es `package.zip`; die
+Kopie, die Deploy in die Inbox legt, heißt nach Text und Sprache. Was zählt,
+ist der Inhalt. Die Paketdatei darf im Archiv auch in einem Ordner liegen.
 
-Technisch gibt es dafür zwei Türen und einen Weg dahinter:
+Das Paket muss **für sich stehen**: Es bringt alle Erklärungen mit, die sein
+Text braucht, und funktioniert in einer Vault, die nichts davon kennt.
 
-- `Library.importZip(bytes, label)` – eine ZIP-Datei von außen, wird entpackt
-  und dann weitergereicht an
-- `Library.importFiles(contents, label)` – `contents` ist eine Map von Pfad
-  (relativ zum Paketordner) auf Bytes. Hier prüft, ordnet und schreibt der
-  Import. Der Packager benutzt diese Tür direkt, ohne Umweg über ein Archiv.
+## Wie ein Paket in die Bibliothek kommt
+
+Werkstatt und Bibliothek teilen sich **keine Funktion**, nur einen Ordner und
+diese Dateiform.
+
+```text
+Trisent/                      einstellbar, Vorgabe: Trisent
+├── packager/                 die Werkstatt
+├── inbox/                    fertige Pakete als ZIP
+├── learning/                 die Bibliothek der Person
+│   └── FR/
+│       ├── language.md
+│       ├── dictionary.json   das Wörterbuch: jeder Eintrag, der je importiert wurde
+│       ├── notes/            Wortnotizen der Person - on demand
+│       ├── flashcards/
+│       ├── sentences/
+│       └── packages/
+│           └── Beliebig/Tief/Verschachtelt/Paul et Julie/
+│               ├── package.json   nur der Kopf
+│               ├── text.json
+│               └── audio/
+└── log.md                    was die App getan hat
+```
+
+**Deploy** legt ein fertiges Paket in die Inbox. Von dort holt die Person es
+ab - um es weiterzugeben, oder um es in ihre Bibliothek zu importieren. Nur der
+**Import** schreibt in die Bibliothek, und nur, was die Prüfung besteht.
+
+Beim Import:
+
+1. Auspacken und prüfen.
+2. Das Paket an seiner `id` wiedererkennen; sonst einen neuen Ordner anlegen.
+3. `dictionary.json` **zuerst** in das Wörterbuch der Sprache einarbeiten -
+   so bleibt bei einem Abbruch schlimmstenfalls ein Eintrag ohne Text zurück,
+   nie ein Text ohne Erklärungen.
+4. `package.json`, `text.json` und `audio/` ablegen. Das Wörterbuch des
+   Pakets wird **nicht** abgelegt, das Archiv auch nicht.
 
 Ein Ordner **ist** ein Lernpaket, genau dann wenn eine `package.json` direkt
 darin liegt. Ein Paket enthält keine weiteren Pakete. Der Ordnername ist frei
 wählbar; angezeigt wird immer `title` aus der Paketdatei.
 
-## Kopf der Paketdatei
+## Kopf: package.json
 
 ```json
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "id": "bg-boy-and-dog",
   "version": 1,
   "title": "Момчето и кучето",
@@ -49,31 +79,38 @@ wählbar; angezeigt wird immer `title` aus der Paketdatei.
   "glossLanguage": "de",
   "fluentLanguage": "de",
   "level": "A1",
-  "topics": ["animals", "friendship", "family"],
-  "paragraphs": [],
-  "dictionary": {}
+  "topics": ["animals", "friendship", "family"]
 }
 ```
 
 | Feld | Pflicht | Bedeutung |
 |---|---|---|
-| `schemaVersion` | ja | Immer `1`. |
+| `schemaVersion` | ja | `2`: Text und Wörterbuch liegen daneben. |
 | `id` | ja | Stabil über Aktualisierungen hinweg. Kleinbuchstaben, Ziffern, Bindestriche. Daran erkennt die App, dass ein Import dasselbe Paket in neuer Fassung ist. |
 | `version` | ja | Ganze Zahl, steigt bei jeder neuen Fassung. |
 | `title` | ja | Titel in der Fremdsprache. |
-| `titleTranslation` | nein | Deutscher Titel. |
+| `titleTranslation` | nein | Titel in der Sprache der Person. |
 | `language` | ja | Sprachcode der Fremdsprache, klein (`bg`, `fr`). Muss zum Sprachordner passen. |
 | `glossLanguage` | ja | Sprachcode der Person, klein – die Sprache der G-Ebene. Aus derselben Liste wie `language`. |
 | `fluentLanguage` | ja | Sprachcode der Person, klein – die Sprache der T-Ebene. |
 | `level` | nein | `A1`…`C2`. |
 | `topics` | nein | Kurze englische Schlagwörter, klein. Erscheinen in der Paketliste. |
-| `paragraphs` | ja | Der Text. |
-| `dictionary` | ja | Wörterbucheinträge zu allen vorkommenden Schlüsseln. |
+
+Der Kopf trägt **weder** `paragraphs` **noch** `dictionary` - sonst wäre nicht
+klar, welche Fassung gilt.
 
 **Die Sprache der Person steht im Paket, nicht im Code.** Ein Franzose, der
 Spanisch lernt, bekommt französische Glossen und `"glossLanguage": "fr"`. Der
 Reader liest beide Ebenen, ohne eine bestimmte Sprache vorauszusetzen; nur seine
 Oberfläche ist englisch.
+
+## Text: text.json
+
+```json
+{ "paragraphs": [] }
+```
+
+Was darin steht, beschreiben die folgenden Abschnitte.
 
 ## Absätze und Sätze
 
@@ -198,21 +235,24 @@ Fremdsprache. Deshalb gilt:
 
 Die Bedeutung transportiert die T-Ebene, nicht die G-Ebene.
 
-## Wörterbuch
 
-Ein Eintrag je vorkommendem Schlüssel. Vollständigkeit ist Pflicht: jeder `key`
+## Wörterbuch: dictionary.json
+
+Ein Eintrag je vorkommendem Schlüssel - als eigene Datei, nicht im Kopf.
+Vollständigkeit ist Pflicht: jeder `key`
 aus den Einheiten **und aus den Wendungen** muss hier stehen. Wendungen tragen
 `partOfSpeech: "PHRASE"`; ihre `grammar`-Notiz erklärt, wörtlich was dasteht und
 wann man es benutzt.
 
 ```json
-"dictionary": {
+{
   "bg:куче:NOUN": {
     "lemma": "куче",
     "partOfSpeech": "NOUN",
     "gloss": "Hund",
     "forms": ["куче", "кучето", "кучета"],
-    "grammar": "Neutrum. Bestimmte Form: кучето. Plural: кучета."
+    "grammar": "Neutrum. Bestimmte Form: кучето. Plural: кучета.",
+    "entrySchema": 3
   }
 }
 ```
@@ -222,18 +262,38 @@ wann man es benutzt.
 | `lemma` | ja | Grundform. |
 | `partOfSpeech` | ja | Wie oben. |
 | `gloss` | ja | Deutsche Grundbedeutung. Darf ausführlicher sein als die Glosse im Satz. |
-| `forms` | nein | Formen, die im Paket vorkommen oder häufig sind. |
+| `forms` | nein | Alle Formen, die die Werkstatt von diesem Wort kennt - nicht nur die aus diesem Text. |
 | `grammar` | nein | Deutsche Grammatiknotiz, ein bis drei Sätze. Genau das, was man beim Lernen wissen will. **Markdown** – der Reader zeichnet sie als solches. |
+| `entrySchema` | nein | Nach welcher Fassung des Bauplans die Beschreibung geschrieben wurde. Ganze Zahl von 0 bis 1000; fehlt sie, gilt 0. |
 
-### Word entry und Word note: das Paket ist die einzige Quelle
+**`entrySchema` ist nicht `schemaVersion`.** Das eine ist die Fassung des
+Bauplans für Beschreibungen, das andere die Fassung des Paketformats.
 
-Diese Angaben heißen zusammen der **Word entry**. Der Reader zeigt sie auf der
-**Word card** direkt aus dem Paket. Eine **Word note** in `dictionary/` – dem
-Wörterbuch der Person – entsteht erst, wenn sie das Wort zum ersten Mal
-antippt – der Ordner enthält also die Wörter, mit denen sie sich befasst
-hat, nicht alle, die vorkommen.
+Sie steht am einzelnen Eintrag, nicht am Paket: Die Werkstatt schlägt nur
+nach, was ihr fehlt, also enthält ein Paket zwangsläufig Einträge aus
+mehreren Zeitaltern. Die Obergrenze ist Absicht - beim Import gewinnt die
+höhere Nummer, und eine absurd hohe würde einen Eintrag für immer festhalten.
 
-**In die Word note wird nichts kopiert, was im Word entry steht.** Sie enthält nur:
+### Die Abgleichregel beim Import
+
+Für jeden Schlüssel aus dem Paket:
+
+- Steht er noch nicht im Wörterbuch der Sprache: **aufnehmen**.
+- Steht er schon dort: **ersetzen, wenn `entrySchema` höher ist**, sonst
+  liegen lassen.
+
+Im Wörterbuch steht nichts, was die Person geschrieben hat - es ist jederzeit
+aus den Paketen neu aufbaubar. Einträge, deren Paket gelöscht wird, bleiben.
+
+### Word entry und Word note
+
+Ein Eintrag im Wörterbuch heißt **Word entry**. Die Wortkarte zeigt ihn aus dem
+Wörterbuch der Sprache - gleich, aus welchem Text sie geöffnet wird. Ein Wort,
+eine Erklärung.
+
+Eine **Word note** in `notes/` gehört der Person und entsteht erst, wenn sie das
+Wort anfasst. **In sie wird nichts kopiert, was im Word entry steht** - kein
+`gloss`, keine `forms`, keine `grammar`:
 
 ```markdown
 ---
@@ -248,19 +308,9 @@ updatedAt: 2026-09-19
 ## My notes
 ```
 
-Also: wer das Wort ist, wie weit die Person damit ist, und was sie sich selbst
-notiert. Auch **kein Verweis auf das Paket**: Das Wörterbuch eines Textes liegt
-in einer einzigen `package.json`, ein Link dorthin führte in eine Datei, die
-niemand lesen will. Den Weg zum Wort geht die App stattdessen selbst – wer eine
-Wortnotiz öffnet, bekommt die Erklärung in der Seitenleiste daneben. **Kein `gloss`, keine `forms`, keine `grammar`.** Die gehören dem
-Paket und dürfen sich mit einer besseren Fassung ändern; eine Abschrift daneben
-veraltete still, während die Wortkarte längst etwas anderes zeigt. Gelesen wird
-aus der Notiz ohnehin nur `key` und `status`.
-
-Damit erledigt sich auch die Frage, ob ein Import vorhandene Word notes
-ergänzen soll: **Es gibt dort nichts zu ergänzen.** Ein neues Paket bringt eine
-bessere Erklärung mit, und die Wortkarte zeigt sie – ohne irgendetwas
-anzufassen, das der Person gehört.
+Wer das Wort ist, wie weit die Person damit ist, und was sie sich selbst
+notiert. Eine Abschrift der Erklärung veraltete still, während die Wortkarte
+längst eine bessere zeigt.
 
 ## Audio
 
@@ -286,7 +336,8 @@ Optional. Fehlt es, blendet die App die Abspielknöpfe einfach aus.
 3. Jede Einheit hat `gloss`, `lemma`, `partOfSpeech` und `key`.
 4. Jeder Satz hat `fluent`.
 5. Absatz- und Satz-IDs sind eindeutig.
-6. Jeder `key` aus den Einheiten und den Wendungen hat einen Eintrag in `dictionary`.
+6. Jeder `key` aus den Einheiten und den Wendungen hat einen Eintrag in
+   `dictionary.json` - und jeder Eintrag dort wird benutzt.
 7. Jeder `key` folgt aus `lemma` und `partOfSpeech` – geprüft gegen `keyFor()`.
    Ein Bedeutungszusatz ist erlaubt; geprüft wird der Teil davor.
    Jede `partOfSpeech` ist einer der vierzehn erlaubten Tags.
@@ -294,4 +345,26 @@ Optional. Fehlt es, blendet die App die Abspielknöpfe einfach aus.
    auf Einheitengrenzen; Wendungen überlappen sich nicht und umfassen mindestens
    zwei Einheiten.
 9. Alle `audio.file`-Verweise zeigen auf vorhandene Dateien.
-10. Die Datei ist gültiges JSON in UTF-8, ohne BOM.
+10. Die Dateien sind gültiges JSON in UTF-8, ohne BOM.
+11. `entrySchema` ist, wo es steht, eine ganze Zahl von 0 bis 1000.
+12. Alle drei Dateien sind da, und der Kopf trägt weder `paragraphs` noch
+    `dictionary`.
+
+## Die Prüfung in core/package.js
+
+- `validateParts(files)` prüft ein ausgepacktes Paket - `files` ist eine Map von
+  Pfad auf Inhalt. Es liest die drei Dateien, setzt sie mit `joinPackage`
+  zusammen und schickt das Ganze durch `validatePackage`. Ergebnis:
+  `{ data, problems }`.
+- `validatePackage(data, files)` prüft die zusammengesetzte Form nach den Regeln
+  oben, dazu: `entrySchema` ist eine ganze Zahl von 0 bis 1000.
+- `splitPackage(data)` teilt ein Paket in `{ head, text, dictionary }`.
+
+## Pakete der ersten Fassung
+
+Bis September 2026 war ein Paket ein Ordner mit einer einzigen `package.json`,
+in der `paragraphs` und `dictionary` mit im Kopf standen (`schemaVersion: 1`).
+Solche Pakete liegen auf fremden Rechnern und bleiben importierbar:
+`validatePackage` prüft sie wie damals, der Import behandelt ihre Einträge als
+`entrySchema: 0`. Beim Start bringen beide Seiten ihre vorhandenen Pakete in
+die heutige Form - ohne neue Nummer, am Inhalt ändert sich nichts.

@@ -2124,6 +2124,20 @@ class Packager {
     if (report.kept.length > 0) {
       said.push('Left where they are, because meta already has one: ' + report.kept.join(', ') + '.');
     }
+    if (report.wrapped > 0) {
+      said.push((report.wrapped === 1 ? 'One package was' : report.wrapped + ' packages were') +
+        ' brought into the new form - same content, same version.');
+    }
+    if (report.unwrapped.length > 0) {
+      said.push('Not brought over, ingest these again: ' + report.unwrapped.join(', ') + '.');
+    }
+    if (report.cleared > 0) {
+      said.push('The ' + report.cleared + ' old word notes went to the trash; the dictionary holds all of them.');
+    }
+    if (report.uncleared.length > 0) {
+      said.push('Old word notes kept, because the dictionary does not know all of them: ' +
+        report.uncleared.join(', ') + '.');
+    }
     if (said.length === 0) return;
     new Notice(said.join(' '), 15000);
     for (const one of said) await log(this.plugin, 'Packager', one);

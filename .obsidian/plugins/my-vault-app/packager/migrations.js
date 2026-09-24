@@ -21,12 +21,27 @@
  */
 
 const { TFile, TFolder } = require('obsidian');
+const store = require('./dictionary.js');
+const manifests = require('./manifest.js');
 
-/* Wie weit die Werkstatt umgebaut ist.
-   1 - der Wortvorrat ist eine Datei statt vieler Notizen.
-   2 - Hausregeln und Bauplan liegen in meta/, der Bauplan heißt
-       schema.md und trägt eine Nummer. */
-const SCHEMA = 2;
+/* Die Schritte, nummeriert. Jeder bringt die Werkstatt von der Nummer
+   davor auf seine eigene, und die Nummer wird nach JEDEM Schritt
+   gespeichert: Bricht ein späterer ab, bleibt der frühere erledigt und
+   läuft nicht noch einmal. */
+const STEPS = [
+  /* 1 - der Wortvorrat ist eine Datei statt vieler Notizen. */
+  { to: 1, run: (m, report) => m.wordsIntoDictionary(report) },
+  /* 2 - Hausregeln und Bauplan liegen in meta/, der Bauplan heißt
+         schema.md und trägt eine Nummer. */
+  { to: 2, run: (m, report) => m.intoMeta(report) },
+  /* 3 - jedes gebaute Paket liegt in drei Dateien und als Archiv vor, mit
+         Manifest daneben; ob es schon abgeliefert war, steht dort. */
+  { to: 3, run: (m, report) => m.wrapPackages(report) },
+  /* 4 - die alten Wortnotizen sind weggeräumt, sofern der Wortvorrat
+         jede einzelne kennt. */
+  { to: 4, run: (m, report) => m.clearWords(report) }
+];
+const SCHEMA = STEPS[STEPS.length - 1].to;
 
 /* Was nach meta/ umzieht: alter Name -> neuer Name. Die Fassungen, die
    das Auffrischen daneben gelegt hat, ziehen mit. */
@@ -45,15 +60,28 @@ class Migrations {
 
   async run() {
     const at = Number(this.packager.settings.schema) || 0;
+    /* Höher als wir? Dort war eine neuere Fassung unterwegs - in Ruhe
+       lassen, statt zurückzubauen. */
     if (at >= SCHEMA) return null;
 
-    const report = { languages: 0, words: 0, moved: 0, kept: [] };
-    if (at < 1) await this.wordsIntoDictionary(report);
-    if (at < 2) await this.intoMeta(report);
-
-    this.packager.settings.schema = SCHEMA;
-    await this.packager.saveSettings();
+    const report = {
+      languages: 0, words: 0, moved: 0, kept: [],
+      wrapped: 0, unwrapped: [], cleared: 0, uncleared: []
+    };
+    for (const step of STEPS) {
+      if (at >= step.to) continue;
+      await step.run(this, report);
+      this.packager.settings.schema = step.to;
+      await this.packager.saveSettings();
+    }
     return report;
+  }
+
+  /* Die Sprachordner der Werkstatt. */
+  languageFolders() {
+    const root = this.packager.folder(this.packager.rootPath);
+    if (!root) return [];
+    return root.children.filter((child) => child instanceof TFolder && /^[a-z]{2,3}$/i.test(child.name));
   }
 
   /* Aus den Wortnotizen einer Sprache wird ihr Wortvorrat: eine Datei,
@@ -63,12 +91,7 @@ class Migrations {
      wegwerfen kann man sie immer noch - und wer sie behält, kann
      nachsehen, ob der Umzug stimmt. */
   async wordsIntoDictionary(report) {
-    const root = this.packager.folder(this.packager.rootPath);
-    if (!root) return;
-
-    for (const child of root.children) {
-      if (!(child instanceof TFolder)) continue;
-      if (!/^[a-z]{2,3}$/i.test(child.name)) continue;
+    for (const child of this.languageFolders()) {
       if (this.packager.file(child.path + '/dictionary.json')) continue;
 
       const words = this.packager.folder(child.path + '/words');
@@ -87,15 +110,9 @@ class Migrations {
      beides, wo es ist: Welche Fassung gilt, entscheidet dann die Person,
      nicht ein Umzug, der nachts um drei in ihren Dateien aufräumt. */
   async intoMeta(report) {
-    const root = this.packager.folder(this.packager.rootPath);
-    if (!root) return;
-
     const known = this.packager.settings.schemas || {};
 
-    for (const child of root.children) {
-      if (!(child instanceof TFolder)) continue;
-      if (!/^[a-z]{2,3}$/i.test(child.name)) continue;
-
+    for (const child of this.languageFolders()) {
       const meta = child.path + '/meta';
       for (const [from, to] of INTO_META) {
         const file = this.packager.file(child.path + '/' + from);
@@ -136,6 +153,109 @@ class Migrations {
     }
 
     this.packager.settings.schemas = known;
+  }
+
+  /* Jedes gebaute Paket in die heutige Form: Kopf, Text und Wörterbuch als
+     drei Dateien, dazu das Archiv und das Manifest. Am Inhalt ändert sich
+     nichts, also auch nicht an der Nummer.
+
+     Zwei Dinge aus der alten Welt dürfen dabei nicht verloren gehen:
+
+     Ob ein Paket schon abgeliefert war. Das stand bisher in den
+     Einstellungen ("sent"); jetzt steht es im Manifest. Sonst leuchtete
+     Deploy bei jedem Text, den die Person längst hinübergeschickt hat.
+
+     Ob ein Paket veraltet war. Die alte Werkstatt erkannte das am Datum:
+     War der Text oder die Werkbank jünger als das Paket, musste neu gebaut
+     werden. Das Manifest hielte den heutigen Stand sonst für gebaut - und
+     eine Änderung, die nie ins Paket kam, fiele unter den Tisch. Also
+     wird, was damals jünger war, als verändert vermerkt.
+
+     Ein Paket, das die heutige Prüfung nicht besteht, bleibt, wie es ist.
+     Dann zeigt die Werkstatt Ingest, und die Person baut es neu. */
+  async wrapPackages(report) {
+    const sent = this.packager.settings.sent || {};
+
+    for (const language of this.languageFolders()) {
+      for (const child of language.children) {
+        if (!(child instanceof TFolder)) continue;
+        const head = this.packager.file(child.path + '/package.json');
+        if (!head) continue;
+        if (this.packager.file(child.path + '/manifest.json')) continue;
+
+        const builtAt = head.stat.mtime;
+        const younger = [];
+        for (const name of ['text.md', 'work.md']) {
+          const file = this.packager.file(child.path + '/' + name);
+          if (file && file.stat.mtime > builtAt) younger.push(name);
+        }
+
+        const data = await this.packager.readBuilt(child);
+        if (!data) {
+          report.unwrapped.push(language.name + '/' + child.name);
+          continue;
+        }
+        const refused = await this.packager.writeBuilt(child, data);
+        if (refused.length > 0) {
+          report.unwrapped.push(language.name + '/' + child.name);
+          continue;
+        }
+
+        const path = child.path + '/manifest.json';
+        const recorded = manifests.parse(await this.app.vault.read(this.packager.file(path)));
+        if (recorded) {
+          for (const name of younger) recorded.inputs[name] = 'changed before there were manifests';
+          const delivered = Number(sent[data.id] || sent[child.path]) || 0;
+          if (delivered > 0) recorded.deployed = { version: delivered, at: null, file: null };
+          await this.packager.put(path, manifests.serialize(recorded));
+        }
+        report.wrapped += 1;
+      }
+    }
+
+    /* Was die alte Buchführung wusste, steht jetzt in den Manifesten. */
+    delete this.packager.settings.sent;
+  }
+
+  /* Die alten Wortnotizen wegräumen - aber nur, wenn der Wortvorrat jede
+     einzelne von ihnen kennt. Fehlt auch nur eine, bleibt der Ordner
+     liegen: Dann stimmt etwas nicht, und die Notizen sind das Einzige,
+     woran man es nachprüfen kann.
+
+     Weggeräumt wird in den Papierkorb, so wie die Person es in Obsidian
+     eingestellt hat - von dort lässt es sich zurückholen. */
+  async clearWords(report) {
+    for (const language of this.languageFolders()) {
+      const words = this.packager.folder(language.path + '/words');
+      if (!words) continue;
+
+      const file = this.packager.file(language.path + '/dictionary.json');
+      if (!file) {
+        report.uncleared.push(language.name);
+        continue;
+      }
+      const dictionary = store.parse(await this.app.vault.read(file)).dictionary;
+      const code = language.name.toLowerCase();
+
+      let count = 0;
+      let covered = true;
+      for (const note of words.children) {
+        if (!(note instanceof TFile) || note.extension !== 'md') continue;
+        const made = store.fromNote(await this.app.vault.read(note), code);
+        if (made && !Object.prototype.hasOwnProperty.call(dictionary, made.key)) {
+          covered = false;
+          break;
+        }
+        count += 1;
+      }
+
+      if (!covered) {
+        report.uncleared.push(language.name);
+        continue;
+      }
+      await this.app.fileManager.trashFile(words);
+      report.cleared += count;
+    }
   }
 }
 

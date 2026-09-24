@@ -48,6 +48,35 @@ Papierkorb, falls du es doch noch brauchst). Was nicht passt, bleibt liegen,
 und du erfährst, warum. Beides steht auch im Logbuch – **Einstellungen →
 Open log**.
 
+## Texte selbst verpacken
+
+Die Werkstatt – **Trisent: Packager** – macht aus einem fremdsprachigen Text
+ein Paket: zerlegt, übersetzt, mit Wörterbuch und auf Wunsch mit Ton. Sie ist
+von Haus aus ausgeschaltet; einschalten kannst du sie in den Einstellungen.
+
+**Einen Text hineinlegen:** entweder über **New text** oben in der Werkstatt,
+oder du legst einfach eine Notiz in den Ordner der Sprache, zum Beispiel
+`Trisent/packager/FR`. Die Werkstatt findet sie von selbst.
+
+Dann gibt es an jedem Text drei Knöpfe. Welcher gerade dran ist, leuchtet:
+
+| Knopf | Was er tut |
+|---|---|
+| **Ingest** | Alles vom Text bis zum fertigen Paket: aufbereiten, fehlende Wörter nachschlagen, verschnüren. |
+| **Record** | Die Sätze vertonen. Das Paket wird damit ergänzt. |
+| **Deploy** | Das fertige Paket in den Posteingang `Trisent/inbox` legen. |
+
+Änderst du später den Text, leuchtet **Ingest** wieder – und es wird nur neu
+aufbereitet, was sich tatsächlich geändert hat. Was du in der Werkbank von Hand
+verbessert hast, bleibt stehen. Fährt man mit der Maus über einen Knopf, sagt
+er, warum er gerade an oder aus ist.
+
+Ein Paket, das schon im Posteingang war, kannst du jederzeit noch einmal
+hineinlegen: Neben dem Zustand steht dann **Put it into the inbox again**.
+
+Für das Aufbereiten braucht die Werkstatt Claude auf diesem Rechner, für den
+Ton einen Zugang zu ElevenLabs – beides wird in den Einstellungen eingetragen.
+
 ## Der Rhythmus
 
 Immer dieselben drei Schritte, immer in dieser Reihenfolge:

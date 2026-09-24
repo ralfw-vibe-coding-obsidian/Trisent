@@ -13,7 +13,7 @@
 const PACKAGE_FILE = 'package.json';
 
 /* Die zweite Fassung teilt das Paket in drei Dateien: Kopf, Text und
-   Wörterbuch. Siehe konzept/paketformat-2.md. */
+   Wörterbuch. Siehe konzept/paketformat.md. */
 const TEXT_FILE = 'text.json';
 const DICTIONARY_FILE = 'dictionary.json';
 

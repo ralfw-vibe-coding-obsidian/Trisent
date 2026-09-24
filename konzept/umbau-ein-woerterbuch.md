@@ -1,8 +1,9 @@
 # Ein Wörterbuch, ein Erzeugnis
 
-Ein Vorhaben. Noch nichts davon ist gebaut.
+Umgesetzt im September 2026, Fassung 0.11. Das Format selbst beschreibt
+`paketformat.md`; hier steht, warum es so gekommen ist.
 
-## Woran es heute hakt
+## Woran es hakte
 
 Jedes Paket bringt seine Worterklärungen mit. Das muss so sein – ein Paket
 soll für sich stehen, auch in einer fremden Vault. Aber beim Import wird
@@ -187,13 +188,24 @@ gehören ihr. Vorder- und Rückseite holt sie sich über den Schlüssel aus dem
 Wörterbuch, statt sie beim Anlegen abzuschreiben - heute friert eine Karte
 die Bedeutung von damals ein, und kein besseres Paket taut sie wieder auf.
 
-## Offen
+## Entschieden
 
-- **Der Ton liegt zweimal**, lose im Textordner und im ZIP. Vorschlag: Nach
-  dem Verschnüren darf das lose `audio/` weg - Record packt sich aus dem ZIP,
-  was es behalten will.
-- **Was wird aus Einträgen, deren Paket gelöscht wird?** Vorschlag: Sie
-  bleiben. Es ist ihr Wörterbuch, nicht das des Textes.
-- **Bestehende Vaults.** Es gibt Pakete im alten Format auf fremden Rechnern.
-  Der Umbau muss sie beim Start einsammeln: Wörterbuch aufbauen, Paketordner
-  umschreiben, Karteikarten von ihrer eingefrorenen Rückseite lösen.
+- **Der Ton liegt zweimal**, lose im Textordner und im ZIP. Bleibt so: Die
+  losen Tonspuren sind das, woraus das nächste Archiv entsteht, und das
+  Manifest vergleicht mit ihnen.
+- **Einträge, deren Paket gelöscht wird, bleiben.** Es ist ihr Wörterbuch,
+  nicht das des Textes.
+- **Bestehende Vaults** werden beim Start umgebaut, auf beiden Seiten und
+  ohne neue Nummern: die Werkstatt in `packager/migrations.js`, die
+  Bibliothek in `learning/migrations.js`.
+- **Werkstatt und Bibliothek teilen keine Funktion.** Deploy legt das Archiv
+  in `Trisent/inbox/`; importiert wird nur von dort.
+
+## Als Nächstes
+
+- **Einträge nach einem neuen Bauplan überarbeiten.** Steigt die Nummer in
+  `meta/schema.md`, beschreibt die Werkstatt auf Knopfdruck alle Einträge mit
+  kleinerer Nummer neu. Die betroffenen Texte erscheinen danach als veraltet,
+  werden neu geschnürt, und beim Import ersetzt die höhere Nummer die alte
+  Beschreibung im Wörterbuch der Person - ohne dass dort jemand etwas von
+  Hand nachführt.
