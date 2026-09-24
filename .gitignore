@@ -29,3 +29,7 @@ Trisent/log.md
 # Das Erzeugnis der Werkstatt. Entsteht aus den Dateien daneben bei jedem
 # Verpacken neu und wäre im Repo nur ein Megabyte Binärschrott je Fassung.
 Trisent/packager/**/package.zip
+
+# Die Inbox: fertige Pakete zum Abholen. Kopien dessen, was in der
+# Werkstatt ohnehin entsteht.
+Trisent/inbox/
