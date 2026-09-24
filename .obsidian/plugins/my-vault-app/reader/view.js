@@ -598,7 +598,9 @@ class TrisentView extends ItemView {
 
     for (const file of files) {
       try {
-        const result = await this.library.importZip(await file.arrayBuffer(), file.name);
+        const result = await this.reader.plugin.learning.importArchive(
+          await file.arrayBuffer(), file.name
+        );
         this.importReport.done.push(result);
       } catch (error) {
         this.importReport.failed.push({

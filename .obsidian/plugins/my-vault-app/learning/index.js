@@ -22,6 +22,7 @@ const { Library } = require('../core/library.js');
 const { Streak } = require('./streak.js');
 const { Deck } = require('../flashcards/deck.js');
 const { Dictionary } = require('./dictionary.js');
+const { Importer } = require('./importer.js');
 const { Migrations, describe } = require('./migrations.js');
 const { log } = require('../core/log.js');
 
@@ -49,6 +50,9 @@ class Learning {
     /* Die Lernkartei. Der Reader legt Karten hinein, die Kartei fragt sie
        ab - also gehört sie keinem von beiden allein. */
     this.deck = new Deck(plugin.app, this.library);
+
+    /* Der eine Weg herein. */
+    this.importer = new Importer(this);
   }
 
   /* Vorhandene Notizen auf das heutige Schema bringen. Läuft einmal je
@@ -70,13 +74,28 @@ class Learning {
     return describe(report);
   }
 
-  /* Die einzige Tür in den Bereich der Lernenden.
+  /* Die Tür für ein schon ausgepacktes Paket.
    *
    * contents: Map von Pfad (relativ zum Paketordner) auf Bytes, also
    * mindestens 'package.json'. Geprüft wird dahinter, immer - ein Paket
-   * vom Packager nimmt denselben Weg wie eine fremde ZIP-Datei. */
+   * vom Packager nimmt denselben Weg wie eine fremde ZIP-Datei.
+   *
+   * Seit es importArchive() gibt, ist das nur noch Innenleben und die
+   * Brücke für die Übergangszeit: Der Packager ruft es, bis er auf das
+   * ZIP umgestellt hat. */
   importFiles(contents, label) {
-    return this.library.importFiles(contents, label);
+    return this.importer.importContents(contents, label);
+  }
+
+  /* Die Vordertür für ein ZIP - genau das, was auch ein Fremder mitbringt.
+   *
+   * bytes: der Inhalt des Archivs, als ArrayBuffer oder Uint8Array.
+   * label: wie es heißen soll, wenn eine Meldung davon spricht.
+   *
+   * Nimmt beide Fassungen des Paketformats. Dahinter derselbe Weg wie
+   * importFiles(): prüfen, Wörterbuch einarbeiten, ablegen. */
+  importArchive(bytes, label) {
+    return this.importer.importArchive(bytes, label);
   }
 }
 

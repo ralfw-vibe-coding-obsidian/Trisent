@@ -11,13 +11,7 @@
 
 const { TFile, TFolder, normalizePath } = require('obsidian');
 const { readZip } = require('./zip.js');
-const { PACKAGE_FILE, WORD_STATUS, validatePackage } = require('./package.js');
-
-/* Zweite Fassung des Paketformats: Kopf, Text und Wörterbuch liegen in
-   drei Dateien. Der Kopf behält seinen Namen; der Text bekommt diesen.
-   Steht hier und nicht in package.js, damit er der Packager-Sitzung
-   nicht in die Quere kommt, während sie dort die Prüfung umbaut. */
-const TEXT_FILE = 'text.json';
+const { PACKAGE_FILE, TEXT_FILE, WORD_STATUS, validatePackage } = require('./package.js');
 
 /* Ein Ordner ist eine Sprache, wenn diese Notiz darin liegt - nicht
    durch Raten am Namen. */
@@ -668,7 +662,6 @@ module.exports = {
   LANGUAGE_NOTE,
   NOTES_DIR,
   LEGACY_NOTES_DIR,
-  TEXT_FILE,
   PACKAGES_DIR,
   KNOWN_LANGUAGES,
   sanitizeFileName,

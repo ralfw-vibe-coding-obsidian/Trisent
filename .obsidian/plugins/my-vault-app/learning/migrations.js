@@ -19,13 +19,11 @@
 
 const { TFile, TFolder, normalizePath } = require('obsidian');
 const {
-  cleanWordNote, cleanFlashcard, pendingSteps, frontmatterOf, splitPackage
+  cleanWordNote, cleanFlashcard, pendingSteps, frontmatterOf
 } = require('./schema.js');
 const { normalizeAll, mergeLegacy } = require('./entries.js');
-const {
-  NOTES_DIR, LEGACY_NOTES_DIR, TEXT_FILE
-} = require('../core/library.js');
-const { PACKAGE_FILE } = require('../core/package.js');
+const { NOTES_DIR, LEGACY_NOTES_DIR } = require('../core/library.js');
+const { PACKAGE_FILE, TEXT_FILE, splitPackage } = require('../core/package.js');
 
 /* Frontmatter und Rumpf trennen. Die Eigenschaften ändert Obsidian
    selbst (processFrontMatter); hier geht es nur um den Text darunter. */
@@ -277,8 +275,12 @@ class Migrations {
     for (const folder of this.library.packagesOf(language)) {
       const file = this.fileIn(folder, PACKAGE_FILE);
       const data = await this.readJson(file);
+
+      /* Nur Pakete der ersten Fassung - bei ihnen steht der Text im Kopf.
+         Ein schon geteiltes wird nicht noch einmal angefasst. Wie geteilt
+         wird, sagt der Vertrag in core/package.js. */
+      if (!data || !Array.isArray(data.paragraphs)) continue;
       const parts = splitPackage(data);
-      if (!parts || !parts.split) continue;
 
       /* Zuerst den Text daneben legen, dann den Kopf kürzen. Bricht es
          dazwischen ab, steht der Text noch im Kopf und die App liest ihn

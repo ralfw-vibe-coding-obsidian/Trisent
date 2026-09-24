@@ -35,6 +35,8 @@ const MODULES = [
   'learning/dictionary.js',
   'learning/schema.js',
   'learning/migrations.js',
+  'learning/layout.js',
+  'learning/importer.js',
   'flashcards/schedule.js',
   'flashcards/session.js',
   'flashcards/find.js',
