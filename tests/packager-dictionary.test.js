@@ -110,4 +110,26 @@ test('eine kaputte Datei wirft nicht, sie meldet', () => {
   is(result.problems.length, 1, 'eine Meldung');
 });
 
+test('Formen aus einem neuen Text kommen dazu, sonst nichts', () => {
+  const vorrat = {
+    'fr:aller:VERB': dictionary.entry({ lemma: 'aller', partOfSpeech: 'VERB', gloss: 'gehen', forms: ['va'], grammar: 'alt', entrySchema: 1 })
+  };
+  const changed = dictionary.mergeForms(vorrat, {
+    'fr:aller:VERB': { lemma: 'aller', partOfSpeech: 'VERB', gloss: 'etwas anderes', forms: ['va', 'allons', 'irai'], grammar: 'neu', entrySchema: 5 },
+    'fr:unbekannt:NOUN': { lemma: 'unbekannt', partOfSpeech: 'NOUN', gloss: 'x', forms: ['y'] }
+  });
+
+  is(changed, 1, 'ein Eintrag geändert');
+  is(vorrat['fr:aller:VERB'].forms, ['va', 'allons', 'irai'], 'alle Formen, die alten zuerst');
+  is(vorrat['fr:aller:VERB'].gloss, 'gehen', 'die Bedeutung blieb');
+  is(vorrat['fr:aller:VERB'].grammar, 'alt', 'die Beschreibung blieb');
+  is(vorrat['fr:aller:VERB'].entrySchema, 1, 'die Bauplannummer blieb');
+  ok(!vorrat['fr:unbekannt:NOUN'], 'Unbekanntes wird hier nicht aufgenommen');
+});
+
+test('nichts Neues, nichts geändert', () => {
+  const vorrat = { 'fr:aller:VERB': dictionary.entry({ lemma: 'aller', partOfSpeech: 'VERB', gloss: 'gehen', forms: ['va'] }) };
+  is(dictionary.mergeForms(vorrat, { 'fr:aller:VERB': { forms: ['va'] } }), 0, 'keine Änderung');
+});
+
 if (require.main === module) report();

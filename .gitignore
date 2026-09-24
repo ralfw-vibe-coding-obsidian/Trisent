@@ -20,3 +20,12 @@ dist/
 # die jemand aus der Lernkartei genommen hat. Im Repo waere es nur der
 # Schatten geloeschter Dateien.
 .trash/
+
+# Das Logbuch der App. Es hält fest, was auf DIESEM Rechner geschah, und
+# ändert sich bei jedem Import und jedem Deploy - im Repo wäre es ein
+# ständiger Zankapfel zwischen den Sitzungen, die beide hineinschreiben.
+Trisent/log.md
+
+# Das Erzeugnis der Werkstatt. Entsteht aus den Dateien daneben bei jedem
+# Verpacken neu und wäre im Repo nur ein Megabyte Binärschrott je Fassung.
+Trisent/packager/**/package.zip

@@ -1946,6 +1946,13 @@ class Packager {
       };
     }
 
+    /* Was dieser Text an Formen mitbrachte, kennt ab jetzt auch der
+       Wortvorrat - damit das nächste Paket sie ebenfalls trägt. */
+    const vocabulary = await this.loadDictionary(language);
+    if (store.mergeForms(vocabulary, result.data.dictionary) > 0) {
+      await this.saveDictionary(language, vocabulary);
+    }
+
     const stats = result.stats;
     return {
       kind: 'ok',
@@ -2138,25 +2145,23 @@ class Packager {
   async send(text) {
     if (!text.package) throw new Error('There is no built package yet.');
 
-    const data = await this.readBuilt(text.folder);
-    if (!data) throw new Error('The package is incomplete. Build it again.');
-
-    /* Bis die Vordertür für Archive steht, geht das Paket in der ersten
-       Fassung hinüber: eine Datei mit allem darin, dazu die Tonspuren.
-       Sobald die Learning-Seite Bescheid gibt, geht stattdessen
-       package.zip durch importArchive - und dieser Umweg fällt weg. */
-    const whole = Object.assign({}, data, { schemaVersion: 1 });
-    const contents = new Map();
-    contents.set(PACKAGE_FILE, new TextEncoder().encode(JSON.stringify(whole, null, 2) + '\n'));
-    for (const name of audioNamesOf(whole)) {
-      const file = this.file(text.folder.path + '/' + name);
-      if (file) contents.set(name, new Uint8Array(await this.app.vault.readBinary(file)));
+    /* Ein Paket aus der Zeit vor dem Archiv wird jetzt nachträglich
+       verschnürt. Am Inhalt ändert sich dabei nichts, also auch nicht an
+       seiner Nummer. */
+    let archive = this.file(text.folder.path + '/' + ARCHIVE_FILE);
+    if (!archive) {
+      const data = await this.readBuilt(text.folder);
+      if (!data) throw new Error('The package is incomplete. Package it again.');
+      const refused = await this.writeBuilt(text.folder, data);
+      if (refused.length > 0) throw new Error('The package did not pass the checks: ' + refused[0]);
+      archive = this.file(text.folder.path + '/' + ARCHIVE_FILE);
+      if (!archive) throw new Error('The archive could not be written.');
     }
 
-    /* Die Vordertür. Sie heißt nach ihrem Zweck, nicht nach einem
-       Werkzeug - hinter ihr liegt dieselbe Prüfung wie bei einem Paket
-       von einem Fremden. */
-    const result = await this.plugin.learning.importFiles(contents, text.folder.name);
+    /* Die Vordertür für ein Archiv - dieselbe, durch die ein Paket von
+       einem Fremden kommt. Geprüft wird dahinter, immer. */
+    const bytes = await this.app.vault.readBinary(archive);
+    const result = await this.plugin.learning.importArchive(bytes, text.title || text.folder.name);
 
     if (!this.settings.sent) this.settings.sent = {};
     const head = await this.headOf(text.package);

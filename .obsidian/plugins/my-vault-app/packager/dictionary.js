@@ -81,6 +81,39 @@ function addMissing(into, offered) {
   return added;
 }
 
+/* Formen, die ein Text mitgebracht hat, in den Wortvorrat übernehmen.
+
+   Ein Eintrag soll alle Formen kennen, die je vorkamen - nicht nur die
+   aus dem Text, in dem das Wort zum ersten Mal stand. Sonst trüge jedes
+   Paket nur die Formen seines Textes, und im Wörterbuch der Person würde
+   ein Eintrag mit jüngerer Beschreibung die Formen auf die eines einzigen
+   Textes zurückschneiden.
+
+   Nur Formen kommen dazu; Bedeutung und Beschreibung bleiben, wie sie
+   sind. Liefert, wie viele Einträge sich geändert haben. */
+function mergeForms(dictionary, entries) {
+  let changed = 0;
+  for (const key of Object.keys(entries || {})) {
+    const target = dictionary[key];
+    const offered = entries[key] && entries[key].forms;
+    if (!target || !Array.isArray(offered)) continue;
+
+    const forms = Array.isArray(target.forms) ? target.forms.slice() : [];
+    let added = false;
+    for (const form of offered) {
+      if (form && forms.indexOf(form) < 0) {
+        forms.push(String(form));
+        added = true;
+      }
+    }
+    if (added) {
+      target.forms = forms;
+      changed += 1;
+    }
+  }
+  return changed;
+}
+
 /* Welche Schlüssel dem Wortvorrat noch fehlen. */
 function missingFrom(dictionary, keys) {
   const missing = [];
@@ -148,4 +181,4 @@ function serialize(dictionary) {
   return JSON.stringify(out, null, 2) + '\n';
 }
 
-module.exports = { entry, fromNote, addMissing, missingFrom, extract, parse, serialize };
+module.exports = { entry, fromNote, addMissing, mergeForms, missingFrom, extract, parse, serialize };
