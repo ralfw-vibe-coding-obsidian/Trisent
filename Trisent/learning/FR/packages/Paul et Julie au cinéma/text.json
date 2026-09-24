@@ -1,0 +1,1522 @@
+{
+  "paragraphs": [
+    {
+      "id": "p001",
+      "sentences": [
+        {
+          "id": "s001",
+          "source": "Paul et Julie arrivent au cinéma.",
+          "fluent": "Paul und Julie kommen am Kino an.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 7,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 8,
+              "end": 13,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 14,
+              "end": 22,
+              "surface": "arrivent",
+              "gloss": "ankommen",
+              "lemma": "arriver",
+              "partOfSpeech": "VERB",
+              "key": "fr:arriver:VERB"
+            },
+            {
+              "start": 23,
+              "end": 25,
+              "surface": "au",
+              "gloss": "zu dem",
+              "lemma": "au",
+              "partOfSpeech": "ADP",
+              "key": "fr:au:ADP"
+            },
+            {
+              "start": 26,
+              "end": 32,
+              "surface": "cinéma",
+              "gloss": "Kino",
+              "lemma": "cinéma",
+              "partOfSpeech": "NOUN",
+              "key": "fr:cinéma:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p002",
+      "sentences": [
+        {
+          "id": "s002",
+          "source": "Il y a beaucoup de personnes devant l’entrée.",
+          "fluent": "Vor dem Eingang sind viele Leute.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Il",
+              "gloss": "es",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 3,
+              "end": 4,
+              "surface": "y",
+              "gloss": "da",
+              "lemma": "y",
+              "partOfSpeech": "PRON",
+              "key": "fr:y:PRON"
+            },
+            {
+              "start": 5,
+              "end": 6,
+              "surface": "a",
+              "gloss": "haben",
+              "lemma": "avoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:avoir:VERB"
+            },
+            {
+              "start": 7,
+              "end": 15,
+              "surface": "beaucoup",
+              "gloss": "viel",
+              "lemma": "beaucoup",
+              "partOfSpeech": "ADV",
+              "key": "fr:beaucoup:ADV"
+            },
+            {
+              "start": 16,
+              "end": 18,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 19,
+              "end": 28,
+              "surface": "personnes",
+              "gloss": "Personen",
+              "lemma": "personne",
+              "partOfSpeech": "NOUN",
+              "key": "fr:personne:NOUN"
+            },
+            {
+              "start": 29,
+              "end": 35,
+              "surface": "devant",
+              "gloss": "vor",
+              "lemma": "devant",
+              "partOfSpeech": "ADP",
+              "key": "fr:devant:ADP"
+            },
+            {
+              "start": 36,
+              "end": 38,
+              "surface": "l’",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 38,
+              "end": 44,
+              "surface": "entrée",
+              "gloss": "Eingang",
+              "lemma": "entrée",
+              "partOfSpeech": "NOUN",
+              "key": "fr:entrée:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 6,
+              "surface": "Il y a",
+              "gloss": "es-gibt",
+              "lemma": "Il y a",
+              "key": "fr:il y a:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s003",
+          "source": "Paul et Julie regardent les films.",
+          "fluent": "Paul und Julie schauen die Filme an.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 7,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 8,
+              "end": 13,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 14,
+              "end": 23,
+              "surface": "regardent",
+              "gloss": "schauen",
+              "lemma": "regarder",
+              "partOfSpeech": "VERB",
+              "key": "fr:regarder:VERB"
+            },
+            {
+              "start": 24,
+              "end": 27,
+              "surface": "les",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 28,
+              "end": 33,
+              "surface": "films",
+              "gloss": "Filme",
+              "lemma": "film",
+              "partOfSpeech": "NOUN",
+              "key": "fr:film:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p003",
+      "sentences": [
+        {
+          "id": "s004",
+          "source": "Julie dit : « Je veux voir ce film. »",
+          "fluent": "Julie sagt: „Ich will diesen Film sehen.\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 14,
+              "end": 16,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 17,
+              "end": 21,
+              "surface": "veux",
+              "gloss": "wollen",
+              "lemma": "vouloir",
+              "partOfSpeech": "VERB",
+              "key": "fr:vouloir:VERB"
+            },
+            {
+              "start": 22,
+              "end": 26,
+              "surface": "voir",
+              "gloss": "sehen",
+              "lemma": "voir",
+              "partOfSpeech": "VERB",
+              "key": "fr:voir:VERB"
+            },
+            {
+              "start": 27,
+              "end": 29,
+              "surface": "ce",
+              "gloss": "dieser",
+              "lemma": "ce",
+              "partOfSpeech": "DET",
+              "key": "fr:ce:DET"
+            },
+            {
+              "start": 30,
+              "end": 34,
+              "surface": "film",
+              "gloss": "Film",
+              "lemma": "film",
+              "partOfSpeech": "NOUN",
+              "key": "fr:film:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p004",
+      "sentences": [
+        {
+          "id": "s005",
+          "source": "Paul répond : « Oui, moi aussi. »",
+          "fluent": "Paul antwortet: „Ja, ich auch.\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 11,
+              "surface": "répond",
+              "gloss": "antworten",
+              "lemma": "répondre",
+              "partOfSpeech": "VERB",
+              "key": "fr:répondre:VERB"
+            },
+            {
+              "start": 16,
+              "end": 19,
+              "surface": "Oui",
+              "gloss": "ja",
+              "lemma": "oui",
+              "partOfSpeech": "INTJ",
+              "key": "fr:oui:INTJ"
+            },
+            {
+              "start": 21,
+              "end": 24,
+              "surface": "moi",
+              "gloss": "ich",
+              "lemma": "moi",
+              "partOfSpeech": "PRON",
+              "key": "fr:moi:PRON"
+            },
+            {
+              "start": 25,
+              "end": 30,
+              "surface": "aussi",
+              "gloss": "auch",
+              "lemma": "aussi",
+              "partOfSpeech": "ADV",
+              "key": "fr:aussi:ADV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p005",
+      "sentences": [
+        {
+          "id": "s006",
+          "source": "Ils vont à la caisse.",
+          "fluent": "Sie gehen zur Kasse.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 4,
+              "end": 8,
+              "surface": "vont",
+              "gloss": "gehen",
+              "lemma": "aller",
+              "partOfSpeech": "VERB",
+              "key": "fr:aller:VERB"
+            },
+            {
+              "start": 9,
+              "end": 10,
+              "surface": "à",
+              "gloss": "zu",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 11,
+              "end": 13,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 14,
+              "end": 20,
+              "surface": "caisse",
+              "gloss": "Kasse",
+              "lemma": "caisse",
+              "partOfSpeech": "NOUN",
+              "key": "fr:caisse:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p006",
+      "sentences": [
+        {
+          "id": "s007",
+          "source": "Paul dit : « Bonjour, deux billets pour le film, s’il vous plaît. »",
+          "fluent": "Paul sagt: „Guten Tag, zwei Karten für den Film, bitte.\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 13,
+              "end": 20,
+              "surface": "Bonjour",
+              "gloss": "guten-Tag",
+              "lemma": "bonjour",
+              "partOfSpeech": "INTJ",
+              "key": "fr:bonjour:INTJ"
+            },
+            {
+              "start": 22,
+              "end": 26,
+              "surface": "deux",
+              "gloss": "zwei",
+              "lemma": "deux",
+              "partOfSpeech": "NUM",
+              "key": "fr:deux:NUM"
+            },
+            {
+              "start": 27,
+              "end": 34,
+              "surface": "billets",
+              "gloss": "Karten",
+              "lemma": "billet",
+              "partOfSpeech": "NOUN",
+              "key": "fr:billet:NOUN"
+            },
+            {
+              "start": 35,
+              "end": 39,
+              "surface": "pour",
+              "gloss": "für",
+              "lemma": "pour",
+              "partOfSpeech": "ADP",
+              "key": "fr:pour:ADP"
+            },
+            {
+              "start": 40,
+              "end": 42,
+              "surface": "le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 43,
+              "end": 47,
+              "surface": "film",
+              "gloss": "Film",
+              "lemma": "film",
+              "partOfSpeech": "NOUN",
+              "key": "fr:film:NOUN"
+            },
+            {
+              "start": 49,
+              "end": 51,
+              "surface": "s’",
+              "gloss": "wenn",
+              "lemma": "si",
+              "partOfSpeech": "SCONJ",
+              "key": "fr:si:SCONJ"
+            },
+            {
+              "start": 51,
+              "end": 53,
+              "surface": "il",
+              "gloss": "es",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 54,
+              "end": 58,
+              "surface": "vous",
+              "gloss": "Ihnen",
+              "lemma": "vous",
+              "partOfSpeech": "PRON",
+              "key": "fr:vous:PRON"
+            },
+            {
+              "start": 59,
+              "end": 64,
+              "surface": "plaît",
+              "gloss": "gefallen",
+              "lemma": "plaire",
+              "partOfSpeech": "VERB",
+              "key": "fr:plaire:VERB"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 49,
+              "end": 64,
+              "surface": "s’il vous plaît",
+              "gloss": "bitte",
+              "lemma": "s’il vous plaît",
+              "key": "fr:s'il vous plaît:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p007",
+      "sentences": [
+        {
+          "id": "s008",
+          "source": "La femme à la caisse donne les billets à Paul et Julie.",
+          "fluent": "Die Frau an der Kasse gibt Paul und Julie die Tickets.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "La",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 8,
+              "surface": "femme",
+              "gloss": "Frau",
+              "lemma": "femme",
+              "partOfSpeech": "NOUN",
+              "key": "fr:femme:NOUN"
+            },
+            {
+              "start": 9,
+              "end": 10,
+              "surface": "à",
+              "gloss": "an",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 11,
+              "end": 13,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 14,
+              "end": 20,
+              "surface": "caisse",
+              "gloss": "Kasse",
+              "lemma": "caisse",
+              "partOfSpeech": "NOUN",
+              "key": "fr:caisse:NOUN"
+            },
+            {
+              "start": 21,
+              "end": 26,
+              "surface": "donne",
+              "gloss": "geben",
+              "lemma": "donner",
+              "partOfSpeech": "VERB",
+              "key": "fr:donner:VERB"
+            },
+            {
+              "start": 27,
+              "end": 30,
+              "surface": "les",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 31,
+              "end": 38,
+              "surface": "billets",
+              "gloss": "Tickets",
+              "lemma": "billet",
+              "partOfSpeech": "NOUN",
+              "key": "fr:billet:NOUN"
+            },
+            {
+              "start": 39,
+              "end": 40,
+              "surface": "à",
+              "gloss": "an",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 41,
+              "end": 45,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 46,
+              "end": 48,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 49,
+              "end": 54,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p008",
+      "sentences": [
+        {
+          "id": "s009",
+          "source": "Ensuite, ils achètent une boisson.",
+          "fluent": "Danach kaufen sie ein Getränk.",
+          "units": [
+            {
+              "start": 0,
+              "end": 7,
+              "surface": "Ensuite",
+              "gloss": "danach",
+              "lemma": "ensuite",
+              "partOfSpeech": "ADV",
+              "key": "fr:ensuite:ADV"
+            },
+            {
+              "start": 9,
+              "end": 12,
+              "surface": "ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 13,
+              "end": 21,
+              "surface": "achètent",
+              "gloss": "kaufen",
+              "lemma": "acheter",
+              "partOfSpeech": "VERB",
+              "key": "fr:acheter:VERB"
+            },
+            {
+              "start": 22,
+              "end": 25,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 26,
+              "end": 33,
+              "surface": "boisson",
+              "gloss": "Getränk",
+              "lemma": "boisson",
+              "partOfSpeech": "NOUN",
+              "key": "fr:boisson:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s010",
+          "source": "Julie prend un jus d’orange et Paul prend un coca.",
+          "fluent": "Julie nimmt einen Orangensaft und Paul nimmt eine Cola.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 11,
+              "surface": "prend",
+              "gloss": "nehmen",
+              "lemma": "prendre",
+              "partOfSpeech": "VERB",
+              "key": "fr:prendre:VERB"
+            },
+            {
+              "start": 12,
+              "end": 14,
+              "surface": "un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 15,
+              "end": 18,
+              "surface": "jus",
+              "gloss": "Saft",
+              "lemma": "jus",
+              "partOfSpeech": "NOUN",
+              "key": "fr:jus:NOUN"
+            },
+            {
+              "start": 19,
+              "end": 21,
+              "surface": "d’",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 21,
+              "end": 27,
+              "surface": "orange",
+              "gloss": "Orange",
+              "lemma": "orange",
+              "partOfSpeech": "NOUN",
+              "key": "fr:orange:NOUN"
+            },
+            {
+              "start": 28,
+              "end": 30,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 31,
+              "end": 35,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 36,
+              "end": 41,
+              "surface": "prend",
+              "gloss": "nehmen",
+              "lemma": "prendre",
+              "partOfSpeech": "VERB",
+              "key": "fr:prendre:VERB"
+            },
+            {
+              "start": 42,
+              "end": 44,
+              "surface": "un",
+              "gloss": "ein",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 45,
+              "end": 49,
+              "surface": "coca",
+              "gloss": "Cola",
+              "lemma": "coca",
+              "partOfSpeech": "NOUN",
+              "key": "fr:coca:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p009",
+      "sentences": [
+        {
+          "id": "s011",
+          "source": "Puis ils entrent dans la salle.",
+          "fluent": "Dann gehen sie in den Saal.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Puis",
+              "gloss": "dann",
+              "lemma": "puis",
+              "partOfSpeech": "ADV",
+              "key": "fr:puis:ADV"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 9,
+              "end": 16,
+              "surface": "entrent",
+              "gloss": "eintreten",
+              "lemma": "entrer",
+              "partOfSpeech": "VERB",
+              "key": "fr:entrer:VERB"
+            },
+            {
+              "start": 17,
+              "end": 21,
+              "surface": "dans",
+              "gloss": "in",
+              "lemma": "dans",
+              "partOfSpeech": "ADP",
+              "key": "fr:dans:ADP"
+            },
+            {
+              "start": 22,
+              "end": 24,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 25,
+              "end": 30,
+              "surface": "salle",
+              "gloss": "Saal",
+              "lemma": "salle",
+              "partOfSpeech": "NOUN",
+              "key": "fr:salle:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p010",
+      "sentences": [
+        {
+          "id": "s012",
+          "source": "Paul regarde les billets.",
+          "fluent": "Paul schaut sich die Fahrkarten an.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 12,
+              "surface": "regarde",
+              "gloss": "schauen",
+              "lemma": "regarder",
+              "partOfSpeech": "VERB",
+              "key": "fr:regarder:VERB"
+            },
+            {
+              "start": 13,
+              "end": 16,
+              "surface": "les",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 17,
+              "end": 24,
+              "surface": "billets",
+              "gloss": "Fahrkarten",
+              "lemma": "billet",
+              "partOfSpeech": "NOUN",
+              "key": "fr:billet:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p011",
+      "sentences": [
+        {
+          "id": "s013",
+          "source": "« Nous sommes au rang cinq, places douze et treize », dit Paul.",
+          "fluent": "„Wir sitzen in Reihe fünf, Plätze zwölf und dreizehn\", sagt Paul.",
+          "units": [
+            {
+              "start": 2,
+              "end": 6,
+              "surface": "Nous",
+              "gloss": "wir",
+              "lemma": "nous",
+              "partOfSpeech": "PRON",
+              "key": "fr:nous:PRON"
+            },
+            {
+              "start": 7,
+              "end": 13,
+              "surface": "sommes",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 14,
+              "end": 16,
+              "surface": "au",
+              "gloss": "im",
+              "lemma": "au",
+              "partOfSpeech": "ADP",
+              "key": "fr:au:ADP"
+            },
+            {
+              "start": 17,
+              "end": 21,
+              "surface": "rang",
+              "gloss": "Reihe",
+              "lemma": "rang",
+              "partOfSpeech": "NOUN",
+              "key": "fr:rang:NOUN"
+            },
+            {
+              "start": 22,
+              "end": 26,
+              "surface": "cinq",
+              "gloss": "fünf",
+              "lemma": "cinq",
+              "partOfSpeech": "NUM",
+              "key": "fr:cinq:NUM"
+            },
+            {
+              "start": 28,
+              "end": 34,
+              "surface": "places",
+              "gloss": "Plätze",
+              "lemma": "place",
+              "partOfSpeech": "NOUN",
+              "key": "fr:place:NOUN"
+            },
+            {
+              "start": 35,
+              "end": 40,
+              "surface": "douze",
+              "gloss": "zwölf",
+              "lemma": "douze",
+              "partOfSpeech": "NUM",
+              "key": "fr:douze:NUM"
+            },
+            {
+              "start": 41,
+              "end": 43,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 44,
+              "end": 50,
+              "surface": "treize",
+              "gloss": "dreizehn",
+              "lemma": "treize",
+              "partOfSpeech": "NUM",
+              "key": "fr:treize:NUM"
+            },
+            {
+              "start": 54,
+              "end": 57,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 58,
+              "end": 62,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p012",
+      "sentences": [
+        {
+          "id": "s014",
+          "source": "Ils cherchent leurs places.",
+          "fluent": "Sie suchen ihre Plätze.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 4,
+              "end": 13,
+              "surface": "cherchent",
+              "gloss": "suchen",
+              "lemma": "chercher",
+              "partOfSpeech": "VERB",
+              "key": "fr:chercher:VERB"
+            },
+            {
+              "start": 14,
+              "end": 19,
+              "surface": "leurs",
+              "gloss": "ihre",
+              "lemma": "leur",
+              "partOfSpeech": "DET",
+              "key": "fr:leur:DET"
+            },
+            {
+              "start": 20,
+              "end": 26,
+              "surface": "places",
+              "gloss": "Plätze",
+              "lemma": "place",
+              "partOfSpeech": "NOUN",
+              "key": "fr:place:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p013",
+      "sentences": [
+        {
+          "id": "s015",
+          "source": "Julie dit : « Ah, voilà nos places ! »",
+          "fluent": "Julie sagt: „Ah, da sind unsere Plätze!\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 14,
+              "end": 16,
+              "surface": "Ah",
+              "gloss": "ah",
+              "lemma": "ah",
+              "partOfSpeech": "INTJ",
+              "key": "fr:ah:INTJ"
+            },
+            {
+              "start": 18,
+              "end": 23,
+              "surface": "voilà",
+              "gloss": "da-sind",
+              "lemma": "voilà",
+              "partOfSpeech": "PART",
+              "key": "fr:voilà:PART"
+            },
+            {
+              "start": 24,
+              "end": 27,
+              "surface": "nos",
+              "gloss": "unsere",
+              "lemma": "notre",
+              "partOfSpeech": "DET",
+              "key": "fr:notre:DET"
+            },
+            {
+              "start": 28,
+              "end": 34,
+              "surface": "places",
+              "gloss": "Plätze",
+              "lemma": "place",
+              "partOfSpeech": "NOUN",
+              "key": "fr:place:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p014",
+      "sentences": [
+        {
+          "id": "s016",
+          "source": "Ils s’assoient.",
+          "fluent": "Sie setzen sich.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 4,
+              "end": 6,
+              "surface": "s’",
+              "gloss": "sich",
+              "lemma": "se",
+              "partOfSpeech": "PRON",
+              "key": "fr:se:PRON"
+            },
+            {
+              "start": 6,
+              "end": 14,
+              "surface": "assoient",
+              "gloss": "setzen",
+              "lemma": "asseoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:asseoir:VERB"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p015",
+      "sentences": [
+        {
+          "id": "s017",
+          "source": "Paul met sa boisson à côté de son siège.",
+          "fluent": "Paul stellt sein Getränk neben seinen Sitz.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "met",
+              "gloss": "stellen",
+              "lemma": "mettre",
+              "partOfSpeech": "VERB",
+              "key": "fr:mettre:VERB"
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "surface": "sa",
+              "gloss": "sein",
+              "lemma": "son",
+              "partOfSpeech": "DET",
+              "key": "fr:son:DET"
+            },
+            {
+              "start": 12,
+              "end": 19,
+              "surface": "boisson",
+              "gloss": "Getränk",
+              "lemma": "boisson",
+              "partOfSpeech": "NOUN",
+              "key": "fr:boisson:NOUN"
+            },
+            {
+              "start": 20,
+              "end": 21,
+              "surface": "à",
+              "gloss": "an",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 22,
+              "end": 26,
+              "surface": "côté",
+              "gloss": "Seite",
+              "lemma": "côté",
+              "partOfSpeech": "NOUN",
+              "key": "fr:côté:NOUN"
+            },
+            {
+              "start": 27,
+              "end": 29,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 30,
+              "end": 33,
+              "surface": "son",
+              "gloss": "sein",
+              "lemma": "son",
+              "partOfSpeech": "DET",
+              "key": "fr:son:DET"
+            },
+            {
+              "start": 34,
+              "end": 39,
+              "surface": "siège",
+              "gloss": "Sitz",
+              "lemma": "siège",
+              "partOfSpeech": "NOUN",
+              "key": "fr:siège:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 20,
+              "end": 29,
+              "surface": "à côté de",
+              "gloss": "neben",
+              "lemma": "à côté de",
+              "key": "fr:à côté de:PHRASE"
+            }
+          ]
+        },
+        {
+          "id": "s018",
+          "source": "Julie regarde l’écran.",
+          "fluent": "Julie schaut auf den Bildschirm.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 13,
+              "surface": "regarde",
+              "gloss": "ansehen",
+              "lemma": "regarder",
+              "partOfSpeech": "VERB",
+              "key": "fr:regarder:VERB"
+            },
+            {
+              "start": 14,
+              "end": 16,
+              "surface": "l’",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 16,
+              "end": 21,
+              "surface": "écran",
+              "gloss": "Bildschirm",
+              "lemma": "écran",
+              "partOfSpeech": "NOUN",
+              "key": "fr:écran:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p016",
+      "sentences": [
+        {
+          "id": "s019",
+          "source": "La salle devient sombre.",
+          "fluent": "Der Saal wird dunkel.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "La",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 8,
+              "surface": "salle",
+              "gloss": "Saal",
+              "lemma": "salle",
+              "partOfSpeech": "NOUN",
+              "key": "fr:salle:NOUN"
+            },
+            {
+              "start": 9,
+              "end": 16,
+              "surface": "devient",
+              "gloss": "werden",
+              "lemma": "devenir",
+              "partOfSpeech": "VERB",
+              "key": "fr:devenir:VERB"
+            },
+            {
+              "start": 17,
+              "end": 23,
+              "surface": "sombre",
+              "gloss": "dunkel",
+              "lemma": "sombre",
+              "partOfSpeech": "ADJ",
+              "key": "fr:sombre:ADJ"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p017",
+      "sentences": [
+        {
+          "id": "s020",
+          "source": "Julie sourit et dit : « Le film commence ! »",
+          "fluent": "Julie lächelt und sagt: „Der Film fängt an!\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 12,
+              "surface": "sourit",
+              "gloss": "lächeln",
+              "lemma": "sourire",
+              "partOfSpeech": "VERB",
+              "key": "fr:sourire:VERB"
+            },
+            {
+              "start": 13,
+              "end": 15,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 16,
+              "end": 19,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 24,
+              "end": 26,
+              "surface": "Le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 27,
+              "end": 31,
+              "surface": "film",
+              "gloss": "Film",
+              "lemma": "film",
+              "partOfSpeech": "NOUN",
+              "key": "fr:film:NOUN"
+            },
+            {
+              "start": 32,
+              "end": 40,
+              "surface": "commence",
+              "gloss": "beginnen",
+              "lemma": "commencer",
+              "partOfSpeech": "VERB",
+              "key": "fr:commencer:VERB"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p018",
+      "sentences": [
+        {
+          "id": "s021",
+          "source": "Paul répond : « Super ! »",
+          "fluent": "Paul antwortet: „Super!\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 11,
+              "surface": "répond",
+              "gloss": "antworten",
+              "lemma": "répondre",
+              "partOfSpeech": "VERB",
+              "key": "fr:répondre:VERB"
+            },
+            {
+              "start": 16,
+              "end": 21,
+              "surface": "Super",
+              "gloss": "super",
+              "lemma": "super",
+              "partOfSpeech": "ADJ",
+              "key": "fr:super:ADJ"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

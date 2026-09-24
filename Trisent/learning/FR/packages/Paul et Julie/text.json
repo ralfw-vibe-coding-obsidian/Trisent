@@ -1,0 +1,1182 @@
+{
+  "paragraphs": [
+    {
+      "id": "p001",
+      "sentences": [
+        {
+          "id": "s001",
+          "source": "Paul est à une fête avec ses amis.",
+          "fluent": "Paul ist mit seinen Freunden auf einer Party.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 9,
+              "end": 10,
+              "surface": "à",
+              "gloss": "auf",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 11,
+              "end": 14,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 15,
+              "end": 19,
+              "surface": "fête",
+              "gloss": "Fest",
+              "lemma": "fête",
+              "partOfSpeech": "NOUN",
+              "key": "fr:fête:NOUN"
+            },
+            {
+              "start": 20,
+              "end": 24,
+              "surface": "avec",
+              "gloss": "mit",
+              "lemma": "avec",
+              "partOfSpeech": "ADP",
+              "key": "fr:avec:ADP"
+            },
+            {
+              "start": 25,
+              "end": 28,
+              "surface": "ses",
+              "gloss": "seine",
+              "lemma": "son",
+              "partOfSpeech": "DET",
+              "key": "fr:son:DET"
+            },
+            {
+              "start": 29,
+              "end": 33,
+              "surface": "amis",
+              "gloss": "Freunde",
+              "lemma": "ami",
+              "partOfSpeech": "NOUN",
+              "key": "fr:ami:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s002",
+          "source": "Il y a de la musique et beaucoup de personnes.",
+          "fluent": "Es gibt Musik und viele Leute.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Il",
+              "gloss": "es",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 3,
+              "end": 4,
+              "surface": "y",
+              "gloss": "da",
+              "lemma": "y",
+              "partOfSpeech": "PRON",
+              "key": "fr:y:PRON"
+            },
+            {
+              "start": 5,
+              "end": 6,
+              "surface": "a",
+              "gloss": "haben",
+              "lemma": "avoir",
+              "partOfSpeech": "VERB",
+              "key": "fr:avoir:VERB"
+            },
+            {
+              "start": 7,
+              "end": 9,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 10,
+              "end": 12,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 13,
+              "end": 20,
+              "surface": "musique",
+              "gloss": "Musik",
+              "lemma": "musique",
+              "partOfSpeech": "NOUN",
+              "key": "fr:musique:NOUN"
+            },
+            {
+              "start": 21,
+              "end": 23,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 24,
+              "end": 32,
+              "surface": "beaucoup",
+              "gloss": "viel",
+              "lemma": "beaucoup",
+              "partOfSpeech": "ADV",
+              "key": "fr:beaucoup:ADV"
+            },
+            {
+              "start": 33,
+              "end": 35,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 36,
+              "end": 45,
+              "surface": "personnes",
+              "gloss": "Personen",
+              "lemma": "personne",
+              "partOfSpeech": "NOUN",
+              "key": "fr:personne:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 6,
+              "surface": "Il y a",
+              "gloss": "es gibt",
+              "lemma": "Il y a",
+              "key": "fr:il y a:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p002",
+      "sentences": [
+        {
+          "id": "s003",
+          "source": "Julie est aussi à la fête.",
+          "fluent": "Julie ist auch auf der Party.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "surface": "est",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 10,
+              "end": 15,
+              "surface": "aussi",
+              "gloss": "auch",
+              "lemma": "aussi",
+              "partOfSpeech": "ADV",
+              "key": "fr:aussi:ADV"
+            },
+            {
+              "start": 16,
+              "end": 17,
+              "surface": "à",
+              "gloss": "auf",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 18,
+              "end": 20,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 21,
+              "end": 25,
+              "surface": "fête",
+              "gloss": "Fest",
+              "lemma": "fête",
+              "partOfSpeech": "NOUN",
+              "key": "fr:fête:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s004",
+          "source": "Elle parle avec une amie.",
+          "fluent": "Sie spricht mit einer Freundin.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Elle",
+              "gloss": "sie",
+              "lemma": "elle",
+              "partOfSpeech": "PRON",
+              "key": "fr:elle:PRON"
+            },
+            {
+              "start": 5,
+              "end": 10,
+              "surface": "parle",
+              "gloss": "sprechen",
+              "lemma": "parler",
+              "partOfSpeech": "VERB",
+              "key": "fr:parler:VERB"
+            },
+            {
+              "start": 11,
+              "end": 15,
+              "surface": "avec",
+              "gloss": "mit",
+              "lemma": "avec",
+              "partOfSpeech": "ADP",
+              "key": "fr:avec:ADP"
+            },
+            {
+              "start": 16,
+              "end": 19,
+              "surface": "une",
+              "gloss": "eine",
+              "lemma": "un",
+              "partOfSpeech": "DET",
+              "key": "fr:un:DET"
+            },
+            {
+              "start": 20,
+              "end": 24,
+              "surface": "amie",
+              "gloss": "Freundin",
+              "lemma": "ami",
+              "partOfSpeech": "NOUN",
+              "key": "fr:ami:NOUN"
+            }
+          ]
+        },
+        {
+          "id": "s005",
+          "source": "Paul voit Julie et il sourit.",
+          "fluent": "Paul sieht Julie und lächelt.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 9,
+              "surface": "voit",
+              "gloss": "sehen",
+              "lemma": "voir",
+              "partOfSpeech": "VERB",
+              "key": "fr:voir:VERB"
+            },
+            {
+              "start": 10,
+              "end": 15,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 16,
+              "end": 18,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 19,
+              "end": 21,
+              "surface": "il",
+              "gloss": "er",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 22,
+              "end": 28,
+              "surface": "sourit",
+              "gloss": "lächeln",
+              "lemma": "sourire",
+              "partOfSpeech": "VERB",
+              "key": "fr:sourire:VERB"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p003",
+      "sentences": [
+        {
+          "id": "s006",
+          "source": "Paul dit : « Salut ! Je m’appelle Paul. Et toi ? »",
+          "fluent": "Paul sagt: „Hallo! Ich heiße Paul. Und du?\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 13,
+              "end": 18,
+              "surface": "Salut",
+              "gloss": "hallo",
+              "lemma": "salut",
+              "partOfSpeech": "INTJ",
+              "key": "fr:salut:INTJ"
+            },
+            {
+              "start": 21,
+              "end": 23,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 24,
+              "end": 26,
+              "surface": "m’",
+              "gloss": "mich",
+              "lemma": "me",
+              "partOfSpeech": "PRON",
+              "key": "fr:me:PRON"
+            },
+            {
+              "start": 26,
+              "end": 33,
+              "surface": "appelle",
+              "gloss": "nennen",
+              "lemma": "appeler",
+              "partOfSpeech": "VERB",
+              "key": "fr:appeler:VERB"
+            },
+            {
+              "start": 34,
+              "end": 38,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 40,
+              "end": 42,
+              "surface": "Et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 43,
+              "end": 46,
+              "surface": "toi",
+              "gloss": "du",
+              "lemma": "toi",
+              "partOfSpeech": "PRON",
+              "key": "fr:toi:PRON"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 21,
+              "end": 33,
+              "surface": "Je m’appelle",
+              "gloss": "ich heiße",
+              "lemma": "Je m’appelle",
+              "key": "fr:je m'appelle:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p004",
+      "sentences": [
+        {
+          "id": "s007",
+          "source": "Julie répond : « Salut ! Je m’appelle Julie. »",
+          "fluent": "Julie antwortet: „Hallo! Ich heiße Julie.\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 12,
+              "surface": "répond",
+              "gloss": "antworten",
+              "lemma": "répondre",
+              "partOfSpeech": "VERB",
+              "key": "fr:répondre:VERB"
+            },
+            {
+              "start": 17,
+              "end": 22,
+              "surface": "Salut",
+              "gloss": "hallo",
+              "lemma": "salut",
+              "partOfSpeech": "INTJ",
+              "key": "fr:salut:INTJ"
+            },
+            {
+              "start": 25,
+              "end": 27,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 28,
+              "end": 30,
+              "surface": "m’",
+              "gloss": "mich",
+              "lemma": "me",
+              "partOfSpeech": "PRON",
+              "key": "fr:me:PRON"
+            },
+            {
+              "start": 30,
+              "end": 37,
+              "surface": "appelle",
+              "gloss": "nennen",
+              "lemma": "appeler",
+              "partOfSpeech": "VERB",
+              "key": "fr:appeler:VERB"
+            },
+            {
+              "start": 38,
+              "end": 43,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 25,
+              "end": 37,
+              "surface": "Je m’appelle",
+              "gloss": "ich heiße",
+              "lemma": "Je m’appelle",
+              "key": "fr:je m'appelle:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p005",
+      "sentences": [
+        {
+          "id": "s008",
+          "source": "Paul demande : « Tu habites où ? »",
+          "fluent": "Paul fragt: „Wo wohnst du?\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 12,
+              "surface": "demande",
+              "gloss": "fragen",
+              "lemma": "demander",
+              "partOfSpeech": "VERB",
+              "key": "fr:demander:VERB"
+            },
+            {
+              "start": 17,
+              "end": 19,
+              "surface": "Tu",
+              "gloss": "du",
+              "lemma": "tu",
+              "partOfSpeech": "PRON",
+              "key": "fr:tu:PRON"
+            },
+            {
+              "start": 20,
+              "end": 27,
+              "surface": "habites",
+              "gloss": "wohnen",
+              "lemma": "habiter",
+              "partOfSpeech": "VERB",
+              "key": "fr:habiter:VERB"
+            },
+            {
+              "start": 28,
+              "end": 30,
+              "surface": "où",
+              "gloss": "wo",
+              "lemma": "où",
+              "partOfSpeech": "ADV",
+              "key": "fr:où:ADV"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p006",
+      "sentences": [
+        {
+          "id": "s009",
+          "source": "Julie dit : « J’habite à Paris. Et toi ? »",
+          "fluent": "Julie sagt: „Ich wohne in Paris. Und du?\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 9,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 14,
+              "end": 16,
+              "surface": "J’",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 16,
+              "end": 22,
+              "surface": "habite",
+              "gloss": "wohnen",
+              "lemma": "habiter",
+              "partOfSpeech": "VERB",
+              "key": "fr:habiter:VERB"
+            },
+            {
+              "start": 23,
+              "end": 24,
+              "surface": "à",
+              "gloss": "in",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 25,
+              "end": 30,
+              "surface": "Paris",
+              "gloss": "Paris",
+              "lemma": "Paris",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paris:PROPN"
+            },
+            {
+              "start": 32,
+              "end": 34,
+              "surface": "Et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 35,
+              "end": 38,
+              "surface": "toi",
+              "gloss": "du",
+              "lemma": "toi",
+              "partOfSpeech": "PRON",
+              "key": "fr:toi:PRON"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p007",
+      "sentences": [
+        {
+          "id": "s010",
+          "source": "Paul répond : « Moi aussi, j’habite à Paris ! »",
+          "fluent": "Paul antwortet: „Ich auch, ich wohne in Paris!\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 11,
+              "surface": "répond",
+              "gloss": "antworten",
+              "lemma": "répondre",
+              "partOfSpeech": "VERB",
+              "key": "fr:répondre:VERB"
+            },
+            {
+              "start": 16,
+              "end": 19,
+              "surface": "Moi",
+              "gloss": "ich",
+              "lemma": "moi",
+              "partOfSpeech": "PRON",
+              "key": "fr:moi:PRON"
+            },
+            {
+              "start": 20,
+              "end": 25,
+              "surface": "aussi",
+              "gloss": "auch",
+              "lemma": "aussi",
+              "partOfSpeech": "ADV",
+              "key": "fr:aussi:ADV"
+            },
+            {
+              "start": 27,
+              "end": 29,
+              "surface": "j’",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 29,
+              "end": 35,
+              "surface": "habite",
+              "gloss": "wohnen",
+              "lemma": "habiter",
+              "partOfSpeech": "VERB",
+              "key": "fr:habiter:VERB"
+            },
+            {
+              "start": 36,
+              "end": 37,
+              "surface": "à",
+              "gloss": "in",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 38,
+              "end": 43,
+              "surface": "Paris",
+              "gloss": "Paris",
+              "lemma": "Paris",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paris:PROPN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p008",
+      "sentences": [
+        {
+          "id": "s011",
+          "source": "Ils parlent, ils rient et ils dansent ensemble.",
+          "fluent": "Sie reden, sie lachen und sie tanzen zusammen.",
+          "units": [
+            {
+              "start": 0,
+              "end": 3,
+              "surface": "Ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 4,
+              "end": 11,
+              "surface": "parlent",
+              "gloss": "sprechen",
+              "lemma": "parler",
+              "partOfSpeech": "VERB",
+              "key": "fr:parler:VERB"
+            },
+            {
+              "start": 13,
+              "end": 16,
+              "surface": "ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 17,
+              "end": 22,
+              "surface": "rient",
+              "gloss": "lachen",
+              "lemma": "rire",
+              "partOfSpeech": "VERB",
+              "key": "fr:rire:VERB"
+            },
+            {
+              "start": 23,
+              "end": 25,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 26,
+              "end": 29,
+              "surface": "ils",
+              "gloss": "sie",
+              "lemma": "il",
+              "partOfSpeech": "PRON",
+              "key": "fr:il:PRON"
+            },
+            {
+              "start": 30,
+              "end": 37,
+              "surface": "dansent",
+              "gloss": "tanzen",
+              "lemma": "danser",
+              "partOfSpeech": "VERB",
+              "key": "fr:danser:VERB"
+            },
+            {
+              "start": 38,
+              "end": 46,
+              "surface": "ensemble",
+              "gloss": "zusammen",
+              "lemma": "ensemble",
+              "partOfSpeech": "ADV",
+              "key": "fr:ensemble:ADV"
+            }
+          ]
+        },
+        {
+          "id": "s012",
+          "source": "Julie aime la musique et Paul aime aussi la musique.",
+          "fluent": "Julie mag Musik, und Paul mag Musik auch.",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 10,
+              "surface": "aime",
+              "gloss": "lieben",
+              "lemma": "aimer",
+              "partOfSpeech": "VERB",
+              "key": "fr:aimer:VERB"
+            },
+            {
+              "start": 11,
+              "end": 13,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 14,
+              "end": 21,
+              "surface": "musique",
+              "gloss": "Musik",
+              "lemma": "musique",
+              "partOfSpeech": "NOUN",
+              "key": "fr:musique:NOUN"
+            },
+            {
+              "start": 22,
+              "end": 24,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 25,
+              "end": 29,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 30,
+              "end": 34,
+              "surface": "aime",
+              "gloss": "lieben",
+              "lemma": "aimer",
+              "partOfSpeech": "VERB",
+              "key": "fr:aimer:VERB"
+            },
+            {
+              "start": 35,
+              "end": 40,
+              "surface": "aussi",
+              "gloss": "auch",
+              "lemma": "aussi",
+              "partOfSpeech": "ADV",
+              "key": "fr:aussi:ADV"
+            },
+            {
+              "start": 41,
+              "end": 43,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 44,
+              "end": 51,
+              "surface": "musique",
+              "gloss": "Musik",
+              "lemma": "musique",
+              "partOfSpeech": "NOUN",
+              "key": "fr:musique:NOUN"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p009",
+      "sentences": [
+        {
+          "id": "s013",
+          "source": "À la fin de la fête, Paul dit : « Je suis content de te connaître. »",
+          "fluent": "Am Ende der Party sagt Paul: „Ich bin froh, dich kennenzulernen.\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 1,
+              "surface": "À",
+              "gloss": "an",
+              "lemma": "à",
+              "partOfSpeech": "ADP",
+              "key": "fr:à:ADP"
+            },
+            {
+              "start": 2,
+              "end": 4,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 5,
+              "end": 8,
+              "surface": "fin",
+              "gloss": "Ende",
+              "lemma": "fin",
+              "partOfSpeech": "NOUN",
+              "key": "fr:fin:NOUN"
+            },
+            {
+              "start": 9,
+              "end": 11,
+              "surface": "de",
+              "gloss": "von",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 12,
+              "end": 14,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 15,
+              "end": 19,
+              "surface": "fête",
+              "gloss": "Fest",
+              "lemma": "fête",
+              "partOfSpeech": "NOUN",
+              "key": "fr:fête:NOUN"
+            },
+            {
+              "start": 21,
+              "end": 25,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 26,
+              "end": 29,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 34,
+              "end": 36,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 37,
+              "end": 41,
+              "surface": "suis",
+              "gloss": "sein",
+              "lemma": "être",
+              "partOfSpeech": "AUX",
+              "key": "fr:être:AUX"
+            },
+            {
+              "start": 42,
+              "end": 49,
+              "surface": "content",
+              "gloss": "froh",
+              "lemma": "content",
+              "partOfSpeech": "ADJ",
+              "key": "fr:content:ADJ"
+            },
+            {
+              "start": 50,
+              "end": 52,
+              "surface": "de",
+              "gloss": "zu",
+              "lemma": "de",
+              "partOfSpeech": "ADP",
+              "key": "fr:de:ADP"
+            },
+            {
+              "start": 53,
+              "end": 55,
+              "surface": "te",
+              "gloss": "dich",
+              "lemma": "te",
+              "partOfSpeech": "PRON",
+              "key": "fr:te:PRON"
+            },
+            {
+              "start": 56,
+              "end": 65,
+              "surface": "connaître",
+              "gloss": "kennen",
+              "lemma": "connaître",
+              "partOfSpeech": "VERB",
+              "key": "fr:connaître:VERB"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 0,
+              "end": 8,
+              "surface": "À la fin",
+              "gloss": "am Ende",
+              "lemma": "À la fin",
+              "key": "fr:à la fin:PHRASE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p010",
+      "sentences": [
+        {
+          "id": "s014",
+          "source": "Julie sourit et dit : « Moi aussi ! »",
+          "fluent": "Julie lächelt und sagt: „Ich auch!\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 12,
+              "surface": "sourit",
+              "gloss": "lächeln",
+              "lemma": "sourire",
+              "partOfSpeech": "VERB",
+              "key": "fr:sourire:VERB"
+            },
+            {
+              "start": 13,
+              "end": 15,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 16,
+              "end": 19,
+              "surface": "dit",
+              "gloss": "sagen",
+              "lemma": "dire",
+              "partOfSpeech": "VERB",
+              "key": "fr:dire:VERB"
+            },
+            {
+              "start": 24,
+              "end": 27,
+              "surface": "Moi",
+              "gloss": "ich",
+              "lemma": "moi",
+              "partOfSpeech": "PRON",
+              "key": "fr:moi:PRON"
+            },
+            {
+              "start": 28,
+              "end": 33,
+              "surface": "aussi",
+              "gloss": "auch",
+              "lemma": "aussi",
+              "partOfSpeech": "ADV",
+              "key": "fr:aussi:ADV"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

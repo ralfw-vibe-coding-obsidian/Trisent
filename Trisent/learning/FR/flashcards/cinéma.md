@@ -2,13 +2,11 @@
 type: flashcard
 language: fr
 key: fr:cinéma:NOUN
-front: cinéma
-back: Kino, Filmkunst
-level: 0
-seen: 0
+level: 1
+seen: 1
 wrong: 0
-due: 2026-09-19
+due: 2026-09-25
 added: 2026-09-19
-word: "[[Trisent/learning/FR/dictionary/cinéma|cinéma]]"
+word: "[[Trisent/learning/FR/notes/cinéma|cinéma]]"
 ---
 ## My notes
