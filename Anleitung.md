@@ -25,10 +25,28 @@ tippe **`trisent`**, und du siehst alle vier:
 | **Trisent: Reading** | Texte lesen und hören |
 | **Trisent: Translation** | Sätze übersetzen, tippend oder gesprochen |
 | **Trisent: Flashcards** | die Lernkartei |
-| **Trisent: Open packager** | Texte zu Paketen schnüren |
+| **Trisent: Packager** | Texte zu Paketen schnüren |
 
 Auf dem Handy ist das der bequemere Weg – dort ist die Symbolleiste schmal
 und manches Symbol schlecht zu treffen.
+
+## Neue Texte in deine Bibliothek holen
+
+Neue Texte kommen immer auf demselben Weg: als **ZIP-Datei im Ordner
+`Trisent/inbox`**. Das ist dein Posteingang.
+
+- **Aus der eigenen Werkstatt:** „Deploy" im Packager legt das Paket dort ab.
+- **Von jemand anderem:** Leg die ZIP-Datei selbst hinein – am Mac im Finder,
+  am iPhone über die Dateien-App. In Obsidians Dateiliste siehst du den
+  Ordner womöglich nicht, weil Trisent seine Ordner dort ausblendet.
+
+Übernommen wird erst, wenn du es willst: Im Reader auf **Import** drücken.
+Liegt etwas im Posteingang, steht die Zahl schon am Knopf.
+
+Was angekommen ist, verschwindet aus dem Posteingang (in Obsidians
+Papierkorb, falls du es doch noch brauchst). Was nicht passt, bleibt liegen,
+und du erfährst, warum. Beides steht auch im Logbuch – **Einstellungen →
+Open log**.
 
 ## Der Rhythmus
 

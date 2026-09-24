@@ -8,14 +8,11 @@
  * Streak und die Kartei. Vorher hatte jedes Werkzeug seine eigene Bibliothek auf
  * demselben Ordner - zwei Zwischenspeicher für dieselben Dateien.
  *
- * Und hier liegt die VORDERTÜR: Der Packager reicht fertige Pakete an
- * `plugin.learning.importFiles()`. Absichtlich benannt nach dem Zweck und
- * nicht nach einem Werkzeug - `plugin.reader` hieße heute schon falsch,
- * und eine Umbenennung würde bei der Person erst dann brechen, wenn sie
- * "Deploy" drückt.
+ * Und hier liegt der IMPORT: Pakete kommen ausschließlich über die Inbox
+ * herein, als ZIP. Mit der Werkstatt teilt diese Seite keine Funktion,
+ * nur den Ordner und die Dateiform - siehe inbox.js.
  *
- * Diese Datei gehört Reader und Translator gemeinsam. Änderungen am
- * Namen oder an der Form von `importFiles` betreffen auch den Packager.
+ * Diese Datei gehört Reader und Translator gemeinsam.
  */
 
 const { Library } = require('../core/library.js');
@@ -23,6 +20,7 @@ const { Streak } = require('./streak.js');
 const { Deck } = require('../flashcards/deck.js');
 const { Dictionary } = require('./dictionary.js');
 const { Importer } = require('./importer.js');
+const { Inbox } = require('./inbox.js');
 const { Migrations, describe } = require('./migrations.js');
 const { log } = require('../core/log.js');
 
@@ -51,8 +49,9 @@ class Learning {
        ab - also gehört sie keinem von beiden allein. */
     this.deck = new Deck(plugin.app, this.library);
 
-    /* Der eine Weg herein. */
+    /* Der eine Weg herein: aus der Inbox, durch die Prüfung. */
     this.importer = new Importer(this);
+    this.inbox = new Inbox(this);
   }
 
   /* Vorhandene Notizen auf das heutige Schema bringen. Läuft einmal je
@@ -74,45 +73,15 @@ class Learning {
     return describe(report);
   }
 
-  /* Die Tür für ein schon ausgepacktes Paket.
-   *
-   * contents: Map von Pfad (relativ zum Paketordner) auf Bytes, also
-   * mindestens 'package.json'. Geprüft wird dahinter, immer - ein Paket
-   * vom Packager nimmt denselben Weg wie eine fremde ZIP-Datei.
-   *
-   * Seit es importArchive() gibt, ist das nur noch Innenleben und die
-   * Brücke für die Übergangszeit: Der Packager ruft es, bis er auf das
-   * ZIP umgestellt hat. */
-  importFiles(contents, label) {
-    return this.importer.importContents(contents, label);
+  /* Wie viele Pakete in der Inbox warten. Sofort, ohne zu lesen - für
+     den Knopf, der es anzeigt. */
+  waitingInInbox() {
+    return this.inbox.waiting().length;
   }
 
-  /* Die Vordertür für ein ZIP - genau das, was auch ein Fremder mitbringt.
-   *
-   * bytes: der Inhalt des Archivs, als ArrayBuffer oder Uint8Array.
-   * label: wie es heißen soll, wenn eine Meldung davon spricht.
-   *
-   * Nimmt beide Fassungen des Paketformats. Dahinter derselbe Weg wie
-   * importFiles(): prüfen, Wörterbuch einarbeiten, ablegen. */
-  importArchive(bytes, label) {
-    return this.importer.importArchive(bytes, label);
-  }
-
-  /* Liegt ein Paket in der Bibliothek, und in welcher Fassung?
-   *
-   * Liefert die Fassungsnummer (`version` aus dem Kopf, 0 wenn es keine
-   * trägt) - oder null, wenn das Paket nicht da ist.
-   *
-   * Für den Packager, der wissen muss, ob ein Deploy nötig ist. Er soll
-   * dafür nicht in den Bereich der Lernenden schauen: Wie die Ablage dort
-   * aussieht, hat sich eben erst geändert und wird sich wieder ändern.
-   * Die Frage gehört an die Tür, wie der Import auch. */
-  async versionOf(id) {
-    for (const language of this.library.languages()) {
-      const found = await this.library.folderForPackageId(language, id);
-      if (found) return typeof found.version === 'number' ? found.version : 0;
-    }
-    return null;
+  /* Alles importieren, was in der Inbox liegt. Liefert { done, failed }. */
+  importInbox() {
+    return this.inbox.importAll();
   }
 }
 

@@ -161,7 +161,6 @@ class TrisentView extends ItemView {
     const head = page.createDiv({ cls: 'trisent-dashboard-head' });
     head.createEl('h1', { text: 'Trisent' });
     this.renderImportButton(head);
-    this.attachDropTarget();
 
     if (this.importReport) this.renderImportReport(page);
     page.createEl('p', {
@@ -182,7 +181,6 @@ class TrisentView extends ItemView {
     const head = page.createDiv({ cls: 'trisent-dashboard-head' });
     head.createEl('h1', { text: 'Trisent' });
     this.renderImportButton(head);
-    this.attachDropTarget();
 
     if (this.importReport) this.renderImportReport(page);
 
@@ -428,7 +426,6 @@ class TrisentView extends ItemView {
     const head = bar.querySelector('.trisent-header');
     this.renderStreak(head, language);
     this.renderImportButton(head);
-    this.attachDropTarget();
 
     if (this.importReport) this.renderImportReport(page);
 
@@ -553,65 +550,44 @@ class TrisentView extends ItemView {
   /* ---------------------------------------------------------------- */
 
   /* Der Import gehört keiner Sprache - die steht im Paket. Deshalb
-     derselbe Knopf auf der Übersicht wie in der Textliste. */
+     derselbe Knopf auf der Übersicht wie in der Textliste.
+
+     Er schaut in die Inbox, und nur dort. Eine ZIP von woanders legt die
+     Person selbst hinein; Werkstatt und Bibliothek teilen sich nichts als
+     diesen Ordner. Wartet etwas, steht die Zahl am Knopf - sonst wüsste
+     niemand, dass es sich zu drücken lohnt. */
   renderImportButton(parent) {
+    const waiting = this.reader.plugin.learning.waitingInInbox();
     const button = parent.createEl('button', {
-      cls: 'trisent-import-button',
-      attr: { title: 'Import a package from a ZIP file' }
+      cls: 'trisent-import-button' + (waiting > 0 ? ' has-waiting' : ''),
+      attr: {
+        title: waiting > 0
+          ? 'Import ' + waiting + (waiting === 1 ? ' package' : ' packages') + ' from your inbox'
+          : 'Import packages from your inbox'
+      }
     });
-    setIcon(button.createSpan(), 'download');
+    setIcon(button.createSpan(), 'inbox');
     button.createSpan({ text: 'Import' });
-    button.addEventListener('click', () => this.pickPackages());
+    if (waiting > 0) button.createSpan({ cls: 'trisent-import-count', text: String(waiting) });
+    button.addEventListener('click', () => this.importFromInbox());
     return button;
   }
 
-  /* Eine ZIP-Datei darf auch einfach fallen gelassen werden. */
-  attachDropTarget() {
-    this.scrollEl.addEventListener('dragover', (event) => {
-      event.preventDefault();
-      this.scrollEl.addClass('is-dropping');
-    });
-    this.scrollEl.addEventListener('dragleave', () => this.scrollEl.removeClass('is-dropping'));
-    this.scrollEl.addEventListener('drop', (event) => {
-      event.preventDefault();
-      this.scrollEl.removeClass('is-dropping');
-      const files = event.dataTransfer && event.dataTransfer.files;
-      if (files && files.length > 0) this.importArchives(Array.from(files));
-    });
-  }
+  async importFromInbox() {
+    const learning = this.reader.plugin.learning;
 
-  pickPackages() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.zip,application/zip';
-    input.multiple = true;
-    input.addEventListener('change', () => {
-      const files = Array.from(input.files || []);
-      if (files.length > 0) this.importArchives(files);
-    });
-    input.click();
-  }
+    /* Nichts da: nicht still nichts tun, sondern sagen, wohin es gehört. */
+    if (learning.waitingInInbox() === 0) {
+      this.importReport = { busy: false, done: [], failed: [], empty: learning.inbox.path() };
+      this.render();
+      return;
+    }
 
-  async importArchives(files) {
     this.importReport = { busy: true, done: [], failed: [] };
     this.render();
 
-    for (const file of files) {
-      try {
-        const result = await this.reader.plugin.learning.importArchive(
-          await file.arrayBuffer(), file.name
-        );
-        this.importReport.done.push(result);
-      } catch (error) {
-        this.importReport.failed.push({
-          name: file.name,
-          message: String(error.message || error),
-          problems: error.problems || []
-        });
-      }
-    }
-
-    this.importReport.busy = false;
+    const report = await learning.importInbox();
+    this.importReport = { busy: false, done: report.done, failed: report.failed };
     this.reader.plugin.applyFolderVisibility();
 
     /* Steht man in einer Textliste und das Paket gehört in eine andere
@@ -651,8 +627,17 @@ class TrisentView extends ItemView {
     const box = page.createDiv({ cls: 'trisent-report' });
 
     if (report.busy) {
-      box.createDiv({ cls: 'trisent-report-line', text: 'Reading…' });
+      box.createDiv({ cls: 'trisent-report-line', text: 'Reading your inbox…' });
       return;
+    }
+
+    if (report.empty) {
+      const line = box.createDiv({ cls: 'trisent-report-line' });
+      setIcon(line.createSpan({ cls: 'trisent-report-icon' }), 'inbox');
+      line.createSpan({
+        text: 'Your inbox is empty. Packages arrive in ' + report.empty
+          + ' - as ZIP files, from the packager or from anyone else.'
+      });
     }
 
     for (const result of report.done) {

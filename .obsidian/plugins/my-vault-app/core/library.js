@@ -10,8 +10,7 @@
  */
 
 const { TFile, TFolder, normalizePath } = require('obsidian');
-const { readZip } = require('./zip.js');
-const { PACKAGE_FILE, TEXT_FILE, WORD_STATUS, validatePackage } = require('./package.js');
+const { PACKAGE_FILE, TEXT_FILE, WORD_STATUS } = require('./package.js');
 
 /* Ein Ordner ist eine Sprache, wenn diese Notiz darin liegt - nicht
    durch Raten am Namen. */
@@ -447,94 +446,6 @@ class Library {
   /* ---------------------------------------------------------------- */
 
   /* Ein Paket aus einer ZIP-Datei in die Vault holen. */
-  async importZip(arrayBuffer, label) {
-    const files = await readZip(arrayBuffer);
-
-    /* Die Paketdatei kann direkt im Archiv liegen oder in einem Ordner
-       darin. Die am wenigsten tief liegende gewinnt. */
-    let packagePath = null;
-    for (const name of files.keys()) {
-      if (!name.endsWith(PACKAGE_FILE)) continue;
-      const isRoot = name === PACKAGE_FILE || name.endsWith('/' + PACKAGE_FILE);
-      if (!isRoot) continue;
-      if (packagePath === null || name.split('/').length < packagePath.split('/').length) {
-        packagePath = name;
-      }
-    }
-    if (packagePath === null) {
-      throw new Error('There is no ' + PACKAGE_FILE + ' in "' + label + '".');
-    }
-
-    /* Alles aus dem Paketordner, mit Pfaden relativ zu ihm. */
-    const prefix = packagePath.slice(0, packagePath.length - PACKAGE_FILE.length);
-    const contents = new Map();
-    for (const [name, bytes] of files) {
-      if (!name.startsWith(prefix)) continue;
-      contents.set(name.slice(prefix.length), bytes);
-    }
-
-    return this.importFiles(contents, label);
-  }
-
-  /* Der eigentliche Import: prüfen, einordnen, schreiben.
-
-     Absichtlich getrennt vom Entpacken. So gibt es zwei Türen - eine ZIP
-     von außen und ein fertiges Paket vom Packager - aber nur einen Weg
-     dahinter. Gleiche Prüfung, gleiche Platzierung, gleiches Verhalten.
-     Eine Abkürzung für die eigene Seite würde mit der Zeit vom fremden
-     Weg abweichen, und genau das fiele niemandem auf.
-
-     contents: Map von Pfad (relativ zum Paketordner) auf Bytes. */
-  async importFiles(contents, label) {
-    const source = contents.get(PACKAGE_FILE);
-    if (!source) throw new Error('There is no ' + PACKAGE_FILE + ' in "' + label + '".');
-
-    let data;
-    try {
-      data = JSON.parse(new TextDecoder('utf-8').decode(source));
-    } catch (error) {
-      throw new Error('The package file is not valid JSON: ' + String(error.message || error));
-    }
-
-    const problems = validatePackage(data, new Set(contents.keys()));
-    if (problems.length > 0) {
-      const error = new Error('The package did not pass the checks.');
-      error.problems = problems;
-      throw error;
-    }
-
-    /* Die Sprache steht im Paket. Fehlt sie in der Bibliothek, legen wir
-       sie an - solange wir wissen, wie sie heißt. */
-    let language = this.languageByCode(data.language);
-    let addedLanguage = false;
-    if (!language) {
-      const known = KNOWN_LANGUAGES.find((entry) => entry.code === data.language);
-      if (!known) {
-        throw new Error(
-          'This package is in "' + data.language + '", which is not a language Trisent knows. Add it by hand first.'
-        );
-      }
-      language = await this.createLanguage(known.code, known.name, known.flag);
-      addedLanguage = true;
-    }
-
-    /* Dasselbe Paket in neuer Fassung? Dann dorthin, wo es schon liegt. */
-    const existing = await this.folderForPackageId(language, data.id);
-    const target = existing ? existing.folder : await this.newPackageFolder(language, data.title);
-
-    await this.writePackageFiles(target, contents);
-
-    return {
-      title: data.title,
-      language: language,
-      folder: target,
-      updated: !!existing,
-      addedLanguage: addedLanguage,
-      version: data.version,
-      previousVersion: existing ? existing.version : null
-    };
-  }
-
   /* Der Ordner, in dem dieses Paket schon liegt - samt seiner bisherigen
      Fassung, damit der Import sagen kann, was er ersetzt. */
   async folderForPackageId(language, id) {

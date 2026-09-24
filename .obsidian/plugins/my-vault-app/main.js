@@ -37,6 +37,7 @@ const MODULES = [
   'learning/migrations.js',
   'learning/layout.js',
   'learning/importer.js',
+  'learning/inbox.js',
   'flashcards/schedule.js',
   'flashcards/session.js',
   'flashcards/find.js',
@@ -189,10 +190,9 @@ module.exports = class TrisentPlugin extends Plugin {
       reader.DEFAULTS, translator.DEFAULTS, flashcards.DEFAULTS, packager.DEFAULTS
     );
 
-    /* Die Seite der Lernenden. Reader und Translator teilen sich, was hier
-       liegt - und der Packager reicht fertige Pakete an
-       plugin.learning.importFiles(). Das ist die Vordertür, benannt nach
-       dem Zweck und nicht nach einem Werkzeug. */
+    /* Die Seite der Lernenden. Reader, Translator und Kartei teilen sich,
+       was hier liegt. Mit dem Packager teilt sie keine Funktion - Pakete
+       kommen als ZIP über die Inbox. */
     this.learning = new modules['learning/index.js'].Learning(this);
 
     /* Das Logbuch - jeder Teil schreibt über core/log.js hinein. */

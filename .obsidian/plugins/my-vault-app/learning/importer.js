@@ -1,10 +1,10 @@
 "use strict";
 
 /*
- * Die Tür in die Bibliothek der Person.
+ * Der Weg eines Pakets in die Bibliothek der Person.
  *
- * Es gibt genau einen Weg herein, und hier ist er: ein Paket - aus der
- * Werkstatt nebenan oder als ZIP von einem Fremden - wird ausgepackt,
+ * Es gibt genau einen, und er beginnt in der Inbox (inbox.js): Ein ZIP -
+ * aus der Werkstatt nebenan oder von einem Fremden - wird ausgepackt,
  * geprüft, sein Wörterbuch in das der Person eingearbeitet, und dann
  * abgelegt. Gleiche Prüfung, gleiche Ablage, gleiches Verhalten für
  * beide. Eine Abkürzung für die eigene Seite würde mit der Zeit vom

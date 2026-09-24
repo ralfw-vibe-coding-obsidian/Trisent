@@ -136,18 +136,20 @@ in Kommentaren und im Gespräch mit der Person:
 
 | Begriff | Was es ist | Wo es liegt |
 |---|---|---|
-| **Word card** | die Ansicht rechts im Reader. Virtuell: Sie setzt zusammen, was Paket, Notiz und Kartei wissen. Keine Datei. | – |
-| **Word entry** | was ein Paket über ein Wort weiß: Grundform, Wortart, Bedeutung, Formen, Grammatik. Kommt vom Packager. | `dictionary` in der `package.json` eines Textes |
-| **Word note** | die Manifestation eines Wortes für die Person – ihr Knotenpunkt. Lernstand, eigene Notizen, Verweise (z. B. auf die Flashcard). | `learning/<LANG>/dictionary/` – **ihr** Wörterbuch |
-| **Flashcard** | eine Karteikarte: Vorder- und Rückseite, Level, Wiedervorlage. Verweist auf die Word note. | `learning/<LANG>/flashcards/` |
+| **Word card** | die Ansicht rechts im Reader. Virtuell: Sie setzt zusammen, was Wörterbuch, Notiz und Kartei wissen. Keine Datei. | – |
+| **Word entry** | was über ein Wort bekannt ist: Grundform, Wortart, Bedeutung, Formen, Grammatik. Kommt mit den Paketen und wird beim Import eingearbeitet. | `learning/<LANG>/dictionary.json` – **ihr** Wörterbuch, eins je Sprache |
+| **Word note** | die Manifestation eines Wortes für die Person – ihr Knotenpunkt. Lernstand, eigene Notizen, Verweise (z. B. auf die Flashcard). | `learning/<LANG>/notes/` |
+| **Flashcard** | eine Karteikarte: Level, Wiedervorlage, eigene Notizen. Vorder- und Rückseite holt sie über den Schlüssel aus dem Wörterbuch. Verweist auf die Word note. | `learning/<LANG>/flashcards/` |
 
 Zwei Regeln fallen daraus:
 
-- **In die Word note wird nichts kopiert, was im Word entry steht.** Sonst gibt
-  es dieselbe Erklärung zweimal, und die Abschrift veraltet still. Siehe
-  `konzept/paketformat.md`.
-- **„Dictionary" heißt immer das der Person.** Was mit dem Text kommt, heißt
-  Word entry – auch wenn das Feld in der `package.json` `dictionary` heißt.
+- **In Word note und Flashcard wird nichts kopiert, was im Word entry steht.**
+  Sonst gibt es dieselbe Erklärung zweimal, und die Abschrift veraltet still.
+  Gelesen wird die Erklärung nur aus dem Wörterbuch – im Text, auf der Word
+  card, auf der Flashcard.
+- **„Dictionary" heißt das Wörterbuch der Person** – die eine Datei je Sprache.
+  Das `dictionary.json` in einem Paket ist nur Transportmittel: Es wird beim
+  Import eingearbeitet und nicht abgelegt.
 
 ### Getrennte Bereiche in der Vault
 
@@ -159,12 +161,14 @@ Trisent/                  einstellbar, Vorgabe: Trisent
 ├── learning/             die Seite der Lernenden
 │   ├── BG/
 │   │   ├── language.md
-│   │   ├── dictionary/   was die Person über Wörter weiß, eine Notiz je Wort
-│   │   ├── sentences/    was sie über Sätze weiß, eine Notiz je Text
-│   │   └── packages/     die Lerntexte
+│   │   ├── dictionary.json  das Wörterbuch: alle Word entries, gefüllt durch Importe
+│   │   ├── notes/           Word notes - Lernstand und Eigenes, eine je Wort
+│   │   ├── flashcards/      die Lernkartei
+│   │   ├── sentences/       was sie über Sätze weiß, eine Notiz je Text
+│   │   └── packages/        die Lerntexte: Kopf und Text, ohne Wörterbuch
 │   └── FR/
 ├── packager/             die Seite des Herstellens
-├── inbox/                fertige Pakete als ZIP - hier legt der Packager ab
+├── inbox/                Pakete als ZIP - der einzige Weg in die Bibliothek
 └── log.md                was die App getan hat, zum Nachlesen
 ```
 
@@ -218,16 +222,24 @@ Die Aufteilung ist keine Empfehlung, sondern eine Abmachung.
 ```
 
 `learning/` ist zu `core/`, was die Lernwerkzeuge gemeinsam haben: die
-Bibliothek, der Streak (je Sprache, nicht je Werkzeug), die Suche nach
-Fundstellen (`occurrences.js` – Reader und Lernkartei müssen dieselben Sätze
-finden) – und die **Vordertür**.
+Bibliothek, der Streak (je Sprache, nicht je Werkzeug), das Wörterbuch, die
+Suche nach Fundstellen (`occurrences.js` – Reader und Lernkartei müssen
+dieselben Sätze finden) – und der **Import**.
 
-**Die Vordertür ist `plugin.learning.importFiles(contents, label)`.** Durch sie
-kommt jedes Paket in die Bibliothek – eines aus der Inbox genauso wie eine
-ZIP-Datei von außen; geprüft wird dahinter, immer. Sie
-heißt nach dem Zweck und nicht nach einem Werkzeug, denn ein Werkzeugname
-ändert sich – und ein gebrochener Aufruf fiele der Person erst auf, wenn sie
-„Deploy" drückt, nicht beim Laden.
+**Pakete kommen nur über die Inbox herein.** Werkstatt und Bibliothek teilen
+sich **keine Funktion** – nur den Ordner `Trisent/inbox/` und eine Dateiform:
+ein Paket als ZIP. Der Packager legt hinein, was er geschnürt hat; ein Paket
+von einem Fremden legt die Person selbst dorthin.
+
+Importiert wird, wenn die Person es möchte – im Reader über „Import", nie von
+selbst. Dann liest `learning/inbox.js` jede ZIP, `learning/importer.js` prüft
+sie mit dem Vertrag in `core/package.js` (beide Fassungen), arbeitet ihr
+Wörterbuch ins zentrale ein – **zuerst**, dann erst die Dateien – und legt
+Kopf, Text und Ton ab. Angekommene ZIPs wandern in den Papierkorb, abgewiesene
+bleiben liegen, und die Person erfährt, warum.
+
+Der Packager fragt die Bibliothek nichts, auch nicht, ob ein Paket dort schon
+liegt. Ob seines veraltet ist, liest er aus seinem eigenen Manifest.
 
 Änderungen an `learning/` im Einvernehmen zwischen Reader und Translator.
 
@@ -243,7 +255,7 @@ heißt nach dem Zweck und nicht nach einem Werkzeug, denn ein Werkzeugname
 | `core/`, `main.js`, `styles.css`, `konzept/paketformat.md` | **alle - nur im Einvernehmen** |
 | `Trisent/learning/` in der Vault | die Learning-Seite (Reader und Translator) |
 | `Trisent/packager/` in der Vault | nur der Packager |
-| `Trisent/inbox/` in der Vault | der Packager legt hinein, die Person holt ab |
+| `Trisent/inbox/` in der Vault | der Packager legt hinein; die Person holt ab oder importiert – der Import räumt, was angekommen ist |
 
 Bevor du etwas in `core/`, `main.js` oder `styles.css` änderst, sag es der
 Person. Sie gibt es an die andere Sitzung weiter. Änderst du dort still etwas,
