@@ -345,6 +345,13 @@ weigert sich, eine Datei zu laden, die Obsidian braucht – das ist Absicht.
 **Git.** Beide Sitzungen arbeiten im selben Repo. Committe klein und oft.
 Solange jeder in seinem Verzeichnis bleibt, gibt es keine Konflikte.
 
+**Nur die eigenen Pfade einchecken.** Kein `git add -A`, kein `git commit -a`,
+kein `git add .` – wir teilen uns nicht nur das Repo, sondern das
+Arbeitsverzeichnis, und der Stand der anderen Seite ist dort womöglich gerade
+halbfertig. Einmal ist es schon passiert: Ein Commit der einen Seite trug die
+unfertige Arbeit der anderen unter falschem Namen. Also immer mit Pfaden, etwa
+`git add .obsidian/plugins/my-vault-app/packager/ tests/packager-*`.
+
 Ansonsten: schreib den Code so, wie der vorhandene geschrieben ist. Schlicht,
 lesbar, deutschsprachige Kommentare an den Stellen, wo eine Entscheidung
 dahintersteckt. Englische Bezeichner, englische Oberfläche.
