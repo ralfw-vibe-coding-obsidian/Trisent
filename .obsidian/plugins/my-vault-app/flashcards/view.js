@@ -57,6 +57,7 @@ class DeckView extends ItemView {
     this.library = flashcards.library;
     this.deck = flashcards.deck;
     this.streak = flashcards.streak;
+    this.dict = flashcards.dictionary;
     this.languageCode = null;
     this.query = '';
     /* Welche Seite der Kartei gerade zu sehen ist. Keine Einstellung -
@@ -90,6 +91,7 @@ class DeckView extends ItemView {
     const last = this.flashcards.settings.lastLanguage;
     if (last && this.library.languageByCode(last)) this.languageCode = last;
     this.registerDomEvent(document, 'keydown', (event) => this.onKey(event));
+    this.warmDictionary();
 
     /* Ein Klick irgendwohin sonst hebt die Markierung auf: Sie ist ein
        Lesezeichen für den Weg zurück, kein Zustand, den man wieder
@@ -149,7 +151,7 @@ class DeckView extends ItemView {
 
     const grid = page.createDiv({ cls: 'trisent-language-grid' });
     for (const language of languages) {
-      const cards = this.deck.all(language);
+      const cards = this.cardsOf(language);
       const due = cards.filter((card) => isDue(card, today())).length;
 
       const tile = grid.createEl('button', { cls: 'trisent-tile' });
@@ -170,6 +172,7 @@ class DeckView extends ItemView {
         this.query = '';
         this.at = 0;
         this.cameFrom = null;
+        this.warmDictionary();
         this.flashcards.settings.lastLanguage = language.code;
         this.flashcards.saveSettings();
         this.render();
@@ -199,7 +202,7 @@ class DeckView extends ItemView {
     });
     this.renderStreak(head, language);
 
-    const cards = this.deck.all(language);
+    const cards = this.cardsOf(language);
     if (cards.length === 0) {
       page.createEl('p', {
         cls: 'trisent-lead',
@@ -304,7 +307,7 @@ class DeckView extends ItemView {
       this.query = field.value;
       this.at = 0;
       const language = this.library.languageByCode(this.languageCode);
-      if (language) this.paintList(this.deck.all(language), language, today());
+      if (language) this.paintList(this.cardsOf(language), language, today());
     });
   }
 
@@ -344,6 +347,43 @@ class DeckView extends ItemView {
       return cards.slice().sort((a, b) => (b.wrong - a.wrong) || byName(a, b));
     }
     return cards.slice().sort(byName);
+  }
+
+  /* Die Karten einer Sprache, mit Vorder- und Rückseite aus dem
+     Wörterbuch der Person.
+
+     Eine Karte schrieb sich die Bedeutung bisher beim Anlegen ab und
+     schlug nie wieder nach - ein besserer Text verbesserte eine
+     vorhandene Karte nie. Jetzt hängt sie nur noch am Schlüssel.
+
+     Die Reihenfolge der Rückfälle ist die Reihenfolge der Verlässlichkeit:
+     das Wörterbuch, dann was in der Karte steht (bis der Umbau es
+     entfernt), dann die Grundform aus dem Schlüssel. Das Letzte geht
+     immer - ein Schlüssel ohne Grundform ist keiner. */
+  cardsOf(language) {
+    return this.deck.all(language).map((card) => {
+      const entry = this.dict.peek(language, card.key);
+      const lemma = String(card.key || '').split(':')[1] || card.key || '';
+
+      return Object.assign({}, card, {
+        front: (entry && entry.lemma) || card.front || lemma,
+        back: (entry && entry.gloss) || card.back || ''
+      });
+    });
+  }
+
+  /* Das Wörterbuch einmal lesen, bevor gezeichnet wird - danach geht es
+     ohne Warten, und die Liste kann zeichnen, ohne anzuhalten. */
+  async warmDictionary() {
+    const language = this.library.languageByCode(this.languageCode);
+    if (!language) return;
+
+    try {
+      await this.dict.entries(language);
+    } catch (error) {
+      console.error('Trisent: could not read the dictionary', error);
+    }
+    this.render();
   }
 
   /* An wie vielen Tagen hintereinander mit dieser Sprache gelernt wurde.

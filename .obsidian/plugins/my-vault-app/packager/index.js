@@ -34,20 +34,26 @@ const PACKAGE_FILE = 'package.json';
 const WORDS_DIR = 'words';
 const DICTIONARY_FILE = 'dictionary.json';
 
-/* Die Nummer des Bauplans, nach dem heute Beschreibungen entstehen.
-   Später steht sie im Bauplan selbst (meta/schema.md); bis dahin hier.
-   Alte Beschreibungen aus der Zeit davor zählen als 0 und werden so von
-   jeder neueren Fassung abgelöst. */
-const RECIPE_SCHEMA = 1;
+/* Die Nummer eines Bauplans, der keine eigene trägt. Alte Beschreibungen
+   aus der Zeit vor dem Bauplan zählen als 0 und werden so von jeder
+   neueren Fassung abgelöst. */
+const FIRST_RECIPE = 1;
 const AUDIO_DIR = 'audio';
 /* Die Zeitmarken je Satz. Bleiben in der Werkstatt - im Paket stehen
    sie fertig ausgerechnet an den Sätzen, nicht als Rohdaten daneben. */
 const TIMING_DIR = 'timing';
+/* Hausregeln und Bauplan liegen in einem eigenen Ordner je Sprache -
+   getrennt von den Texten, damit keines von beiden je für einen Text
+   gehalten wird. */
+const META_DIR = 'meta';
 const RULES_FILE = 'rules.md';
 /* Der Bauplan für Wortbeschreibungen: was je Wortart darin stehen muss.
-   Liegt als Notiz beim Sprachordner - abgeholt aus dem Repo, sobald eine
-   Sprache zum ersten Mal verpackt wird, und danach die der Person. */
-const RECIPE_FILE = 'word-notes.md';
+   Abgeholt aus dem Repo, sobald eine Sprache zum ersten Mal verpackt
+   wird, und danach der der Person. Er trägt eine Nummer; jeder Eintrag
+   im Wortvorrat merkt sich, nach welcher er geschrieben wurde. */
+const RECIPE_FILE = 'schema.md';
+/* So hieß der Bauplan, bevor er nach meta/ zog - nur noch für den Umzug. */
+const OLD_RECIPE_FILE = 'word-notes.md';
 /* Das Repo als Quelle vorbereiteter Regelwerke. Geholt wird von "main",
    nicht von einem Release: Was wir dort einarbeiten, steht damit sofort
    jedem Packager zur Verfügung, ohne dass jemand das Plugin erneuert. */
@@ -221,9 +227,17 @@ function fingerprint(text) {
    Notiz schon. */
 function isSchemaNote(file, raw) {
   const name = String(file.name).toLowerCase();
-  if (name === RULES_FILE || name === RECIPE_FILE) return true;
+  if (name === RULES_FILE || name === RECIPE_FILE || name === OLD_RECIPE_FILE) return true;
   const type = splitNote(raw).front.type;
   return typeof type === 'string' && type.indexOf('packager-') === 0;
+}
+
+/* Die Nummer, die eine Fassung des Bauplans im Kopf trägt. Fehlt sie,
+   ist es die erste. */
+function recipeVersion(body) {
+  const { front } = splitNote(String(body || ''));
+  const number = Number(front.version);
+  return Number.isFinite(number) && number >= 0 ? Math.floor(number) : FIRST_RECIPE;
 }
 
 /* Aus einem Ordnernamen eine Kennung machen: klein, ohne Sonderzeichen. */
@@ -819,7 +833,8 @@ class Packager {
       result.push({
         code: child.name.toLowerCase(),
         folder: child,
-        rules: !!this.file(child.path + '/' + RULES_FILE),
+        rules: !!this.file(child.path + '/' + META_DIR + '/' + RULES_FILE) ||
+               !!this.file(child.path + '/' + RULES_FILE),
         words: await this.wordCount(child),
         texts: await this.textsOf(child)
       });
@@ -1012,8 +1027,7 @@ class Packager {
      ohne Netz, und wer eine Sprache besser kennt als das Repo, ändert
      einfach die Notiz. */
   async ensureSchema(code, kind) {
-    const file = kind === 'rules' ? RULES_FILE : RECIPE_FILE;
-    const path = this.languagePath(code) + '/' + file;
+    const path = this.metaPath(code, this.schemaFile(kind));
 
     const here = this.file(path);
     if (here) {
@@ -1024,7 +1038,7 @@ class Packager {
     const fetched = await this.fetchSchema(code, kind);
     const body = fetched || this.builtIn(kind, code);
 
-    await this.ensureFolder(this.languagePath(code));
+    await this.ensureFolder(this.languagePath(code) + '/' + META_DIR);
     await this.put(path, this.schemaNote(code, kind, body, !!fetched));
     this.rememberSchema(path, body);
     return body;
@@ -1077,10 +1091,12 @@ class Packager {
         const fetched = await this.fetchSchema(code, kind);
         if (!fetched) { missing.push(code.toUpperCase() + ' ' + kind); continue; }
 
-        const file = kind === 'rules' ? RULES_FILE : RECIPE_FILE;
-        const path = child.path + '/' + file;
+        const file = this.schemaFile(kind);
+        const meta = child.path + '/' + META_DIR;
+        const path = meta + '/' + file;
         const note = this.file(path);
         const fresh = this.schemaNote(code, kind, fetched, true);
+        await this.ensureFolder(meta);
 
         if (!note) {
           await this.put(path, fresh);
@@ -1094,7 +1110,7 @@ class Packager {
         const touched = !known || known !== fingerprint(body);
 
         if (touched) {
-          await this.put(child.path + '/' + file.replace(/\.md$/, '') + ' (from the repo).md', fresh);
+          await this.put(meta + '/' + file.replace(/\.md$/, '') + ' (from the repo).md', fresh);
           kept.push(code.toUpperCase() + ' ' + kind);
         } else {
           await this.put(path, fresh);
@@ -1111,31 +1127,64 @@ class Packager {
   }
 
   schemaNote(code, kind, body, fromRepo) {
-    const what = kind === 'rules'
+    const rules = kind === 'rules';
+    const what = rules
       ? 'Wie aus einer Wortform ein Wissensschlüssel wird.'
       : 'Was in der Beschreibung eines Wortes steht, je Wortart.';
 
-    return [
+    const head = [
       '---',
-      'type: packager-' + kind,
-      'language: ' + String(code).toLowerCase(),
-      '---',
-      '',
-      '<!-- ' + what,
+      'type: ' + (rules ? 'packager-rules' : 'packager-schema'),
+      'language: ' + String(code).toLowerCase()
+    ];
+    /* Die Nummer kommt aus dem Repo, wenn die Fassung dort eine trägt. */
+    if (!rules) head.push('version: ' + recipeVersion(body));
+    head.push('---');
+
+    const remarks = ['<!-- ' + what,
       '     ' + (fromRepo ? 'Aus dem Trisent-Repo geholt.' : 'Eingebaute Fassung.'),
-      '     Ändere hier, was dir fehlt - diese Notiz gilt, nicht das Repo. -->',
-      '',
-      fillTemplate(body, code, this.myLanguageName())
-        .replace(/^---[\s\S]*?---\n+/, '')
-        .trim(),
-      ''
-    ].join('\n');
+      '     Ändere hier, was dir fehlt - diese Notiz gilt, nicht das Repo.'];
+    if (!rules) {
+      remarks.push(
+        '     Die Nummer oben sagt, nach welcher Fassung ein Eintrag im',
+        '     Wortvorrat beschrieben wurde. Wer sie erhöht, erklärt alle',
+        '     bisherigen Beschreibungen für älter. -->'
+      );
+    } else {
+      remarks[remarks.length - 1] += ' -->';
+    }
+
+    /* Trägt die Fassung aus dem Repo einen eigenen Kopf, gehört der nicht
+       in den Text - sonst stünde er mitten in der Notiz. */
+    const own = splitNote(String(body || '')).body;
+    const text = fillTemplate(own, code, this.myLanguageName())
+      .replace(/^---[\s\S]*?---\n+/, '')
+      .trim();
+
+    return head.concat([''], remarks, ['', text, '']).join('\n');
+  }
+
+  /* Die Nummer des Bauplans dieser Sprache - aus dem Kopf der Notiz. */
+  async recipeNumber(code) {
+    const file = this.file(this.metaPath(code, RECIPE_FILE));
+    if (!file) return FIRST_RECIPE;
+    const { front } = splitNote(await this.app.vault.read(file));
+    const number = Number(front.version);
+    return Number.isFinite(number) && number >= 0 ? Math.floor(number) : FIRST_RECIPE;
+  }
+
+  metaPath(code, file) {
+    return this.languagePath(code) + '/' + META_DIR + '/' + file;
+  }
+
+  schemaFile(kind) {
+    return kind === 'rules' ? RULES_FILE : RECIPE_FILE;
   }
 
   /* Hausregeln, falls die Sprache von Hand angelegt wurde. Ohne sie
      entscheidet jeder Lauf neu - und genau das sollen sie verhindern. */
   async ensureRules(code) {
-    if (this.file(this.languagePath(code) + '/' + RULES_FILE)) return;
+    if (this.file(this.metaPath(code, RULES_FILE))) return;
     await this.ensureSchema(code, 'rules');
   }
 
@@ -1431,7 +1480,7 @@ class Packager {
     const into = this.myLanguageName();
     const here = this.languagePath(text.code);
     const languageFolder = this.basePath() + '/' + here;
-    const rules = await this.readIfThere(here + '/' + RULES_FILE);
+    const rules = await this.readIfThere(this.metaPath(text.code, RULES_FILE));
     const example = await this.exampleFor(text);
 
     /* Zwei Anläufe: Beim zweiten bekommt Claude die Fundliste des Prüfers
@@ -1475,7 +1524,7 @@ class Packager {
      umgeschrieben wird nichts: Was die Person dort einmal festgelegt hat,
      gehört ihr. */
   async learn(text, notes) {
-    const file = this.file(this.languagePath(text.code) + '/' + RULES_FILE);
+    const file = this.file(this.metaPath(text.code, RULES_FILE));
     if (!file) return;
 
     const rules = await this.app.vault.read(file);
@@ -1529,8 +1578,9 @@ class Packager {
   async writeWords(text, entries, step) {
     const here = this.languagePath(text.code);
     const languageFolder = this.basePath() + '/' + here;
-    const rules = await this.readIfThere(here + '/' + RULES_FILE);
+    const rules = await this.readIfThere(this.metaPath(text.code, RULES_FILE));
     const recipe = await this.ensureRecipe(text.code);
+    const number = await this.recipeNumber(text.code);
     const size = 8;
     const batches = [];
     for (let at = 0; at < entries.length; at += size) batches.push(entries.slice(at, at + size));
@@ -1564,7 +1614,7 @@ class Packager {
     let written = 0;
 
     for (const answer of [].concat.apply([], answers)) {
-      const made = this.entryFrom(text.code, answer, byKey.get(answer.key));
+      const made = this.entryFrom(text.code, answer, byKey.get(answer.key), number);
       if (!made) continue;
       /* Was schon im Wortvorrat steht, bleibt, wie es ist. Ein Wort wird
          einmal beschrieben, nicht einmal je Text. */
@@ -1587,7 +1637,7 @@ class Packager {
      nächste Anlauf bekäme dieselbe Antwort, und die Person käme aus der
      Schleife nicht heraus. (Spanisch: im Text steht "la", vorgeschlagen
      wird "el" - beides vertretbar, aber der Schlüssel hat Vorrang.) */
-  entryFrom(code, answer, asked) {
+  entryFrom(code, answer, asked, number) {
     const parts = String(answer.key).split(':');
     if (parts.length < 3) return null;
 
@@ -1609,7 +1659,7 @@ class Packager {
         gloss: answer.gloss,
         forms: answer.forms,
         grammar: answer.grammar,
-        entrySchema: RECIPE_SCHEMA
+        entrySchema: number
       })
     };
   }

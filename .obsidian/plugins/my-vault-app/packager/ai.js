@@ -109,11 +109,13 @@ function instructions(options) {
 
   if (options.folder) {
     parts.push(
-      'In ' + options.folder + '/words/ there is a word store: one note per word',
-      'with base form, part of speech and gloss. If a word is already there, use',
-      'EXACTLY that base form and that part of speech. The reader\'s learning',
-      'state hangs on it across every text; a different base form tears it apart',
-      'without anyone noticing. So look it up before you decide.',
+      'In ' + options.folder + '/dictionary.json there is the word store: one',
+      'entry per key (language:baseform:PART-OF-SPEECH), each with base form,',
+      'part of speech and gloss. If a word is already there, use EXACTLY that',
+      'base form and that part of speech. The reader\'s learning state hangs on',
+      'it across every text; a different base form tears it apart without anyone',
+      'noticing. So look it up before you decide - with Grep, not by reading the',
+      'whole file; it can be large.',
       ''
     );
   }

@@ -34,6 +34,7 @@ class Flashcards {
     this.library = plugin.learning.library;
     this.deck = plugin.learning.deck;
     this.streak = plugin.learning.streak;
+    this.dictionary = plugin.learning.dictionary;
 
     /* Der eingestellte Rhythmus gilt ab jetzt für alles, was rechnet. */
     if (!configure(this.settings.rhythm)) configure(DEFAULT_RHYTHM);

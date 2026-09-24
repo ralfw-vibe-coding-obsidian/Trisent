@@ -19,7 +19,8 @@
  */
 
 const { TFile, normalizePath } = require('obsidian');
-const { normalizeAll, mergeEntries, toObject } = require('./entries.js');
+const { normalizeAll, normalizeEntry, mergeEntries, toObject } = require('./entries.js');
+const { lookupWord } = require('./occurrences.js');
 
 const DICTIONARY_FILE = 'dictionary.json';
 
@@ -61,9 +62,33 @@ class Dictionary {
     }
   }
 
-  /* Ein Wort nachschlagen. */
+  /* Ein Wort nachschlagen.
+
+     Zuerst hier, dann in den Paketen. Der zweite Weg ist der Rückfall
+     für die Übergangszeit: Solange eine Vault noch nicht umgebaut ist,
+     steht das Wissen nur in den Paketen. Nach dem Umbau greift er nicht
+     mehr - und schadet auch dann nicht, wenn die Person ein Paket von
+     Hand hineinlegt, bevor die App es eingearbeitet hat. */
   async lookup(language, key) {
-    return (await this.entries(language)).get(key) || null;
+    const found = (await this.entries(language)).get(key);
+    if (found) return found;
+
+    const fromPackage = await lookupWord(this.library, language, key);
+    return fromPackage ? normalizeEntry(fromPackage, key) : null;
+  }
+
+  /* Das Wörterbuch eines Textes, überlagert vom zentralen: Was hier
+     steht, gilt; was fehlt, kommt aus dem Paket.
+
+     Damit sagen Text und Word card dasselbe, auch während des Umbaus.
+     Genau das war der Fehler, um den es bei dem ganzen Vorhaben geht -
+     zwei Wege zur Erklärung, zwei Antworten. */
+  async overlay(language, packageDictionary) {
+    const central = await this.entries(language);
+    const merged = Object.assign({}, packageDictionary || {});
+
+    for (const [key, entry] of central) merged[key] = entry;
+    return merged;
   }
 
   /* Ein Wort nachschlagen, ohne zu warten - liefert nur, was schon

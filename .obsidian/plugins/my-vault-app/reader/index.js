@@ -37,6 +37,7 @@ class Reader {
     this.library = plugin.learning.library;
     this.streak = plugin.learning.streak;
     this.deck = plugin.learning.deck;
+    this.dictionary = plugin.learning.dictionary;
 
     plugin.registerView(VIEW_TYPE, (leaf) => new TrisentView(leaf, this));
     plugin.registerView(CARD_VIEW_TYPE, (leaf) => new WordCardView(leaf, this));
@@ -200,7 +201,7 @@ class Reader {
      muss. Alles, was sie zeigt, wird aus den Paketen zusammengesucht -
      die Notiz selbst weiß ja nur, wie weit die Person ist. */
   async showWord(language, key, file) {
-    const entry = (await lookupWord(this.library, language, key)) || {};
+    const entry = (await this.dictionary.lookup(language, key)) || {};
     const status = this.library.wordStatusMap(language).get(key) || 'unknown';
 
     const card = {

@@ -13,6 +13,12 @@ const { TFile, TFolder, normalizePath } = require('obsidian');
 const { readZip } = require('./zip.js');
 const { PACKAGE_FILE, WORD_STATUS, validatePackage } = require('./package.js');
 
+/* Zweite Fassung des Paketformats: Kopf, Text und Wörterbuch liegen in
+   drei Dateien. Der Kopf behält seinen Namen; der Text bekommt diesen.
+   Steht hier und nicht in package.js, damit er der Packager-Sitzung
+   nicht in die Quere kommt, während sie dort die Prüfung umbaut. */
+const TEXT_FILE = 'text.json';
+
 /* Ein Ordner ist eine Sprache, wenn diese Notiz darin liegt - nicht
    durch Raten am Namen. */
 const LANGUAGE_NOTE = 'language.md';
@@ -223,19 +229,34 @@ class Library {
     );
     if (!file) return null;
 
+    /* Zweite Fassung des Formats: Der Text liegt neben dem Kopf. */
+    const body = folder.children.find(
+      (child) => child instanceof TFile && child.name === TEXT_FILE
+    );
+
+    const stamp = file.stat.mtime + ':' + (body ? body.stat.mtime : 0);
     const cached = this.packageCache.get(file.path);
-    if (cached && cached.mtime === file.stat.mtime) return cached.value;
+    if (cached && cached.stamp === stamp) return cached.value;
 
     let value;
     try {
-      const raw = await this.app.vault.cachedRead(file);
-      value = { ok: true, folder: folder, data: JSON.parse(raw) };
+      const data = JSON.parse(await this.app.vault.cachedRead(file));
+
+      /* Beide Ablagen ergeben dasselbe Paket. Liegt der Text daneben,
+         wird er hier hineingehängt - alles darüber merkt nichts davon
+         und muss nicht wissen, welche Fassung es gerade liest. */
+      if (body && !Array.isArray(data.paragraphs)) {
+        const parsed = JSON.parse(await this.app.vault.cachedRead(body));
+        data.paragraphs = Array.isArray(parsed.paragraphs) ? parsed.paragraphs : [];
+      }
+
+      value = { ok: true, folder: folder, data: data };
     } catch (error) {
       /* Ein kaputtes Paket muss sichtbar sein, nicht stillschweigend fehlen. */
       value = { ok: false, folder: folder, error: String(error.message || error) };
     }
 
-    this.packageCache.set(file.path, { mtime: file.stat.mtime, value: value });
+    this.packageCache.set(file.path, { stamp: stamp, value: value });
     return value;
   }
 

@@ -835,11 +835,22 @@ class TrisentView extends ItemView {
     const body = page.createDiv();
     body.createDiv({ cls: 'trisent-loading', text: '…' });
 
-    this.library.loadPackage(folder).then((entry) => {
+    this.library.loadPackage(folder).then(async (entry) => {
       if (!this.contentEl.contains(body)) return;
+
+      /* Das Wörterbuch der Person über das des Textes legen - ab jetzt
+         sagt der Text dasselbe wie die Word card. */
+      let dictionary = {};
+      if (entry && entry.ok) {
+        dictionary = await this.reader.dictionary.overlay(language, entry.data.dictionary);
+      }
+      /* Nach dem Warten noch einmal: Vielleicht ist die Person längst
+         woanders. */
+      if (!this.contentEl.contains(body)) return;
+
       page.empty();
       try {
-        this.buildText(page, language, folder, entry);
+        this.buildText(page, language, folder, entry, dictionary);
       } catch (error) {
         /* Lieber eine Meldung als eine leere Seite - dann weiß man
            wenigstens, dass etwas kaputt ist und was. */
@@ -852,7 +863,7 @@ class TrisentView extends ItemView {
     });
   }
 
-  buildText(page, language, folder, entry) {
+  buildText(page, language, folder, entry, dictionary) {
     {
       if (!entry || !entry.ok) {
         this.renderHeader(this.useBar(), folder.name, () => this.backToPackages(), language.name);
@@ -865,7 +876,7 @@ class TrisentView extends ItemView {
 
       const data = entry.data;
       this.language = language;
-      this.dictionary = data.dictionary || {};
+      this.dictionary = dictionary || data.dictionary || {};
       this.packageData = data;
       this.statusMap = this.library.wordStatusMap(language);
       /* Einmal je Text nachsehen, welche Wörter in der Kartei liegen -
