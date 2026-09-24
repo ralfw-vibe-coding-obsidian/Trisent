@@ -12,6 +12,18 @@
 /* Der Dateiname, an dem ein Paketordner erkannt wird. */
 const PACKAGE_FILE = 'package.json';
 
+/* Die zweite Fassung teilt das Paket in drei Dateien: Kopf, Text und
+   Wörterbuch. Siehe konzept/paketformat-2.md. */
+const TEXT_FILE = 'text.json';
+const DICTIONARY_FILE = 'dictionary.json';
+
+/* Höher kommt kein Bauplan. Eine größere Zahl am Eintrag ist kein
+   Fortschritt, sondern ein Fehler - und ein gefährlicher: Da beim Import
+   die höhere Nummer gewinnt, hielte sie den Eintrag im Wörterbuch der
+   Person für immer fest, und niemand sähe, warum die Erklärung nicht
+   mehr besser wird. */
+const MAX_ENTRY_SCHEMA = 1000;
+
 /* Die vier Wissensstände. Die Reihenfolge ist zugleich die
    Klick-Reihenfolge im Reader. */
 const WORD_STATUS = ['unknown', 'learning', 'familiar', 'known'];
@@ -27,7 +39,12 @@ function validatePackage(data, fileNames) {
   const say = (text) => { if (problems.length < 40) problems.push(text); };
 
   if (!data || typeof data !== 'object') return ['The package file is not an object.'];
-  if (data.schemaVersion !== 1) say('schemaVersion must be 1.');
+  /* Die zweite Fassung wird hier in ihrer zusammengesetzten Form geprüft
+     (siehe joinPackage) - dieselben Regeln, dieselbe Sicht auf das Ganze.
+     Für die erste Fassung ändert sich nichts. */
+  if (data.schemaVersion !== 1 && data.schemaVersion !== 2) {
+    say('schemaVersion must be 1 or 2.');
+  }
   for (const field of ['id', 'title', 'language', 'glossLanguage', 'fluentLanguage']) {
     if (!data[field]) say('Missing "' + field + '" in the package header.');
   }
@@ -187,9 +204,98 @@ function validatePackage(data, fileNames) {
   }
   for (const key of Object.keys(data.dictionary)) {
     if (!usedKeys.has(key)) say('The dictionary entry "' + key + '" is never used.');
+
+    const entry = data.dictionary[key];
+    if (entry && entry.entrySchema !== undefined) {
+      const number = entry.entrySchema;
+      if (!Number.isInteger(number) || number < 0 || number > MAX_ENTRY_SCHEMA) {
+        say('The dictionary entry "' + key + '" has an impossible entrySchema: ' +
+            JSON.stringify(number) + '. It must be a whole number from 0 to ' + MAX_ENTRY_SCHEMA + '.');
+      }
+    }
   }
 
   return problems;
+}
+
+/* ------------------------------------------------------------------ */
+/* Die zweite Fassung: drei Dateien                                    */
+/* ------------------------------------------------------------------ */
+
+/* Aus Kopf, Text und Wörterbuch die eine Form machen, die validatePackage
+   prüft. Die Dateien bleiben getrennt; das hier ist nur die Sicht auf das
+   Ganze. */
+function joinPackage(head, text, dictionary) {
+  const joined = Object.assign({}, head);
+  joined.paragraphs = text && Array.isArray(text.paragraphs) ? text.paragraphs : [];
+  joined.dictionary = dictionary && typeof dictionary === 'object' && !Array.isArray(dictionary)
+    ? dictionary
+    : {};
+  return joined;
+}
+
+/* Umgekehrt: ein Paket in die drei Dateien teilen. */
+function splitPackage(data) {
+  const head = {};
+  for (const field of Object.keys(data)) {
+    if (field === 'paragraphs' || field === 'dictionary') continue;
+    head[field] = data[field];
+  }
+  head.schemaVersion = 2;
+  return {
+    head: head,
+    text: { paragraphs: data.paragraphs || [] },
+    dictionary: data.dictionary || {}
+  };
+}
+
+/* Ein Paket der zweiten Fassung prüfen, so wie es ausgepackt vorliegt:
+   Pfad (relativ zum Paket) -> Inhalt, als Text oder Bytes.
+
+   Liefert { data, problems }. Ist "problems" leer, ist "data" das
+   zusammengesetzte Paket. Pakete der ersten Fassung gehen nicht hier
+   durch, sondern wie bisher direkt durch validatePackage. */
+function validateParts(files) {
+  const problems = [];
+  const read = (name) => {
+    if (!files.has(name)) {
+      problems.push('There is no ' + name + ' in the package.');
+      return null;
+    }
+    const raw = files.get(name);
+    const text = typeof raw === 'string' ? raw : new TextDecoder('utf-8').decode(raw);
+    try {
+      return JSON.parse(text.replace(/^\uFEFF/, ''));
+    } catch (error) {
+      problems.push(name + ' is not valid JSON: ' + String(error.message || error));
+      return null;
+    }
+  };
+
+  const head = read(PACKAGE_FILE);
+  const text = read(TEXT_FILE);
+  const dictionary = read(DICTIONARY_FILE);
+  if (problems.length > 0) return { data: null, problems: problems };
+
+  if (!head || typeof head !== 'object') {
+    return { data: null, problems: ['The package header is not an object.'] };
+  }
+  if (head.schemaVersion !== 2) {
+    return { data: null, problems: ['schemaVersion must be 2 for a package in three files.'] };
+  }
+  /* Steht der Text oder das Wörterbuch auch im Kopf, wäre nicht klar,
+     welches gilt. */
+  if (head.paragraphs !== undefined || head.dictionary !== undefined) {
+    return {
+      data: null,
+      problems: ['The package header must not carry "paragraphs" or "dictionary" - they belong in ' +
+                 TEXT_FILE + ' and ' + DICTIONARY_FILE + '.']
+    };
+  }
+
+  const data = joinPackage(head, text, dictionary);
+  const found = validatePackage(data, new Set(files.keys()));
+  return { data: found.length > 0 ? null : data, problems: found };
 }
 
 /* Wortart-Tags sind fürs Datenformat gedacht, nicht fürs Lesen. */
@@ -250,6 +356,12 @@ function keyFor(language, lemma, partOfSpeech, sense) {
 
 module.exports = {
   PACKAGE_FILE,
+  TEXT_FILE,
+  DICTIONARY_FILE,
+  MAX_ENTRY_SCHEMA,
+  joinPackage,
+  splitPackage,
+  validateParts,
   POS_TAGS,
   normalizeForKey,
   WORD_STATUS,
