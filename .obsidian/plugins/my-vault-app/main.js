@@ -25,6 +25,7 @@ const { Plugin, PluginSettingTab, Setting, Notice, TFile, normalizePath } = obsi
    eingetragen werden - eine der wenigen abgestimmten Änderungen in
    dieser Datei. */
 const MODULES = [
+  'core/calendar.js',
   'core/zip.js',
   'core/package.js',
   'core/log.js',

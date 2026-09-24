@@ -11,6 +11,7 @@
 
 const { TFile, TFolder, normalizePath } = require('obsidian');
 const { PACKAGE_FILE, TEXT_FILE, WORD_STATUS } = require('./package.js');
+const { today: calendarToday } = require('./calendar.js');
 
 /* Ein Ordner ist eine Sprache, wenn diese Notiz darin liegt - nicht
    durch Raten am Namen. */
@@ -318,7 +319,7 @@ class Library {
 
   async writeWordStatus(language, key, status, entry) {
     const existing = this.wordFileFor(language, key);
-    const today = new Date().toISOString().slice(0, 10);
+    const today = calendarToday();
 
     if (existing) {
       await this.app.fileManager.processFrontMatter(existing, (fm) => {

@@ -8,6 +8,7 @@
  */
 
 const { Setting, Notice } = require('obsidian');
+const { today } = require('../core/calendar.js');
 const { SentenceKnowledge } = require('./sentences.js');
 const { TranslatorView, VIEW_TYPE, RIBBON_ICON } = require('./view.js');
 
@@ -60,7 +61,7 @@ class Translator {
   addCost(amount) {
     if (typeof amount !== 'number' || !(amount > 0)) return;
     if (!this.settings.spentSince) {
-      this.settings.spentSince = new Date().toISOString().slice(0, 10);
+      this.settings.spentSince = today();
     }
     this.settings.spent = (Number(this.settings.spent) || 0) + amount;
     this.plugin.saveSettingsSoon();
@@ -122,7 +123,7 @@ class Translator {
       .addButton((button) =>
         button.setButtonText('Reset').onClick(async () => {
           this.settings.spent = 0;
-          this.settings.spentSince = new Date().toISOString().slice(0, 10);
+          this.settings.spentSince = today();
           await this.saveSettings();
           spent.setDesc(this.spentSoFar());
         })

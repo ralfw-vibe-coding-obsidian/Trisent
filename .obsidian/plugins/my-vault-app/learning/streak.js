@@ -18,17 +18,11 @@ const { TFile } = require('obsidian');
 
 const LANGUAGE_NOTE = 'language.md';
 
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-/* Der Tag davor, als YYYY-MM-DD. Über die Zeitrechnung, nicht über
-   Sekunden - sonst geht die Sommerzeit-Umstellung schief. */
-function dayBefore(day) {
-  const date = new Date(day + 'T12:00:00Z');
-  date.setUTCDate(date.getUTCDate() - 1);
-  return date.toISOString().slice(0, 10);
-}
+/* Der Kalendertag der Person, nicht der der Weltzeit - siehe
+   core/calendar.js. Mit dem Datum der Weltzeit wechselte der Tag in
+   Hamburg erst um 2 Uhr nachts, und wer nach Mitternacht las, überbrückte
+   damit einen ausgelassenen Tag: Der Streak riss nicht ab. */
+const { today, dayBefore } = require('../core/calendar.js');
 
 class Streak {
   constructor(app) {

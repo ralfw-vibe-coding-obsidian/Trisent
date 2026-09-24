@@ -70,23 +70,11 @@ const SOURCES = [
   { id: 'hard', label: 'Hardest' }
 ];
 
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-/* Tage auf ein Datum rechnen. Über die Zeitrechnung, nicht über Sekunden -
-   sonst geht die Sommerzeit-Umstellung schief. */
-function addDays(day, days) {
-  const date = new Date(day + 'T12:00:00Z');
-  date.setUTCDate(date.getUTCDate() + days);
-  return date.toISOString().slice(0, 10);
-}
-
-function daysBetween(from, to) {
-  const a = Date.parse(from + 'T12:00:00Z');
-  const b = Date.parse(to + 'T12:00:00Z');
-  return Math.round((b - a) / 86400000);
-}
+/* Welcher Tag heute ist und wie man mit Tagen rechnet, steht an EINER
+   Stelle für die ganze App: core/calendar.js. Hier wurde es früher selbst
+   ausgerechnet - mit dem Datum der Weltzeit, sodass eine Karte in Hamburg
+   erst um 2 Uhr nachts fällig wurde statt um Mitternacht. */
+const { today, addDays, daysBetween } = require('../core/calendar.js');
 
 /* Eine Karte auf einen brauchbaren Stand bringen - auch wenn jemand von
    Hand etwas Unsinniges in die Notiz geschrieben hat. */
