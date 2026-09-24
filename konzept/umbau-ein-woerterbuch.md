@@ -27,7 +27,9 @@ Was die Person entscheidet, sind drei Dinge:
 
 - **Ingest** – alles vom Text bis zum fertigen Paket, ohne Ton.
 - **Record** – die Sätze vertonen. Das Paket wird ergänzt.
-- **Deploy** – das Paket hinüberschieben.
+- **Deploy** – das Paket als ZIP in `Trisent/inbox/` legen. Von dort holt die
+  Person es ab: zum Weitergeben oder zum Import in ihre Bibliothek. Mit der
+  Bibliothek selbst hat die Werkstatt nichts zu tun.
 
 Dahinter liegen die Phasen. Sie sind für die Maschine, nicht für die
 Oberfläche: *parse* (in Sätze und Einheiten zerlegen), *compile*
@@ -49,9 +51,12 @@ paket.zip
 
 Zwei Dinge fallen damit an einer Stelle zusammen:
 
-**Ein Datum entscheidet.** Ist der Ausgangstext jünger als das ZIP, ist das
-ZIP verbraucht und Ingest wird wieder anklickbar. Vorher nicht. Kein
-Buchführen, kein Vergleichen von Zwischenständen.
+**Das Manifest entscheidet.** Neben dem ZIP liegt `manifest.json`: je Datei,
+aus der das Paket entstand, ein Fingerabdruck – Ausgangstext, Werkbank, jede
+Tonspur –, dazu, welche Fassung schon in die Inbox ging. Weicht eine Datei
+davon ab, ist das ZIP verbraucht und Ingest wird wieder anklickbar; Record und
+Deploy nicht. Fingerabdrücke statt Uhrzeiten, weil sich ein Datum beim Klonen
+oder Synchronisieren ändert, ohne dass sich etwas geändert hat.
 
 In der Werkstatt heißt es immer `package.zip`; einen sprechenden Namen
 bekommt erst die Kopie, die hinausgeht - beim Deploy und beim Export.
@@ -99,7 +104,8 @@ packager/FR/
     ├── dictionary.json   die Einträge, die in DIESEM Text vorkommen
     ├── package.json      Kopf
     ├── audio/
-    └── package.zip       das Erzeugnis
+    ├── package.zip       das Erzeugnis
+    └── manifest.json     woraus es gebaut wurde, und ob es schon in der Inbox war
 ```
 
 Das eine `dictionary.json` im Sprachordner ist die Ordnung, um die es geht:

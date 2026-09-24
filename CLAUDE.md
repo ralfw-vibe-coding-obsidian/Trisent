@@ -163,7 +163,9 @@ Trisent/                  einstellbar, Vorgabe: Trisent
 │   │   ├── sentences/    was sie über Sätze weiß, eine Notiz je Text
 │   │   └── packages/     die Lerntexte
 │   └── FR/
-└── packager/             die Seite des Herstellens
+├── packager/             die Seite des Herstellens
+├── inbox/                fertige Pakete als ZIP - hier legt der Packager ab
+└── log.md                was die App getan hat, zum Nachlesen
 ```
 
 Der Bereich heißt `learning` und nicht `reader`, weil er **der Person gehört,
@@ -176,6 +178,13 @@ durch `validatePackage()`. Das ist keine Formsache: Es gibt dadurch genau eine
 Tür in die Bibliothek der Person, und die ist geprüft. Ein halbfertiges oder
 fehlerhaftes Paket kann gar nicht dort landen, auch nicht aus Versehen, auch
 nicht vom Schreibtisch nebenan.
+
+**Die Werkstatt hat mit der Bibliothek nichts zu tun.** Ihre Aufgabe ist,
+Pakete richtig zu schnüren. Deploy legt ein fertiges Paket als ZIP nach
+`Trisent/inbox/`; von dort holt die Person es ab – um es jemandem zu schicken
+oder um es in ihre eigene Bibliothek zu importieren. Der Packager ruft dafür
+nichts auf der Learning-Seite auf und fragt sie nichts. Ob ein Paket veraltet
+ist, liest er aus dem Manifest neben seinem Archiv, nicht aus der Bibliothek.
 
 Technisch bekommt jede Seite dafür eine eigene `Library` mit ihrem Bereich:
 `new Library(app, plugin, 'learning')` bzw. `'packager'`. Beide benutzen
@@ -213,14 +222,14 @@ Bibliothek, der Streak (je Sprache, nicht je Werkzeug), die Suche nach
 Fundstellen (`occurrences.js` – Reader und Lernkartei müssen dieselben Sätze
 finden) – und die **Vordertür**.
 
-**Die Vordertür ist `plugin.learning.importFiles(contents, label)`.** Dort
-reicht der Packager fertige Pakete hinein; geprüft wird dahinter, immer. Sie
+**Die Vordertür ist `plugin.learning.importFiles(contents, label)`.** Durch sie
+kommt jedes Paket in die Bibliothek – eines aus der Inbox genauso wie eine
+ZIP-Datei von außen; geprüft wird dahinter, immer. Sie
 heißt nach dem Zweck und nicht nach einem Werkzeug, denn ein Werkzeugname
 ändert sich – und ein gebrochener Aufruf fiele der Person erst auf, wenn sie
 „Deploy" drückt, nicht beim Laden.
 
-Änderungen an `learning/` im Einvernehmen zwischen Reader und Translator; an
-Namen oder Form von `importFiles` auch mit dem Packager.
+Änderungen an `learning/` im Einvernehmen zwischen Reader und Translator.
 
 **Wem was gehört:**
 
@@ -234,6 +243,7 @@ Namen oder Form von `importFiles` auch mit dem Packager.
 | `core/`, `main.js`, `styles.css`, `konzept/paketformat.md` | **alle - nur im Einvernehmen** |
 | `Trisent/learning/` in der Vault | die Learning-Seite (Reader und Translator) |
 | `Trisent/packager/` in der Vault | nur der Packager |
+| `Trisent/inbox/` in der Vault | der Packager legt hinein, die Person holt ab |
 
 Bevor du etwas in `core/`, `main.js` oder `styles.css` änderst, sag es der
 Person. Sie gibt es an die andere Sitzung weiter. Änderst du dort still etwas,

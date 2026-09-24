@@ -26,6 +26,7 @@ const { writeZip } = require('../core/zip.js');
 const store = require('./dictionary.js');
 const { Migrations } = require('./migrations.js');
 const { splitWork, plan, joinWork } = require('./workbench.js');
+const manifests = require('./manifest.js');
 const { log } = require('../core/log.js');
 const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
@@ -41,6 +42,13 @@ const PACKAGE_FILE = 'package.json';
    In der Werkstatt heißt es immer so; einen sprechenden Namen bekommt
    erst die Kopie, die weitergegeben wird. */
 const ARCHIVE_FILE = 'package.zip';
+/* Neben dem Archiv: woraus es gebaut wurde, und ob diese Fassung schon
+   in die Inbox ging. Siehe manifest.js. */
+const MANIFEST_FILE = 'manifest.json';
+/* Wohin Deploy ein fertiges Paket legt - im Bibliotheksordner, für alle
+   Sprachen dieselbe. Von dort holt die Person es ab: zum Weitergeben oder
+   um es in ihre Bibliothek zu holen. */
+const INBOX_DIR = 'inbox';
 const WORDS_DIR = 'words';
 const DICTIONARY_FILE = 'dictionary.json';
 
@@ -97,8 +105,9 @@ const RETRY_MS = 4000;
    für sie wäre die Werkstatt ein zweites Symbol in der Leiste, das sie
    nie brauchen. Wer Texte herstellt, schaltet sie einmal ein.
 
-   Was schon in der Bibliothek liegt, merkt er sich nicht - er fragt an
-   der Vordertür danach (siehe deployedVersion). */
+   Mit der Bibliothek der Person hat er nichts zu tun. Deploy legt ein
+   fertiges Paket in die Inbox; was danach damit geschieht, entscheidet
+   die Person. */
 const DEFAULTS = {
   enabled: false,
   /* Wie weit die Werkstatt umgebaut ist - siehe migrations.js. */
@@ -304,9 +313,9 @@ function keyOf(text) {
    beim Darauffahren, warum. So sieht man auf einen Blick, wo ein Text
    steht - statt es aus wechselnden Knöpfen zu erschließen. */
 function stepsFor(text, can) {
-  const built = text.archiveAt > 0;
-  const stale = built && text.inputsAt > text.archiveAt;
-  const ready = built && !stale;
+  const built = !!text.built;
+  const changed = built && !manifests.isEmpty(text.changes);
+  const ready = built && !changed;
   const prepared = text.total > 0 && text.done >= text.total;
   const silent = Math.max(0, text.sentences - text.spoken);
 
@@ -319,7 +328,7 @@ function stepsFor(text, can) {
       on: !ready && (can.prepare || prepared),
       why: ready ? 'The package is up to date.'
         : !can.prepare && !prepared ? 'Claude was not found - see the settings.'
-        : stale ? 'Something changed since the last package.'
+        : changed ? manifests.describe(text.changes)
         : 'Turn the text into a package.'
     },
     {
@@ -327,7 +336,7 @@ function stepsFor(text, can) {
       run: 'speak',
       on: ready && silent > 0 && can.voices,
       why: !built ? 'Ingest the text first.'
-        : stale ? 'Ingest the changes first.'
+        : changed ? 'Ingest the changes first.'
         : !can.voices ? 'No voice for this language in the settings.'
         : silent === 0 ? 'Every sentence already has sound.'
         : silent + ' of ' + text.sentences + ' sentences have no sound yet.'
@@ -335,11 +344,11 @@ function stepsFor(text, can) {
     {
       name: 'Deploy',
       run: 'send',
-      on: ready && text.sent < text.version,
+      on: ready && text.deployed < text.version,
       why: !built ? 'Ingest the text first.'
-        : stale ? 'Ingest the changes first.'
-        : text.sent >= text.version ? 'Your library already has this version.'
-        : 'Send it to your library.'
+        : changed ? 'Ingest the changes first.'
+        : text.deployed >= text.version ? 'This version has already been put into the inbox.'
+        : 'Put the package into the inbox.'
     }
   ];
 }
@@ -352,20 +361,19 @@ function stateOf(text) {
     ? ' With sound.'
     : text.spoken > 0 ? ' Sound for ' + text.spoken + ' of ' + text.sentences + ' sentences.' : '';
 
-  if (!text.archiveAt) {
-    if (text.version > 0) return 'Packaged before there were archives. Ingest it once to wrap it up.' + sound;
+  if (!text.built) {
+    if (text.version > 0) return 'Packaged before there were manifests. Ingest it once to wrap it up.' + sound;
     if (text.done > 0) return text.done + ' of ' + text.total + ' paragraphs prepared. Ingest to go on.';
     return 'Not ingested yet.';
   }
-  if (text.inputsAt > text.archiveAt) {
-    return 'Something changed since the last package — ingest it again.' + sound;
+  if (!manifests.isEmpty(text.changes)) {
+    return manifests.describe(text.changes) + ' Ingest it again.' + sound;
   }
-  if (!text.sent) return 'Packaged, not in your library yet.' + sound;
-  if (text.sent < text.version) {
-    return 'Version ' + text.version + ' here, version ' + text.sent +
-           ' in your library.' + sound;
+  if (!text.deployed) return 'Version ' + text.version + ', not deployed yet.' + sound;
+  if (text.deployed < text.version) {
+    return 'Version ' + text.version + ' here, version ' + text.deployed + ' was deployed.' + sound;
   }
-  return 'In your library, version ' + text.version + '.' + sound;
+  return 'Version ' + text.version + ' deployed.' + sound;
 }
 
 /* Wörter eines Textes. Grob gezählt - es geht um die Größenordnung,
@@ -885,11 +893,11 @@ class Packager {
         package: null,
         title: child.basename,
         version: 0,
-        sent: 0,
+        built: false,
+        changes: null,
+        deployed: 0,
         sentences: 0,
         spoken: 0,
-        archiveAt: 0,
-        inputsAt: 0,
         done: 0,
         total: paragraphsOf(body).length,
         words: countWords(body),
@@ -911,10 +919,12 @@ class Packager {
       const head = built ? await this.headOf(built) : null;
       const front = work ? this.app.metadataCache.getFileCache(work)?.frontmatter : null;
       const source = this.file(child.path + '/' + TEXT_FILE);
-      const raw = source ? splitNote(await this.app.vault.cachedRead(source)).body : '';
+      const sourceRaw = source ? await this.app.vault.cachedRead(source) : null;
+      const raw = sourceRaw !== null ? splitNote(sourceRaw).body : '';
       const workText = work ? await this.app.vault.cachedRead(work) : '';
       const paragraphs = paragraphsOf(raw);
       const archive = this.file(child.path + '/' + ARCHIVE_FILE);
+      const recorded = manifests.parse(await this.readIfThere(child.path + '/' + MANIFEST_FILE));
 
       /* Wie viele Sätze schon eine Tonspur haben. Der Name einer Tondatei
          hängt am Wortlaut des Satzes - ändert sich der Satz, verliert er
@@ -937,22 +947,20 @@ class Packager {
         text: source,
         package: built,
         title: (front && front.title) || child.name,
-        version: head ? head.version : 0,
-        sent: head ? await this.deployedVersion(head.id) : 0,
+        version: recorded ? recorded.version : (head ? head.version : 0),
+        /* Gebaut heißt: Archiv und Manifest liegen da. Was sich seither an
+           den eigenen Dateien geändert hat, sagt der Vergleich mit dem
+           Manifest - sonst niemand. */
+        built: !!(recorded && archive),
+        changes: recorded
+          ? manifests.compare(recorded.inputs, this.inputsOf(child, sourceRaw, work ? workText : null))
+          : null,
+        deployed: recorded && recorded.deployed ? Number(recorded.deployed.version) || 0 : 0,
         /* Wie viele Absätze des Textes die Werkbank schon kennt - am
            Wortlaut erkannt, nicht an der Zahl. */
         done: plan(paragraphs, splitWork(workText).blocks).filter((one) => one.block).length,
         sentences: sentences,
         spoken: spoken,
-        /* Das Archiv ist das Erzeugnis. Ist irgendetwas, woraus es besteht,
-           jünger als das Archiv, ist es veraltet: der Text, die Werkbank,
-           eine Tonspur. */
-        archiveAt: archive ? archive.stat.mtime : 0,
-        inputsAt: Math.max(
-          source ? source.stat.mtime : 0,
-          work ? work.stat.mtime : 0,
-          this.newestAudio(child)
-        ),
         total: paragraphs.length,
         words: countWords(raw),
         code: languageFolder.name.toLowerCase()
@@ -974,22 +982,22 @@ class Packager {
     }
   }
 
-  /* Welche Fassung dieses Pakets in der Bibliothek liegt - 0, wenn keine.
+  /* Fingerabdrücke von allem, woraus ein Paket entsteht: Ausgangstext,
+     Werkbank und jede Tonspur. Bei Tonspuren genügt die Größe - ihr Name
+     hängt schon am Wortlaut des Satzes, und eine neue Aufnahme ist kaum je
+     aufs Byte so lang wie die alte. */
+  inputsOf(folder, sourceRaw, workRaw) {
+    const inputs = {};
+    if (sourceRaw !== null && sourceRaw !== undefined) inputs[TEXT_FILE] = manifests.hashOf(sourceRaw);
+    if (workRaw !== null && workRaw !== undefined) inputs[WORK_FILE] = manifests.hashOf(workRaw);
 
-     Gefragt an der Vordertür, nicht in ihren Ordnern nachgesehen: Wie es
-     dort drüben aussieht, gehört der Learning-Seite. Und nicht aus eigener
-     Erinnerung: Die wüsste nichts davon, dass die Person einen Text dort
-     gelöscht hat - er käme dann nie wieder hinüber, und der Knopf
-     behauptete, er sei längst da. */
-  async deployedVersion(id) {
-    if (!id) return 0;
-    try {
-      const version = await this.plugin.learning.versionOf(id);
-      return typeof version === 'number' && version > 0 ? version : 0;
-    } catch (error) {
-      console.error('Trisent packager', error);
-      return 0;
+    const sounds = this.childFolder(folder, AUDIO_DIR);
+    if (sounds) {
+      for (const child of sounds.children) {
+        if (child instanceof TFile) inputs[AUDIO_DIR + '/' + child.name] = child.stat.size;
+      }
     }
+    return inputs;
   }
 
   /* ---------------------------------------------------------------- */
@@ -1810,17 +1818,6 @@ class Packager {
 
   /* Was an Ton schon im Textordner liegt: je Datei ihre Zeitmarken,
      oder null, wenn sie vor deren Einführung entstanden ist. */
-  /* Wann zuletzt eine Tonspur dazukam oder sich änderte. */
-  newestAudio(folder) {
-    const sounds = this.childFolder(folder, AUDIO_DIR);
-    if (!sounds) return 0;
-    let newest = 0;
-    for (const child of sounds.children) {
-      if (child instanceof TFile && child.stat.mtime > newest) newest = child.stat.mtime;
-    }
-    return newest;
-  }
-
   audioFiles(folder) {
     const found = new Map();
     const sounds = this.childFolder(folder, AUDIO_DIR);
@@ -2057,6 +2054,25 @@ class Packager {
     await this.put(folder.path + '/' + ENTRIES_JSON, files.get(ENTRIES_JSON));
     await this.put(folder.path + '/' + PACKAGE_FILE, files.get(PACKAGE_FILE));
     await this.putBinary(folder.path + '/' + ARCHIVE_FILE, (await writeZip(files)).buffer);
+
+    /* Das Manifest zuletzt: woraus dieses Archiv gebaut wurde. Ob eine
+       frühere Fassung schon in der Inbox liegt, bleibt vermerkt - geht
+       jetzt eine neuere hinaus, sieht der Knopf es am Vergleich. */
+    const previous = manifests.parse(await this.readIfThere(folder.path + '/' + MANIFEST_FILE));
+    const source = this.file(folder.path + '/' + TEXT_FILE);
+    const work = this.file(folder.path + '/' + WORK_FILE);
+    const record = {
+      id: parts.head.id,
+      version: parts.head.version,
+      built: new Date().toISOString(),
+      inputs: this.inputsOf(
+        folder,
+        source ? await this.app.vault.read(source) : null,
+        work ? await this.app.vault.read(work) : null
+      )
+    };
+    if (previous && previous.deployed) record.deployed = previous.deployed;
+    await this.put(folder.path + '/' + MANIFEST_FILE, manifests.serialize(record));
     return [];
   }
 
@@ -2183,29 +2199,35 @@ class Packager {
 
   /* Übergeben wird über denselben Import, den auch eine ZIP-Datei von
      außen nimmt. Der Packager schreibt nicht in die Bibliothek. */
+  /* Deploy: das Paket in die Inbox legen.
+
+     Von dort holt die Person es ab - um es jemandem zu schicken oder um
+     es in ihre eigene Bibliothek zu holen. Mit der Bibliothek hat die
+     Werkstatt nichts zu tun; ihre Aufgabe ist, Pakete richtig zu schnüren.
+
+     Das Archiv in der Inbox heißt nach dem Text und seiner Sprache. Eine
+     neuere Fassung ersetzt die ältere dort - es soll nie zwei Stände
+     desselben Textes nebeneinander liegen. */
   async send(text) {
-    if (!text.package) throw new Error('There is no built package yet.');
+    const archive = this.file(text.folder.path + '/' + ARCHIVE_FILE);
+    const recorded = manifests.parse(await this.readIfThere(text.folder.path + '/' + MANIFEST_FILE));
+    if (!archive || !recorded) throw new Error('There is no package yet. Ingest it first.');
 
-    /* Ein Paket aus der Zeit vor dem Archiv wird jetzt nachträglich
-       verschnürt. Am Inhalt ändert sich dabei nichts, also auch nicht an
-       seiner Nummer. */
-    let archive = this.file(text.folder.path + '/' + ARCHIVE_FILE);
-    if (!archive) {
-      const data = await this.readBuilt(text.folder);
-      if (!data) throw new Error('The package is incomplete. Package it again.');
-      const refused = await this.writeBuilt(text.folder, data);
-      if (refused.length > 0) throw new Error('The package did not pass the checks: ' + refused[0]);
-      archive = this.file(text.folder.path + '/' + ARCHIVE_FILE);
-      if (!archive) throw new Error('The archive could not be written.');
-    }
+    const inbox = this.inboxPath();
+    await this.ensureFolder(inbox);
+    const name = sanitizeFileName(text.title || text.folder.name) + ' (' + text.code.toUpperCase() + ').zip';
+    const target = inbox + '/' + name;
+    await this.putBinary(target, await this.app.vault.readBinary(archive));
 
-    /* Die Vordertür für ein Archiv - dieselbe, durch die ein Paket von
-       einem Fremden kommt. Geprüft wird dahinter, immer. */
-    const bytes = await this.app.vault.readBinary(archive);
-    const result = await this.plugin.learning.importArchive(bytes, text.title || text.folder.name);
+    recorded.deployed = { version: recorded.version, at: new Date().toISOString(), file: target };
+    await this.put(text.folder.path + '/' + MANIFEST_FILE, manifests.serialize(recorded));
 
-    return (result.updated ? 'Updated "' : 'Added "') + result.title + '" in ' +
-           result.language.name + ' — version ' + result.version + '.';
+    return 'Put "' + name + '" into ' + inbox + ' — version ' + recorded.version + '.';
+  }
+
+  inboxPath() {
+    const base = (this.plugin.settings.libraryFolder || '').trim();
+    return normalizePath((base ? base + '/' : '') + INBOX_DIR);
   }
 
   /* ---------------------------------------------------------------- */

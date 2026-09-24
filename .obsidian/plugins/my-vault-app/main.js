@@ -58,6 +58,7 @@ const MODULES = [
   'packager/build.js',
   'packager/dictionary.js',
   'packager/workbench.js',
+  'packager/manifest.js',
   'packager/migrations.js',
   'packager/index.js'
 ];
