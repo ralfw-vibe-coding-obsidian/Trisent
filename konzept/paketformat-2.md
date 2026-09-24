@@ -75,12 +75,32 @@ Wörtlich das, was bisher unter `paragraphs` in der Paketdatei stand.
 }
 ```
 
-Neu ist allein **`schema`**: die Nummer des Bauplans, nach dem diese
+Neu ist allein **`entrySchema`**: die Nummer des Bauplans, nach dem diese
 Beschreibung geschrieben wurde. Sie steht am einzelnen Eintrag, nicht am
 Paket – ein frisch gebautes Paket enthält zwangsläufig Einträge aus mehreren
 Zeitaltern, weil die Werkstatt nur nachschlägt, was ihr fehlt.
 
-Fehlt `schema`, gilt `0`.
+**`entrySchema` ist nicht `schemaVersion`.** Das eine ist die Fassung des
+Bauplans für Beschreibungen, das andere die Fassung des Paketformats. Sie
+heißen deshalb verschieden.
+
+Fehlt `entrySchema`, gilt `0`. Geprüft wird: ganze Zahl von 0 bis 1000
+(`MAX_ENTRY_SCHEMA` in `core/package.js`). Eine absurd hohe Nummer würde das
+Wörterbuch der Person an dieser Stelle für immer einfrieren – beim Import
+gewinnt ja die höhere –, und niemand sähe, warum die Erklärung nicht mehr
+besser wird.
+
+## Die Prüfung
+
+`core/package.js` bleibt die eine Prüfung für beide Seiten.
+
+- `validateParts(files)` prüft ein ausgepacktes Paket der zweiten Fassung –
+  `files` ist eine Map von Pfad auf Inhalt. Es liest die drei Dateien, setzt
+  sie mit `joinPackage` zusammen und schickt das Ganze durch
+  `validatePackage`. Ergebnis: `{ data, problems }`.
+- `validatePackage(data, files)` prüft wie bisher, und die erste Fassung
+  genau wie bisher. Die zweite nimmt sie in zusammengesetzter Form.
+- `splitPackage(data)` teilt ein Paket in `{ head, text, dictionary }`.
 
 ## Der Import
 
