@@ -162,7 +162,7 @@
               "end": 6,
               "surface": "Il y a",
               "gloss": "es-gibt",
-              "lemma": "Il y a",
+              "lemma": "il y a",
               "key": "fr:il y a:PHRASE"
             }
           ]
@@ -542,7 +542,7 @@
               "end": 64,
               "surface": "s’il vous plaît",
               "gloss": "bitte",
-              "lemma": "s’il vous plaît",
+              "lemma": "s'il vous plaît",
               "key": "fr:s'il vous plaît:PHRASE"
             }
           ]

@@ -184,7 +184,7 @@
               "end": 6,
               "surface": "Il y a",
               "gloss": "es gibt",
-              "lemma": "Il y a",
+              "lemma": "il y a",
               "key": "fr:il y a:PHRASE"
             }
           ]
@@ -466,7 +466,7 @@
               "end": 33,
               "surface": "Je m’appelle",
               "gloss": "ich heiße",
-              "lemma": "Je m’appelle",
+              "lemma": "je m'appelle",
               "key": "fr:je m'appelle:PHRASE"
             }
           ]
@@ -551,7 +551,7 @@
               "end": 37,
               "surface": "Je m’appelle",
               "gloss": "ich heiße",
-              "lemma": "Je m’appelle",
+              "lemma": "je m'appelle",
               "key": "fr:je m'appelle:PHRASE"
             }
           ]
@@ -1105,7 +1105,7 @@
               "end": 8,
               "surface": "À la fin",
               "gloss": "am Ende",
-              "lemma": "À la fin",
+              "lemma": "à la fin",
               "key": "fr:à la fin:PHRASE"
             }
           ]
