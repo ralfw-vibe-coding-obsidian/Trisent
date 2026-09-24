@@ -51,16 +51,31 @@ Trisent/                      einstellbar, Vorgabe: Trisent
 **Deploy** legt ein fertiges Paket in die Inbox. Von dort holt die Person es
 ab - um es weiterzugeben, oder um es in ihre Bibliothek zu importieren. Nur der
 **Import** schreibt in die Bibliothek, und nur, was die Prüfung besteht.
+Importiert wird, wenn die Person es will - im Reader über „Import", nie von
+selbst.
 
-Beim Import:
+Beim Import, je ZIP in der Inbox:
 
 1. Auspacken und prüfen.
-2. Das Paket an seiner `id` wiedererkennen; sonst einen neuen Ordner anlegen.
+2. **Ist der Text schon bekannt?** Das Paket wird an seiner `id` erkannt und
+   seine `version` mit der in der Bibliothek verglichen:
+
+   | In der Bibliothek | Was geschieht |
+   |---|---|
+   | nicht da | wird abgelegt |
+   | ältere `version` | wird ersetzt – ein Update |
+   | dieselbe `version` | nichts abzulegen |
+   | **neuere** `version` | wird **nicht** übernommen, weder Text noch Wörter; das ZIP bleibt in der Inbox |
+
 3. `dictionary.json` **zuerst** in das Wörterbuch der Sprache einarbeiten -
-   so bleibt bei einem Abbruch schlimmstenfalls ein Eintrag ohne Text zurück,
-   nie ein Text ohne Erklärungen.
+   nach der Abgleichregel unten, und mit einer Frage, wenn es etwas zu
+   entscheiden gibt. So bleibt bei einem Abbruch schlimmstenfalls ein Eintrag
+   ohne Text zurück, nie ein Text ohne Erklärungen.
 4. `package.json`, `text.json` und `audio/` ablegen. Das Wörterbuch des
    Pakets wird **nicht** abgelegt, das Archiv auch nicht.
+5. Das ZIP wandert in den Papierkorb von Obsidian - auch bei derselben
+   `version`, denn es war nichts mehr zu tun. Liegen bleibt es nur, wenn es
+   abgewiesen wurde oder eine ältere `version` trägt.
 
 Ein Ordner **ist** ein Lernpaket, genau dann wenn eine `package.json` direkt
 darin liegt. Ein Paket enthält keine weiteren Pakete. Der Ordnername ist frei
@@ -278,9 +293,21 @@ höhere Nummer, und eine absurd hohe würde einen Eintrag für immer festhalten.
 
 Für jeden Schlüssel aus dem Paket:
 
-- Steht er noch nicht im Wörterbuch der Sprache: **aufnehmen**.
-- Steht er schon dort: **ersetzen, wenn `entrySchema` höher ist**, sonst
-  liegen lassen.
+- Steht er noch nicht im Wörterbuch der Sprache: **aufnehmen**. Ohne Frage -
+  sonst hätte der Text Lücken, und es gibt nichts zu ersetzen.
+- Steht er schon dort mit **gleicher oder höherer** `entrySchema`: liegen
+  lassen.
+- Steht er schon dort mit **niedrigerer** `entrySchema`: Die Erklärung im
+  Paket folgt einem neueren Bauplan. **Die Person wird gefragt**, einmal je
+  Paket, für alle solchen Wörter zusammen, mit alter und neuer Fassung
+  nebeneinander. Ja: ersetzen. Nein, oder die Frage wird weggeklickt: liegen
+  lassen.
+
+Ersetzt wird immer ein ganzer Eintrag, nie einzelne Felder - eine aus zwei
+Fassungen zusammengesetzte Erklärung hätte niemand geprüft.
+
+Warum gefragt wird: Eine neue Fassung ist nicht für jede Person eine bessere.
+Wer eine Erklärung verinnerlicht hat, soll nicht still eine andere vorfinden.
 
 Im Wörterbuch steht nichts, was die Person geschrieben hat - es ist jederzeit
 aus den Paketen neu aufbaubar. Einträge, deren Paket gelöscht wird, bleiben.
