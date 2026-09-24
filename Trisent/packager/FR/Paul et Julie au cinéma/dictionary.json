@@ -23,7 +23,9 @@
     "partOfSpeech": "VERB",
     "gloss": "gehen, fahren",
     "forms": [
-      "vont"
+      "vont",
+      "va",
+      "vais"
     ],
     "grammar": "Stark unregelmäßiges Verb: je vais, tu vas, il va, nous allons, vous allez, ils vont. Bildet die nahe Zukunft (aller + Infinitiv: ils vont acheter - sie werden kaufen) und steht meist mit Richtungsangabe à/en/chez. Perfekt mit être: il est allé."
   },
@@ -345,7 +347,9 @@
     "forms": [
       "je",
       "j'",
-      "Je"
+      "Je",
+      "J’",
+      "j’"
     ],
     "grammar": "Vor einem Vokal oder stummem h wird es zu j': j'ai, j'habite."
   },
@@ -378,7 +382,8 @@
       "l’",
       "les",
       "La",
-      "Le"
+      "Le",
+      "L’"
     ],
     "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur."
   },
@@ -387,7 +392,8 @@
     "partOfSpeech": "DET",
     "gloss": "ihr, ihre",
     "forms": [
-      "leurs"
+      "leurs",
+      "leur"
     ],
     "grammar": "Possessivbegleiter für mehrere Besitzer: leur vor Einzahl (leur place), leurs vor Mehrzahl (leurs places). Anders als im Deutschen richtet er sich nach dem besessenen Ding, nicht nach dem Geschlecht der Besitzer. Nicht verwechseln mit dem unveränderlichen Pronomen leur „ihnen\" (je leur parle)."
   },
@@ -563,7 +569,8 @@
     "gloss": "sich",
     "forms": [
       "s'",
-      "s’"
+      "s’",
+      "se"
     ],
     "grammar": "Reflexivpronomen der 3. Person, für Einzahl und Mehrzahl gleich: il se lève, ils s'assoient. Vor Vokal oder stummem h wird es zu `s'` – eigenes Wort mit der Grundform `se`. Steht immer vor dem gebeugten Verb; in der 1. und 2. Person heißt es `me`, `te`, `nous`, `vous`."
   },
@@ -639,7 +646,8 @@
     "gloss": "ein, eine",
     "forms": [
       "une",
-      "un"
+      "un",
+      "Un"
     ],
     "grammar": "Unbestimmter Artikel: un vor männlichen, une vor weiblichen Wörtern. Man sieht also am Artikel das Geschlecht."
   },
@@ -658,7 +666,8 @@
     "gloss": "sehen",
     "forms": [
       "vois",
-      "voir"
+      "voir",
+      "voit"
     ],
     "grammar": "Unregelmäßig: je vois, tu vois, il voit, nous voyons, vous voyez, ils voient."
   },
@@ -705,7 +714,8 @@
     "partOfSpeech": "ADP",
     "gloss": "zu, in, an, bis",
     "forms": [
-      "à"
+      "à",
+      "À"
     ],
     "grammar": "Sehr vielseitig. Mit le verschmilzt es zu au, mit les zu aux."
   },
@@ -724,7 +734,10 @@
     "gloss": "sein",
     "forms": [
       "est",
-      "sommes"
+      "sommes",
+      "suis",
+      "sont",
+      "es"
     ],
     "grammar": "Das unregelmäßigste Verb: je suis, tu es, il est, nous sommes, vous êtes, ils sont."
   }

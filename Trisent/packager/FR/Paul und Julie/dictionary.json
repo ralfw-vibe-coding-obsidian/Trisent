@@ -79,7 +79,8 @@
     "partOfSpeech": "ADJ",
     "gloss": "froh, zufrieden",
     "forms": [
-      "content"
+      "content",
+      "contents"
     ],
     "grammar": "Weibliche Form contente. Vor einem Infinitiv steht de: content de te connaître."
   },
@@ -244,7 +245,8 @@
       "l’",
       "les",
       "La",
-      "Le"
+      "Le",
+      "L’"
     ],
     "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur."
   },
@@ -254,7 +256,8 @@
     "gloss": "mich, mir",
     "forms": [
       "m'",
-      "m’"
+      "m’",
+      "me"
     ],
     "grammar": "Reflexiv- und Objektpronomen. Steht vor dem Verb und wird vor Vokal zu m': je m'appelle."
   },
@@ -403,7 +406,8 @@
     "gloss": "ein, eine",
     "forms": [
       "une",
-      "un"
+      "un",
+      "Un"
     ],
     "grammar": "Unbestimmter Artikel: un vor männlichen, une vor weiblichen Wörtern. Man sieht also am Artikel das Geschlecht."
   },
@@ -453,7 +457,9 @@
     "forms": [
       "est",
       "sommes",
-      "suis"
+      "suis",
+      "sont",
+      "es"
     ],
     "grammar": "Das unregelmäßigste Verb: je suis, tu es, il est, nous sommes, vous êtes, ils sont."
   }

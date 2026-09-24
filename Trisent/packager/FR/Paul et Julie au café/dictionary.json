@@ -71,7 +71,8 @@
     "partOfSpeech": "VERB",
     "gloss": "ankommen, eintreffen",
     "forms": [
-      "arrive"
+      "arrive",
+      "arrivent"
     ],
     "grammar": "Regelmäßiges Verb auf -er: arrive, arrives, arrive, arrivons, arrivez, arrivent. Bildet die zusammengesetzten Zeiten mit être (il est arrivé), nicht mit avoir. Heißt auch „passieren, geschehen\": qu'est-ce qui arrive ?"
   },
@@ -266,7 +267,8 @@
     "gloss": "von, aus",
     "forms": [
       "d'",
-      "de"
+      "de",
+      "d’"
     ],
     "grammar": "Zeigt Herkunft und Zugehörigkeit. Vor Vokal wird es zu d', mit le verschmilzt es zu du, mit les zu des."
   },
@@ -413,6 +415,7 @@
     "gloss": "er, es",
     "forms": [
       "il",
+      "Il",
       "Ils",
       "ils"
     ],
@@ -426,7 +429,8 @@
       "je",
       "j'",
       "Je",
-      "J’"
+      "J’",
+      "j’"
     ],
     "grammar": "Vor einem Vokal oder stummem h wird es zu j': j'ai, j'habite."
   },
@@ -456,8 +460,10 @@
       "l'",
       "la",
       "le",
-      "Le",
       "l’",
+      "les",
+      "La",
+      "Le",
       "L’"
     ],
     "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur."
@@ -532,6 +538,7 @@
     "gloss": "mich, mir",
     "forms": [
       "m'",
+      "m’",
       "me"
     ],
     "grammar": "Reflexiv- und Objektpronomen. Steht vor dem Verb und wird vor Vokal zu m': je m'appelle."
@@ -559,7 +566,8 @@
     "partOfSpeech": "PRON",
     "gloss": "ich, mich (betont)",
     "forms": [
-      "Moi"
+      "Moi",
+      "moi"
     ],
     "grammar": "Betonte Form von je. Steht allein oder nach einer Präposition: Moi aussi. - avec moi."
   },
@@ -726,8 +734,8 @@
     "gloss": "sich",
     "forms": [
       "s'",
-      "se",
-      "s’"
+      "s’",
+      "se"
     ],
     "grammar": "Reflexivpronomen der 3. Person, für Einzahl und Mehrzahl gleich: il se lève, ils s'assoient. Vor Vokal oder stummem h wird es zu `s'` – eigenes Wort mit der Grundform `se`. Steht immer vor dem gebeugten Verb; in der 1. und 2. Person heißt es `me`, `te`, `nous`, `vous`."
   },
@@ -866,7 +874,8 @@
     "gloss": "sehen",
     "forms": [
       "vois",
-      "voir"
+      "voir",
+      "voit"
     ],
     "grammar": "Unregelmäßig: je vois, tu vois, il voit, nous voyons, vous voyez, ils voient."
   },
@@ -914,9 +923,10 @@
     "gloss": "sein",
     "forms": [
       "est",
+      "sommes",
+      "suis",
       "sont",
-      "es",
-      "suis"
+      "es"
     ],
     "grammar": "Das unregelmäßigste Verb: je suis, tu es, il est, nous sommes, vous êtes, ils sont."
   }

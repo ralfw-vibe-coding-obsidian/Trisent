@@ -353,6 +353,13 @@ function stepsFor(text, can) {
   ];
 }
 
+/* Ob eine schon abgelieferte Fassung noch einmal in die Inbox darf: nur,
+   wenn sie unverändert ist - sonst ist Ingest dran, nicht Deploy. */
+function againFor(text) {
+  return !!text.built && manifests.isEmpty(text.changes) &&
+         text.version > 0 && text.deployed >= text.version;
+}
+
 /* Woran man mit einem Text ist - in einem Satz, nicht in Kästchen. */
 function stateOf(text) {
   if (text.loose) return 'Dropped in. Ingest it to get started.';
@@ -641,7 +648,23 @@ class PackagerView extends ItemView {
     /* Der Zustand in einem Satz. Vorher standen hier zwei Kästchen und
        eine wechselnde Knopfbeschriftung - drei Teile, aus denen man sich
        selbst zusammenreimen musste, woran man ist. */
-    row.createDiv({ cls: 'trisent-pack-state', text: stateOf(text) });
+    const state = row.createDiv({ cls: 'trisent-pack-state', text: stateOf(text) });
+
+    /* Einmal in der Inbox gewesen heißt nicht: für immer in der Bibliothek.
+       Der Import räumt die Inbox leer, und wer den Text später dort
+       löscht, will ihn zurück. Das weiß die Werkstatt nicht - sie fragt
+       ja niemanden. Also gibt es den Weg, ohne dass der Knopf ihn
+       behauptet: Deploy bleibt grau, daneben steht, wie es noch einmal
+       geht. */
+    if (againFor(text) && !this.running.get(keyOf(text))) {
+      state.appendText(' ');
+      const again = state.createEl('a', { cls: 'trisent-pack-again', text: 'Put it into the inbox again' });
+      again.setAttr('href', '#');
+      again.addEventListener('click', (event) => {
+        event.preventDefault();
+        this.send(text);
+      });
+    }
 
     const actions = row.createDiv({ cls: 'trisent-pack-actions' });
     const busy = this.running.get(keyOf(text));

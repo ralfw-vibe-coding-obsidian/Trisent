@@ -1,0 +1,14 @@
+{
+  "id": "fr-paul-et-julie-au-cinema",
+  "version": 4,
+  "built": "2026-09-24T13:26:01.403Z",
+  "inputs": {
+    "text.md": "0c41c7ca7e513928:801",
+    "work.md": "8b7b89f9125b5333:6187"
+  },
+  "deployed": {
+    "version": 4,
+    "at": "2026-09-24T13:26:11.300Z",
+    "file": "Trisent/inbox/Paul et Julie au cinéma (FR).zip"
+  }
+}

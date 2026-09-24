@@ -55,7 +55,9 @@
     "partOfSpeech": "VERB",
     "gloss": "gehen, fahren",
     "forms": [
-      "vont"
+      "vont",
+      "va",
+      "vais"
     ],
     "grammar": "Stark unregelmäßiges Verb: je vais, tu vas, il va, nous allons, vous allez, ils vont. Bildet die nahe Zukunft (aller + Infinitiv: ils vont acheter - sie werden kaufen) und steht meist mit Richtungsangabe à/en/chez. Perfekt mit être: il est allé.",
     "entrySchema": 0
@@ -168,7 +170,8 @@
     "partOfSpeech": "ADV",
     "gloss": "heute",
     "forms": [
-      "Aujourd'hui"
+      "Aujourd'hui",
+      "Aujourd’hui"
     ],
     "grammar": "Unveränderliches Zeitadverb, geschrieben mit Apostroph (aus au jour d'hui). Steht am Satzanfang oder -ende. Reihe: hier – aujourd'hui – demain.",
     "entrySchema": 0
@@ -301,7 +304,8 @@
     "partOfSpeech": "ADJ",
     "gloss": "gut",
     "forms": [
-      "bon"
+      "bon",
+      "bonne"
     ],
     "grammar": "Steht vor dem Substantiv. Weiblich: bonne. In Wunschformeln fällt der Artikel weg: bon séjour, bonne journée.",
     "entrySchema": 0
@@ -505,7 +509,8 @@
     "partOfSpeech": "ADJ",
     "gloss": "froh, zufrieden",
     "forms": [
-      "content"
+      "content",
+      "contents"
     ],
     "grammar": "Weibliche Form contente. Vor einem Infinitiv steht de: content de te connaître.",
     "entrySchema": 0
@@ -1112,7 +1117,8 @@
       "l’",
       "les",
       "La",
-      "Le"
+      "Le",
+      "L’"
     ],
     "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur.",
     "entrySchema": 0
@@ -1132,7 +1138,8 @@
     "partOfSpeech": "DET",
     "gloss": "ihr, ihre",
     "forms": [
-      "leurs"
+      "leurs",
+      "leur"
     ],
     "grammar": "Possessivbegleiter für mehrere Besitzer: leur vor Einzahl (leur place), leurs vor Mehrzahl (leurs places). Anders als im Deutschen richtet er sich nach dem besessenen Ding, nicht nach dem Geschlecht der Besitzer. Nicht verwechseln mit dem unveränderlichen Pronomen leur „ihnen\" (je leur parle).",
     "entrySchema": 0
@@ -1223,7 +1230,8 @@
     "gloss": "mich, mir",
     "forms": [
       "m'",
-      "m’"
+      "m’",
+      "me"
     ],
     "grammar": "Reflexiv- und Objektpronomen. Steht vor dem Verb und wird vor Vokal zu m': je m'appelle.",
     "entrySchema": 0
@@ -1285,7 +1293,8 @@
     "gloss": "mein",
     "forms": [
       "mon",
-      "ma"
+      "ma",
+      "mes"
     ],
     "grammar": "Richtet sich nach dem besessenen Ding, nicht nach dem Besitzer: mon passeport (m), ma chambre (f), mes clés (Pl.).",
     "entrySchema": 0
@@ -1902,7 +1911,8 @@
     "gloss": "sich",
     "forms": [
       "s'",
-      "s’"
+      "s’",
+      "se"
     ],
     "grammar": "Reflexivpronomen der 3. Person, für Einzahl und Mehrzahl gleich: il se lève, ils s'assoient. Vor Vokal oder stummem h wird es zu `s'` – eigenes Wort mit der Grundform `se`. Steht immer vor dem gebeugten Verb; in der 1. und 2. Person heißt es `me`, `te`, `nous`, `vous`.",
     "entrySchema": 0
@@ -2197,7 +2207,8 @@
     "gloss": "ein, eine",
     "forms": [
       "une",
-      "un"
+      "un",
+      "Un"
     ],
     "grammar": "Unbestimmter Artikel: un vor männlichen, une vor weiblichen Wörtern. Man sieht also am Artikel das Geschlecht.",
     "entrySchema": 0
@@ -2402,7 +2413,8 @@
     "partOfSpeech": "PRON",
     "gloss": "das",
     "forms": [
-      "ça"
+      "ça",
+      "Ça"
     ],
     "grammar": "Umgangssprachliche Kurzform von cela. C'est ça heißt „genau so ist es“.",
     "entrySchema": 0
@@ -2434,7 +2446,9 @@
     "forms": [
       "est",
       "sommes",
-      "suis"
+      "suis",
+      "sont",
+      "es"
     ],
     "grammar": "Das unregelmäßigste Verb: je suis, tu es, il est, nous sommes, vous êtes, ils sont.",
     "entrySchema": 0

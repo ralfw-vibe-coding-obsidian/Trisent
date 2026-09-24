@@ -4,7 +4,8 @@
     "partOfSpeech": "VERB",
     "gloss": "ankommen, eintreffen",
     "forms": [
-      "arrive"
+      "arrive",
+      "arrivent"
     ],
     "grammar": "Regelmäßiges Verb auf -er: arrive, arrives, arrive, arrivons, arrivez, arrivent. Bildet die zusammengesetzten Zeiten mit être (il est arrivé), nicht mit avoir. Heißt auch „passieren, geschehen\": qu'est-ce qui arrive ?"
   },
@@ -14,7 +15,8 @@
     "gloss": "suchen",
     "forms": [
       "cherche",
-      "cherches"
+      "cherches",
+      "cherchent"
     ],
     "grammar": "Regelmäßiges Verb auf -er: cherche, cherches, cherche, cherchons, cherchez, cherchent. Steht ohne Präposition vor dem Objekt - je cherche mon téléphone, nicht „chercher pour\". Mit venir/aller davor heißt es „abholen\": aller chercher quelqu'un."
   },
@@ -63,7 +65,9 @@
     "forms": [
       "je",
       "j'",
-      "Je"
+      "Je",
+      "J’",
+      "j’"
     ],
     "grammar": "Vor einem Vokal oder stummem h wird es zu j': j'ai, j'habite."
   },
@@ -84,6 +88,9 @@
       "l'",
       "la",
       "le",
+      "l’",
+      "les",
+      "La",
       "Le"
     ],
     "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur."
@@ -185,7 +192,8 @@
     "partOfSpeech": "VERB",
     "gloss": "schauen, ansehen",
     "forms": [
-      "regarde"
+      "regarde",
+      "regardent"
     ],
     "grammar": "Regelmäßiges Verb auf -er: `je regarde`, `tu regardes`, `il/elle regarde`, `nous regardons`, `vous regardez`, `ils regardent`. Nimmt das Objekt ohne Präposition: `regarder la télé`. Gegen `voir` abgrenzen: `regarder` ist das absichtliche Hinsehen, `voir` das bloße Sehen."
   },
@@ -204,6 +212,7 @@
     "gloss": "sein, ihr",
     "forms": [
       "ses",
+      "sa",
       "son"
     ],
     "grammar": "Richtet sich nach dem besessenen Ding, nicht nach dem Besitzer: son ami (m), sa fête (f), ses amis (Pl.). Heißt sowohl sein als auch ihr."

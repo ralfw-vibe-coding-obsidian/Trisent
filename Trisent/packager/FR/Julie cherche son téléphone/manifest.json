@@ -1,0 +1,19 @@
+{
+  "id": "fr-julie-cherche-son-telephone",
+  "version": 4,
+  "built": "2026-09-24T13:25:58.091Z",
+  "inputs": {
+    "text.md": "5fa8168ae2911fa0:201",
+    "work.md": "15191e7b50ba3095:1598",
+    "audio/1e9b45094d64c8b7.mp3": 37660,
+    "audio/3bac2f5c99571c2a.mp3": 51453,
+    "audio/b7501826af9f12bf.mp3": 20524,
+    "audio/bf6c91a043eac45d.mp3": 37660,
+    "audio/caff7eafcc36f10d.mp3": 41004
+  },
+  "deployed": {
+    "version": 4,
+    "at": "2026-09-24T13:26:08.487Z",
+    "file": "Trisent/inbox/Julie cherche son téléphone (FR).zip"
+  }
+}

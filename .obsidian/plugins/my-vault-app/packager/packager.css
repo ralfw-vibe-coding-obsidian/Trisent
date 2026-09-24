@@ -66,6 +66,18 @@
   margin: -0.3rem 0 0.75rem;
 }
 
+/* Noch einmal in die Inbox: ein leiser Weg neben dem Zustand, kein
+   weiterer Knopf. Der Knopf sagt, was ansteht - das hier, was geht. */
+.trisent-pack-again {
+  color: var(--text-accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.trisent-pack-again:hover {
+  text-decoration: underline;
+}
+
 /* Der Bericht. Was gut ging, steht in einem Satz; was schiefging,
    steht vollständig da - eine Fehlerliste, die man kürzt, kostet eine
    weitere Runde. */
