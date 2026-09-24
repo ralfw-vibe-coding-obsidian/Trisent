@@ -1940,14 +1940,21 @@ class Packager {
       new Notice('Trisent could not update the workshop: ' + String(error.message || error), 15000);
       return;
     }
-    if (!report || report.languages === 0) return;
+    if (!report) return;
 
-    new Notice(
-      'Trisent gathered ' + report.words + ' words into ' +
-      (report.languages === 1 ? 'one dictionary' : report.languages + ' dictionaries') +
-      '. The old word notes were left alone.',
-      12000
-    );
+    const said = [];
+    if (report.languages > 0) {
+      said.push('Trisent gathered ' + report.words + ' words into ' +
+        (report.languages === 1 ? 'one dictionary' : report.languages + ' dictionaries') +
+        '. The old word notes were left alone.');
+    }
+    if (report.moved > 0) {
+      said.push('House rules and word recipes moved into a "meta" folder per language.');
+    }
+    if (report.kept.length > 0) {
+      said.push('Left where they are, because meta already has one: ' + report.kept.join(', ') + '.');
+    }
+    if (said.length > 0) new Notice(said.join(' '), 15000);
   }
 
   /* ---------------------------------------------------------------- */
