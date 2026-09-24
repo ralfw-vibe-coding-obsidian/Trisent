@@ -218,9 +218,11 @@ class Migrations {
   }
 
   /* Die alten Wortnotizen wegräumen - aber nur, wenn der Wortvorrat jede
-     einzelne von ihnen kennt. Fehlt auch nur eine, bleibt der Ordner
-     liegen: Dann stimmt etwas nicht, und die Notizen sind das Einzige,
-     woran man es nachprüfen kann.
+     einzelne von ihnen vollständig enthält: denselben Schlüssel, dieselbe
+     Bedeutung, dieselbe Beschreibung, alle ihre Formen. Eine Notiz, die
+     sich nicht lesen lässt, oder eine zweite zum selben Wort mit anderem
+     Inhalt, lässt den ganzen Ordner liegen: Dann stimmt etwas nicht, und
+     die Notizen sind das Einzige, woran man es nachprüfen kann.
 
      Weggeräumt wird in den Papierkorb, so wie die Person es in Obsidian
      eingestellt hat - von dort lässt es sich zurückholen. */
@@ -240,9 +242,13 @@ class Migrations {
       let count = 0;
       let covered = true;
       for (const note of words.children) {
-        if (!(note instanceof TFile) || note.extension !== 'md') continue;
-        const made = store.fromNote(await this.app.vault.read(note), code);
-        if (made && !Object.prototype.hasOwnProperty.call(dictionary, made.key)) {
+        /* Alles, was keine Notiz ist, gehört nicht uns - dann bleibt der
+           Ordner. */
+        if (!(note instanceof TFile) || note.extension !== 'md') {
+          covered = false;
+          break;
+        }
+        if (!store.covers(dictionary, store.fromNote(await this.app.vault.read(note), code))) {
           covered = false;
           break;
         }

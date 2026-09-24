@@ -81,6 +81,23 @@ function addMissing(into, offered) {
   return added;
 }
 
+/* Steht alles, was eine alte Wortnotiz wusste, im Wortvorrat? Derselbe
+   Schlüssel, dieselbe Bedeutung, dieselbe Beschreibung, und jede ihrer
+   Formen. Nur dann darf die Notiz weg.
+
+   Eine Notiz, die sich gar nicht lesen ließ ("made" ist null), gilt
+   ausdrücklich NICHT als enthalten - was man nicht lesen kann, kann man
+   auch nicht übernommen haben. */
+function covers(dictionary, made) {
+  if (!made) return false;
+  const target = dictionary[made.key];
+  if (!target) return false;
+  if (String(target.gloss || '') !== String(made.entry.gloss || '')) return false;
+  if (String(target.grammar || '').trim() !== String(made.entry.grammar || '').trim()) return false;
+  const known = Array.isArray(target.forms) ? target.forms : [];
+  return (made.entry.forms || []).every((form) => known.indexOf(form) >= 0);
+}
+
 /* Formen, die ein Text mitgebracht hat, in den Wortvorrat übernehmen.
 
    Ein Eintrag soll alle Formen kennen, die je vorkamen - nicht nur die
@@ -181,4 +198,4 @@ function serialize(dictionary) {
   return JSON.stringify(out, null, 2) + '\n';
 }
 
-module.exports = { entry, fromNote, addMissing, mergeForms, missingFrom, extract, parse, serialize };
+module.exports = { entry, fromNote, covers, addMissing, mergeForms, missingFrom, extract, parse, serialize };

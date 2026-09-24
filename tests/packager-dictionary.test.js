@@ -132,4 +132,24 @@ test('nichts Neues, nichts geändert', () => {
   is(dictionary.mergeForms(vorrat, { 'fr:aller:VERB': { forms: ['va'] } }), 0, 'keine Änderung');
 });
 
+test('eine unlesbare Notiz gilt nicht als übernommen', () => {
+  is(dictionary.covers({}, null), false, 'nicht enthalten');
+});
+
+test('übernommen heißt: alles, was die Notiz wusste', () => {
+  const made = dictionary.fromNote(note, 'fr');
+  const vorrat = { 'fr:chercher:VERB': dictionary.entry(made.entry) };
+  ok(dictionary.covers(vorrat, made), 'gleich: enthalten');
+
+  vorrat['fr:chercher:VERB'].grammar = 'etwas anderes';
+  ok(!dictionary.covers(vorrat, made), 'andere Beschreibung: nicht enthalten');
+
+  vorrat['fr:chercher:VERB'] = dictionary.entry(made.entry);
+  vorrat['fr:chercher:VERB'].forms = ['cherche'];
+  ok(!dictionary.covers(vorrat, made), 'eine Form fehlt: nicht enthalten');
+
+  vorrat['fr:chercher:VERB'].forms = ['cherche', 'cherchons', 'cherchez'];
+  ok(dictionary.covers(vorrat, made), 'mehr Formen: enthalten');
+});
+
 if (require.main === module) report();
