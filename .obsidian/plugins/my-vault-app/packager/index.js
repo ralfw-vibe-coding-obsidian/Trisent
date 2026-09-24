@@ -18,7 +18,11 @@
 
 const { ItemView, Modal, Notice, Platform, Setting, TFile, TFolder, normalizePath, requestUrl } = require('obsidian');
 const { parseWork, splitNote, buildPackage, nameFor } = require('./build.js');
-const { keyFor } = require('../core/package.js');
+const {
+  keyFor, splitPackage, joinPackage, validateParts,
+  TEXT_FILE: TEXT_JSON, DICTIONARY_FILE: ENTRIES_JSON
+} = require('../core/package.js');
+const { writeZip } = require('../core/zip.js');
 const store = require('./dictionary.js');
 const { Migrations } = require('./migrations.js');
 const { log } = require('../core/log.js');
@@ -32,6 +36,10 @@ const RIBBON_ICON = 'package-plus';
 const WORK_FILE = 'work.md';
 const TEXT_FILE = 'text.md';
 const PACKAGE_FILE = 'package.json';
+/* Das Erzeugnis: das Paket als ein Archiv, genau so, wie es hinausgeht.
+   In der Werkstatt heißt es immer so; einen sprechenden Namen bekommt
+   erst die Kopie, die weitergegeben wird. */
+const ARCHIVE_FILE = 'package.zip';
 const WORDS_DIR = 'words';
 const DICTIONARY_FILE = 'dictionary.json';
 
@@ -254,12 +262,28 @@ function slug(name) {
 /* Zwei Pakete sind dasselbe, wenn sie sich nur in der Fassungsnummer
    unterscheiden. */
 function same(one, other) {
+  /* Die Fassung des Formats zählt nicht: Ein Paket, das nur aus einer
+     Datei in drei umzieht, hat sich inhaltlich nicht geändert. */
   const strip = (data) => {
     const copy = Object.assign({}, data);
     delete copy.version;
+    delete copy.schemaVersion;
     return JSON.stringify(copy);
   };
   return strip(one) === strip(other);
+}
+
+/* Die Tonspuren, auf die ein Paket verweist - und nur die. Was sonst noch
+   im Ordner liegt, gehört nicht hinein. */
+function audioNamesOf(data) {
+  const names = [];
+  for (const paragraph of data.paragraphs || []) {
+    for (const sentence of paragraph.sentences || []) {
+      const file = sentence.audio && sentence.audio.file;
+      if (file && names.indexOf(file) < 0) names.push(file);
+    }
+  }
+  return names;
 }
 
 /* Woran ein Bericht und ein laufender Vorgang hängen. Eine lose Notiz
@@ -1873,14 +1897,7 @@ class Packager {
     /* Die Fassung steigt nur, wenn sich wirklich etwas geändert hat.
        Stur hochzählen hieße: Deine Bibliothek meldet eine neue Fassung,
        obwohl Wort für Wort dasselbe drinsteht. */
-    let previous = null;
-    if (text.package) {
-      try {
-        previous = JSON.parse(await this.app.vault.read(text.package));
-      } catch (error) {
-        /* Kaputte alte Fassung - dann fangen wir eben bei 1 an. */
-      }
-    }
+    const previous = await this.readBuilt(text.folder);
     const held = previous && Number.isFinite(previous.version) ? previous.version : 0;
 
     const result = buildPackage(
@@ -1919,10 +1936,15 @@ class Packager {
 
     /* Erst wenn alles stimmt, wird geschrieben. Ein halbes Paket ist
        schlimmer als keins. */
-    await this.put(
-      text.folder.path + '/' + PACKAGE_FILE,
-      JSON.stringify(result.data, null, 2) + '\n'
-    );
+    const refused = await this.writeBuilt(text.folder, result.data);
+    if (refused.length > 0) {
+      return {
+        kind: 'bad',
+        headline: 'The package did not pass the checks. Nothing was written.',
+        lines: refused.slice(0, 12),
+        more: Math.max(0, refused.length - 12)
+      };
+    }
 
     const stats = result.stats;
     return {
@@ -1932,6 +1954,62 @@ class Packager {
               stats.units + ' words · ' + stats.phrases + ' phrases · ' +
               stats.keys + ' different entries in the dictionary.'
     };
+  }
+
+  /* Was zuletzt gebaut wurde, als ein Ganzes - gleich ob es noch in der
+     ersten Fassung als eine Datei daliegt oder schon in dreien. Kaputt
+     oder unvollständig heißt: Es gibt noch nichts, und die Zählung fängt
+     neu an. */
+  async readBuilt(folder) {
+    const head = this.file(folder.path + '/' + PACKAGE_FILE);
+    if (!head) return null;
+    try {
+      const data = JSON.parse(await this.app.vault.read(head));
+      if (Array.isArray(data.paragraphs)) return data;
+
+      const text = this.file(folder.path + '/' + TEXT_JSON);
+      const entries = this.file(folder.path + '/' + ENTRIES_JSON);
+      if (!text || !entries) return null;
+      return joinPackage(
+        data,
+        JSON.parse(await this.app.vault.read(text)),
+        JSON.parse(await this.app.vault.read(entries))
+      );
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /* Das Paket ablegen: Kopf, Text und Wörterbuch als drei Dateien, und
+     daraus das Archiv, das hinausgeht.
+
+     Vorher wird noch einmal genau so geprüft, wie die Bibliothek beim
+     Import prüft - mit den Dateien, die tatsächlich im Archiv landen.
+     Was hier durchgeht, geht auch dort durch. Liefert die Beanstandungen;
+     leer heißt: geschrieben. */
+  async writeBuilt(folder, data) {
+    const parts = splitPackage(data);
+    const files = new Map();
+    files.set(PACKAGE_FILE, JSON.stringify(parts.head, null, 2) + '\n');
+    files.set(TEXT_JSON, JSON.stringify(parts.text, null, 2) + '\n');
+    files.set(ENTRIES_JSON, JSON.stringify(parts.dictionary, null, 2) + '\n');
+
+    for (const name of audioNamesOf(data)) {
+      const file = this.file(folder.path + '/' + name);
+      if (file) files.set(name, new Uint8Array(await this.app.vault.readBinary(file)));
+    }
+
+    const checked = validateParts(files);
+    if (checked.problems.length > 0) return checked.problems;
+
+    /* Der Kopf zuletzt unter den dreien: An seinem Datum erkennt die
+       Werkstatt, wann gebaut wurde. Das Archiv ganz zuletzt - es ist das
+       Erzeugnis, und es soll nie älter sein als das, woraus es besteht. */
+    await this.put(folder.path + '/' + TEXT_JSON, files.get(TEXT_JSON));
+    await this.put(folder.path + '/' + ENTRIES_JSON, files.get(ENTRIES_JSON));
+    await this.put(folder.path + '/' + PACKAGE_FILE, files.get(PACKAGE_FILE));
+    await this.putBinary(folder.path + '/' + ARCHIVE_FILE, (await writeZip(files)).buffer);
+    return [];
   }
 
   /* Die Werkstatt auf das heutige Schema bringen. Einmal je Vault; was
@@ -2060,15 +2138,19 @@ class Packager {
   async send(text) {
     if (!text.package) throw new Error('There is no built package yet.');
 
+    const data = await this.readBuilt(text.folder);
+    if (!data) throw new Error('The package is incomplete. Build it again.');
+
+    /* Bis die Vordertür für Archive steht, geht das Paket in der ersten
+       Fassung hinüber: eine Datei mit allem darin, dazu die Tonspuren.
+       Sobald die Learning-Seite Bescheid gibt, geht stattdessen
+       package.zip durch importArchive - und dieser Umweg fällt weg. */
+    const whole = Object.assign({}, data, { schemaVersion: 1 });
     const contents = new Map();
-    for (const file of this.filesUnder(text.folder)) {
-      const relative = file.path.slice(text.folder.path.length + 1);
-      if (relative === WORK_FILE || relative === TEXT_FILE) continue;
-      /* Die Rohdaten der Zeitmarken bleiben in der Werkstatt - im Paket
-         stehen sie fertig an den Sätzen. */
-      if (relative.startsWith(TIMING_DIR + '/')) continue;
-      const bytes = await this.app.vault.readBinary(file);
-      contents.set(relative, new Uint8Array(bytes));
+    contents.set(PACKAGE_FILE, new TextEncoder().encode(JSON.stringify(whole, null, 2) + '\n'));
+    for (const name of audioNamesOf(whole)) {
+      const file = this.file(text.folder.path + '/' + name);
+      if (file) contents.set(name, new Uint8Array(await this.app.vault.readBinary(file)));
     }
 
     /* Die Vordertür. Sie heißt nach ihrem Zweck, nicht nach einem
@@ -2084,18 +2166,6 @@ class Packager {
 
     return (result.updated ? 'Updated "' : 'Added "') + result.title + '" in ' +
            result.language.name + ' — version ' + result.version + '.';
-  }
-
-  filesUnder(folder) {
-    const found = [];
-    const walk = (current) => {
-      for (const child of current.children) {
-        if (child instanceof TFolder) walk(child);
-        else if (child instanceof TFile) found.push(child);
-      }
-    };
-    walk(folder);
-    return found;
   }
 
   /* ---------------------------------------------------------------- */

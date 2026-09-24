@@ -435,6 +435,9 @@ function buildPackage(work, original, words, version, audio, into) {
     };
     if (forms.length > 0) entry.forms = forms;
     if (note.grammar) entry.grammar = note.grammar;
+    /* Nach welchem Bauplan die Beschreibung entstand. Die Null wird nicht
+       geschrieben - fehlt die Nummer, gilt ohnehin null. */
+    if (note.entrySchema) entry.entrySchema = note.entrySchema;
     dictionary[key] = entry;
   }
 
