@@ -2114,9 +2114,11 @@ class Packager {
 
     const said = [];
     if (report.languages > 0) {
+      /* Räumt derselbe Lauf die alten Notizen gleich weg, sagt das der
+         Satz dazu weiter unten - hier stünde sonst das Gegenteil. */
       said.push('Trisent gathered ' + report.words + ' words into ' +
-        (report.languages === 1 ? 'one dictionary' : report.languages + ' dictionaries') +
-        '. The old word notes were left alone.');
+        (report.languages === 1 ? 'one dictionary' : report.languages + ' dictionaries') + '.' +
+        (report.cleared > 0 ? '' : ' The old word notes were left alone.'));
     }
     if (report.moved > 0) {
       said.push('House rules and word recipes moved into a "meta" folder per language.');
