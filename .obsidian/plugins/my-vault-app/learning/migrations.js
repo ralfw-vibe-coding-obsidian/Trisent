@@ -24,6 +24,7 @@ const {
 const { normalizeAll, mergeLegacy } = require('./entries.js');
 const { NOTES_DIR, LEGACY_NOTES_DIR } = require('../core/library.js');
 const { PACKAGE_FILE, TEXT_FILE, splitPackage } = require('../core/package.js');
+const { instantOfDay, isInstant } = require('../core/calendar.js');
 
 /* Frontmatter und Rumpf trennen. Die Eigenschaften ändert Obsidian
    selbst (processFrontMatter); hier geht es nur um den Text darunter. */
@@ -56,7 +57,8 @@ class Migrations {
   steps() {
     return [
       { to: 2, run: (report) => this.decoupleNotes(report) },
-      { to: 3, run: (report) => this.centralDictionary(report) }
+      { to: 3, run: (report) => this.centralDictionary(report) },
+      { to: 4, run: (report) => this.utcStamps(report) }
     ];
   }
 
@@ -68,7 +70,7 @@ class Migrations {
     const report = {
       from: from, to: from,
       notes: 0, rescued: 0, cards: 0, links: 0, leftAlone: 0,
-      entries: 0, packages: 0, moved: 0, freed: 0
+      entries: 0, packages: 0, moved: 0, freed: 0, stamps: 0
     };
 
     for (const step of this.steps()) {
@@ -348,6 +350,91 @@ class Migrations {
     }
   }
 
+  /* ---------------------------------------------------------------- */
+  /* Schritt 4: Zeitpunkte in UTC                                      */
+  /* ---------------------------------------------------------------- */
+
+  /* Bisher stand bei jedem Zeitpunkt nur ein Datum - der Tag, wie er dort
+     war, wo die App gerade lief. Die Person reist; ein solcher Tag hängt
+     an dem Ort, an dem er geschrieben wurde. Ab jetzt wird in UTC
+     gespeichert und erst beim Lesen in den Tag übersetzt, der es HIER ist.
+
+     Umgebaut werden nur ZEITPUNKTE:
+     - `lastDay` in language.md wird zu `lastSeen`
+     - `updatedAt` in Word notes und Satznotizen
+     - `added` in Karteikarten
+     - "Kosten seit" des Translators in den Einstellungen
+
+     Die Wiedervorlage `due` bleibt ein Datum - sie ist ein Kalendertag,
+     kein Zeitpunkt, und gilt an jedem Ort an genau diesem Tag.
+
+     Welche Uhrzeit ein altes Datum hatte, weiß niemand mehr. Genommen wird
+     der Mittag dieses Tages hier (instantOfDay): Er ergibt an jedem Ort
+     wieder denselben Tag, solange keine zwölf Stunden Zeitunterschied
+     dazwischen liegen. */
+  async utcStamps(report) {
+    for (const language of this.library.languages()) {
+      const note = language.folder.children.find(
+        (child) => child instanceof TFile && child.name === 'language.md'
+      );
+      if (note) await this.stampLanguage(note, report);
+
+      for (const file of this.library.wordsOf(language)) {
+        await this.stampField(file, 'updatedAt', report);
+      }
+      const sentences = this.library.childFolder(language.folder, 'sentences');
+      for (const file of sentences ? sentences.children : []) {
+        if (file instanceof TFile && file.extension === 'md') {
+          await this.stampField(file, 'updatedAt', report);
+        }
+      }
+      for (const file of this.cardFiles(language)) {
+        await this.stampField(file, 'added', report);
+      }
+    }
+
+    /* Die Einstellung des Translators. */
+    const translator = this.plugin.settings.translator;
+    if (translator && typeof translator.spentSince === 'string' && !isInstant(translator.spentSince)) {
+      const stamped = instantOfDay(translator.spentSince);
+      if (stamped) {
+        translator.spentSince = stamped;
+        report.stamps += 1;
+      }
+    }
+    return true;
+  }
+
+  /* Ein Feld, das ein bloßes Datum trägt, zum Zeitpunkt machen. Steht dort
+     schon ein Zeitpunkt, oder gar nichts, bleibt es, wie es ist. */
+  async stampField(file, field, report) {
+    const head = await this.headOf(file);
+    const value = head.front[field];
+    if (typeof value !== 'string' || isInstant(value)) return;
+
+    const stamped = instantOfDay(value);
+    if (!stamped) return;
+
+    await this.app.fileManager.processFrontMatter(file, (fm) => {
+      fm[field] = stamped;
+    });
+    report.stamps += 1;
+  }
+
+  /* Der Streak: `lastDay` (ein Tag) wird zu `lastSeen` (ein Zeitpunkt). */
+  async stampLanguage(file, report) {
+    const head = await this.headOf(file);
+    const day = head.front.lastDay;
+    if (typeof day !== 'string') return;
+
+    const stamped = isInstant(day) ? day : instantOfDay(day);
+    await this.app.fileManager.processFrontMatter(file, (fm) => {
+      if (stamped && !fm.lastSeen) fm.lastSeen = stamped;
+      delete fm.lastDay;
+    });
+    report.stamps += 1;
+  }
+
   fileIn(folder, name) {
     return folder.children.find((child) => child instanceof TFile && child.name === name) || null;
   }
@@ -409,6 +496,11 @@ function describe(report) {
   if (report.freed > 0) {
     said.push(n(report.freed, 'flashcard now takes its', 'flashcards now take their')
       + ' meaning from your dictionary.');
+  }
+
+  if (report.stamps > 0) {
+    said.push('Times are now stored in UTC and read in your local time zone ('
+      + n(report.stamps, 'entry', 'entries') + ' converted).');
   }
 
   if (report.leftAlone > 0) {

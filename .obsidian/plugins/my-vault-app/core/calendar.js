@@ -21,6 +21,19 @@
  * Weltzeit - an einem Datum ohne Uhrzeit kann keine Zeitumstellung etwas
  * verschieben.
  *
+ * ZWEI ARTEN VON DATEN - und die Regel für beide:
+ *
+ * - Ein ZEITPUNKT sagt, wann etwas geschah: zuletzt gelernt, eine Notiz
+ *   geändert, eine Karte angelegt. Er wird in UTC gespeichert
+ *   (2026-09-24T21:03:00Z) und erst beim Lesen in den Tag übersetzt, der
+ *   er DORT ist, wo die Person gerade ist. Die Person reist; ein
+ *   gespeicherter Ortstag hinge an dem Ort, an dem er geschrieben wurde.
+ *
+ * - Ein KALENDERTAG sagt, an welchem Tag etwas ansteht: die Wiedervorlage
+ *   einer Karteikarte. Er bleibt ein Datum ohne Uhrzeit (2026-09-25) und
+ *   gilt an jedem Ort an genau diesem Tag. Als UTC-Zeitpunkt würde eine in
+ *   Hamburg angelegte Karte in New York schon am Vorabend fällig.
+ *
  * Ohne Obsidian, damit es geprüft werden kann - siehe
  * tests/core-calendar.test.js.
  */
@@ -54,4 +67,46 @@ function daysBetween(from, to) {
   return Math.round((b - a) / 86400000);
 }
 
-module.exports = { today, addDays, dayBefore, daysBetween };
+/* Jetzt, als Zeitpunkt in UTC - so wird gespeichert. Ohne Millisekunden:
+   Eine Notiz soll lesbar bleiben, und so genau will es niemand wissen. */
+function now(date) {
+  const at = date instanceof Date ? date : new Date();
+  return at.toISOString().replace(/\.\d{3}Z$/, 'Z');
+}
+
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+/* Der Kalendertag, der ein gespeicherter Wert HIER ist.
+
+   - Ein Zeitpunkt (2026-09-24T21:03:00Z) wird in den Tag der Zeitzone
+     übersetzt, in der die App gerade läuft. Derselbe Zeitpunkt ist in
+     Hamburg der 24., in Tokio schon der 25.
+   - Ein bloßes Datum (2026-09-24) ist bereits ein Tag und bleibt es. So
+     hat die App früher gespeichert; es wird weiter verstanden.
+   - Alles andere ergibt null. */
+function dayOf(value) {
+  if (typeof value !== 'string' || !value) return null;
+  if (DAY.test(value)) return value;
+  const at = new Date(value);
+  return isNaN(at.getTime()) ? null : today(at);
+}
+
+/* Ein altes, bloßes Datum in einen Zeitpunkt verwandeln - für den Umbau
+   vorhandener Notizen. Welche Uhrzeit es war, weiß niemand mehr; genommen
+   wird der Mittag dieses Tages hier. Mittag ist die Mitte: Ganz gleich, in
+   welche Richtung die Person später reist, der Tag bleibt derselbe, solange
+   sie nicht mehr als zwölf Stunden Zeitunterschied überquert. */
+function instantOfDay(day) {
+  if (typeof day !== 'string' || !DAY.test(day)) return null;
+  const [y, m, d] = day.split('-').map(Number);
+  return now(new Date(y, m - 1, d, 12, 0, 0));
+}
+
+/* Ist ein gespeicherter Wert schon ein Zeitpunkt? */
+function isInstant(value) {
+  return typeof value === 'string' && !DAY.test(value) && !isNaN(new Date(value).getTime());
+}
+
+module.exports = {
+  today, addDays, dayBefore, daysBetween, now, dayOf, instantOfDay, isInstant
+};

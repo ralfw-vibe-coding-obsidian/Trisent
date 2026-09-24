@@ -73,6 +73,73 @@ test('wer Dienstag nach Mitternacht liest, hat Montag ausgelassen', () => {
   is(c.dayBefore(dienstagNacht) === sonntagAbend, false, 'Sonntag war nicht gestern: der Streak reißt');
 });
 
+/* ------------------------------------------------------------------ */
+/* Zeitpunkte in UTC, gelesen am Ort der Person                       */
+/* ------------------------------------------------------------------ */
+
+/* Die Zeitzone für einen einzelnen Test umstellen - so reist der Test. */
+function inZone(zone, fn) {
+  const before = process.env.TZ;
+  process.env.TZ = zone;
+  try { return fn(); } finally { process.env.TZ = before; }
+}
+
+test('gespeichert wird in UTC', () => {
+  is(c.now(hamburg(2026, 9, 24, 23, 3)), '2026-09-24T21:03:00Z', 'Hamburg 23:03 ist 21:03 UTC');
+  is(c.now(hamburg(2026, 12, 3, 23, 3)), '2026-12-03T22:03:00Z', 'im Winter eine Stunde');
+});
+
+test('gespeichert wird ohne Millisekunden', () => {
+  const t = c.now(new Date(Date.UTC(2026, 8, 24, 21, 3, 7, 456)));
+  is(t, '2026-09-24T21:03:07Z', 'lesbar');
+});
+
+test('derselbe Zeitpunkt ist an jedem Ort der dortige Tag', () => {
+  const abends = '2026-09-24T21:03:00Z';   /* in Hamburg 23:03 am 24. */
+  is(inZone('Europe/Berlin', () => c.dayOf(abends)), '2026-09-24', 'Hamburg');
+  is(inZone('America/New_York', () => c.dayOf(abends)), '2026-09-24', 'New York: 17:03 am 24.');
+  is(inZone('Asia/Tokyo', () => c.dayOf(abends)), '2026-09-25', 'Tokio: 06:03 am 25.');
+});
+
+test('ein bloßes Datum bleibt, was es ist - so hat die App früher gespeichert', () => {
+  is(inZone('Asia/Tokyo', () => c.dayOf('2026-09-24')), '2026-09-24', 'kein Zeitpunkt, keine Verschiebung');
+});
+
+test('Unsinn ergibt keinen Tag', () => {
+  is(c.dayOf('gestern'), null, 'ein Wort');
+  is(c.dayOf(''), null, 'leer');
+  is(c.dayOf(null), null, 'nichts');
+});
+
+test('ein altes Datum wird zum Mittag dieses Tages', () => {
+  is(c.instantOfDay('2026-09-24'), '2026-09-24T10:00:00Z', 'Mittag in Hamburg ist 10 Uhr UTC');
+  is(c.dayOf(c.instantOfDay('2026-09-24')), '2026-09-24', 'und ergibt hier wieder denselben Tag');
+  is(c.instantOfDay('kein Datum'), null, 'Unsinn bleibt draußen');
+});
+
+test('vom Mittag aus verschiebt Reisen den Tag nicht', () => {
+  const alt = c.instantOfDay('2026-09-24');
+  is(inZone('America/New_York', () => c.dayOf(alt)), '2026-09-24', 'nach Westen');
+  is(inZone('Asia/Tokyo', () => c.dayOf(alt)), '2026-09-24', 'nach Osten');
+});
+
+test('ein Zeitpunkt ist kein Datum, und ein Datum kein Zeitpunkt', () => {
+  is(c.isInstant('2026-09-24T21:03:00Z'), true, 'Zeitpunkt');
+  is(c.isInstant('2026-09-24'), false, 'Datum');
+  is(c.isInstant('gestern'), false, 'Unsinn');
+});
+
+/* Der Streak auf Reisen: Gelernt am Abend in Hamburg, am nächsten Abend
+   in New York - das sind aus Sicht der Person zwei Tage hintereinander. */
+test('Streak auf Reisen: zwei Abende hintereinander bleiben zwei Tage', () => {
+  const hamburgAbend = '2026-09-24T19:00:00Z';                 /* 21:00 in Hamburg */
+  const newYorkHeute = inZone('America/New_York', () => c.today(new Date('2026-09-26T00:30:00Z')));
+  is(newYorkHeute, '2026-09-25', 'in New York ist der 25.');
+  const zuletzt = inZone('America/New_York', () => c.dayOf(hamburgAbend));
+  is(zuletzt, '2026-09-24', 'gelernt hat sie dort am 24.');
+  is(c.dayBefore(newYorkHeute), zuletzt, 'also gestern: der Streak läuft weiter');
+});
+
 /* Die Zeitzone wieder freigeben - alle Tests laufen in einem Prozess, und
    die anderen sollen nicht in Hamburg rechnen, nur weil diese es tun. Die
    Tests hier laufen sofort beim Laden, also ist hier alles erledigt. */

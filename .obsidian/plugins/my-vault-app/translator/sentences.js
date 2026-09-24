@@ -14,7 +14,7 @@
  */
 
 const { TFile, TFolder, normalizePath } = require('obsidian');
-const { today } = require('../core/calendar.js');
+const { now } = require('../core/calendar.js');
 
 const SENTENCES_DIR = 'sentences';
 
@@ -100,7 +100,7 @@ class SentenceKnowledge {
         tries: before.tries + 1
       };
       fm[direction][sentenceId] = tally.correct + '/' + tally.tries;
-      fm.updatedAt = today();
+      fm.updatedAt = now();
     });
 
     return tally;

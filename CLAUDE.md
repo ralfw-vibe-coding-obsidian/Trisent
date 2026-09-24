@@ -128,6 +128,24 @@ Konfiguration sind und keine Daten (der Name der Person, eine Voreinstellung,
 eine Fensterbreite). Niemals für die eigentlichen Inhalte der App. Jedes Modul
 hat dort seinen eigenen Bereich (`reader`, `packager`).
 
+### Zeit: in UTC speichern, lokal lesen
+
+Die Person benutzt die App in verschiedenen Zeitzonen. Deshalb gibt es zwei
+Arten von Daten, und für beide eine Regel:
+
+- **Ein Zeitpunkt** sagt, *wann* etwas geschah – zuletzt gelernt, eine Notiz
+  geändert, eine Karte angelegt. Er wird **in UTC gespeichert**
+  (`2026-09-24T21:03:00Z`) und erst beim Lesen in den Tag übersetzt, der er
+  *dort* ist, wo die App gerade läuft.
+- **Ein Kalendertag** sagt, *an welchem Tag* etwas ansteht – die Wiedervorlage
+  einer Karteikarte. Er bleibt ein **Datum ohne Uhrzeit** (`2026-09-25`) und
+  gilt an jedem Ort an genau diesem Tag.
+
+„Heute" ist immer der Kalendertag der Person, nicht der der Weltzeit.
+Niemals `new Date().toISOString().slice(0, 10)` – damit wechselte der Tag in
+Hamburg erst um 2 Uhr nachts. Alles dafür steht in `core/calendar.js`:
+`today()`, `now()`, `dayOf()`, geprüft über mehrere Zeitzonen.
+
 ### Die Begriffe
 
 Vier Dinge, die alle mit „Wort" zu tun haben und deshalb immer wieder

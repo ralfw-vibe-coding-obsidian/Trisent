@@ -8,7 +8,7 @@
  */
 
 const { Setting, Notice } = require('obsidian');
-const { today } = require('../core/calendar.js');
+const { now, dayOf } = require('../core/calendar.js');
 const { SentenceKnowledge } = require('./sentences.js');
 const { TranslatorView, VIEW_TYPE, RIBBON_ICON } = require('./view.js');
 
@@ -61,7 +61,7 @@ class Translator {
   addCost(amount) {
     if (typeof amount !== 'number' || !(amount > 0)) return;
     if (!this.settings.spentSince) {
-      this.settings.spentSince = today();
+      this.settings.spentSince = now();
     }
     this.settings.spent = (Number(this.settings.spent) || 0) + amount;
     this.plugin.saveSettingsSoon();
@@ -75,9 +75,10 @@ class Translator {
     if (spent <= 0) return 'Nothing spent yet.';
 
     const amount = '$' + (spent < 0.01 ? spent.toFixed(4) : spent.toFixed(2));
-    return this.settings.spentSince
-      ? amount + ' since ' + this.settings.spentSince
-      : amount;
+    /* Gespeichert ist ein Zeitpunkt in UTC; gezeigt wird der Tag, der er
+       hier ist. */
+    const since = dayOf(this.settings.spentSince);
+    return since ? amount + ' since ' + since : amount;
   }
 
   async open() {
@@ -123,7 +124,7 @@ class Translator {
       .addButton((button) =>
         button.setButtonText('Reset').onClick(async () => {
           this.settings.spent = 0;
-          this.settings.spentSince = today();
+          this.settings.spentSince = now();
           await this.saveSettings();
           spent.setDesc(this.spentSoFar());
         })

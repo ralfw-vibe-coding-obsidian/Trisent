@@ -13,6 +13,7 @@
 
 const { TFile, TFolder, normalizePath } = require('obsidian');
 const { normalize, today } = require('./schedule.js');
+const { now } = require('../core/calendar.js');
 
 const DECK_DIR = 'flashcards';
 
@@ -93,8 +94,12 @@ class Deck {
       level: 0,
       seen: 0,
       wrong: 0,
+      /* Die Wiedervorlage ist ein KALENDERTAG und bleibt ein Datum - sie
+         gilt an jedem Ort an genau diesem Tag. Wann die Karte angelegt
+         wurde, ist dagegen ein ZEITPUNKT und wird in UTC gespeichert.
+         Siehe core/calendar.js. */
       due: today(),
-      added: today()
+      added: now()
     };
 
     const lines = [

@@ -22,7 +22,15 @@ const LANGUAGE_NOTE = 'language.md';
    core/calendar.js. Mit dem Datum der Weltzeit wechselte der Tag in
    Hamburg erst um 2 Uhr nachts, und wer nach Mitternacht las, überbrückte
    damit einen ausgelassenen Tag: Der Streak riss nicht ab. */
-const { today, dayBefore } = require('../core/calendar.js');
+const { today, dayBefore, now: stampNow, dayOf } = require('../core/calendar.js');
+
+/* Was im Kopf der Sprachnotiz steht, als Text. Sollte Obsidian einen
+   Zeitpunkt einmal als Datum-Objekt liefern statt als Text, wird er
+   zurückverwandelt - sonst sähe es aus, als sei nie gelernt worden. */
+function stamp(value) {
+  if (value instanceof Date && !isNaN(value.getTime())) return stampNow(value);
+  return typeof value === 'string' && value ? value : null;
+}
 
 class Streak {
   constructor(app) {
@@ -36,16 +44,25 @@ class Streak {
     return file || null;
   }
 
-  /* Was zu dieser Sprache gespeichert ist. */
+  /* Was zu dieser Sprache gespeichert ist.
+
+     Gespeichert wird der ZEITPUNKT des letzten Lernens, in UTC
+     (`lastSeen`). Welcher Tag das war, wird erst hier bestimmt - in der
+     Zeitzone, in der die App gerade läuft. Die Person reist: Ein Abend in
+     Hamburg ist in New York noch derselbe Tag, in Tokio schon der nächste.
+
+     Ältere Vaults haben statt dessen `lastDay`, ein bloßes Datum. Das wird
+     weiter verstanden, bis der Umbau es ersetzt hat. */
   read(language) {
     const file = this.noteFor(language);
     if (!file) return { days: 0, best: 0, lastDay: null };
 
     const fm = this.app.metadataCache.getFileCache(file)?.frontmatter || {};
+    const seen = stamp(fm.lastSeen) || stamp(fm.lastDay);
     return {
       days: Number(fm.streak) || 0,
       best: Number(fm.bestStreak) || 0,
-      lastDay: typeof fm.lastDay === 'string' ? fm.lastDay : null
+      lastDay: dayOf(seen)
     };
   }
 
@@ -77,7 +94,8 @@ class Streak {
     await this.app.fileManager.processFrontMatter(file, (fm) => {
       fm.streak = days;
       fm.bestStreak = best;
-      fm.lastDay = now;
+      fm.lastSeen = stampNow();
+      delete fm.lastDay;
     });
 
     return { days: days, best: best, lastDay: now };
