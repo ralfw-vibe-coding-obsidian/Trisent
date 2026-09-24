@@ -25,6 +25,7 @@ const {
 const { writeZip } = require('../core/zip.js');
 const store = require('./dictionary.js');
 const { Migrations } = require('./migrations.js');
+const { splitWork, plan, joinWork } = require('./workbench.js');
 const { log } = require('../core/log.js');
 const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
@@ -305,43 +306,40 @@ function keyOf(text) {
    beim Darauffahren, warum. So sieht man auf einen Blick, wo ein Text
    steht - statt es aus wechselnden Knöpfen zu erschließen. */
 function stepsFor(text, can) {
-  const packaged = text.version > 0;
-  const stale = packaged && text.workAt > text.packageAt;
+  const built = text.archiveAt > 0;
+  const stale = built && text.inputsAt > text.archiveAt;
+  const ready = built && !stale;
+  const prepared = text.total > 0 && text.done >= text.total;
   const silent = Math.max(0, text.sentences - text.spoken);
 
   return [
     {
-      name: 'Integrate',
-      run: 'integrate',
-      on: !!text.loose,
-      why: text.loose ? 'Give this note a folder of its own.' : 'Already part of the library folder.'
-    },
-    {
-      name: 'Package',
+      name: 'Ingest',
       run: 'make',
-      on: !text.loose && (!packaged || stale || text.done < text.total),
-      why: text.loose ? 'Integrate it first.'
-        : !can.prepare ? 'Claude was not found - see the settings.'
-        : stale ? 'The workbench changed after the last build.'
-        : packaged ? 'Nothing has changed since the last build.'
+      /* Ohne Claude geht es nur, wenn nichts mehr aufzubereiten ist -
+         dann ist es bloß ein neuer Bau. */
+      on: !ready && (can.prepare || prepared),
+      why: ready ? 'The package is up to date.'
+        : !can.prepare && !prepared ? 'Claude was not found - see the settings.'
+        : stale ? 'Something changed since the last package.'
         : 'Turn the text into a package.'
     },
     {
       name: 'Record',
       run: 'speak',
-      on: !text.loose && packaged && !stale && silent > 0 && can.voices,
-      why: !packaged ? 'Make the package first.'
+      on: ready && silent > 0 && can.voices,
+      why: !built ? 'Ingest the text first.'
+        : stale ? 'Ingest the changes first.'
         : !can.voices ? 'No voice for this language in the settings.'
-        : stale ? 'Build the package again first.'
         : silent === 0 ? 'Every sentence already has sound.'
         : silent + ' of ' + text.sentences + ' sentences have no sound yet.'
     },
     {
       name: 'Deploy',
       run: 'send',
-      on: !text.loose && packaged && !stale && text.sent < text.version,
-      why: !packaged ? 'Make the package first.'
-        : stale ? 'Build the package again first.'
+      on: ready && text.sent < text.version,
+      why: !built ? 'Ingest the text first.'
+        : stale ? 'Ingest the changes first.'
         : text.sent >= text.version ? 'Your library already has this version.'
         : 'Send it to your library.'
     }
@@ -350,15 +348,19 @@ function stepsFor(text, can) {
 
 /* Woran man mit einem Text ist - in einem Satz, nicht in Kästchen. */
 function stateOf(text) {
-  if (text.loose) return 'Dropped in. Integrate it to get started.';
+  if (text.loose) return 'Dropped in. Ingest it to get started.';
 
   const sound = text.sentences > 0 && text.spoken >= text.sentences
     ? ' With sound.'
     : text.spoken > 0 ? ' Sound for ' + text.spoken + ' of ' + text.sentences + ' sentences.' : '';
 
-  if (!text.version) return 'Not packaged yet.';
-  if (text.workAt > text.packageAt) {
-    return 'The workbench changed after the last build — package it again.' + sound;
+  if (!text.archiveAt) {
+    if (text.version > 0) return 'Packaged before there were archives. Ingest it once to wrap it up.' + sound;
+    if (text.done > 0) return text.done + ' of ' + text.total + ' paragraphs prepared. Ingest to go on.';
+    return 'Not ingested yet.';
+  }
+  if (text.inputsAt > text.archiveAt) {
+    return 'Something changed since the last package — ingest it again.' + sound;
   }
   if (!text.sent) return 'Packaged, not in your library yet.' + sound;
   if (text.sent < text.version) {
@@ -732,13 +734,6 @@ class PackagerView extends ItemView {
     await this.refresh();
   }
 
-  integrate(text) {
-    return this.run(text, 'integrate', 'Filing it away…', async () => {
-      await this.packager.fileAway(text);
-      return { kind: 'ok', headline: 'Filed away. Package it next.', detail: '' };
-    });
-  }
-
   make(text) {
     return this.run(text, 'make', 'Starting…', (step) => this.packager.makePackage(text, step));
   }
@@ -883,6 +878,7 @@ class Packager {
 
       const raw = await this.app.vault.cachedRead(child);
       if (isSchemaNote(child, raw)) continue;
+      const body = splitNote(raw).body;
       result.push({
         folder: languageFolder,
         loose: child,
@@ -894,11 +890,11 @@ class Packager {
         sent: 0,
         sentences: 0,
         spoken: 0,
-        workAt: 0,
-        packageAt: 0,
+        archiveAt: 0,
+        inputsAt: 0,
         done: 0,
-        total: paragraphsOf(raw).length,
-        words: countWords(raw),
+        total: paragraphsOf(body).length,
+        words: countWords(body),
         code: languageFolder.name.toLowerCase()
       });
     }
@@ -917,7 +913,10 @@ class Packager {
       const head = built ? await this.headOf(built) : null;
       const front = work ? this.app.metadataCache.getFileCache(work)?.frontmatter : null;
       const source = this.file(child.path + '/' + TEXT_FILE);
-      const raw = source ? await this.app.vault.cachedRead(source) : '';
+      const raw = source ? splitNote(await this.app.vault.cachedRead(source)).body : '';
+      const workText = work ? await this.app.vault.cachedRead(work) : '';
+      const paragraphs = paragraphsOf(raw);
+      const archive = this.file(child.path + '/' + ARCHIVE_FILE);
 
       /* Wie viele Sätze schon eine Tonspur haben. Der Name einer Tondatei
          hängt am Wortlaut des Satzes - ändert sich der Satz, verliert er
@@ -926,7 +925,7 @@ class Packager {
       let spoken = 0;
       if (work) {
         const sounds = this.audioFiles(child);
-        for (const paragraph of parseWork(await this.app.vault.cachedRead(work)).paragraphs) {
+        for (const paragraph of parseWork(workText).paragraphs) {
           for (const sentence of paragraph.sentences) {
             sentences += 1;
             if (sounds.has(nameFor(sentence.source))) spoken += 1;
@@ -942,14 +941,21 @@ class Packager {
         title: (front && front.title) || child.name,
         version: head ? head.version : 0,
         sent: head ? this.sentVersion(head.id, child.path) : 0,
-        done: work ? parseWork(await this.app.vault.cachedRead(work)).paragraphs.length : 0,
+        /* Wie viele Absätze des Textes die Werkbank schon kennt - am
+           Wortlaut erkannt, nicht an der Zahl. */
+        done: plan(paragraphs, splitWork(workText).blocks).filter((one) => one.block).length,
         sentences: sentences,
         spoken: spoken,
-        /* Woran man erkennt, dass das Paket veraltet ist: Die Werkbank
-           wurde nach dem Bauen angefasst. */
-        workAt: work ? work.stat.mtime : 0,
-        packageAt: built ? built.stat.mtime : 0,
-        total: source ? paragraphsOf(raw).length : 0,
+        /* Das Archiv ist das Erzeugnis. Ist irgendetwas, woraus es besteht,
+           jünger als das Archiv, ist es veraltet: der Text, die Werkbank,
+           eine Tonspur. */
+        archiveAt: archive ? archive.stat.mtime : 0,
+        inputsAt: Math.max(
+          source ? source.stat.mtime : 0,
+          work ? work.stat.mtime : 0,
+          this.newestAudio(child)
+        ),
+        total: paragraphs.length,
         words: countWords(raw),
         code: languageFolder.name.toLowerCase()
       });
@@ -1370,47 +1376,20 @@ class Packager {
   /* Der ganze Weg an einem Stück: aufbereiten, fehlende Wörter
      beschreiben, bauen. Was dazwischen passiert, meldet "step" nach
      außen - es steht auf dem Knopf und ist gleich wieder weg. */
+  /* Ingest: alles vom Text bis zum fertigen Paket, ohne Ton.
+
+     Eine lose Notiz wird zuerst einsortiert. Dann wird aufbereitet, was
+     die Werkbank noch nicht kennt - bei einem geänderten Text also nur
+     die geänderten Absätze. Dann gebaut, fehlende Wörter nachgeschlagen,
+     noch einmal gebaut und verschnürt. */
   async makePackage(text, step) {
     if (text.loose && !text.filed) {
-      throw new Error('This note has not been integrated yet.');
+      step('Filing it away…');
+      await this.fileAway(text);
     }
 
-    let done = text.done;
-
-    if (text.total > done) {
-      if (!this.canPrepare()) {
-        throw new Error('The text is not prepared yet, and Claude was not found. Check the settings.');
-      }
-      await this.ensureRules(text.code);
-      const paragraphs = paragraphsOf(await this.app.vault.read(text.text));
-      const open = paragraphs.slice(done);
-      const blocks = await this.prepareAll(text, open, step);
-
-      /* Geschrieben wird nur die lückenlose Reihe von vorn. Ein Absatz,
-         der nicht durchkam, beendet sie - beim nächsten Klick geht es
-         genau dort weiter, statt von vorn. */
-      for (const block of blocks.done) {
-        await this.appendToWork(text, block, done === 0);
-        done += 1;
-      }
-      if (blocks.error) {
-        text.work = this.file(text.folder.path + '/' + WORK_FILE);
-        text.done = done;
-        throw blocks.error;
-      }
-
-      /* Was dabei entschieden wurde, in die Hausregeln - sonst ist es
-         nach dem Lauf vergessen und der nächste Text entscheidet neu. */
-      if (blocks.notes.length > 0) {
-        step('Writing down what was decided…');
-        await this.learn(text, blocks.notes);
-      }
-      /* Die Werkbank gibt es jetzt - und der weitere Weg liest aus ihr. */
-      text.work = this.file(text.folder.path + '/' + WORK_FILE);
-      text.done = done;
-    }
-
-    if (text.total === 0) {
+    const paragraphs = paragraphsOf(await this.sourceOf(text.text));
+    if (paragraphs.length === 0) {
       return {
         kind: 'bad',
         headline: 'There is no text to work with.',
@@ -1418,6 +1397,8 @@ class Packager {
         more: 0
       };
     }
+
+    await this.prepareChanged(text, paragraphs, step);
 
     step('Building…');
     let result = await this.build(text);
@@ -1430,7 +1411,7 @@ class Packager {
       if (written === 0) {
         return {
           kind: 'bad',
-          headline: 'No word notes could be written.',
+          headline: 'No dictionary entries could be written.',
           lines: result.entries.slice(0, 10).map((e) => e.key),
           more: Math.max(0, result.entries.length - 10)
         };
@@ -1443,8 +1424,8 @@ class Packager {
       return {
         kind: 'bad',
         headline: result.entries.length === 1
-          ? 'One word still has no note: the entry that came back did not fit.'
-          : result.entries.length + ' words still have no note.',
+          ? 'One word still has no dictionary entry: the one that came back did not fit.'
+          : result.entries.length + ' words still have no dictionary entry.',
         lines: result.entries.slice(0, 10).map((e) => e.key),
         more: Math.max(0, result.entries.length - 10)
       };
@@ -1464,8 +1445,8 @@ class Packager {
     }
   }
 
-  /* Mehrere Absätze nebeneinander. Fällt einer durch, hören die anderen
-     auf - was hinter der Lücke läge, ließe sich ohnehin nicht anhängen. */
+  /* Mehrere Absätze nebeneinander. Fällt einer durch, fangen die anderen
+     nichts Neues mehr an; was schon läuft, wird noch fertig. */
   async prepareAll(text, paragraphs, step) {
     const blocks = new Array(paragraphs.length).fill(null);
     const notes = [];
@@ -1496,12 +1477,9 @@ class Packager {
     for (let n = 0; n < Math.min(AT_ONCE, paragraphs.length); n++) workers.push(worker());
     await Promise.all(workers);
 
-    const inOrder = [];
-    for (const block of blocks) {
-      if (!block) break;
-      inOrder.push(block);
-    }
-    return { done: inOrder, error: error, notes: notes };
+    /* Jeder fertige Absatz zählt, auch hinter einem, der nicht
+       durchkam - die Werkbank erkennt ihn beim nächsten Mal wieder. */
+    return { blocks: blocks, error: error, notes: notes };
   }
 
   /* Einen Absatz aufbereiten lassen und nachrechnen. */
@@ -1725,39 +1703,72 @@ class Packager {
     return file ? this.app.vault.cachedRead(file) : '';
   }
 
-  /* Anhängen, nicht neu schreiben - was schon dasteht, hat die Person
-     vielleicht von Hand verbessert. */
-  async appendToWork(text, block, first) {
-    void first;
-    if (!text.work) {
-      const head = [
-        '---',
-        'type: packager-work',
-        'language: ' + text.code,
-        'id: ' + text.code + '-' + slug(text.folder.name),
-        'title: ' + text.folder.name,
-        'level: A1',
-        '---',
-        '',
-        block,
-        ''
-      ].join('\n');
-      /* Ab jetzt gibt es sie - sonst versuchte der nächste Absatz, sie
-         ein zweites Mal anzulegen. */
-      text.work = await this.put(text.folder.path + '/' + WORK_FILE, head);
-      return;
+  /* Nur aufbereiten, was die Werkbank noch nicht kennt.
+
+     Jeder Absatz des Textes wird an seinem Wortlaut in der Werkbank
+     wiedererkannt (siehe workbench.js). Was sich findet, bleibt, wie es
+     ist - auch mit allem, was die Person dort von Hand verbessert hat.
+
+     Geschrieben wird die Werkbank danach in der Reihenfolge des Textes,
+     mit allem, was fertig ist - auch wenn ein Absatz nicht durchkam. Beim
+     nächsten Mal fehlt dann nur noch er. */
+  async prepareChanged(text, paragraphs, step) {
+    const before = text.work ? await this.app.vault.read(text.work) : '';
+    const { head, blocks } = splitWork(before);
+    const planned = plan(paragraphs, blocks);
+    const open = planned.filter((one) => !one.block);
+
+    let error = null;
+    let notes = [];
+    if (open.length > 0) {
+      if (!this.canPrepare()) {
+        throw new Error('Part of the text is not prepared yet, and Claude was not found. Check the settings.');
+      }
+      await this.ensureRules(text.code);
+      const result = await this.prepareAll(text, open.map((one) => one.paragraph), step);
+      result.blocks.forEach((block, at) => { if (block) open[at].block = block; });
+      error = result.error;
+      notes = result.notes;
     }
 
-    const current = await this.app.vault.read(text.work);
+    const kept = planned.filter((one) => one.block).map((one) => one.block);
+    if (kept.length > 0) {
+      const after = joinWork(head || this.workHead(text), kept);
+      if (after !== before) {
+        text.work = await this.put(text.folder.path + '/' + WORK_FILE, after);
+      }
+    }
 
-    /* Sicherheitsnetz gegen doppeltes Anhängen: Enthält die Werkbank schon
-       so viele Absätze wie der Rohtext, ist hier nichts mehr zu tun. Ein
-       zweiter Lauf hat den Text sonst still verdoppelt, und das fällt erst
-       beim Bauen auf - mit einer langen, ratlosen Fehlerliste. */
-    if (text.total > 0 && parseWork(current).paragraphs.length >= text.total) return;
+    if (error) throw error;
 
-    const joined = current.replace(/\s+$/, '') + '\n\n---\n\n' + block + '\n';
-    await this.app.vault.modify(text.work, joined);
+    /* Was dabei entschieden wurde, in die Hausregeln - sonst ist es nach
+       dem Lauf vergessen und der nächste Text entscheidet neu. */
+    if (notes.length > 0) {
+      step('Writing down what was decided…');
+      await this.learn(text, notes);
+    }
+  }
+
+  /* Der Kopf einer neuen Werkbank. */
+  workHead(text) {
+    return [
+      '---',
+      'type: packager-work',
+      'language: ' + text.code,
+      'id: ' + text.code + '-' + slug(text.folder.name),
+      'title: ' + yamlValue(text.folder.name),
+      'level: A1',
+      '---',
+      ''
+    ].join('\n');
+  }
+
+  /* Der Ausgangstext ohne einen Kopf, den die Notiz vielleicht trägt -
+     eine in Obsidian geschriebene Notiz hat schnell ein paar
+     Eigenschaften, und die sind kein Absatz. */
+  async sourceOf(file) {
+    if (!file) return '';
+    return splitNote(await this.app.vault.read(file)).body;
   }
 
   /* ---------------------------------------------------------------- */
@@ -1796,6 +1807,17 @@ class Packager {
 
   /* Was an Ton schon im Textordner liegt: je Datei ihre Zeitmarken,
      oder null, wenn sie vor deren Einführung entstanden ist. */
+  /* Wann zuletzt eine Tonspur dazukam oder sich änderte. */
+  newestAudio(folder) {
+    const sounds = this.childFolder(folder, AUDIO_DIR);
+    if (!sounds) return 0;
+    let newest = 0;
+    for (const child of sounds.children) {
+      if (child instanceof TFile && child.stat.mtime > newest) newest = child.stat.mtime;
+    }
+    return newest;
+  }
+
   audioFiles(folder) {
     const found = new Map();
     const sounds = this.childFolder(folder, AUDIO_DIR);
@@ -1889,7 +1911,7 @@ class Packager {
 
   async build(text) {
     const work = parseWork(await this.app.vault.read(text.work));
-    const original = text.text ? await this.app.vault.read(text.text) : null;
+    const original = text.text ? await this.sourceOf(text.text) : null;
 
     const language = String((work.head || {}).language || '').toLowerCase();
     const words = await this.wordsOf(language);
@@ -1922,12 +1944,28 @@ class Packager {
       };
     }
 
-    /* Unverändert? Dann bleibt alles, wie es ist - auch die Nummer. */
+    /* Unverändert? Dann bleibt die Nummer, wie sie ist.
+
+       Das Archiv wird trotzdem neu geschrieben - mit denselben Bytes. Es
+       muss jünger sein als alles, woraus es besteht; sonst hielte die
+       Werkstatt es für veraltet, nur weil jemand die Werkbank geöffnet
+       und wieder gespeichert hat. Und ein Paket aus der Zeit vor den
+       Archiven bekommt so sein erstes. */
     if (previous && same(previous, result.data)) {
+      result.data.version = held;
+      const refused = await this.writeBuilt(text.folder, result.data);
+      if (refused.length > 0) {
+        return {
+          kind: 'bad',
+          headline: 'The package did not pass the checks. Nothing was written.',
+          lines: refused.slice(0, 12),
+          more: Math.max(0, refused.length - 12)
+        };
+      }
       return {
         kind: 'ok',
         headline: '"' + result.data.title + '" is up to date, version ' + held + '.',
-        detail: 'Nothing has changed since the last build.'
+        detail: 'Nothing has changed in its content since the last build.'
       };
     }
 
