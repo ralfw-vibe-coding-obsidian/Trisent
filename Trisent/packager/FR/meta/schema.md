@@ -1,6 +1,7 @@
 ---
-type: packager-word-notes
+type: packager-schema
 language: fr
+version: 1
 ---
 
 <!-- Was in der Beschreibung eines Wortes steht, je Wortart.

@@ -19,7 +19,7 @@
  */
 
 const obsidian = require('obsidian');
-const { Plugin, PluginSettingTab, Setting, Notice, normalizePath } = obsidian;
+const { Plugin, PluginSettingTab, Setting, Notice, TFile, normalizePath } = obsidian;
 
 /* Die Dateien der App, in Ladereihenfolge. Eine neue Datei muss hier
    eingetragen werden - eine der wenigen abgestimmten Änderungen in
@@ -27,6 +27,7 @@ const { Plugin, PluginSettingTab, Setting, Notice, normalizePath } = obsidian;
 const MODULES = [
   'core/zip.js',
   'core/package.js',
+  'core/log.js',
   'core/library.js',
   'learning/streak.js',
   'learning/occurrences.js',
@@ -141,6 +142,15 @@ class TrisentSettingTab extends PluginSettingTab {
           })
       );
 
+    /* Eine Meldung ist nach Sekunden weg. Hier steht, was sie gesagt hat -
+       und was geschah, während niemand hinsah. */
+    new Setting(containerEl)
+      .setName('Log')
+      .setDesc('What Trisent did: updates to your notes, imports, deploys. Newest first.')
+      .addButton((button) =>
+        button.setButtonText('Open log').onClick(() => this.plugin.openLog())
+      );
+
     /* Jedes Modul steuert bei, was nur es betrifft. */
     this.plugin.reader.addSettings(containerEl);
     this.plugin.translator.addSettings(containerEl);
@@ -180,6 +190,9 @@ module.exports = class TrisentPlugin extends Plugin {
        plugin.learning.importFiles(). Das ist die Vordertür, benannt nach
        dem Zweck und nicht nach einem Werkzeug. */
     this.learning = new modules['learning/index.js'].Learning(this);
+
+    /* Das Logbuch - jeder Teil schreibt über core/log.js hinein. */
+    this.logbook = modules['core/log.js'];
 
     this.reader = new reader.Reader(this);
     this.translator = new translator.Translator(this);
@@ -274,6 +287,17 @@ module.exports = class TrisentPlugin extends Plugin {
      Obsidian relative Pfade auflöst, ist nicht zugesichert - und wenn es
      danebengeht, startet die App gar nicht erst. Hier steht dagegen
      genau, wo gesucht wird. */
+  /* Das Logbuch öffnen. Der Bibliotheksordner ist womöglich ausgeblendet;
+     durch die Dateiliste fände man es dann nicht. */
+  async openLog() {
+    const file = this.app.vault.getAbstractFileByPath(this.logbook.logPath(this));
+    if (!(file instanceof TFile)) {
+      new Notice('Nothing has been logged yet.');
+      return;
+    }
+    await this.app.workspace.getLeaf(true).openFile(file);
+  }
+
   async loadModules() {
     const base = this.manifest.dir;
     if (!base) throw new Error('The plugin folder is unknown.');

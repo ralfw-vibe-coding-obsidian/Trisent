@@ -21,6 +21,7 @@ const { parseWork, splitNote, buildPackage, nameFor } = require('./build.js');
 const { keyFor } = require('../core/package.js');
 const store = require('./dictionary.js');
 const { Migrations } = require('./migrations.js');
+const { log } = require('../core/log.js');
 const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
 const ai = require('./ai.js');
 const audio = require('./audio.js');
@@ -691,6 +692,10 @@ class PackagerView extends ItemView {
         lines: [String(error.message || error) + spent], more: 0
       });
     }
+
+    /* Ein langer Lauf dauert Minuten, und die Person sieht womöglich nicht
+       hin. Was dabei herauskam, steht deshalb auch im Logbuch. */
+    this.packager.note(text, this.reports.get(path));
 
     /* Nach dem Einsortieren heißt der Text anders. Der Bericht wird
        deshalb auch unter dem neuen Namen abgelegt - sonst verschwände er
@@ -1954,7 +1959,22 @@ class Packager {
     if (report.kept.length > 0) {
       said.push('Left where they are, because meta already has one: ' + report.kept.join(', ') + '.');
     }
-    if (said.length > 0) new Notice(said.join(' '), 15000);
+    if (said.length === 0) return;
+    new Notice(said.join(' '), 15000);
+    for (const one of said) await log(this.plugin, 'Packager', one);
+  }
+
+  /* Ins Logbuch, was ein Schritt an einem Text ergeben hat. Ein Erfolg in
+     einem Satz; ein Abbruch mit seinem ersten Grund, denn genau den will
+     man später wissen. */
+  note(text, report) {
+    if (!report) return Promise.resolve();
+    const title = '"' + (text.title || (text.folder && text.folder.name) || 'text') + '": ';
+    let said = title + report.headline;
+    if (report.kind !== 'ok' && report.lines && report.lines.length > 0) {
+      said += ' ' + report.lines[0];
+    }
+    return log(this.plugin, 'Packager', said);
   }
 
   /* ---------------------------------------------------------------- */
@@ -2175,6 +2195,9 @@ class Packager {
             }
             if (!said.length) said.push('Nothing to fetch. Add a language first.');
             new Notice(said.join(' '), 15000);
+            if (result.updated.length || result.kept.length) {
+              await log(this.plugin, 'Packager', 'Rules and recipes fetched. ' + said.join(' '));
+            }
           } catch (error) {
             console.error('Trisent packager', error);
             new Notice(String(error.message || error), 10000);
