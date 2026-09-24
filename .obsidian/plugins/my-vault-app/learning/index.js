@@ -23,6 +23,7 @@ const { Streak } = require('./streak.js');
 const { Deck } = require('../flashcards/deck.js');
 const { Dictionary } = require('./dictionary.js');
 const { Migrations, describe } = require('./migrations.js');
+const { log } = require('../core/log.js');
 
 class Learning {
   constructor(plugin) {
@@ -52,8 +53,16 @@ class Learning {
 
   /* Vorhandene Notizen auf das heutige Schema bringen. Läuft einmal je
      Vault, beim Start - siehe migrations.js. */
-  migrate() {
-    return new Migrations(this.plugin, this).run();
+  async migrate() {
+    const report = await new Migrations(this.plugin, this).run();
+
+    /* Eine Meldung steht ein paar Sekunden da. Der Umbau schreibt aber in
+       hunderte Notizen der Person - das muss sie auch später noch
+       nachlesen können. */
+    const text = describe(report);
+    if (text) await log(this.plugin, 'Learning', text);
+
+    return report;
   }
 
   /* Was dabei geschah, als Satz für die Person - oder nichts. */
