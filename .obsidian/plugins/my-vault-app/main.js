@@ -44,6 +44,7 @@ const MODULES = [
   'flashcards/deck.js',
   'learning/index.js',
   'reader/audio.js',
+  'reader/upgrade.js',
   'reader/view.js',
   'reader/card.js',
   'reader/index.js',

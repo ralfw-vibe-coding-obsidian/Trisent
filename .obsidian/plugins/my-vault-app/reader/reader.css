@@ -1419,3 +1419,82 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+
+/* ------------------------------------------------------------------ */
+/* Die Frage beim Import                                              */
+/* ------------------------------------------------------------------ */
+
+/* Das Fenster liegt außerhalb der Ansichten - dort gelten die Farben der
+   App nicht. Deshalb Obsidians eigene, mit der Leseschrift als Ausnahme
+   für die Wörter. */
+
+.trisent-upgrade-lead {
+  margin-top: 0;
+  color: var(--text-normal);
+}
+
+.trisent-upgrade-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.8rem 0;
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  background: var(--background-secondary);
+}
+
+.trisent-upgrade-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  font-size: 0.88rem;
+}
+
+.trisent-upgrade-word {
+  flex: 0 0 8rem;
+  font-family: ui-serif, "New York", "Iowan Old Style", Palatino, Georgia, serif;
+  font-size: 0.98rem;
+  color: var(--text-normal);
+  overflow-wrap: anywhere;
+}
+
+.trisent-upgrade-change {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--text-muted);
+}
+
+.trisent-upgrade-before {
+  text-decoration: line-through;
+  color: var(--text-faint);
+}
+
+.trisent-upgrade-arrow {
+  color: var(--text-faint);
+}
+
+.trisent-upgrade-after {
+  color: var(--text-normal);
+}
+
+.trisent-upgrade-recipe {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+}
+
+.trisent-upgrade-more {
+  font-size: 0.8rem;
+  color: var(--text-faint);
+}
+
+.trisent-upgrade-note {
+  font-size: 0.8rem;
+  color: var(--text-faint);
+}
+
+/* Ein schon bekannter Text im Importbericht - es war nichts zu tun. */
+.trisent-report-line.is-same .trisent-report-icon {
+  color: var(--text-faint);
+}

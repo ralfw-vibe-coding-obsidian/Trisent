@@ -109,6 +109,66 @@ function mergeEntries(current, incoming) {
   return { entries: entries, report: report };
 }
 
+/* Was ein Import am Wörterbuch ändern WÜRDE - bevor er es tut.
+
+   Die Abgleichregel oben entscheidet, was gewinnt. Aber ob eine
+   vorhandene Erklärung ersetzt wird, soll die Person entscheiden: Sie
+   hat die alte vielleicht längst verinnerlicht, und eine neue Fassung
+   ist nicht in jedem Fall eine bessere für sie. Deshalb wird erst
+   geplant, dann gefragt, dann angewendet.
+
+   - added:    Wörter, die es noch nicht gibt. Die kommen immer dazu - ohne
+               sie hätte der Text Lücken, und es gibt nichts zu ersetzen.
+   - upgrades: Wörter, deren Erklärung nach einem neueren Bauplan
+               geschrieben ist. Je Wort: vorher, nachher, beide Nummern.
+   - kept:     Wörter, bei denen das Vorhandene ohnehin bleibt. */
+function planMerge(current, incoming) {
+  const plan = { added: [], upgrades: [], kept: 0 };
+  for (const [key, entry] of incoming || []) {
+    const have = (current && current.get(key)) || null;
+    if (!have) {
+      plan.added.push(key);
+      continue;
+    }
+    if (schemaOf(entry) > schemaOf(have)) {
+      plan.upgrades.push({
+        key: key,
+        from: schemaOf(have),
+        to: schemaOf(entry),
+        before: have,
+        after: entry
+      });
+      continue;
+    }
+    plan.kept += 1;
+  }
+  return plan;
+}
+
+/* Den Plan anwenden. `takeUpgrades` ist die Antwort der Person: ja, die
+   neueren Erklärungen übernehmen - oder nein, nur die neuen Wörter.
+   Der Bestand wird nicht verändert; es kommt eine neue Sammlung heraus. */
+function applyMerge(current, incoming, takeUpgrades) {
+  const entries = new Map(current || []);
+  const report = { added: 0, replaced: 0, declined: 0 };
+
+  for (const [key, entry] of incoming || []) {
+    const have = entries.get(key);
+    if (!have) {
+      entries.set(key, entry);
+      report.added += 1;
+    } else if (schemaOf(entry) > schemaOf(have)) {
+      if (takeUpgrades) {
+        entries.set(key, entry);
+        report.replaced += 1;
+      } else {
+        report.declined += 1;
+      }
+    }
+  }
+  return { entries: entries, report: report };
+}
+
 /* Der Sonderfall beim Umbau alter Pakete - und NUR dort.
 
    Pakete der ersten Fassung listen unter `forms` die Formen, die in
@@ -158,5 +218,6 @@ function toObject(entries) {
 }
 
 module.exports = {
-  ENTRY_SCHEMA, schemaOf, normalizeEntry, normalizeAll, mergeEntries, mergeLegacy, toObject
+  ENTRY_SCHEMA, schemaOf, normalizeEntry, normalizeAll, mergeEntries, mergeLegacy,
+  planMerge, applyMerge, toObject
 };

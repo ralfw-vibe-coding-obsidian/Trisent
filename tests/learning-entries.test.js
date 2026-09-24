@@ -248,3 +248,77 @@ test('alte Pakete: der Bestand wird nicht verändert', () => {
   e.mergeLegacy(bestand, sammlung([['fr:aller:VERB', alt(['va'])]]));
   is(vorher.forms, ['vont'], 'die Liste des Bestands ist dieselbe geblieben');
 });
+
+/* ------------------------------------------------------------------ */
+/* Erst planen, dann fragen, dann anwenden                            */
+/* ------------------------------------------------------------------ */
+
+test('der Plan trennt neue Wörter, bessere Erklärungen und Unverändertes', () => {
+  const plan = e.planMerge(
+    sammlung([
+      ['fr:a:NOUN', eintrag('alt a', 0)],
+      ['fr:b:NOUN', eintrag('alt b', 2)]
+    ]),
+    sammlung([
+      ['fr:a:NOUN', eintrag('neu a', 3)],
+      ['fr:b:NOUN', eintrag('neu b', 2)],
+      ['fr:c:NOUN', eintrag('neu c', 1)]
+    ])
+  );
+  is(plan.added, ['fr:c:NOUN'], 'neu');
+  is(plan.upgrades.map((u) => u.key), ['fr:a:NOUN'], 'besser erklärt');
+  is(plan.kept, 1, 'unverändert');
+});
+
+test('der Plan zeigt vorher und nachher, mit beiden Nummern', () => {
+  const plan = e.planMerge(
+    sammlung([['fr:a:NOUN', eintrag('alt', 0)]]),
+    sammlung([['fr:a:NOUN', eintrag('neu', 3)]])
+  );
+  const u = plan.upgrades[0];
+  is([u.from, u.to], [0, 3], 'Nummern');
+  is([u.before.gloss, u.after.gloss], ['alt', 'neu'], 'beide Fassungen');
+});
+
+test('der Plan verändert nichts', () => {
+  const bestand = sammlung([['fr:a:NOUN', eintrag('alt', 0)]]);
+  e.planMerge(bestand, sammlung([['fr:a:NOUN', eintrag('neu', 3)], ['fr:b:NOUN', eintrag('b', 1)]]));
+  is(bestand.size, 1, 'nichts dazu');
+  is(bestand.get('fr:a:NOUN').gloss, 'alt', 'nichts ersetzt');
+});
+
+test('ja: neue Wörter kommen dazu, bessere Erklärungen ersetzen', () => {
+  const erg = e.applyMerge(
+    sammlung([['fr:a:NOUN', eintrag('alt', 0)]]),
+    sammlung([['fr:a:NOUN', eintrag('neu', 3)], ['fr:b:NOUN', eintrag('b', 1)]]),
+    true
+  );
+  is(erg.entries.get('fr:a:NOUN').gloss, 'neu', 'ersetzt');
+  ok(erg.entries.has('fr:b:NOUN'), 'dazu');
+  is(erg.report, { added: 1, replaced: 1, declined: 0 }, 'gezählt');
+});
+
+test('nein: neue Wörter kommen trotzdem dazu, die eigenen Erklärungen bleiben', () => {
+  const erg = e.applyMerge(
+    sammlung([['fr:a:NOUN', eintrag('alt', 0)]]),
+    sammlung([['fr:a:NOUN', eintrag('neu', 3)], ['fr:b:NOUN', eintrag('b', 1)]]),
+    false
+  );
+  is(erg.entries.get('fr:a:NOUN').gloss, 'alt', 'bleibt');
+  ok(erg.entries.has('fr:b:NOUN'), 'das neue Wort ist trotzdem da - sonst hätte der Text Lücken');
+  is(erg.report, { added: 1, replaced: 0, declined: 1 }, 'gezählt');
+});
+
+test('eine gleiche oder niedrigere Nummer ist nie eine Frage', () => {
+  const plan = e.planMerge(
+    sammlung([['fr:a:NOUN', eintrag('a', 2)], ['fr:b:NOUN', eintrag('b', 3)]]),
+    sammlung([['fr:a:NOUN', eintrag('a2', 2)], ['fr:b:NOUN', eintrag('b2', 1)]])
+  );
+  is(plan.upgrades, [], 'nichts zu fragen');
+  const erg = e.applyMerge(
+    sammlung([['fr:b:NOUN', eintrag('b', 3)]]),
+    sammlung([['fr:b:NOUN', eintrag('b2', 1)]]),
+    true
+  );
+  is(erg.entries.get('fr:b:NOUN').gloss, 'b', 'auch ein Ja ersetzt nichts Besseres');
+});

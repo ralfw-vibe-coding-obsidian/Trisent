@@ -79,9 +79,11 @@ class Learning {
     return this.inbox.waiting().length;
   }
 
-  /* Alles importieren, was in der Inbox liegt. Liefert { done, failed }. */
-  importInbox() {
-    return this.inbox.importAll();
+  /* Alles importieren, was in der Inbox liegt. Liefert { done, failed }.
+     ask: die Frage an die Person, ob neuere Erklärungen übernommen werden
+     sollen - die stellt die Oberfläche, nicht diese Seite. */
+  importInbox(ask) {
+    return this.inbox.importAll(ask);
   }
 }
 

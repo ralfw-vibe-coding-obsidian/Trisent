@@ -105,4 +105,26 @@ function readPackage(contents) {
   };
 }
 
-module.exports = { packageRoot, relativeTo, readPackage };
+/* Ist dieser Text schon bekannt - und wenn ja, in welcher Fassung?
+
+   have:     die Fassung in der Bibliothek, oder null, wenn er nicht da ist
+   incoming: die Fassung, die in der Inbox liegt
+
+   - 'new':   noch nicht da - ablegen.
+   - 'newer': da, in älterer Fassung - ersetzen, das ist ein Update.
+   - 'same':  da, in dieser Fassung - nichts abzulegen.
+   - 'older': da, in NEUERER Fassung - nicht übernehmen. Ein Rückschritt
+              geschieht nicht aus Versehen beim Aufräumen der Inbox.
+
+   Fehlt eine Nummer, zählt sie als 0. Ein Paket ohne Fassung ist damit
+   älter als jedes mit einer - die ungefährliche Richtung. */
+function compareVersion(have, incoming) {
+  if (have === null || have === undefined) return 'new';
+  const a = Number.isFinite(Number(have)) ? Number(have) : 0;
+  const b = Number.isFinite(Number(incoming)) ? Number(incoming) : 0;
+  if (b > a) return 'newer';
+  if (b === a) return 'same';
+  return 'older';
+}
+
+module.exports = { packageRoot, relativeTo, readPackage, compareVersion };

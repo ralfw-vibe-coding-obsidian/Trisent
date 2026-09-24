@@ -149,3 +149,30 @@ testAsync('eine vernünftige Nummer geht durch', async ({ is }) => {
 
   is(l.readPackage(alsZweiteFassung(erste, wortbuch)).problems, [], 'keine Beanstandung');
 });
+
+/* ------------------------------------------------------------------ */
+/* Ist der Text schon bekannt?                                        */
+/* ------------------------------------------------------------------ */
+
+test('ein unbekannter Text ist neu', () => {
+  is(l.compareVersion(null, 3), 'new', 'nicht da');
+  is(l.compareVersion(undefined, 3), 'new', 'auch nicht da');
+});
+
+test('eine höhere Fassung ist ein Update', () => {
+  is(l.compareVersion(4, 5), 'newer', 'höher');
+});
+
+test('dieselbe Fassung ist nichts Neues', () => {
+  is(l.compareVersion(5, 5), 'same', 'gleich');
+});
+
+test('eine niedrigere Fassung ist ein Rückschritt', () => {
+  is(l.compareVersion(6, 5), 'older', 'niedriger');
+});
+
+test('ohne Nummer zählt die Fassung als null', () => {
+  is(l.compareVersion(0, undefined), 'same', 'beide ohne');
+  is(l.compareVersion(2, undefined), 'older', 'die fehlende ist älter');
+  is(l.compareVersion(0, 1), 'newer', 'jede Nummer schlägt keine');
+});

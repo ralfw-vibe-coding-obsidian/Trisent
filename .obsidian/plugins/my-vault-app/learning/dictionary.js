@@ -19,7 +19,9 @@
  */
 
 const { TFile, normalizePath } = require('obsidian');
-const { normalizeAll, normalizeEntry, mergeEntries, toObject } = require('./entries.js');
+const {
+  normalizeAll, normalizeEntry, mergeEntries, planMerge, applyMerge, toObject
+} = require('./entries.js');
 const { lookupWord } = require('./occurrences.js');
 
 const DICTIONARY_FILE = 'dictionary.json';
@@ -107,6 +109,23 @@ class Dictionary {
     /* Nur schreiben, wenn sich wirklich etwas geändert hat - sonst
        schriebe jeder Import dieselbe Datei neu, und die Vault hätte eine
        Änderung, die keine ist. */
+    if (result.report.added > 0 || result.report.replaced > 0) {
+      await this.write(language, result.entries);
+    }
+    return result.report;
+  }
+
+  /* Was ein Paket am Wörterbuch ändern würde - ohne es zu tun. */
+  async plan(language, incoming) {
+    return planMerge(await this.entries(language), incoming);
+  }
+
+  /* Ein Paket einarbeiten, mit der Antwort der Person auf die Frage, ob
+     neuere Erklärungen die vorhandenen ersetzen sollen. Neue Wörter
+     kommen in jedem Fall dazu. */
+  async apply(language, incoming, takeUpgrades) {
+    const current = await this.entries(language);
+    const result = applyMerge(current, incoming, takeUpgrades);
     if (result.report.added > 0 || result.report.replaced > 0) {
       await this.write(language, result.entries);
     }

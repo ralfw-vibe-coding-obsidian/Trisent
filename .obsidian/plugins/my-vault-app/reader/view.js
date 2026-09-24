@@ -10,6 +10,8 @@ const { ItemView, TFolder, Notice, setIcon } = require('obsidian');
 const { WORD_STATUS } = require('../core/package.js');
 const { KNOWN_LANGUAGES } = require('../core/library.js');
 const { Playback, Recorder, SPEEDS } = require('./audio.js');
+const { askForUpgrades } = require('./upgrade.js');
+const { describeImport } = require('../learning/importer.js');
 const {
   matchesIn, occurrenceOf, searchPackages
 } = require('../learning/occurrences.js');
@@ -586,7 +588,9 @@ class TrisentView extends ItemView {
     this.importReport = { busy: true, done: [], failed: [] };
     this.render();
 
-    const report = await learning.importInbox();
+    /* Bringt ein Paket Erklärungen nach einem neueren Bauplan mit, wird
+       gefragt - je Paket einmal, nur wenn es etwas zu entscheiden gibt. */
+    const report = await learning.importInbox((question) => askForUpgrades(this.app, question));
     this.importReport = { busy: false, done: report.done, failed: report.failed };
     this.reader.plugin.applyFolderVisibility();
 
@@ -601,25 +605,10 @@ class TrisentView extends ItemView {
     this.render();
   }
 
-  /* Was der Import getan hat, in einem Satz. */
+  /* Was der Import getan hat, in einem Satz - derselbe Satz, der auch im
+     Logbuch steht. Zwei Formulierungen für dasselbe wären zwei Wahrheiten. */
   importLine(result) {
-    const what = '"' + result.title + '" in ' + result.language.name;
-
-    if (!result.updated) {
-      return 'Added ' + what +
-        (result.addedLanguage ? ' — which was added to your library' : '');
-    }
-
-    const from = result.previousVersion;
-    const to = result.version;
-    if (typeof from === 'number' && typeof to === 'number' && to <= from) {
-      return 'Replaced ' + what + ' — you had version ' + from +
-        ', this one is version ' + to + '.';
-    }
-    if (typeof from === 'number' && typeof to === 'number') {
-      return 'Updated ' + what + ' from version ' + from + ' to ' + to + '.';
-    }
-    return 'Updated ' + what + '.';
+    return describeImport(result);
   }
 
   renderImportReport(page) {
@@ -641,18 +630,15 @@ class TrisentView extends ItemView {
     }
 
     for (const result of report.done) {
-      /* Ein Paket, das eine neuere Fassung ersetzt, ist einen Hinweis wert -
-         verbieten wollen wir es nicht, entschieden hat es ja die Person. */
-      const backwards =
-        result.updated &&
-        typeof result.version === 'number' &&
-        typeof result.previousVersion === 'number' &&
-        result.version <= result.previousVersion;
+      /* Ein Rückschritt bleibt in der Inbox liegen - das ist einen Hinweis
+         wert. Ein schon bekannter Text ist keiner: Es war nichts zu tun. */
+      const look = {
+        older: { cls: 'is-warn', icon: 'alert-triangle' },
+        same: { cls: 'is-same', icon: 'check-check' }
+      }[result.status] || { cls: 'is-good', icon: 'check' };
 
-      const line = box.createDiv({
-        cls: 'trisent-report-line ' + (backwards ? 'is-warn' : 'is-good')
-      });
-      setIcon(line.createSpan({ cls: 'trisent-report-icon' }), backwards ? 'alert-triangle' : 'check');
+      const line = box.createDiv({ cls: 'trisent-report-line ' + look.cls });
+      setIcon(line.createSpan({ cls: 'trisent-report-icon' }), look.icon);
       line.createSpan({ text: this.importLine(result) });
     }
 
