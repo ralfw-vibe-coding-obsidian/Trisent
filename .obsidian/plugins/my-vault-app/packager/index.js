@@ -23,6 +23,7 @@ const {
   TEXT_FILE: TEXT_JSON, DICTIONARY_FILE: ENTRIES_JSON
 } = require('../core/package.js');
 const { writeZip } = require('../core/zip.js');
+const calendar = require('../core/calendar.js');
 const store = require('./dictionary.js');
 const { Migrations } = require('./migrations.js');
 const { splitWork, plan, joinWork } = require('./workbench.js');
@@ -1595,7 +1596,9 @@ class Packager {
     });
     if (fresh.length === 0) return;
 
-    const today = new Date().toISOString().slice(0, 10);
+    /* Der Kalendertag, an dem die Person gerade ist - nicht der der
+       Weltzeit, sonst stünde nach Mitternacht noch der Vortag da. */
+    const today = calendar.today();
     const heading = '## Dazugelernt';
     const lines = fresh.map(
       (rule) => '- ' + today + ', „' + (text.title || text.folder.name) + '": ' + rule
@@ -2087,7 +2090,8 @@ class Packager {
     const record = {
       id: parts.head.id,
       version: parts.head.version,
-      built: new Date().toISOString(),
+      /* Zeitpunkte in UTC, wie überall in der App. */
+      built: calendar.now(),
       inputs: this.inputsOf(
         folder,
         source ? await this.app.vault.read(source) : null,
@@ -2258,7 +2262,7 @@ class Packager {
     const target = inbox + '/' + name;
     await this.putBinary(target, await this.app.vault.readBinary(archive));
 
-    recorded.deployed = { version: recorded.version, at: new Date().toISOString(), file: target };
+    recorded.deployed = { version: recorded.version, at: calendar.now(), file: target };
     await this.put(text.folder.path + '/' + MANIFEST_FILE, manifests.serialize(recorded));
 
     return 'Put "' + name + '" into ' + inbox + ' — version ' + recorded.version + '.';
