@@ -5,7 +5,8 @@
  *
  * Es liegt neben package.zip und hält für jede Datei, aus der das Paket
  * entstand, einen Fingerabdruck fest - den Ausgangstext, die Werkbank,
- * jede Tonspur. Dazu, ob diese Fassung schon in die Inbox gelegt wurde.
+ * jede Tonspur, und die Erklärungen seiner Wörter aus dem Wortvorrat.
+ * Dazu, ob diese Fassung schon in die Inbox gelegt wurde.
  *
  * Daraus liest die Werkstatt ab, was bei einem Text zu tun ist: Weicht
  * etwas vom Manifest ab, ist das Paket veraltet. Sie fragt dafür niemanden
@@ -62,6 +63,7 @@ function describe(changes) {
 
   if (all.indexOf('text.md') >= 0) parts.push('the text');
   if (all.indexOf('work.md') >= 0) parts.push('the workbench');
+  if (all.indexOf('dictionary.json') >= 0) parts.push('the word explanations');
 
   const sounds = all.filter((name) => name.indexOf('audio/') === 0).length;
   if (sounds === 1) parts.push('a recording');

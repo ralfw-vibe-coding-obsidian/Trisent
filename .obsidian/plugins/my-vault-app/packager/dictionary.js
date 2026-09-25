@@ -131,6 +131,53 @@ function mergeForms(dictionary, entries) {
   return changed;
 }
 
+/* Welche Einträge nach einem älteren Bauplan beschrieben sind als dem,
+   der jetzt gilt. Nach Schlüssel sortiert, damit ein abgebrochener Lauf
+   beim nächsten Mal in derselben Reihenfolge weitermacht. */
+function outdated(dictionary, number) {
+  return Object.keys(dictionary).sort().filter((key) => {
+    const written = Number(dictionary[key].entrySchema) || 0;
+    return written < number;
+  });
+}
+
+/* Einen Eintrag nach dem neuen Bauplan erneuern.
+
+   Neu sind nur Bedeutung und Beschreibung. Grundform und Wortart bleiben
+   - aus ihnen ist der Schlüssel entstanden, und an ihm hängt der
+   Lernstand. Die Formen werden höchstens mehr: Was dort steht, stammt aus
+   Texten, und das weiß eine neue Beschreibung nicht besser. */
+function renew(dictionary, key, fresh, number) {
+  const target = dictionary[key];
+  if (!target || !fresh || !fresh.gloss) return false;
+
+  const forms = Array.isArray(target.forms) ? target.forms.slice() : [];
+  for (const form of fresh.forms || []) {
+    if (form && forms.indexOf(form) < 0) forms.push(String(form));
+  }
+
+  dictionary[key] = entry({
+    lemma: target.lemma,
+    partOfSpeech: target.partOfSpeech,
+    gloss: fresh.gloss,
+    forms: forms,
+    grammar: fresh.grammar,
+    entrySchema: number
+  });
+  return true;
+}
+
+/* Was an den Einträgen eines Pakets zählt, wenn man wissen will, ob es neu
+   gebaut werden muss: Bedeutung, Beschreibung und Bauplannummer - die
+   Formen nicht. Die wachsen mit jedem Text, der ein Wort mitbringt; darum
+   jedes Mal alle anderen Pakete neu zu bauen, lohnte nicht. */
+function signature(entries) {
+  return Object.keys(entries || {}).sort().map((key) => {
+    const one = entries[key] || {};
+    return [key, String(one.gloss || ''), String(one.grammar || '').trim(), Number(one.entrySchema) || 0].join('\u0001');
+  }).join('\u0002');
+}
+
 /* Welche Schlüssel dem Wortvorrat noch fehlen. */
 function missingFrom(dictionary, keys) {
   const missing = [];
@@ -198,4 +245,7 @@ function serialize(dictionary) {
   return JSON.stringify(out, null, 2) + '\n';
 }
 
-module.exports = { entry, fromNote, covers, addMissing, mergeForms, missingFrom, extract, parse, serialize };
+module.exports = {
+  entry, fromNote, covers, addMissing, mergeForms, outdated, renew, signature,
+  missingFrom, extract, parse, serialize
+};

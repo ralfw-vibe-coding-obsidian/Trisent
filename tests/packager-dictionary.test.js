@@ -152,4 +152,45 @@ test('übernommen heißt: alles, was die Notiz wusste', () => {
   ok(dictionary.covers(vorrat, made), 'mehr Formen: enthalten');
 });
 
+test('veraltet ist, was nach einem älteren Bauplan beschrieben wurde', () => {
+  const vorrat = {
+    'fr:b:NOUN': dictionary.entry({ lemma: 'b', partOfSpeech: 'NOUN', gloss: 'x', entrySchema: 2 }),
+    'fr:a:NOUN': dictionary.entry({ lemma: 'a', partOfSpeech: 'NOUN', gloss: 'x' }),
+    'fr:c:NOUN': dictionary.entry({ lemma: 'c', partOfSpeech: 'NOUN', gloss: 'x', entrySchema: 1 })
+  };
+  is(dictionary.outdated(vorrat, 2), ['fr:a:NOUN', 'fr:c:NOUN'], 'null und eins, sortiert');
+  is(dictionary.outdated(vorrat, 1), ['fr:a:NOUN'], 'nur die null');
+});
+
+test('erneuert werden Bedeutung und Beschreibung, sonst nichts', () => {
+  const vorrat = {
+    'fr:aller:VERB': dictionary.entry({ lemma: 'aller', partOfSpeech: 'VERB', gloss: 'gehen', forms: ['va', 'allons'], grammar: 'alt' })
+  };
+  const done = dictionary.renew(vorrat, 'fr:aller:VERB',
+    { lemma: 'ALLER', partOfSpeech: 'AUX', gloss: 'gehen, fahren', forms: ['vais'], grammar: '**Infinitif** aller' }, 1);
+
+  ok(done, 'erneuert');
+  const e = vorrat['fr:aller:VERB'];
+  is(e.lemma, 'aller', 'Grundform bleibt');
+  is(e.partOfSpeech, 'VERB', 'Wortart bleibt');
+  is(e.forms, ['va', 'allons', 'vais'], 'Formen werden nur mehr');
+  is(e.gloss, 'gehen, fahren', 'neue Bedeutung');
+  is(e.grammar, '**Infinitif** aller', 'neue Beschreibung');
+  is(e.entrySchema, 1, 'neue Bauplannummer');
+});
+
+test('ohne Bedeutung wird nichts erneuert', () => {
+  const vorrat = { 'fr:x:NOUN': dictionary.entry({ lemma: 'x', partOfSpeech: 'NOUN', gloss: 'alt' }) };
+  ok(!dictionary.renew(vorrat, 'fr:x:NOUN', { gloss: '' }, 1), 'abgelehnt');
+  is(vorrat['fr:x:NOUN'].gloss, 'alt', 'unverändert');
+});
+
+test('die Signatur sieht Erklärungen, aber keine Formen', () => {
+  const one = { 'fr:x:NOUN': { gloss: 'a', grammar: 'b', forms: ['x'] } };
+  const moreForms = { 'fr:x:NOUN': { gloss: 'a', grammar: 'b', forms: ['x', 'xs'], entrySchema: 0 } };
+  const newer = { 'fr:x:NOUN': { gloss: 'a', grammar: 'b', entrySchema: 1 } };
+  is(dictionary.signature(one), dictionary.signature(moreForms), 'mehr Formen: gleich');
+  ok(dictionary.signature(one) !== dictionary.signature(newer), 'neuer Bauplan: verschieden');
+});
+
 if (require.main === module) report();

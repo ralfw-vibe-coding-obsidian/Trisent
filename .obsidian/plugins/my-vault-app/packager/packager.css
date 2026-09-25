@@ -23,6 +23,12 @@
   letter-spacing: 0.06em;
 }
 
+/* Überarbeiten nach Bauplan: am rechten Rand des Sprachkopfs. */
+.trisent-pack-refresh {
+  margin-left: auto;
+  align-self: center;
+}
+
 .trisent-pack-count,
 .trisent-pack-empty {
   font-size: 0.8rem;

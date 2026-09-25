@@ -282,6 +282,16 @@ function same(one, other) {
   return strip(one) === strip(other);
 }
 
+/* JSON lesen, das fehlen oder kaputt sein darf. */
+function parseJson(text) {
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    return null;
+  }
+}
+
 /* Die Tonspuren, auf die ein Paket verweist - und nur die. Was sonst noch
    im Ordner liegt, gehört nicht hinein. */
 function audioNamesOf(data) {
@@ -630,6 +640,31 @@ class PackagerView extends ItemView {
             (language.rules ? ' · house rules' : ' · no house rules yet')
     });
 
+    /* Überarbeiten nach Bauplan: alle Erklärungen, die nach einem älteren
+       Bauplan geschrieben sind als dem, der jetzt gilt. Der Knopf steht an
+       der Sprache, weil es ihr Wortvorrat ist - nicht an einem Text. */
+    if (language.words > 0) {
+      const busy = this.running.get(language.folder.path);
+      const can = this.packager.canPrepare();
+      const count = language.outdated;
+      const button = head.createEl('button', {
+        cls: 'trisent-pack-refresh' + (count > 0 && can && !busy ? ' mod-cta' : ''),
+        text: busy ? busy.label
+          : count > 0 ? 'Update ' + count + (count === 1 ? ' explanation' : ' explanations')
+          : 'Explanations up to date'
+      });
+      button.title = !can ? 'Claude was not found - see the settings.'
+        : count > 0
+          ? count + ' of ' + language.words + ' words were described after an older recipe than version ' +
+            language.recipe + '. Claude describes them again; keys, base forms and forms stay.'
+          : 'Every word is described after recipe version ' + language.recipe + '.';
+      if (busy || count === 0 || !can) button.disabled = true;
+      else button.addEventListener('click', () => this.refreshWords(language));
+    }
+
+    const report = this.reports.get(language.folder.path);
+    if (report) this.renderReport(section, report);
+
     if (language.texts.length === 0) {
       section.createDiv({ cls: 'trisent-pack-empty', text: 'No texts yet.' });
       return;
@@ -778,6 +813,13 @@ class PackagerView extends ItemView {
     ).open();
   }
 
+  /* Einen Lauf über den Wortvorrat einer Sprache - er hängt am
+     Sprachordner, so wie ein Lauf an einem Text an dessen Ordner hängt. */
+  refreshWords(language) {
+    const whole = { title: language.code.toUpperCase() + ' dictionary', folder: language.folder, code: language.code };
+    return this.run(whole, 'refresh', 'Starting…', (step) => this.packager.refreshEntries(language.code, step));
+  }
+
   send(text) {
     return this.run(text, 'send', 'Sending…', async () => {
       const said = await this.packager.send(text);
@@ -884,20 +926,24 @@ class Packager {
       if (!(child instanceof TFolder)) continue;
       if (!/^[a-z]{2,3}$/i.test(child.name)) continue;
 
+      const vocabulary = await this.readStore(child);
+      const recipe = await this.recipeNumber(child.name.toLowerCase());
       result.push({
         code: child.name.toLowerCase(),
         folder: child,
         rules: !!this.file(child.path + '/' + META_DIR + '/' + RULES_FILE) ||
                !!this.file(child.path + '/' + RULES_FILE),
         words: await this.wordCount(child),
-        texts: await this.textsOf(child)
+        outdated: store.outdated(vocabulary, recipe).length,
+        recipe: recipe,
+        texts: await this.textsOf(child, vocabulary)
       });
     }
     return result.sort((a, b) => a.code.localeCompare(b.code));
   }
 
   /* Ein Ordner mit einer work.md darin ist ein Text in Arbeit. */
-  async textsOf(languageFolder) {
+  async textsOf(languageFolder, vocabulary) {
     const result = [];
 
     /* Eine Notiz, die einfach im Sprachordner liegt, ist ein Text, der
@@ -949,6 +995,7 @@ class Packager {
       const paragraphs = paragraphsOf(raw);
       const archive = this.file(child.path + '/' + ARCHIVE_FILE);
       const recorded = manifests.parse(await this.readIfThere(child.path + '/' + MANIFEST_FILE));
+      const entries = parseJson(await this.readIfThere(child.path + '/' + ENTRIES_JSON));
 
       /* Wie viele Sätze schon eine Tonspur haben. Der Name einer Tondatei
          hängt am Wortlaut des Satzes - ändert sich der Satz, verliert er
@@ -976,9 +1023,7 @@ class Packager {
            den eigenen Dateien geändert hat, sagt der Vergleich mit dem
            Manifest - sonst niemand. */
         built: !!(recorded && archive),
-        changes: recorded
-          ? manifests.compare(recorded.inputs, this.inputsOf(child, sourceRaw, work ? workText : null))
-          : null,
+        changes: recorded ? this.changesOf(child, recorded, entries, vocabulary || {}, sourceRaw, work ? workText : null) : null,
         deployed: recorded && recorded.deployed ? Number(recorded.deployed.version) || 0 : 0,
         /* Wie viele Absätze des Textes die Werkbank schon kennt - am
            Wortlaut erkannt, nicht an der Zahl. */
@@ -1004,6 +1049,152 @@ class Packager {
     } catch (error) {
       return { id: '', version: 0 };
     }
+  }
+
+  /* Was sich seit dem Bau geändert hat - an Text, Werkbank und Ton, und an
+     den Erklärungen seiner Wörter im Wortvorrat.
+
+     Für die Erklärungen zählt, was das Paket beim Bau mitbekam. Ein
+     Manifest von vor dieser Prüfung hat dafür noch keinen Fingerabdruck;
+     dann ist das Wörterbuch neben dem Archiv der Beleg - es ist ja genau
+     das, was hineinging. */
+  changesOf(folder, recorded, entries, vocabulary, sourceRaw, workRaw) {
+    const current = this.inputsOf(folder, sourceRaw, workRaw);
+    const before = Object.assign({}, recorded.inputs);
+    if (entries) {
+      current[ENTRIES_JSON] = manifests.hashOf(store.signature(store.extract(vocabulary, Object.keys(entries))));
+      if (!before[ENTRIES_JSON]) before[ENTRIES_JSON] = manifests.hashOf(store.signature(entries));
+    }
+    return manifests.compare(before, current);
+  }
+
+  /* Der Wortvorrat einer Sprache, nur zum Lesen - legt nichts an. */
+  async readStore(folder) {
+    const file = this.file(folder.path + '/' + DICTIONARY_FILE);
+    return file ? store.parse(await this.app.vault.cachedRead(file)).dictionary : {};
+  }
+
+  /* Überarbeiten nach Bauplan.
+
+     Jeder Eintrag des Wortvorrats, der nach einem älteren Bauplan
+     beschrieben ist als dem, der jetzt gilt, wird noch einmal
+     beschrieben. Neu sind nur Bedeutung und Beschreibung; Schlüssel,
+     Grundform, Wortart und Formen bleiben (siehe renew in dictionary.js).
+
+     Gespeichert wird nach jeder Runde. Bricht der Lauf ab - das Abo ist
+     erschöpft, das Netz weg -, ist das Geschaffte da, und der nächste
+     Druck macht mit dem Rest weiter. Eine Gruppe, die nicht durchkommt,
+     hält die anderen nicht auf.
+
+     Danach erscheinen die Texte, deren Wörter neu erklärt sind, als
+     veraltet: Ingest baut sie neu, ohne sie noch einmal aufzubereiten. */
+  async refreshEntries(code, step) {
+    if (!this.canPrepare()) throw new Error('Claude was not found. Check the settings.');
+
+    const recipe = await this.ensureRecipe(code);
+    const number = await this.recipeNumber(code);
+    const rules = await this.readIfThere(this.metaPath(code, RULES_FILE));
+    const dictionary = await this.loadDictionary(code);
+    const keys = store.outdated(dictionary, number);
+
+    if (keys.length === 0) {
+      return { kind: 'ok', headline: 'Every word is already described after recipe version ' + number + '.', detail: '' };
+    }
+
+    const examples = await this.examplesOf(code);
+    const asked = keys.map((key) => ({
+      key: key,
+      lemma: dictionary[key].lemma,
+      partOfSpeech: dictionary[key].partOfSpeech,
+      forms: dictionary[key].forms || [],
+      glosses: dictionary[key].gloss ? [dictionary[key].gloss] : [],
+      sentence: examples.get(key) || ''
+    }));
+    const byKey = new Map(asked.map((one) => [one.key, one]));
+
+    const size = 8;
+    const batches = [];
+    for (let at = 0; at < asked.length; at += size) batches.push(asked.slice(at, at + size));
+
+    let renewed = 0;
+    let failed = 0;
+    let finished = 0;
+    let problem = null;
+    const context = { recipe: recipe, rules: rules };
+
+    for (let from = 0; from < batches.length; from += AT_ONCE) {
+      const round = await Promise.all(batches.slice(from, from + AT_ONCE).map(async (batch) => {
+        try {
+          return await this.describeBatch(code, batch, context);
+        } catch (error) {
+          console.error('Trisent packager', error);
+          failed += batch.length;
+          if (!problem) problem = error;
+          return [];
+        } finally {
+          finished += 1;
+          step('Describing words… ' + Math.round((finished / batches.length) * 100) + '%');
+        }
+      }));
+
+      for (const answer of [].concat.apply([], round)) {
+        const made = this.entryFrom(code, answer, byKey.get(answer.key), number);
+        if (made && store.renew(dictionary, made.key, made.entry, number)) renewed += 1;
+      }
+      await this.saveDictionary(code, dictionary);
+    }
+
+    if (renewed === 0 && problem) throw problem;
+
+    const left = store.outdated(dictionary, number).length;
+    return {
+      kind: left === 0 ? 'ok' : 'bad',
+      headline: 'Described ' + renewed + ' of ' + keys.length + ' words after recipe version ' + number + '.',
+      detail: left === 0 ? 'Texts with new explanations now show Ingest.' : '',
+      lines: left === 0 ? [] : [left + ' are still to do' +
+        (problem ? ' - the last problem: ' + String(problem.message || problem) : '') +
+        '. Press the button again to go on.'],
+      more: 0
+    };
+  }
+
+  /* Eine Gruppe von Wörtern beschreiben lassen - derselbe Auftrag wie beim
+     Nachschlagen neuer Wörter, mit Bauplan und Hausregeln. */
+  describeBatch(code, batch, context) {
+    return this.ask(() => ai.words({
+      into: this.myLanguageName(),
+      recipe: context.recipe,
+      command: this.settings.claudePath || 'claude',
+      temp: ai.tempDir(),
+      folder: this.basePath() + '/' + this.languagePath(code),
+      rules: context.rules,
+      entries: batch
+    }));
+  }
+
+  /* Zu jedem Schlüssel ein Satz, in dem das Wort vorkommt. Hilft beim
+     Beschreiben - vor allem bei Wörtern, die gleich geschrieben werden und
+     Verschiedenes bedeuten. */
+  async examplesOf(code) {
+    const examples = new Map();
+    const folder = this.folder(this.languagePath(code));
+    if (!folder) return examples;
+
+    for (const child of folder.children) {
+      if (!(child instanceof TFolder)) continue;
+      const data = await this.readBuilt(child);
+      if (!data) continue;
+      for (const paragraph of data.paragraphs || []) {
+        for (const sentence of paragraph.sentences || []) {
+          const keys = (sentence.units || []).map((unit) => unit.key)
+            .concat((sentence.phrases || []).map((phrase) => phrase.key));
+          for (const key of keys) {
+            if (key && !examples.has(key)) examples.set(key, sentence.source);
+          }
+        }
+      }
+    }
+    return examples;
   }
 
   /* Fingerabdrücke von allem, woraus ein Paket entsteht: Ausgangstext,
@@ -2098,6 +2289,9 @@ class Packager {
         work ? await this.app.vault.read(work) : null
       )
     };
+    /* Und was die Wörter dieses Pakets erklärt - ändert sich das im
+       Wortvorrat, ist das Paket veraltet. */
+    record.inputs[ENTRIES_JSON] = manifests.hashOf(store.signature(parts.dictionary));
     if (previous && previous.deployed) record.deployed = previous.deployed;
     await this.put(folder.path + '/' + MANIFEST_FILE, manifests.serialize(record));
     return [];
