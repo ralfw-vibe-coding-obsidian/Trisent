@@ -2,41 +2,45 @@
   "fr:arriver:VERB": {
     "lemma": "arriver",
     "partOfSpeech": "VERB",
-    "gloss": "ankommen, eintreffen",
+    "gloss": "ankommen, geschehen",
     "forms": [
       "arrive",
       "arrivent"
     ],
-    "grammar": "Regelmäßiges Verb auf -er: arrive, arrives, arrive, arrivons, arrivez, arrivent. Bildet die zusammengesetzten Zeiten mit être (il est arrivé), nicht mit avoir. Heißt auch „passieren, geschehen\": qu'est-ce qui arrive ?"
+    "grammar": "**Infinitif** arriver\n**Présent** j'arrive · tu arrives · il arrive · nous arrivons · vous arrivez · ils arrivent\n**Passé composé** je suis arrivé(e)\n\nRegelmäßiges Verb auf -er, das Hilfsverb ist aber **être**, und das Partizip richtet sich nach dem Subjekt: *elle est arrivée*. Beim Ziel steht *à* oder *en*: *arriver à Paris*. In *ils arrivent* wird das -ent nicht gesprochen.",
+    "entrySchema": 1
   },
   "fr:chercher:VERB": {
     "lemma": "chercher",
     "partOfSpeech": "VERB",
-    "gloss": "suchen",
+    "gloss": "suchen, holen",
     "forms": [
       "cherche",
       "cherches",
       "cherchent"
     ],
-    "grammar": "Regelmäßiges Verb auf -er: cherche, cherches, cherche, cherchons, cherchez, cherchent. Steht ohne Präposition vor dem Objekt - je cherche mon téléphone, nicht „chercher pour\". Mit venir/aller davor heißt es „abholen\": aller chercher quelqu'un."
+    "grammar": "**Infinitif** chercher\n**Présent** je cherche · tu cherches · il cherche · nous cherchons · vous cherchez · ils cherchent\n**Passé composé** j'ai cherché\n\nRegelmäßiges Verb auf -er; *cherche*, *cherches* und *cherchent* klingen gleich [ʃɛʁʃ]. Das Objekt folgt ohne Präposition (*chercher son téléphone*, nicht „nach“); *aller chercher* heißt „abholen“.",
+    "entrySchema": 1
   },
   "fr:chose:NOUN": {
     "lemma": "chose",
     "partOfSpeech": "NOUN",
-    "gloss": "die Sache, das Ding",
+    "gloss": "Sache, Ding",
     "forms": [
       "chose"
     ],
-    "grammar": "Weiblich: la chose, Mehrzahl les choses. Steckt in den festen Fügungen quelque chose („etwas\") und autre chose („etwas anderes\"), die beide männlich weiterwirken: quelque chose de bon."
+    "grammar": "**Singular** la chose · une chose\n**Plural** les choses\n\nWeiblich, doch in *quelque chose* (etwas) männlich: *quelque chose de bon*. Das *s* klingt wie ein stimmhaftes s, das *-e* am Ende bleibt stumm: [ʃoz].",
+    "entrySchema": 1
   },
   "fr:demander:VERB": {
     "lemma": "demander",
     "partOfSpeech": "VERB",
-    "gloss": "fragen, bitten um",
+    "gloss": "fragen, bitten",
     "forms": [
       "demande"
     ],
-    "grammar": "Regelmäßig auf -er. Heißt fragen und bitten um - nicht fordern."
+    "grammar": "**Infinitif** demander\n**Présent** je demande · tu demandes · il demande · nous demandons · vous demandez · ils demandent\n**Passé composé** j'ai demandé\n\nRegelmäßiges Verb auf -er. Die gefragte Person steht mit *à*: *demander quelque chose à quelqu'un*, *demander à Paul de venir* (Paul bitten zu kommen). Ein falscher Freund: Es heißt nicht „fordern“ wie das englische *demand*, sondern nur „fragen“ oder „bitten“.",
+    "entrySchema": 1
   },
   "fr:elle:PRON": {
     "lemma": "elle",
@@ -46,7 +50,8 @@
       "elle",
       "Elle"
     ],
-    "grammar": "Steht für jedes weibliche Wort, auch für Dinge: la chambre → elle."
+    "grammar": "**Subjekt** elle · elles\n**Betont** elle · elles (*avec elle*, *c'est elle*)\n**Beispiel** *Elle regarde sur la table.* – Sie schaut auf den Tisch.\n\nSteht auch für weibliche Dinge und heißt dann im Deutschen oft „er“ oder „es“: *la table → elle*. Wird nie elidiert. Im Plural *elles* hört man das -s nur vor einem Vokal (*elles ont*).",
+    "entrySchema": 1
   },
   "fr:et:CCONJ": {
     "lemma": "et",
@@ -56,7 +61,8 @@
       "et",
       "Et"
     ],
-    "grammar": "Verbindet Wörter und Sätze. Anders als im Deutschen steht davor kein Komma: Paul et Julie."
+    "grammar": "**Beispiel** Elle regarde sur la table et sous le lit. – Sie schaut auf dem Tisch und unter dem Bett nach.\n\nVerbindet gleichrangige Wörter, Satzteile und Sätze. Der Subjonctif folgt nie. Das *t* ist stumm und wird auch vor Vokal nie gebunden: *et elle* [e ɛl]. Klingt genau wie *est* („ist\"), das Schriftbild unterscheidet sie.",
+    "entrySchema": 1
   },
   "fr:je:PRON": {
     "lemma": "je",
@@ -69,16 +75,18 @@
       "J’",
       "j’"
     ],
-    "grammar": "Vor einem Vokal oder stummem h wird es zu j': j'ai, j'habite."
+    "grammar": "**Reihe** Subjektpronomen, unbetont · je · nous\n**Elision** j' vor Vokal und stummem h: *j'ai*, *j'habite*\n**Beispiel** Je ne le trouve pas. (Ich finde ihn nicht.)\n\nSteht immer direkt vor dem Verb, oder vor den Pronomen, die zum Verb gehören (*je le trouve*). Allein kann es nicht stehen. Die betonte Form ist *moi*: *Moi, je…* oder *C'est moi*.",
+    "entrySchema": 1
   },
   "fr:julie:PROPN": {
     "lemma": "Julie",
     "partOfSpeech": "PROPN",
-    "gloss": "Julie (Vorname)",
+    "gloss": "Julie",
     "forms": [
       "Julie"
     ],
-    "grammar": "Weiblicher Eigenname. Betont wird die letzte Silbe."
+    "grammar": "Das *-e* am Ende bleibt stumm, man sagt [ʒyˈli], mit der Betonung auf der letzten Silbe.",
+    "entrySchema": 1
   },
   "fr:le:DET": {
     "lemma": "le",
@@ -91,27 +99,31 @@
       "l’",
       "les",
       "La",
-      "Le"
+      "Le",
+      "L’"
     ],
-    "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur."
+    "grammar": "**Reihe** le · la · les\n**Elision** l' vor Vokal und stummem h: *l'orange*, *l'hôtel*\n**Verschmelzung** de + le = du · à + le = au · de + les = des · à + les = aux\n\nDas Geschlecht richtet sich nach dem französischen Wort, nicht nach dem deutschen: *la table*, *le lit*. Nicht mit dem Fürwort *le* (ihn, es) verwechseln, das vor dem Verb steht: *je le trouve*.",
+    "entrySchema": 1
   },
   "fr:le:PRON": {
     "lemma": "le",
     "partOfSpeech": "PRON",
-    "gloss": "ihn, es",
+    "gloss": "ihn, es, sie",
     "forms": [
       "le"
     ],
-    "grammar": "Direktes Objektpronomen der 3. Person männlich; weiblich la, Mehrzahl les. Steht vor dem Verb, nicht dahinter: je le trouve. Vor Vokal wird es zu l' (je l'ai). Nicht mit dem gleichlautenden Artikel le („der\") verwechseln - das Pronomen ersetzt ein Nomen, der Artikel begleitet eines."
+    "grammar": "**Reihe** direktes Objekt: le · la · les\n**Elision** l' vor Vokal: *je l'aime*\n**Beispiel** *Je ne le trouve pas.* – Ich finde ihn nicht.\n\nUnbetont, steht direkt vor dem Verb, bei der Verneinung zwischen *ne* und Verb. Nicht mit dem Artikel *le* verwechseln, der vor einem Substantiv steht.",
+    "entrySchema": 1
   },
   "fr:lit:NOUN": {
     "lemma": "lit",
     "partOfSpeech": "NOUN",
-    "gloss": "das Bett",
+    "gloss": "Bett",
     "forms": [
       "lit"
     ],
-    "grammar": "Männlich: le lit, Mehrzahl les lits. Das t bleibt stumm. Gleichlautend mit der Verbform il lit („er liest\") von lire - hier entscheidet der Artikel davor."
+    "grammar": "**Artikel** le lit · un lit\n**Mehrzahl** les lits\n\nMännlich. Das *-t* bleibt stumm, man sagt [li]. Nicht mit *il lit* (er liest, von *lire*) verwechseln, das genauso klingt.",
+    "entrySchema": 1
   },
   "fr:matin:NOUN": {
     "lemma": "matin",
@@ -120,7 +132,8 @@
     "forms": [
       "matin"
     ],
-    "grammar": "Männlich: le matin. Hinter einen Wochentag gestellt, ergibt es samedi matin, Samstagmorgen."
+    "grammar": "**Artikel** le matin · un matin\n**Pluriel** les matins\n\nMännlich. *Le matin* ohne Präposition heißt „morgens“ bzw. „am Morgen“. Nicht verwechseln mit *la matinée*, das den ganzen Vormittag als Zeitspanne meint.",
+    "entrySchema": 1
   },
   "fr:mon:DET": {
     "lemma": "mon",
@@ -128,9 +141,11 @@
     "gloss": "mein",
     "forms": [
       "mon",
-      "ma"
+      "ma",
+      "mes"
     ],
-    "grammar": "Richtet sich nach dem besessenen Ding, nicht nach dem Besitzer: mon passeport (m), ma chambre (f), mes clés (Pl.)."
+    "grammar": "**Reihe** mon · ma · mes\n\nRichtet sich nach dem Geschlecht des Besitzes, nicht des Besitzers. Vor einem Vokal oder stummen h steht auch bei weiblichen Wörtern *mon*: *mon amie* statt *ma amie*, gebunden als *mon‿amie* [n].",
+    "entrySchema": 1
   },
   "fr:ne:PART": {
     "lemma": "ne",
@@ -139,7 +154,8 @@
     "forms": [
       "ne"
     ],
-    "grammar": "Erster Teil der zweiteiligen Verneinung; steht vor dem Verb und den Objektpronomen, der zweite Teil (pas, jamais, rien, plus) dahinter: je ne le trouve pas. Vor Vokal wird es zu n' (il n'arrive pas). In gesprochener Umgangssprache fällt ne oft weg, pas bleibt."
+    "grammar": "**Elision** n' vor Vokal und stummem h: *je n'ai pas*\n\nErster Teil der Verneinung, steht vor dem Verb und braucht einen zweiten Teil danach: *ne … pas* (nicht), *ne … plus* (nicht mehr), *ne … jamais* (nie), *ne … rien* (nichts), *ne … personne* (niemand). Beispiel: *Je ne le trouve pas.* „Ich finde ihn nicht.“ Im gesprochenen Französisch fällt *ne* oft weg (*je le trouve pas*), in der Schrift bleibt es.",
+    "entrySchema": 1
   },
   "fr:oui:INTJ": {
     "lemma": "oui",
@@ -149,7 +165,8 @@
       "oui",
       "Oui"
     ],
-    "grammar": "Auf eine verneinte Frage antwortet man stattdessen mit si."
+    "grammar": "Die normale Zustimmung, in jeder Stilebene passend; locker auch *ouais*. Auf eine verneinte Frage antwortet man aber mit *si*: *Tu ne viens pas ? – Si !* (Doch!). Vor *oui* wird nicht elidiert: *le oui*.",
+    "entrySchema": 1
   },
   "fr:pas:PART": {
     "lemma": "pas",
@@ -158,16 +175,18 @@
     "forms": [
       "pas"
     ],
-    "grammar": "Zweiter Teil der Verneinung ne … pas; steht direkt nach dem konjugierten Verb: je ne le trouve pas. Wird durch jamais, rien oder plus ersetzt, nie mit ihnen kombiniert. Gleichlautend mit le pas („der Schritt\")."
+    "grammar": "**Verneinung** ne … pas · n'… pas\n**Beispiel** *Je ne le trouve pas.* – Ich finde es nicht.\n\nZweiter Teil der Verneinung: `ne` steht vor dem Verb, `pas` dahinter; in zusammengesetzten Zeiten steht `pas` vor dem Partizip (*je n'ai pas trouvé*). Nicht verwechseln mit dem Substantiv `le pas` (der Schritt); in der gesprochenen Sprache fällt `ne` oft weg, `pas` bleibt.",
+    "entrySchema": 1
   },
   "fr:paul:PROPN": {
     "lemma": "Paul",
     "partOfSpeech": "PROPN",
-    "gloss": "Paul (Vorname)",
+    "gloss": "Paul",
     "forms": [
       "Paul"
     ],
-    "grammar": "Eigenname. Das l am Ende wird gesprochen."
+    "grammar": "Das `au` wird wie ein offenes o gesprochen, das End-l ist hörbar: etwa „Poll“, nicht „Paul“ wie im Deutschen.",
+    "entrySchema": 1
   },
   "fr:quelque chose:PHRASE": {
     "lemma": "quelque chose",
@@ -176,7 +195,8 @@
     "forms": [
       "quelque chose"
     ],
-    "grammar": "Wörtlich „irgendeine Sache\" - unbestimmtes Pronomen, zusammen als Einheit gelernt. Gilt trotz des weiblichen chose als männlich, und ein Adjektiv wird mit de angeschlossen: quelque chose de bon. Verneint heißt es ne … rien, nicht „pas quelque chose\"."
+    "grammar": "**Wörtlich** irgendeine Sache\n\nWird als Pronomen für „etwas“ benutzt, in Fragen und Aussagen: *Tu cherches quelque chose ?* Obwohl *chose* weiblich ist, gilt es als männlich, und ein Adjektiv folgt mit *de*: *quelque chose de bon*. Verneint: *ne … rien* (nichts).",
+    "entrySchema": 1
   },
   "fr:quelque:DET": {
     "lemma": "quelque",
@@ -185,26 +205,29 @@
     "forms": [
       "quelque"
     ],
-    "grammar": "Unbestimmter Begleiter; in der Einzahl „irgendein\", im Plural `quelques` „einige, ein paar\". Steht fast immer vor einem Substantiv. Nicht verwechseln mit `quelque chose` „etwas\" und `quelqu'un` „jemand\", wo es festgewachsen ist."
+    "grammar": "**Formen** quelque · quelque · quelques\n\nIn der Einzahl eher in festen Verbindungen (*quelque chose*, *quelque part*), in der Mehrzahl heißt es „einige“: *quelques minutes*. Keine Elision außer in *quelqu'un* (jemand). Nicht verwechseln mit *quel que* getrennt geschrieben (*quel que soit* – welcher auch immer).",
+    "entrySchema": 1
   },
   "fr:regarder:VERB": {
     "lemma": "regarder",
     "partOfSpeech": "VERB",
-    "gloss": "schauen, ansehen",
+    "gloss": "ansehen, schauen",
     "forms": [
       "regarde",
       "regardent"
     ],
-    "grammar": "Regelmäßiges Verb auf -er: `je regarde`, `tu regardes`, `il/elle regarde`, `nous regardons`, `vous regardez`, `ils regardent`. Nimmt das Objekt ohne Präposition: `regarder la télé`. Gegen `voir` abgrenzen: `regarder` ist das absichtliche Hinsehen, `voir` das bloße Sehen."
+    "grammar": "**Infinitif** regarder\n**Présent** je regarde · tu regardes · il regarde · nous regardons · vous regardez · ils regardent\n**Passé composé** j'ai regardé\n\nRegelmäßiges Verb auf -er. Das Objekt folgt ohne Präposition (*regarder la télé*, nicht „auf“). Nicht verwechseln mit *voir*: *regarder* heißt gezielt hinsehen, *voir* heißt sehen.",
+    "entrySchema": 1
   },
   "fr:répondre:VERB": {
     "lemma": "répondre",
     "partOfSpeech": "VERB",
-    "gloss": "antworten",
+    "gloss": "antworten, beantworten",
     "forms": [
       "répond"
     ],
-    "grammar": "Auf -re: je réponds, il répond, ils répondent. Man antwortet à jemandem."
+    "grammar": "**Infinitif** répondre\n**Présent** je réponds · tu réponds · il répond · nous répondons · vous répondez · ils répondent\n**Passé composé** j'ai répondu\n\nRegelmäßiges Verb auf -re, das *d* in *il répond* bleibt stumm. Die Person oder Sache kommt mit *à*: *répondre à Julie*, *répondre à une question* – anders als im Deutschen („eine Frage beantworten“).",
+    "entrySchema": 1
   },
   "fr:son:DET": {
     "lemma": "son",
@@ -215,7 +238,8 @@
       "sa",
       "son"
     ],
-    "grammar": "Richtet sich nach dem besessenen Ding, nicht nach dem Besitzer: son ami (m), sa fête (f), ses amis (Pl.). Heißt sowohl sein als auch ihr."
+    "grammar": "**Reihe** son · sa · ses\n**Vor Vokal** son amie (nicht *sa amie*)\n\nDie Form richtet sich nach dem Besitz, nicht nach dem Besitzer: *son téléphone* heißt „sein Telefon“ oder „ihr Telefon“. Nicht verwechseln mit dem Substantiv *le son* (Klang) und mit *ils sont* (sie sind), das genauso klingt.",
+    "entrySchema": 1
   },
   "fr:sous:ADP": {
     "lemma": "sous",
@@ -224,16 +248,18 @@
     "forms": [
       "sous"
     ],
-    "grammar": "Präposition des Orts, Gegenstück zu `sur` „auf\". Verschmilzt nicht mit dem Artikel: `sous le lit`, `sous la table`. Für „unter\" im Sinn von „unter mehreren\" steht `parmi` oder `entre`."
+    "grammar": "**Ort** sous le lit – unter dem Bett\n**Umstand** sous la pluie – im Regen\n\nVerschmilzt nicht mit dem Artikel. Das *-s* am Ende ist stumm: [su]. Nicht verwechseln mit dem Gegenteil *sur* (auf).",
+    "entrySchema": 1
   },
   "fr:sur:ADP": {
     "lemma": "sur",
     "partOfSpeech": "ADP",
-    "gloss": "auf",
+    "gloss": "auf, über",
     "forms": [
       "sur"
     ],
-    "grammar": "Nicht mit sûr („sicher“) verwechseln; dort steht ein Akzent."
+    "grammar": "**Ort** sur la table – auf dem Tisch\n**Thema** un livre sur Paris – ein Buch über Paris\n**Verhältnis** un jour sur deux – jeden zweiten Tag\n\nVerschmilzt nicht mit dem Artikel. Nicht verwechseln mit *sûr* mit Akzent (sicher) und mit dem Gegenteil *sous* (unter).",
+    "entrySchema": 1
   },
   "fr:table:NOUN": {
     "lemma": "table",
@@ -242,7 +268,8 @@
     "forms": [
       "table"
     ],
-    "grammar": "Weiblich: `la table`, Plural `les tables`. Feste Fügungen: `à table` „zu Tisch, an den Tisch\", `mettre la table` „den Tisch decken\". Trotz deutschem „der Tisch\" hier weiblich - die Glosse folgt dem französischen Geschlecht."
+    "grammar": "**Artikel** la table · une table\n**Plural** les tables\n\nWeiblich, anders als im Deutschen. Feste Verbindungen: *mettre la table* (den Tisch decken), *À table !* (Essen ist fertig!).",
+    "entrySchema": 1
   },
   "fr:trouver:VERB": {
     "lemma": "trouver",
@@ -251,7 +278,8 @@
     "forms": [
       "trouve"
     ],
-    "grammar": "Regelmäßiges Verb auf -er: `je trouve`, `tu trouves`, `il/elle trouve`, `nous trouvons`, `vous trouvez`, `ils trouvent`. Heißt auch „meinen, halten für\": `je trouve ça bien`. Reflexiv `se trouver` bedeutet „sich befinden, liegen\"."
+    "grammar": "**Infinitif** trouver\n**Présent** je trouve · tu trouves · il trouve · nous trouvons · vous trouvez · ils trouvent\n**Passé composé** j'ai trouvé\n\nRegelmäßiges Verb auf -er. Das Objekt folgt ohne Präposition. *je trouve que …* heißt auch „ich finde, dass …“ (Meinung). Nicht verwechseln mit *se trouver* (sich befinden).",
+    "entrySchema": 1
   },
   "fr:tu:PRON": {
     "lemma": "tu",
@@ -260,15 +288,17 @@
     "forms": [
       "Tu"
     ],
-    "grammar": "Das vertraute Du - für Freunde, Familie und junge Leute. Gegenüber Fremden benutzt man vous."
+    "grammar": "**Reihe** Subjektpronomen, unbetont · betonte Form *toi*\n**Beispiel** *Tu cherches quelque chose ?* – Suchst du etwas?\n\nSteht direkt vor dem Verb. Elision zu *t'* nur in der Umgangssprache (*t'as vu ?*). *tu* ist die vertraute Anrede; wer siezt, nimmt *vous*.",
+    "entrySchema": 1
   },
   "fr:téléphone:NOUN": {
     "lemma": "téléphone",
     "partOfSpeech": "NOUN",
-    "gloss": "die Telefon",
+    "gloss": "der Telefon",
     "forms": [
       "téléphone"
     ],
-    "grammar": "Männlich: `le téléphone`, Plural `les téléphones`. Fürs Handy sagt man `le téléphone portable` oder kurz `le portable`. Das Verb dazu ist `téléphoner (à qn)` „jemanden anrufen\", mit `à` vor der Person."
+    "grammar": "**Singulier** le téléphone · un téléphone\n**Pluriel** les téléphones\n\nMännlich, obwohl es auf *-e* endet. Das ist eine häufige Falle, *la téléphone* ist falsch.",
+    "entrySchema": 1
   }
 }

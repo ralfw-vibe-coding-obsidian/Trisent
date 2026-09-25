@@ -1,13 +1,13 @@
 {
   "id": "fr-paul-et-julie-au-cafe",
-  "version": 6,
-  "built": "2026-09-24T13:25:59.355Z",
+  "version": 7,
+  "built": "2026-09-25T13:40:58Z",
   "inputs": {
     "text.md": "bbb60a277383eb89:1126",
     "work.md": "08780b1ff7540aa1:8660",
     "audio/01084530f5ad0670.mp3": 47691,
-    "audio/175bc7caf911a5e6.mp3": 23449,
     "audio/0d31e6fc6af05d94.mp3": 51035,
+    "audio/175bc7caf911a5e6.mp3": 23449,
     "audio/18da38fca4273274.mp3": 40586,
     "audio/18e07cc0e6dc391d.mp3": 30973,
     "audio/1f7244070c0b7320.mp3": 51035,
@@ -35,11 +35,12 @@
     "audio/e49944b6ea1c3fb8.mp3": 23449,
     "audio/f0dff6fde92cf2b0.mp3": 21777,
     "audio/f67f86116083a1b2.mp3": 50199,
-    "audio/fd270599441114fa.mp3": 30973
+    "audio/fd270599441114fa.mp3": 30973,
+    "dictionary.json": "d72dea4bb42019e9:30573"
   },
   "deployed": {
-    "version": 6,
-    "at": "2026-09-24T13:26:09.930Z",
+    "version": 7,
+    "at": "2026-09-25T13:41:05Z",
     "file": "Trisent/inbox/Paul et Julie au café (FR).zip"
   }
 }

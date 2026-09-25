@@ -1,14 +1,15 @@
 {
   "id": "fr-paul-et-julie",
-  "version": 3,
-  "built": "2026-09-24T13:26:02.202Z",
+  "version": 4,
+  "built": "2026-09-25T13:41:01Z",
   "inputs": {
     "text.md": "ceaded7d3701a8eb:606",
-    "work.md": "2b6fa09819ece102:4815"
+    "work.md": "2b6fa09819ece102:4815",
+    "dictionary.json": "d0e1d292ab29d20c:14950"
   },
   "deployed": {
-    "version": 3,
-    "at": "2026-09-24T13:26:13.437Z",
+    "version": 4,
+    "at": "2026-09-25T13:41:08Z",
     "file": "Trisent/inbox/Paul et Julie (FR).zip"
   }
 }

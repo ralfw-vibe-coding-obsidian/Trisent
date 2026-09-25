@@ -2,11 +2,12 @@
   "fr:addition:NOUN": {
     "lemma": "addition",
     "partOfSpeech": "NOUN",
-    "gloss": "die Rechnung",
+    "gloss": "Rechnung, Addition",
     "forms": [
       "addition"
     ],
-    "grammar": "Weiblich: une addition, l'addition. Im Restaurant der feste Ausdruck für die Rechnung – nicht „Addition\" im mathematischen Sinn, auch wenn das Wort beides kann. Man sagt „l'addition, s'il vous plaît\"."
+    "grammar": "**Artikel** l'addition (f.) · une addition\n**Plural** les additions\n\nWeiblich, mit Elision: *l'addition*. Im Restaurant heißt es die Rechnung (*L'addition, s'il vous plaît*). Nicht verwechseln mit *la facture*, der Rechnung für Waren und Dienstleistungen.",
+    "entrySchema": 1
   },
   "fr:aller:VERB": {
     "lemma": "aller",
@@ -17,7 +18,8 @@
       "va",
       "vais"
     ],
-    "grammar": "Stark unregelmäßiges Verb: je vais, tu vas, il va, nous allons, vous allez, ils vont. Bildet die nahe Zukunft (aller + Infinitiv: ils vont acheter - sie werden kaufen) und steht meist mit Richtungsangabe à/en/chez. Perfekt mit être: il est allé."
+    "grammar": "**Infinitif** aller\n**Présent** je vais · tu vas · il va · nous allons · vous allez · ils vont\n**Passé composé** je suis allé(e)\n\nUnregelmäßig. Das Hilfsverb ist **être**, und das Partizip richtet sich nach dem Subjekt: *elle est allée*. Futur und Konditional bilden sich vom Stamm *ir-* (*j'irai*). *Ça va ?* („Wie geht's?“) und *aller* + Infinitiv als nahe Zukunft (*je vais manger*) sind die häufigsten Verwendungen.",
+    "entrySchema": 1
   },
   "fr:ami:NOUN": {
     "lemma": "ami",
@@ -27,16 +29,18 @@
       "amis",
       "amie"
     ],
-    "grammar": "Männlich ami, weiblich amie - beide gleich ausgesprochen. Plural amis, amies."
+    "grammar": "**Artikel** l'ami (m.) · l'amie (f.) · un ami · une amie\n**Plural** les amis · les amies\n\n*ami* und *amie* klingen gleich, weil das *-e* stumm ist. Vor der weiblichen Form steht trotzdem *mon*: *mon amie* (nicht *ma amie*). Mit Bindung spricht man *mes‿amis* als „mé-sami“.",
+    "entrySchema": 1
   },
   "fr:apporter:VERB": {
     "lemma": "apporter",
     "partOfSpeech": "VERB",
-    "gloss": "bringen, herbringen",
+    "gloss": "bringen, herbringen, mitbringen",
     "forms": [
       "apporte"
     ],
-    "grammar": "Regelmäßig auf -er: j'apporte, tu apportes, il apporte, nous apportons. Gemeint ist „etwas mitbringen, herbeitragen\"; für Personen steht amener. Das Gegenstück ist emporter (wegbringen)."
+    "grammar": "**Infinitif** apporter\n**Présent** j'apporte · tu apportes · il apporte · nous apportons · vous apportez · ils apportent\n**Passé composé** j'ai apporté\n\nRegelmäßiges Verb auf -er, das Objekt folgt ohne Präposition: *apporter l'addition*. Nicht verwechseln mit *amener*: *apporter* gilt für Dinge, *amener* für Personen. Man verwechselt es auch mit *emporter* (mitnehmen, wegbringen).",
+    "entrySchema": 1
   },
   "fr:après-midi:NOUN": {
     "lemma": "après-midi",
@@ -45,17 +49,19 @@
     "forms": [
       "après-midi"
     ],
-    "grammar": "Männlich (l'après-midi, un après-midi), selten auch weiblich; im Plural unverändert: des après-midi. Als Zeitangabe steht es meist ohne Präposition: l'après-midi = „nachmittags\"."
+    "grammar": "**Artikel** l'après-midi · un après-midi\n**Pluriel** des après-midi (auch: des après-midis)\n\nMeist männlich, weibliches *une après-midi* ist aber ebenfalls korrekt. Wegen des Vokals am Anfang steht immer *l'*. Ohne Präposition heißt *l'après-midi* „am Nachmittag“ bzw. „nachmittags“.",
+    "entrySchema": 1
   },
   "fr:après:ADP": {
     "lemma": "après",
     "partOfSpeech": "ADP",
-    "gloss": "nach",
+    "gloss": "nach, hinter",
     "forms": [
       "après",
       "Après"
     ],
-    "grammar": "Präposition mit Nomen oder Betonungspronomen: après la fête, après toi. Zeitlich und örtlich („hinter, nach\"). Gegenstück ist avant; vor einem Verb steht der Infinitiv Perfekt: après avoir mangé."
+    "grammar": "**zeitlich** *après la fête* – nach dem Fest\n**räumlich** *après la poste* – hinter der Post\n**mit Infinitiv** *après avoir mangé* – nachdem er gegessen hat\n\nEs gibt keine Verschmelzung mit dem Artikel: *après le film*. Nicht verwechseln mit *après* als Adverb („danach“), das ohne Ergänzung steht, und mit *d'après* („laut, nach Meinung von“).",
+    "entrySchema": 1
   },
   "fr:après:ADV": {
     "lemma": "après",
@@ -64,35 +70,39 @@
     "forms": [
       "Après"
     ],
-    "grammar": "Dasselbe Wort ohne folgendes Nomen – dann Adverb: Après, ils parlent. Häufig am Satzanfang mit Komma. Verwandt: et après ? („und dann?\")."
+    "grammar": "**Unveränderlich** après\n\nSteht meist am Satzanfang (*Après, ils parlent…*) oder am Satzende (*On verra après.*). Die Form ist dieselbe wie bei der Präposition *après*, als Adverb folgt aber kein Substantiv.",
+    "entrySchema": 1
   },
   "fr:arriver:VERB": {
     "lemma": "arriver",
     "partOfSpeech": "VERB",
-    "gloss": "ankommen, eintreffen",
+    "gloss": "ankommen, geschehen",
     "forms": [
       "arrive",
       "arrivent"
     ],
-    "grammar": "Regelmäßiges Verb auf -er: arrive, arrives, arrive, arrivons, arrivez, arrivent. Bildet die zusammengesetzten Zeiten mit être (il est arrivé), nicht mit avoir. Heißt auch „passieren, geschehen\": qu'est-ce qui arrive ?"
+    "grammar": "**Infinitif** arriver\n**Présent** j'arrive · tu arrives · il arrive · nous arrivons · vous arrivez · ils arrivent\n**Passé composé** je suis arrivé(e)\n\nRegelmäßiges Verb auf -er, das Hilfsverb ist aber **être**, und das Partizip richtet sich nach dem Subjekt: *elle est arrivée*. Beim Ziel steht *à* oder *en*: *arriver à Paris*. In *ils arrivent* wird das -ent nicht gesprochen.",
+    "entrySchema": 1
   },
   "fr:asseoir:VERB": {
     "lemma": "asseoir",
     "partOfSpeech": "VERB",
-    "gloss": "setzen",
+    "gloss": "setzen, hinsetzen",
     "forms": [
       "assoient"
     ],
-    "grammar": "Im Alltag fast immer reflexiv: s'asseoir (sich setzen), je m'assois, ils s'assoient - daneben existiert die gleichwertige Variante je m'assieds, ils s'asseyent. Nicht mit être assis (sitzen, Zustand) verwechseln: s'asseoir ist die Bewegung des Hinsetzens."
+    "grammar": "**Infinitif** (s')asseoir\n**Présent** je m'assois · tu t'assois · il s'assoit · nous nous assoyons · vous vous assoyez · ils s'assoient (auch: je m'assieds · il s'assied · nous nous asseyons · ils s'asseyent)\n**Passé composé** je me suis assis(e)\n\nUnregelmäßiges Verb auf -re mit zwei gleichwertigen Formenreihen. Meist wird es reflexiv gebraucht, deshalb ist das Hilfsverb **être**, und das Partizip wird angeglichen: *elle s'est assise*.",
+    "entrySchema": 1
   },
   "fr:au:ADP": {
     "lemma": "au",
     "partOfSpeech": "ADP",
-    "gloss": "zu dem, im",
+    "gloss": "zu dem, im, am",
     "forms": [
       "au"
     ],
-    "grammar": "Verschmelzung von à + le. Vor weiblichen Wörtern bleibt es getrennt (à la), vor Vokal à l', im Plural aux."
+    "grammar": "**Verschmelzung** à + le = au · à + les = aux\n\n*aller au cinéma* – ins Kino gehen, *au café* – im Café. Vor einem Vokal oder stummem h wird nicht verschmolzen, dort steht *à l'*: *à l'hôtel*. Man verwechselt es mit *aux* (Mehrzahl) und mit dem gleich klingenden *eau* (Wasser).",
+    "entrySchema": 1
   },
   "fr:aujourd'hui:ADV": {
     "lemma": "aujourd'hui",
@@ -102,7 +112,8 @@
       "Aujourd'hui",
       "Aujourd’hui"
     ],
-    "grammar": "Unveränderliches Zeitadverb, geschrieben mit Apostroph (aus au jour d'hui). Steht am Satzanfang oder -ende. Reihe: hier – aujourd'hui – demain."
+    "grammar": "**Stellung** meist am Satzanfang oder am Satzende: *Aujourd’hui, je travaille.* · *Je travaille aujourd’hui.*\n**Form** unveränderlich\n\nEin einziges Wort, obwohl ein Apostroph darin steht. Man trennt es nie auf, und das *h* bleibt stumm.",
+    "entrySchema": 1
   },
   "fr:avec:ADP": {
     "lemma": "avec",
@@ -111,7 +122,8 @@
     "forms": [
       "avec"
     ],
-    "grammar": "Unveränderlich. Danach steht die betonte Form des Pronomens: avec moi, avec toi."
+    "grammar": "**Begleitung** *Je mange avec une collègue.* (Ich esse mit einer Kollegin.)\n**Mittel** *Il écrit avec un stylo.* (Er schreibt mit einem Kuli.)\n\nVerschmilzt nie mit dem Artikel: *avec le*, *avec les*. Das *c* am Ende wird gesprochen.",
+    "entrySchema": 1
   },
   "fr:avoir:VERB": {
     "lemma": "avoir",
@@ -122,7 +134,8 @@
       "ai",
       "a"
     ],
-    "grammar": "Das wichtigste unregelmäßige Verb: j'ai, tu as, il a, nous avons, vous avez, ils ont."
+    "grammar": "**Infinitif** avoir\n**Présent** j'ai · tu as · il a · nous avons · vous avez · ils ont\n**Passé composé** j'ai eu\n\nUnregelmäßig. Das Futur baut auf dem Stamm *aur-* auf (*j'aurai*), das Partizip *eu* spricht man wie „ü“. Leicht zu verwechseln sind *il a* (er hat) und die Präposition *à*, ebenso *ils ont* (sie haben) und *ils sont* (sie sind).",
+    "entrySchema": 1
   },
   "fr:beaucoup:ADV": {
     "lemma": "beaucoup",
@@ -131,16 +144,18 @@
     "forms": [
       "beaucoup"
     ],
-    "grammar": "Steht hinter dem Wort, das es verstärkt: merci beaucoup."
+    "grammar": "**Stellung** direkt hinter dem konjugierten Verb: *je travaille beaucoup* · *j'ai beaucoup travaillé*\n**Mit Nomen** *beaucoup de* ohne Artikel: *beaucoup de travail*\n\nUnveränderlich. Vor einem Adjektiv steht nicht *beaucoup*, sondern *très*: *très grand*.",
+    "entrySchema": 1
   },
   "fr:bibliothèque:NOUN": {
     "lemma": "bibliothèque",
     "partOfSpeech": "NOUN",
-    "gloss": "die Bibliothek, das Bücherregal",
+    "gloss": "Bibliothek, Bücherregal",
     "forms": [
       "bibliothèque"
     ],
-    "grammar": "Weiblich: la bibliothèque, une bibliothèque. Ort zum Lesen und Ausleihen – nicht zu verwechseln mit librairie, das die Buchhandlung ist."
+    "grammar": "**Artikel** la bibliothèque · une bibliothèque\n**Pluriel** les bibliothèques\n\nDas *th* spricht man wie ein einfaches *t*. Nicht verwechseln mit *la librairie*, das ist die Buchhandlung.",
+    "entrySchema": 1
   },
   "fr:bien:ADV": {
     "lemma": "bien",
@@ -149,7 +164,8 @@
     "forms": [
       "bien"
     ],
-    "grammar": "Adverb, unveränderlich – steht beim Verb (ça va bien, il parle bien), während bon ein Adjektiv beim Nomen ist. Verstärkend auch „sehr, wirklich\": bien content. Steigerung unregelmäßig: bien – mieux – le mieux."
+    "grammar": "**Unveränderlich** bien\n**Stellung** nach dem konjugierten Verb: *ça va bien* · *il chante bien*; in zusammengesetzten Zeiten zwischen Hilfsverb und Partizip: *j'ai bien dormi*\nVor Adjektiven heißt es „sehr“: *bien content*. Wird oft mit `bon` verwechselt: *bon* beschreibt ein Substantiv (*un bon film*), *bien* ein Verb (*il travaille bien*). Die Steigerung ist unregelmäßig: `mieux`.",
+    "entrySchema": 1
   },
   "fr:bon:ADJ": {
     "lemma": "bon",
@@ -159,16 +175,18 @@
       "bon",
       "bonne"
     ],
-    "grammar": "Steht vor dem Substantiv. Weiblich: bonne. In Wunschformeln fällt der Artikel weg: bon séjour, bonne journée."
+    "grammar": "**Masculin** bon\n**Féminin** bonne\n**Pluriel** bons · bonnes\nSteht vor dem Substantiv: *un bon film*, *une bonne idée*. Wird oft mit `bien` verwechselt: *bon* gehört zum Substantiv, *bien* zum Verb. *bon* wird nasal gesprochen, *bonne* nicht. Vor Vokal wird gebunden: *bon ami* [bɔnami].",
+    "entrySchema": 1
   },
   "fr:café:NOUN": {
     "lemma": "café",
     "partOfSpeech": "NOUN",
-    "gloss": "das Café, der Kaffee",
+    "gloss": "Kaffee, Café",
     "forms": [
       "café"
     ],
-    "grammar": "Männlich (un café, le café). Bedeutet sowohl das Lokal als auch das Getränk; welches gemeint ist, zeigt der Zusammenhang. Im Lokal heißt un café eine Tasse Espresso — für Filterkaffee sagt man un café allongé."
+    "grammar": "**Singular** le café · un café\n**Plural** les cafés\n\nMännlich. Dasselbe Wort bezeichnet das Getränk und das Lokal; nur der Zusammenhang entscheidet (*un café, s'il vous plaît* gegen *dans un café*). Das *é* am Ende wird gesprochen.",
+    "entrySchema": 1
   },
   "fr:cinéma:NOUN": {
     "lemma": "cinéma",
@@ -177,16 +195,18 @@
     "forms": [
       "cinéma"
     ],
-    "grammar": "Männlich: le cinéma. Steht meist mit au (aller au cinéma, au cinéma = ins/im Kino), weil Verschmelzung von à + le. Bezeichnet sowohl das Gebäude als auch das Medium Film insgesamt."
+    "grammar": "**Singulier** le cinéma · un cinéma\n**Pluriel** les cinémas\n\nMännlich, obwohl es auf -a endet. Mit *à* heißt es *aller au cinéma* (*à* + *le* = *au*); umgangssprachlich auch kurz *le ciné*.",
+    "entrySchema": 1
   },
   "fr:collègue:NOUN": {
     "lemma": "collègue",
     "partOfSpeech": "NOUN",
-    "gloss": "der Kollege, die Kollegin",
+    "gloss": "Kollege, Kollegin",
     "forms": [
       "collègue"
     ],
-    "grammar": "Gleiche Schreibweise für beide Geschlechter, nur der Begleiter unterscheidet: un collègue, une collègue. Nicht verwechseln mit copain/copine (Freund) — collègue meint ausschließlich die Arbeitsbeziehung."
+    "grammar": "**Masculin** le collègue · un collègue\n**Féminin** la collègue · une collègue\n**Pluriel** les collègues\n\nDie Form ist für beide Geschlechter gleich, das Geschlecht zeigt nur der Artikel. Man schreibt es mit *-ll-* und *è*, anders als das englische *colleague*.",
+    "entrySchema": 1
   },
   "fr:commander:VERB": {
     "lemma": "commander",
@@ -195,7 +215,8 @@
     "forms": [
       "commande"
     ],
-    "grammar": "Regelmäßig auf -er: je commande, tu commandes, il/elle commande, nous commandons, vous commandez, ils commandent. Im Restaurant mit direktem Objekt (commander un thé), ohne Präposition. Daneben auch „befehlen, kommandieren\" — dann mit à: commander à quelqu'un."
+    "grammar": "**Infinitif** commander\n**Présent** je commande · tu commandes · il commande · nous commandons · vous commandez · ils commandent\n**Passé composé** j'ai commandé\n\nRegelmäßiges Verb auf -er. Das Objekt steht ohne Präposition (*commander un thé*), in der Bedeutung „befehlen“ heißt es *commander à qn de faire qc*. Nicht verwechseln mit dem Substantiv *la commande* (die Bestellung).",
+    "entrySchema": 1
   },
   "fr:commencer:VERB": {
     "lemma": "commencer",
@@ -204,7 +225,8 @@
     "forms": [
       "commence"
     ],
-    "grammar": "Regelmäßig auf -er, aber mit Schreibschwankung: vor a und o wird c zu ç (nous commençons, il commençait). Kann ohne Objekt stehen (le film commence) oder mit: commencer à + Infinitiv = anfangen zu, commencer par = beginnen mit."
+    "grammar": "**Infinitif** commencer\n**Présent** je commence · tu commences · il commence · nous commençons · vous commencez · ils commencent\n**Passé composé** j'ai commencé\n\nRegelmäßiges Verb auf -er. Vor *a* und *o* wird *c* zu *ç*, damit es [s] bleibt: *nous commençons*, im Imparfait *je commençais*. Vor einem Infinitiv steht *à* (*commencer à travailler*), bei „beginnen mit“ steht *par*.",
+    "entrySchema": 1
   },
   "fr:comment ça va:PHRASE": {
     "lemma": "comment ça va",
@@ -213,7 +235,8 @@
     "forms": [
       "Comment ça va"
     ],
-    "grammar": "Wörtlich „wie das geht\" — ça steht für die unpersönliche Lage, aller für das Befinden. Lockere Begrüßungsfrage unter Bekannten; die förmliche Variante ist comment allez-vous. Übliche Antworten: ça va (bien), très bien, pas mal."
+    "grammar": "**Wörtlich** comment · ça · va („wie · das · geht“)\n\nDas ist die alltägliche Frage nach dem Befinden, freundlich und nicht förmlich. Man antwortet mit *ça va (bien)*; förmlicher fragt man *comment allez-vous ?*.",
+    "entrySchema": 1
   },
   "fr:comment:ADV": {
     "lemma": "comment",
@@ -222,7 +245,8 @@
     "forms": [
       "Comment"
     ],
-    "grammar": "Fragewort nach Art und Weise; unveränderlich. Am Satzanfang folgt Umkehrung (Comment allez-vous ?) oder est-ce que. Fragt nie nach dem Maß — dafür steht combien."
+    "grammar": "**Stellung** am Satzanfang: *Comment ça va ?* · umgangssprachlich am Ende: *Tu t'appelles comment ?*\n\nDas Wort ist unveränderlich. Das -t wird nicht gesprochen, außer bei der Bindung in *comment allez-vous*. Man verwechselt es leicht mit *comme* (wie, als), das vergleicht und nicht fragt.",
+    "entrySchema": 1
   },
   "fr:content:ADJ": {
     "lemma": "content",
@@ -232,7 +256,8 @@
       "content",
       "contents"
     ],
-    "grammar": "Weibliche Form contente. Vor einem Infinitiv steht de: content de te connaître."
+    "grammar": "**Masculin** content\n**Féminin** contente\n**Pluriel** contents · contentes\n\nSteht nach dem Substantiv oder nach *être*, meist mit *de*: *content de te connaître*. In *content* ist das *t* stumm, in *contente* wird es gesprochen.",
+    "entrySchema": 1
   },
   "fr:cours:NOUN": {
     "lemma": "cours",
@@ -241,16 +266,18 @@
     "forms": [
       "cours"
     ],
-    "grammar": "Männlich; Einzahl und Mehrzahl sind gleich geschrieben (un cours, deux cours), nur der Begleiter zeigt die Zahl. Das s bleibt stumm. Nicht verwechseln mit court (kurz) und mit cour (der Hof), gleich klingend, aber anderes Wort."
+    "grammar": "**Singulier** le cours · un cours\n**Pluriel** les cours\n\nMännlich, endet schon im Singular auf *-s* und bleibt im Plural gleich. Das *s* ist stumm, deshalb klingt es genau wie *court* (kurz). Nicht verwechseln mit *la cour* (der Hof) und *la course* (der Lauf, das Rennen).",
+    "entrySchema": 1
   },
   "fr:croissant:NOUN": {
     "lemma": "croissant",
     "partOfSpeech": "NOUN",
-    "gloss": "das Croissant, der Halbmond",
+    "gloss": "der Croissant, der Halbmond",
     "forms": [
       "croissant"
     ],
-    "grammar": "Männlich (un croissant). Ursprünglich „Halbmond\" — daher die Form des Gebäcks. Beim Bestellen ohne Artikelwechsel: je voudrais un croissant."
+    "grammar": "**Singulier** le croissant · un croissant\n**Pluriel** les croissants\n\nIm Französischen männlich. Das *t* am Ende ist stumm. Gleichlautend mit dem Adjektiv *croissant* (wachsend).",
+    "entrySchema": 1
   },
   "fr:dans:ADP": {
     "lemma": "dans",
@@ -259,7 +286,8 @@
     "forms": [
       "dans"
     ],
-    "grammar": "Räumlich „innerhalb von“: dans la chambre, dans l'hôtel."
+    "grammar": "**Ort** *dans un café* – in einem Café\n**Zeit** *dans deux jours* – in zwei Tagen (von jetzt an)\n\nVerschmilzt nicht mit dem Artikel, auf *dans* folgt meist ein Begleiter. Leicht verwechselt mit *en*: *en deux jours* heißt „innerhalb von zwei Tagen“, und *en* steht meist ohne Artikel (*en France*).",
+    "entrySchema": 1
   },
   "fr:de:ADP": {
     "lemma": "de",
@@ -270,16 +298,18 @@
       "de",
       "d’"
     ],
-    "grammar": "Zeigt Herkunft und Zugehörigkeit. Vor Vokal wird es zu d', mit le verschmilzt es zu du, mit les zu des."
+    "grammar": "**Herkunft** Il vient de Paris. – Er kommt aus Paris.\n**Zugehörigkeit** le livre de Paul – das Buch von Paul (Pauls Buch)\n**Verschmelzung** de + le = du · de + les = des · aber: de la, de l'\n\nVor Vokal oder stummem h wird es zu *d'* (*d'accord*, *d'Hélène*). Nicht verwechseln mit dem Zahlwort *deux* [dø] und mit *de* als Teilungsartikel (*de la musique*).",
+    "entrySchema": 1
   },
   "fr:demander:VERB": {
     "lemma": "demander",
     "partOfSpeech": "VERB",
-    "gloss": "fragen, bitten um",
+    "gloss": "fragen, bitten",
     "forms": [
       "demande"
     ],
-    "grammar": "Regelmäßig auf -er. Heißt fragen und bitten um - nicht fordern."
+    "grammar": "**Infinitif** demander\n**Présent** je demande · tu demandes · il demande · nous demandons · vous demandez · ils demandent\n**Passé composé** j'ai demandé\n\nRegelmäßiges Verb auf -er. Die gefragte Person steht mit *à*: *demander quelque chose à quelqu'un*, *demander à Paul de venir* (Paul bitten zu kommen). Ein falscher Freund: Es heißt nicht „fordern“ wie das englische *demand*, sondern nur „fragen“ oder „bitten“.",
+    "entrySchema": 1
   },
   "fr:deux:NUM": {
     "lemma": "deux",
@@ -288,16 +318,18 @@
     "forms": [
       "deux"
     ],
-    "grammar": "Unveränderlich, das x wird nie gesprochen, außer als Bindung vor Vokal (deux billets, aber deux_hommes). Steht direkt vor dem Substantiv ohne Artikel: deux billets. Auch in tous les deux (beide) und Datumsangaben (le deux mai)."
+    "grammar": "**Aussprache** deux [dø] · deux ans [dø-zɑ̃]\n\nDas *x* ist stumm; nur vor Vokal oder stummem h wird es als [z] gebunden. Man verwechselt es leicht mit *de* [də] und *des* [de], die ähnlich klingen.",
+    "entrySchema": 1
   },
   "fr:devoir:NOUN": {
     "lemma": "devoir",
     "partOfSpeech": "NOUN",
-    "gloss": "die Hausaufgabe, die Pflicht",
+    "gloss": "Pflicht, Hausaufgabe",
     "forms": [
       "devoirs"
     ],
-    "grammar": "Männlich (un devoir). In der Mehrzahl les devoirs fast immer die Hausaufgaben, in der Einzahl eher „Pflicht\" oder „Klassenarbeit\". Steht hier mit faire: faire ses devoirs. Formgleich mit dem Verb devoir (müssen) — hier ist das Hauptwort gemeint."
+    "grammar": "**Singular** le devoir · un devoir\n**Plural** les devoirs · des devoirs\n\nMännlich. In der Mehrzahl sind es meist die Hausaufgaben, fest verbunden in `faire ses devoirs` (Hausaufgaben machen). Nicht verwechseln mit dem Verb `devoir` (müssen): `je dois partir`.",
+    "entrySchema": 1
   },
   "fr:dire:VERB": {
     "lemma": "dire",
@@ -306,7 +338,8 @@
     "forms": [
       "dit"
     ],
-    "grammar": "Unregelmäßig: je dis, tu dis, il dit, nous disons, vous dites, ils disent."
+    "grammar": "**Infinitif** dire\n**Présent** je dis · tu dis · il dit · nous disons · vous dites · ils disent\n**Passé composé** j'ai dit\n\nUnregelmäßig. Achtung bei `vous dites` (nicht *disez*). `il dit` (Präsens) und `dit` (Partizip) klingen und schreiben sich gleich. Die Person folgt mit `à`: `dire quelque chose à quelqu'un`.",
+    "entrySchema": 1
   },
   "fr:encore:ADV": {
     "lemma": "encore",
@@ -315,7 +348,8 @@
     "forms": [
       "encore"
     ],
-    "grammar": "Unveränderliches Adverb. Steht meist direkt hinter dem konjugierten Verb (`ils parlent encore`). Zwei Lesarten: Fortdauer „noch\" und Wiederholung „wieder, nochmal\"; verneint heißt `pas encore` „noch nicht\". Nicht mit `toujours` („immer, immer noch\") verwechseln."
+    "grammar": "**Form** unveränderlich\n**Stellung** hinter dem konjugierten Verb; in zusammengesetzten Zeiten zwischen Hilfsverb und Partizip: *il a encore mangé*\n\n*pas encore* heißt „noch nicht“. Wird verwechselt mit *toujours*, das ebenfalls „noch“ heißen kann (im Sinn von „immer noch“).",
+    "entrySchema": 1
   },
   "fr:ensemble:ADV": {
     "lemma": "ensemble",
@@ -324,7 +358,8 @@
     "forms": [
       "ensemble"
     ],
-    "grammar": "Unveränderlich, steht hinter dem Verb: ils dansent ensemble."
+    "grammar": "**Form** unveränderlich\n**Stellung** hinter dem Verb: *ils partent ensemble*\n\nDasselbe Wort ist auch ein männliches Substantiv: *l'ensemble* (das Ganze, die Gesamtheit). Das End-e spricht man nicht.",
+    "entrySchema": 1
   },
   "fr:ensuite:ADV": {
     "lemma": "ensuite",
@@ -333,7 +368,8 @@
     "forms": [
       "Ensuite"
     ],
-    "grammar": "Unveränderliches Adverb der zeitlichen Abfolge. Steht meist am Satzanfang, dann mit Komma abgetrennt. Reiht sich in die Kette d'abord – puis / ensuite – enfin; `puis` ist kürzer und leichter, `ensuite` betont den nächsten Schritt stärker."
+    "grammar": "**Form** unveränderlich\n**Stellung** meist am Satzanfang, mit Komma abgetrennt: *Ensuite, Paul demande l'addition.*\n\nBedeutet fast dasselbe wie *puis*; *ensuite* steht aber gern allein vor einem Komma, *puis* meist nicht.",
+    "entrySchema": 1
   },
   "fr:et:CCONJ": {
     "lemma": "et",
@@ -343,7 +379,8 @@
       "et",
       "Et"
     ],
-    "grammar": "Verbindet Wörter und Sätze. Anders als im Deutschen steht davor kein Komma: Paul et Julie."
+    "grammar": "**Beispiel** Elle regarde sur la table et sous le lit. – Sie schaut auf dem Tisch und unter dem Bett nach.\n\nVerbindet gleichrangige Wörter, Satzteile und Sätze. Der Subjonctif folgt nie. Das *t* ist stumm und wird auch vor Vokal nie gebunden: *et elle* [e ɛl]. Klingt genau wie *est* („ist\"), das Schriftbild unterscheidet sie.",
+    "entrySchema": 1
   },
   "fr:faire:VERB": {
     "lemma": "faire",
@@ -352,7 +389,8 @@
     "forms": [
       "fais"
     ],
-    "grammar": "Unregelmäßiges Verb: `je fais, tu fais, il fait, nous faisons, vous faites, ils font` - `vous faites` und `ils font` sind die Stolperstellen. Partizip `fait`. Deckt viel ab, wofür das Deutsche eigene Verben hat: Hausaufgaben, Einkäufe, Sport, Wetter (`il fait beau`)."
+    "grammar": "**Infinitif** faire\n**Présent** je fais · tu fais · il fait · nous faisons · vous faites · ils font\n**Passé composé** j'ai fait\n\nUnregelmäßig, wird mit *avoir* gebildet. *vous faites* und *ils font* sind unregelmäßige Formen, *faisons* spricht man [fəzɔ̃]. Das Futur (und damit auch das Konditional) baut auf dem Stamm *fer-* auf: *je ferai*, *je ferais*.",
+    "entrySchema": 1
   },
   "fr:fatigué:ADJ": {
     "lemma": "fatigué",
@@ -361,25 +399,28 @@
     "forms": [
       "fatigué"
     ],
-    "grammar": "Adjektiv, richtet sich nach dem Bezugswort: `fatigué, fatiguée, fatigués, fatiguées` - alle vier klingen gleich, nur die Schrift unterscheidet sie. Ursprünglich Partizip von `fatiguer` („ermüden\"), steht hier aber als Eigenschaft nach `être`."
+    "grammar": "**Masculin** fatigué\n**Féminin** fatiguée\n**Pluriel** fatigués · fatiguées\n\nAlle vier Formen klingen gleich, nur die Schrift zeigt die Angleichung: *elle est fatiguée*. Es steht nach dem Substantiv oder nach *être*. Eigentlich das Partizip von *fatiguer* („ermüden\").",
+    "entrySchema": 1
   },
   "fr:finir:VERB": {
     "lemma": "finir",
     "partOfSpeech": "VERB",
-    "gloss": "beenden, enden",
+    "gloss": "beenden, enden, aufhören",
     "forms": [
       "finissent"
     ],
-    "grammar": "Regelmäßiges Verb auf `-ir` mit Stammerweiterung `-iss-` im Plural: `je finis, tu finis, il finit, nous finissons, vous finissez, ils finissent`. Partizip `fini`. Mit direktem Objekt „etwas beenden\", ohne Objekt „zu Ende gehen\"; `finir de faire qc` heißt „aufhören, etwas zu tun\"."
+    "grammar": "**Infinitif** finir\n**Présent** je finis · tu finis · il finit · nous finissons · vous finissez · ils finissent\n**Passé composé** j'ai fini\n\nRegelmäßiges Verb auf -ir, das im Plural *-iss-* einschiebt. Mit Infinitiv folgt *de*: *finir de manger*. Das Imparfait kommt ebenfalls vom Stamm *finiss-*: *je finissais*.",
+    "entrySchema": 1
   },
   "fr:fête:NOUN": {
     "lemma": "fête",
     "partOfSpeech": "NOUN",
-    "gloss": "Fest, Party",
+    "gloss": "Fest, Feier, Party",
     "forms": [
       "fête"
     ],
-    "grammar": "Weiblich: la fête. Meint Fest, Feier und Feiertag gleichermaßen."
+    "grammar": "**Singulier** la fête · une fête\n**Pluriel** les fêtes\n\nWeiblich. Klingt genau wie *vous faites* (ihr macht / Sie machen).",
+    "entrySchema": 1
   },
   "fr:heure:NOUN": {
     "lemma": "heure",
@@ -389,7 +430,8 @@
       "heure",
       "heures"
     ],
-    "grammar": "Weiblich: l'heure. À quelle heure? heißt „um wie viel Uhr?“, und Uhrzeiten sagt man mit heures: sept heures."
+    "grammar": "**Singulier** l'heure · une heure\n**Pluriel** les heures\n\nWeiblich. Das *h* ist stumm, deshalb *l'heure* und die Bindung *les‿heures*. Man sagt *à huit heures* (um acht Uhr) und *Quelle heure est-il ?* (Wie spät ist es?). Nicht verwechseln mit *le temps*: Das ist die Zeit als Dauer.",
+    "entrySchema": 1
   },
   "fr:huit:NUM": {
     "lemma": "huit",
@@ -398,16 +440,18 @@
     "forms": [
       "huit"
     ],
-    "grammar": "Unveränderliches Zahlwort. Das `h` ist ein sogenanntes h aspiré: kein Bindungs-`s` und keine Elision, also `le huit`, nicht `l'huit`. Das Schluss-`t` spricht man allein und vor Vokal (`huit heures`), vor Konsonant fällt es oft weg."
+    "grammar": "**Aussprache** allein und vor Vokal mit *t*: *huit*, *huit‿heures* · vor Konsonant ohne *t*: *huit jours*\n\nDas *h* ist behaucht, deshalb weder Elision noch Bindung: *le huit*, *les huit*. *Huit jours* bedeutet meist „eine Woche“.",
+    "entrySchema": 1
   },
   "fr:idée:NOUN": {
     "lemma": "idée",
     "partOfSpeech": "NOUN",
-    "gloss": "die Idee, der Einfall",
+    "gloss": "die Idee",
     "forms": [
       "idée"
     ],
-    "grammar": "Weiblich: `une idée`, `l'idée`, Plural `les idées`. Trotz Endung `-ée` weiblich - das ist bei dieser Endung die Regel. `Bonne idée !` ist die geläufige Zustimmung auf einen Vorschlag."
+    "grammar": "**Artikel** l'idée · une idée\n**Plural** les idées\n\nWeiblich, obwohl das Wort auf *-ée* endet. Diese Endung sieht männlich aus, weil sie an Partizipien wie *allé* erinnert. Das `l'` vor dem Vokal verdeckt das Geschlecht, am unbestimmten Artikel *une idée* sieht man es. Feste Verbindung: *bonne idée!* (gute Idee!).",
+    "entrySchema": 1
   },
   "fr:il:PRON": {
     "lemma": "il",
@@ -419,7 +463,8 @@
       "Ils",
       "ils"
     ],
-    "grammar": "Steht auch als unpersönliches „es“ ohne eigene Bedeutung: il y a, s'il vous plaît."
+    "grammar": "**Reihe** Subjektpronomen, unbetont · il · ils\n**Beispiel** Ils sont contents. (Sie sind froh.)\n\nSteht direkt vor dem Verb. Es gibt keine Elision: *il a* bleibt *il a*. Das *-s* in *ils* ist stumm, *il* und *ils* klingen also gleich. Nur in der Bindung vor einem Vokal spricht man es als [z]: *ils‿ont*. Als unpersönliches „es“ steht *il* in *il y a* und *il pleut*. Die betonte Form ist *lui*.",
+    "entrySchema": 1
   },
   "fr:je:PRON": {
     "lemma": "je",
@@ -432,25 +477,28 @@
       "J’",
       "j’"
     ],
-    "grammar": "Vor einem Vokal oder stummem h wird es zu j': j'ai, j'habite."
+    "grammar": "**Reihe** Subjektpronomen, unbetont · je · nous\n**Elision** j' vor Vokal und stummem h: *j'ai*, *j'habite*\n**Beispiel** Je ne le trouve pas. (Ich finde ihn nicht.)\n\nSteht immer direkt vor dem Verb, oder vor den Pronomen, die zum Verb gehören (*je le trouve*). Allein kann es nicht stehen. Die betonte Form ist *moi*: *Moi, je…* oder *C'est moi*.",
+    "entrySchema": 1
   },
   "fr:journée:NOUN": {
     "lemma": "journée",
     "partOfSpeech": "NOUN",
-    "gloss": "der Tag, der Tagesverlauf",
+    "gloss": "Tag, Tagesverlauf",
     "forms": [
       "journée"
     ],
-    "grammar": "Weiblich: `une journée`, Plural `les journées`. Gegenstück zu `jour`: `journée` meint den Tag als ausgefüllte Zeitspanne (deshalb `parler de leur journée`), `jour` den Tag als Zeitpunkt oder Kalendertag. Gleiches Paar: `an/année`, `matin/matinée`, `soir/soirée`."
+    "grammar": "**Artikel** la journée · une journée\n**Mehrzahl** les journées\n\nWeiblich. Nicht mit *le jour* verwechseln: *jour* ist der Tag als Datum oder Zeiteinheit, *journée* der Tag als Zeitraum, den man erlebt (*bonne journée!*, *toute la journée*).",
+    "entrySchema": 1
   },
   "fr:julie:PROPN": {
     "lemma": "Julie",
     "partOfSpeech": "PROPN",
-    "gloss": "Julie (Vorname)",
+    "gloss": "Julie",
     "forms": [
       "Julie"
     ],
-    "grammar": "Weiblicher Eigenname. Betont wird die letzte Silbe."
+    "grammar": "Das *-e* am Ende bleibt stumm, man sagt [ʒyˈli], mit der Betonung auf der letzten Silbe.",
+    "entrySchema": 1
   },
   "fr:le:DET": {
     "lemma": "le",
@@ -466,7 +514,8 @@
       "Le",
       "L’"
     ],
-    "grammar": "Bestimmter Artikel: le (m), la (f), les (Pl.). Vor Vokal oder stummem h wird beides zu l': l'hôtel, l'ascenseur."
+    "grammar": "**Reihe** le · la · les\n**Elision** l' vor Vokal und stummem h: *l'orange*, *l'hôtel*\n**Verschmelzung** de + le = du · à + le = au · de + les = des · à + les = aux\n\nDas Geschlecht richtet sich nach dem französischen Wort, nicht nach dem deutschen: *la table*, *le lit*. Nicht mit dem Fürwort *le* (ihn, es) verwechseln, das vor dem Verb steht: *je le trouve*.",
+    "entrySchema": 1
   },
   "fr:leur:DET": {
     "lemma": "leur",
@@ -476,7 +525,8 @@
       "leurs",
       "leur"
     ],
-    "grammar": "Possessivbegleiter für mehrere Besitzer: leur vor Einzahl (leur place), leurs vor Mehrzahl (leurs places). Anders als im Deutschen richtet er sich nach dem besessenen Ding, nicht nach dem Geschlecht der Besitzer. Nicht verwechseln mit dem unveränderlichen Pronomen leur „ihnen\" (je leur parle)."
+    "grammar": "**Reihe** leur · leur · leurs\n\nEine Form für männlich und weiblich, nur in der Mehrzahl kommt *-s* dazu: *leur journée*, *leurs amis*. Nicht mit dem Fürwort *leur* (ihnen) verwechseln, das vor dem Verb steht und nie ein *-s* bekommt: *je leur parle*.",
+    "entrySchema": 1
   },
   "fr:maintenant:ADV": {
     "lemma": "maintenant",
@@ -485,7 +535,8 @@
     "forms": [
       "Maintenant"
     ],
-    "grammar": "Unveränderliches Adverb der Zeit. Kann am Satzanfang stehen (dann meist mit Komma) oder hinter dem Verb. Bezeichnet den Sprechmoment - für „gerade eben\" nimmt man `à l'instant`, für „sofort\" `tout de suite`."
+    "grammar": "**Unveränderlich** maintenant\n\nSteht am Satzanfang (oft mit Komma), am Satzende oder direkt hinter dem konjugierten Verb: *Il travaille maintenant.* Nicht verwechseln mit *maintenant* als Partizip Präsens von *maintenir* (aufrechterhalten).",
+    "entrySchema": 1
   },
   "fr:mais:CCONJ": {
     "lemma": "mais",
@@ -494,16 +545,18 @@
     "forms": [
       "mais"
     ],
-    "grammar": "Nebenordnende Konjunktion, unveränderlich. Verbindet zwei gleichrangige Aussagen und steht in der Regel nach Komma. Nach einer Verneinung heißt `mais` „sondern\": `ce n'est pas Paul, mais Julie`. Nicht mit `mai` („Mai\") verwechseln."
+    "grammar": "**Verbindet** zwei Hauptsätze oder Satzteile gleicher Art\n**Beispiel** *C'est petit, mais c'est joli.* – Es ist klein, aber es ist hübsch.\n\nNach einer Verneinung heißt es „sondern“: *pas lui, mais elle*. Kein Subjonctif. Nicht verwechseln mit *mes* (meine), das ähnlich klingt. Das -s wird nicht gesprochen.",
+    "entrySchema": 1
   },
   "fr:maison:NOUN": {
     "lemma": "maison",
     "partOfSpeech": "NOUN",
-    "gloss": "die Haus",
+    "gloss": "Haus, Zuhause",
     "forms": [
       "maison"
     ],
-    "grammar": "Weiblich: `la maison`, Mehrzahl `les maisons`. Die Ortsangabe geht mit `à la maison` („nach Hause\", „zu Hause\"), die Herkunft mit `de la maison`. Ohne Artikel steht nur `à la maison` nie - anders als im Deutschen gibt es kein artikelloses „zu Haus\"."
+    "grammar": "**Artikel** la maison · une maison\n**Pluriel** les maisons\n\nWeiblich. Die feste Wendung *à la maison* heißt „zu Hause“ oder „nach Hause“.",
+    "entrySchema": 1
   },
   "fr:manger:VERB": {
     "lemma": "manger",
@@ -512,7 +565,8 @@
     "forms": [
       "mange"
     ],
-    "grammar": "Regelmäßig auf -er, aber mit Schreib-Eigenheit: vor `a` und `o` tritt ein `e` ein, damit das `g` weich bleibt - `nous mangeons`, `il mangeait`. Präsens: `je mange, tu manges, il mange, nous mangeons, vous mangez, ils mangent`. Partizip `mangé`, Hilfsverb `avoir`."
+    "grammar": "**Infinitif** manger\n**Présent** je mange · tu manges · il mange · nous mangeons · vous mangez · ils mangent\n**Passé composé** j'ai mangé\n\nRegelmäßiges Verb auf -er. Vor *a* und *o* bleibt ein *e* stehen, damit das *g* weich klingt: *nous mangeons*, *je mangeais*. Das Objekt folgt ohne Präposition.",
+    "entrySchema": 1
   },
   "fr:marcher:VERB": {
     "lemma": "marcher",
@@ -521,7 +575,8 @@
     "forms": [
       "marchent"
     ],
-    "grammar": "Regelmäßig auf -er, Partizip `marché`, Hilfsverb `avoir`. `ils marchent` klingt wie `il marche` - die Endung -ent bleibt stumm. Richtung mit `vers` oder `à`; von Geräten gesagt heißt `ça marche` „das funktioniert\"."
+    "grammar": "**Infinitif** marcher\n**Présent** je marche · tu marches · il marche · nous marchons · vous marchez · ils marchent\n**Passé composé** j'ai marché\n\nRegelmäßiges Verb auf -er. Das *-ent* in *ils marchent* ist stumm, *ça marche* heißt „das funktioniert“ oder „einverstanden“. Nicht verwechseln mit dem Substantiv *le marché* (der Markt).",
+    "entrySchema": 1
   },
   "fr:matin:NOUN": {
     "lemma": "matin",
@@ -530,7 +585,8 @@
     "forms": [
       "matin"
     ],
-    "grammar": "Männlich: le matin. Hinter einen Wochentag gestellt, ergibt es samedi matin, Samstagmorgen."
+    "grammar": "**Artikel** le matin · un matin\n**Pluriel** les matins\n\nMännlich. *Le matin* ohne Präposition heißt „morgens“ bzw. „am Morgen“. Nicht verwechseln mit *la matinée*, das den ganzen Vormittag als Zeitspanne meint.",
+    "entrySchema": 1
   },
   "fr:me:PRON": {
     "lemma": "me",
@@ -541,7 +597,8 @@
       "m’",
       "me"
     ],
-    "grammar": "Reflexiv- und Objektpronomen. Steht vor dem Verb und wird vor Vokal zu m': je m'appelle."
+    "grammar": "**Reihe** unbetontes Objektpronomen (direkt und indirekt), auch reflexiv\n**Beispiel** *Il me voit.* – Er sieht mich.\n**Elision** m' vor Vokal und stummem h: *je m'appelle*\n\nSteht vor dem konjugierten Verb. Nicht verwechseln mit dem betonten *moi*, das nach Präpositionen und im bejahten Imperativ steht: *avec moi*, *donne-moi*.",
+    "entrySchema": 1
   },
   "fr:merci:INTJ": {
     "lemma": "merci",
@@ -550,26 +607,29 @@
     "forms": [
       "merci"
     ],
-    "grammar": "Merci beaucoup ist „vielen Dank“. Die Antwort darauf lautet je vous en prie oder de rien."
+    "grammar": "Man sagt es in jeder Lage, ob förmlich oder locker. Verstärkt heißt es *merci beaucoup*, *non merci* lehnt höflich ab, und die übliche Antwort ist *de rien* oder *je vous en prie*.",
+    "entrySchema": 1
   },
   "fr:midi:NOUN": {
     "lemma": "midi",
     "partOfSpeech": "NOUN",
-    "gloss": "die Mittag",
+    "gloss": "Mittag, zwölf-Uhr",
     "forms": [
       "midi"
     ],
-    "grammar": "Männlich: `le midi`, aber in Zeitangaben ohne Artikel: `à midi` („mittags\"), `avant midi`. Meint die Uhrzeit 12 Uhr, nicht die Mahlzeit. Gegenstück ist `minuit` („Mitternacht\"), ebenfalls männlich und artikellos."
+    "grammar": "**Artikel** le midi · un midi\n**Plural** les midis\n\nMännlich, obwohl es auf Deutsch „der Mittag“ ist, bleibt der Artikel meist weg: *à midi* (um zwölf Uhr, mittags). Nicht verwechseln mit *le Midi* (Südfrankreich).",
+    "entrySchema": 1
   },
   "fr:moi:PRON": {
     "lemma": "moi",
     "partOfSpeech": "PRON",
-    "gloss": "ich, mich (betont)",
+    "gloss": "ich, mich, mir",
     "forms": [
       "Moi",
       "moi"
     ],
-    "grammar": "Betonte Form von je. Steht allein oder nach einer Präposition: Moi aussi. - avec moi."
+    "grammar": "**Reihe** betont: moi · toi · lui · elle · nous · vous · eux · elles\n\n*Moi, je vais à l'université.* – Ich gehe zur Uni. Steht zur Betonung vor *je*, nach Präpositionen (*avec moi*) und beim bejahten Imperativ (*donne-moi*). Nicht verwechseln mit dem unbetonten *me* / *m'* vor dem Verb.",
+    "entrySchema": 1
   },
   "fr:mon:DET": {
     "lemma": "mon",
@@ -580,7 +640,8 @@
       "ma",
       "mes"
     ],
-    "grammar": "Richtet sich nach dem besessenen Ding, nicht nach dem Besitzer: mon passeport (m), ma chambre (f), mes clés (Pl.)."
+    "grammar": "**Reihe** mon · ma · mes\n\nRichtet sich nach dem Geschlecht des Besitzes, nicht des Besitzers. Vor einem Vokal oder stummen h steht auch bei weiblichen Wörtern *mon*: *mon amie* statt *ma amie*, gebunden als *mon‿amie* [n].",
+    "entrySchema": 1
   },
   "fr:on:PRON": {
     "lemma": "on",
@@ -589,7 +650,8 @@
     "forms": [
       "on"
     ],
-    "grammar": "Unbestimmtes Personalpronomen, steht nur als Subjekt und verlangt immer die Verbform der 3. Person Einzahl: `on va`, `on mange`. Umgangssprachlich ersetzt es `nous`: `on va au cinéma ?` heißt „gehen wir ins Kino?\". Vor Vokal wird `je` zu `j'`, `on` selbst bleibt unverändert."
+    "grammar": "**Reihe** Subjektpronomen, nur als Subjekt\n\n*Maintenant, on va au cinéma ?* „Gehen wir jetzt ins Kino?“ Das Verb steht immer in der 3. Person Einzahl (*on va*), auch wenn *on* „wir“ bedeutet. In der Umgangssprache ersetzt es *nous*. Es klingt genau wie *ils ont* („sie haben“), vor Vokal wird es gebunden: *on‿a* [ɔ̃na].",
+    "entrySchema": 1
   },
   "fr:oui:INTJ": {
     "lemma": "oui",
@@ -599,7 +661,8 @@
       "oui",
       "Oui"
     ],
-    "grammar": "Auf eine verneinte Frage antwortet man stattdessen mit si."
+    "grammar": "Die normale Zustimmung, in jeder Stilebene passend; locker auch *ouais*. Auf eine verneinte Frage antwortet man aber mit *si*: *Tu ne viens pas ? – Si !* (Doch!). Vor *oui* wird nicht elidiert: *le oui*.",
+    "entrySchema": 1
   },
   "fr:parler:VERB": {
     "lemma": "parler",
@@ -609,25 +672,28 @@
       "parle",
       "parlent"
     ],
-    "grammar": "Regelmäßig auf -er: je parle, tu parles, il parle, nous parlons, vous parlez, ils parlent."
+    "grammar": "**Infinitif** parler\n**Présent** je parle · tu parles · il parle · nous parlons · vous parlez · ils parlent\n**Passé composé** j'ai parlé\n\nRegelmäßiges Verb auf -er; *parle*, *parles* und *parlent* klingen gleich, weil die Endungen stumm sind. Mit *de* sagt man, worüber man spricht (*parler de sa journée*), mit *à*, mit wem (*parler à Julie*).",
+    "entrySchema": 1
   },
   "fr:paul:PROPN": {
     "lemma": "Paul",
     "partOfSpeech": "PROPN",
-    "gloss": "Paul (Vorname)",
+    "gloss": "Paul",
     "forms": [
       "Paul"
     ],
-    "grammar": "Eigenname. Das l am Ende wird gesprochen."
+    "grammar": "Das `au` wird wie ein offenes o gesprochen, das End-l ist hörbar: etwa „Poll“, nicht „Paul“ wie im Deutschen.",
+    "entrySchema": 1
   },
   "fr:payer:VERB": {
     "lemma": "payer",
     "partOfSpeech": "VERB",
-    "gloss": "bezahlen",
+    "gloss": "bezahlen, zahlen",
     "forms": [
       "paient"
     ],
-    "grammar": "Verb auf -yer: das `y` darf vor stummem `e` zu `i` werden - `je paie` oder `je paye`, `ils paient` oder `ils payent`. Partizip `payé`, Hilfsverb `avoir`. Das Bezahlte steht ohne Präposition (`payer le café`), die Person mit `payer qn`."
+    "grammar": "**Infinitif** payer\n**Présent** je paie · tu paies · il paie · nous payons · vous payez · ils paient\n**Passé composé** j'ai payé\n\nRegelmäßiges Verb auf -er. Vor stummem -e wird `y` zu `i`, wobei `je paye` usw. ebenfalls erlaubt ist. Das Objekt folgt ohne Präposition: *payer le repas* (das Essen bezahlen), nicht „payer pour“.",
+    "entrySchema": 1
   },
   "fr:peu:ADV": {
     "lemma": "peu",
@@ -636,7 +702,8 @@
     "forms": [
       "peu"
     ],
-    "grammar": "Unveränderliches Mengenadverb. `un peu` heißt „ein bisschen\" und ist positiv gemeint, das bloße `peu` heißt „wenig\" und ist einschränkend. Vor einem Substantiv steht `de` ohne Artikel: `un peu de café`. Gegenstück ist `beaucoup`."
+    "grammar": "**Unveränderlich** peu · un peu · peu de + Substantiv (*peu de temps*)\n\nSteht nach dem konjugierten Verb (*je me repose un peu*), in zusammengesetzten Zeiten zwischen Hilfsverb und Partizip (*j'ai peu dormi*). Nicht verwechseln: *peu* allein bedeutet „kaum, wenig“ und klingt eher verneinend, *un peu* bedeutet „ein bisschen“ und ist positiv gemeint.",
+    "entrySchema": 1
   },
   "fr:puis:ADV": {
     "lemma": "puis",
@@ -645,7 +712,8 @@
     "forms": [
       "Puis"
     ],
-    "grammar": "Reiht Handlungen zeitlich aneinander, oft am Satzanfang oder nach `et`. Gleichlautend mit der Verbform `je puis` (gehoben für `je peux`) - hier ist aber das Adverb gemeint. Nahe bei `ensuite`, nicht bei `alors` „also\"."
+    "grammar": "**Stellung** meist am Satzanfang oder zwischen zwei Handlungen: *Puis ils quittent le café.*\n\nUnveränderlich. Das *-s* wird nicht gesprochen [pɥi]. Nicht verwechseln mit *je puis* (gehobene Form von *je peux*), mit dem gleich klingenden *puits* (Brunnen) und mit *depuis* (seit).",
+    "entrySchema": 1
   },
   "fr:quitter:VERB": {
     "lemma": "quitter",
@@ -654,25 +722,28 @@
     "forms": [
       "quittent"
     ],
-    "grammar": "Regelmäßiges Verb auf -er; `quittent` ist 3. Person Plural Präsens. Steht mit direktem Objekt ohne Präposition: `quitter le café` – anders als deutsch „weggehen von\". Nicht mit `partir` verwechseln, das ohne Objekt steht."
+    "grammar": "**Infinitif** quitter\n**Présent** je quitte · tu quittes · il quitte · nous quittons · vous quittez · ils quittent\n**Passé composé** j'ai quitté\n\nRegelmäßiges Verb auf -er mit *avoir*. Braucht immer ein direktes Objekt ohne Präposition: *quitter le café*. Ohne Objekt sagt man *partir*. Am Telefon heißt *Ne quittez pas* „Bleiben Sie dran“.",
+    "entrySchema": 1
   },
   "fr:rentrer:VERB": {
     "lemma": "rentrer",
     "partOfSpeech": "VERB",
-    "gloss": "zurückkehren, heimkommen",
+    "gloss": "heimkommen, zurückkehren",
     "forms": [
       "rentre"
     ],
-    "grammar": "Regelmäßiges Verb auf -er; `rentre` ist 1. und 3. Person Singular Präsens. Bildet die zusammengesetzte Vergangenheit mit `être`. Meint das Zurückkommen nach Hause oder an den Ausgangsort – enger als `retourner`."
+    "grammar": "**Infinitif** rentrer\n**Présent** je rentre · tu rentres · il rentre · nous rentrons · vous rentrez · ils rentrent\n**Passé composé** je suis rentré(e)\n\nRegelmäßiges Verb auf -er, das Passé composé bildet es mit **être**, und das Partizip richtet sich nach dem Subjekt: *elle est rentrée*. Nicht verwechseln mit *entrer* (hineingehen) und *retourner* (an einen Ort zurückgehen).",
+    "entrySchema": 1
   },
   "fr:repas:NOUN": {
     "lemma": "repas",
     "partOfSpeech": "NOUN",
-    "gloss": "die Mahlzeit, das Essen",
+    "gloss": "Mahlzeit, Essen",
     "forms": [
       "repas"
     ],
-    "grammar": "Männlich: `le repas`. Endet schon in der Einzahl auf -s, Mehrzahl ist gleich geschrieben: `les repas`. Bezeichnet die ganze Mahlzeit, nicht die Speise – dafür steht `plat`."
+    "grammar": "**Singulier** le repas · un repas\n**Pluriel** les repas\n\nMännlich. Die Mehrzahl ändert sich nicht, weil das Wort schon auf -s endet. Das -s ist stumm.",
+    "entrySchema": 1
   },
   "fr:reposer:VERB": {
     "lemma": "reposer",
@@ -681,7 +752,8 @@
     "forms": [
       "repose"
     ],
-    "grammar": "Regelmäßiges Verb auf -er. In der Bedeutung „sich ausruhen\" reflexiv: `se reposer`, im Text `je me repose`. Ohne `se` heißt es „wieder hinlegen, abstellen\"."
+    "grammar": "**Infinitif** se reposer\n**Présent** je me repose · tu te reposes · il se repose · nous nous reposons · vous vous reposez · ils se reposent\n**Passé composé** je me suis reposé(e)\n\nRegelmäßiges Verb auf -er. Im Sinn von „sich ausruhen“ steht es reflexiv und bildet das Passé composé deshalb mit **être**. Ohne *se* bedeutet *reposer* „wieder hinlegen“ oder „wieder stellen“ (eine Frage).",
+    "entrySchema": 1
   },
   "fr:retrouver:VERB": {
     "lemma": "retrouver",
@@ -690,7 +762,8 @@
     "forms": [
       "retrouvent"
     ],
-    "grammar": "Regelmäßiges Verb auf -er; `retrouvent` ist 3. Person Plural Präsens. Reflexiv `se retrouver` heißt „sich treffen\" (verabredet), wie in `Paul et Julie se retrouvent`. Ohne `se` heißt es „etwas wiederfinden\"."
+    "grammar": "**Infinitif** retrouver\n**Présent** je retrouve · tu retrouves · il retrouve · nous retrouvons · vous retrouvez · ils retrouvent\n**Passé composé** j'ai retrouvé\n\nRegelmäßiges Verb auf -er. Reflexiv bedeutet *se retrouver* „sich treffen“ und bildet das Passé composé mit **être**: *ils se sont retrouvés*. Nicht verwechseln mit *trouver* (finden).",
+    "entrySchema": 1
   },
   "fr:revoir:VERB": {
     "lemma": "revoir",
@@ -699,16 +772,18 @@
     "forms": [
       "revoir"
     ],
-    "grammar": "Unregelmäßig wie `voir`: `je revois`, `nous revoyons`, `ils revoient`. Im Text steht der Infinitiv nach `de`. Steckt auch in der Abschiedsformel `au revoir`."
+    "grammar": "**Infinitif** revoir\n**Présent** je revois · tu revois · il revoit · nous revoyons · vous revoyez · ils revoient\n**Passé composé** j'ai revu\n\nUnregelmäßig wie *voir*: Im Stamm wechselt *-oi-* zu *-oy-* (*nous revoyons*), das Futur hat den Stamm *reverr-*. Reflexiv als *se revoir* („sich wiedersehen“) steht es mit **être**: *ils se sont revus*. Nicht verwechseln mit dem Gruß *au revoir*.",
+    "entrySchema": 1
   },
   "fr:répondre:VERB": {
     "lemma": "répondre",
     "partOfSpeech": "VERB",
-    "gloss": "antworten",
+    "gloss": "antworten, beantworten",
     "forms": [
       "répond"
     ],
-    "grammar": "Auf -re: je réponds, il répond, ils répondent. Man antwortet à jemandem."
+    "grammar": "**Infinitif** répondre\n**Présent** je réponds · tu réponds · il répond · nous répondons · vous répondez · ils répondent\n**Passé composé** j'ai répondu\n\nRegelmäßiges Verb auf -re, das *d* in *il répond* bleibt stumm. Die Person oder Sache kommt mit *à*: *répondre à Julie*, *répondre à une question* – anders als im Deutschen („eine Frage beantworten“).",
+    "entrySchema": 1
   },
   "fr:salut:INTJ": {
     "lemma": "salut",
@@ -717,16 +792,18 @@
     "forms": [
       "Salut"
     ],
-    "grammar": "Unter Freunden, beim Kommen wie beim Gehen. Förmlicher ist bonjour."
+    "grammar": "Ein vertrauter Gruß unter Freunden und Leuten, die man duzt, zur Begrüßung und genauso zum Abschied. Förmlich sagt man dafür *bonjour* bzw. *au revoir*. Das End-*t* bleibt stumm.",
+    "entrySchema": 1
   },
   "fr:sandwich:NOUN": {
     "lemma": "sandwich",
     "partOfSpeech": "NOUN",
-    "gloss": "das Sandwich, das belegte-Brot",
+    "gloss": "Sandwich, belegtes-Brot",
     "forms": [
       "sandwich"
     ],
-    "grammar": "Männlich: `le sandwich`. Mehrzahl `sandwichs` oder `sandwiches`. Englisches Lehnwort, das im Französischen das Geschlecht wechselt zu männlich."
+    "grammar": "**Artikel** le sandwich · un sandwich\n**Plural** les sandwichs (auch: sandwiches)\n\nMännlich, anders als das deutsche *das Sandwich*. Das *-ch* am Ende wird gesprochen, etwa wie „tsch“.",
+    "entrySchema": 1
   },
   "fr:se:PRON": {
     "lemma": "se",
@@ -737,16 +814,18 @@
       "s’",
       "se"
     ],
-    "grammar": "Reflexivpronomen der 3. Person, für Einzahl und Mehrzahl gleich: il se lève, ils s'assoient. Vor Vokal oder stummem h wird es zu `s'` – eigenes Wort mit der Grundform `se`. Steht immer vor dem gebeugten Verb; in der 1. und 2. Person heißt es `me`, `te`, `nous`, `vous`."
+    "grammar": "**Reihe** Reflexivpronomen der 3. Person (Singular und Plural): me · te · se · nous · vous · se\n**Elision** s' vor Vokal oder stummem h: *il s'appelle*\n\nSteht unbetont direkt vor dem Verb: *Ils se retrouvent.* – Sie treffen sich. Nicht verwechseln mit dem *s'* aus *si* (*s'il*), das nur vor *il/ils* steht, und mit *ce* (*c'est*).",
+    "entrySchema": 1
   },
   "fr:serveur:NOUN": {
     "lemma": "serveur",
     "partOfSpeech": "NOUN",
-    "gloss": "der Kellner, die Bedienung",
+    "gloss": "Kellner, Bedienung",
     "forms": [
       "serveur"
     ],
-    "grammar": "Männlich: `le serveur`; weibliche Form `la serveuse`. Endung -eur wird zu -euse, wie bei `vendeur`/`vendeuse`. Im Café ruft man ihn nicht mit `garçon`, das gilt heute als unhöflich."
+    "grammar": "**Artikel** le serveur · un serveur\n**Weiblich** la serveuse\n**Plural** les serveurs\n\nAuch das Wort für einen Computer-Server.",
+    "entrySchema": 1
   },
   "fr:sourire:VERB": {
     "lemma": "sourire",
@@ -755,7 +834,8 @@
     "forms": [
       "sourit"
     ],
-    "grammar": "Geht wie rire: il sourit, ils sourient. Auch als Hauptwort: un sourire - ein Lächeln."
+    "grammar": "**Infinitif** sourire\n**Présent** je souris · tu souris · il sourit · nous sourions · vous souriez · ils sourient\n**Passé composé** j'ai souri\n\nUnregelmäßig, wird wie *rire* konjugiert. Das Futur hat den Stamm *sourir-* (*je sourirai*), im Imparfait steht ein Doppel-i (*nous souriions*). Wem man zulächelt, steht mit *à*: *sourire à quelqu'un*. Nicht verwechseln mit dem Substantiv *le sourire* (das Lächeln).",
+    "entrySchema": 1
   },
   "fr:table:NOUN": {
     "lemma": "table",
@@ -764,7 +844,8 @@
     "forms": [
       "table"
     ],
-    "grammar": "Weiblich: `la table`, Plural `les tables`. Feste Fügungen: `à table` „zu Tisch, an den Tisch\", `mettre la table` „den Tisch decken\". Trotz deutschem „der Tisch\" hier weiblich - die Glosse folgt dem französischen Geschlecht."
+    "grammar": "**Artikel** la table · une table\n**Plural** les tables\n\nWeiblich, anders als im Deutschen. Feste Verbindungen: *mettre la table* (den Tisch decken), *À table !* (Essen ist fertig!).",
+    "entrySchema": 1
   },
   "fr:te:PRON": {
     "lemma": "te",
@@ -773,7 +854,8 @@
     "forms": [
       "te"
     ],
-    "grammar": "Unbetonte Form von tu und steht vor dem Verb: je te vois. Vor einem Vokal wird es t'."
+    "grammar": "**Reihe** unbetontes Objektpronomen, direkt und indirekt (*me · te · se · nous · vous*)\n**Beispiel** *Je suis content de te voir.* – Ich freue mich, dich zu sehen.\n**Elision** vor Vokal und stummem h wird es zu *t'*: *je t'aime*\n\nSteht vor dem Verb, im bejahten Imperativ wird es zu *toi*: *lève-toi*. Nicht verwechseln mit *tu* (Subjekt) und *toi* (betont).",
+    "entrySchema": 1
   },
   "fr:thé:NOUN": {
     "lemma": "thé",
@@ -782,25 +864,28 @@
     "forms": [
       "thé"
     ],
-    "grammar": "Männlich: le thé, un thé. Im Café bestellt man un thé (eine Tasse Tee). Nicht mit théâtre (Theater) verwechseln; der Akzent auf é wird deutlich als geschlossenes e gesprochen."
+    "grammar": "**Artikel** le thé · un thé\n**Plural** les thés\n\nMännlich, obwohl die meisten Wörter auf *-té* weiblich sind (*la liberté*). Das *h* ist stumm, gesprochen [te] wie der Buchstabe *t*.",
+    "entrySchema": 1
   },
   "fr:toi:PRON": {
     "lemma": "toi",
     "partOfSpeech": "PRON",
-    "gloss": "du, dich (betont)",
+    "gloss": "du, dich",
     "forms": [
       "toi"
     ],
-    "grammar": "Betonte Form von tu. Steht allein oder nach einer Präposition: Et toi ? - avec toi."
+    "grammar": "**Reihe** betontes Pronomen (*moi · toi · lui · elle · nous · vous · eux · elles*)\n**Beispiel** *Et toi ?* – Und du?\n\nSteht allein, nach Präpositionen (*avec toi*), zur Hervorhebung (*toi, tu restes*) und im bejahten Imperativ (*assieds-toi*). Keine Elision. Nicht verwechseln mit *tu* (Subjekt) und *te* (unbetontes Objekt).",
+    "entrySchema": 1
   },
   "fr:travail:NOUN": {
     "lemma": "travail",
     "partOfSpeech": "NOUN",
-    "gloss": "die Arbeit, Job",
+    "gloss": "die Arbeit",
     "forms": [
       "travail"
     ],
-    "grammar": "Männlich: le travail, un travail. Unregelmäßige Mehrzahl: les travaux. Steht oft mit à (aller au travail) oder après (après le travail); das dazugehörige Verb ist travailler."
+    "grammar": "**Artikel** le travail · un travail\n**Plural** les travaux\n\nMännlich, obwohl es auf Deutsch „die Arbeit“ heißt; der Plural auf *-aux* ist unregelmäßig und bedeutet meist „Bauarbeiten“. Klingt genau wie *je travaille* – Nomen ohne *-e*, Verb mit.",
+    "entrySchema": 1
   },
   "fr:travailler:VERB": {
     "lemma": "travailler",
@@ -809,7 +894,8 @@
     "forms": [
       "travaille"
     ],
-    "grammar": "Regelmäßiges Verb auf -er: je travaille, tu travailles, il/elle travaille, nous travaillons, vous travaillez, ils travaillent. Die Formen travaille, travailles und travaillent klingen alle gleich. Mit à für den Ort (je travaille à Paris), mit chez für den Arbeitgeber."
+    "grammar": "**Infinitif** travailler\n**Présent** je travaille · tu travailles · il travaille · nous travaillons · vous travaillez · ils travaillent\n**Passé composé** j'ai travaillé\n\nRegelmäßiges Verb auf -er, das *-ill-* wird [j] gesprochen. *je travaille*, *tu travailles*, *il travaille* und *ils travaillent* klingen gleich, und genauso wie das Nomen *le travail*.",
+    "entrySchema": 1
   },
   "fr:très:ADV": {
     "lemma": "très",
@@ -818,7 +904,8 @@
     "forms": [
       "Très"
     ],
-    "grammar": "Unveränderlich; steht vor Adjektiven und Adverbien (très bien, très grand). Vor Substantiven in festen Wendungen wie avoir très faim. Nicht mit beaucoup verwechseln: beaucoup verstärkt Verben (je travaille beaucoup), très nur Adjektive und Adverbien."
+    "grammar": "**Stellung** direkt vor einem Adjektiv oder Adverb: *très bien*, *très grand*\n\nUnveränderlich. Nicht verwechseln mit *beaucoup*: Beim Verb steht *beaucoup* (*j'aime beaucoup*, nicht *très*), und mit *trop* (zu, zu viel).",
+    "entrySchema": 1
   },
   "fr:tu:PRON": {
     "lemma": "tu",
@@ -827,7 +914,8 @@
     "forms": [
       "Tu"
     ],
-    "grammar": "Das vertraute Du - für Freunde, Familie und junge Leute. Gegenüber Fremden benutzt man vous."
+    "grammar": "**Reihe** Subjektpronomen, unbetont · betonte Form *toi*\n**Beispiel** *Tu cherches quelque chose ?* – Suchst du etwas?\n\nSteht direkt vor dem Verb. Elision zu *t'* nur in der Umgangssprache (*t'as vu ?*). *tu* ist die vertraute Anrede; wer siezt, nimmt *vous*.",
+    "entrySchema": 1
   },
   "fr:un peu:PHRASE": {
     "lemma": "un peu",
@@ -837,7 +925,8 @@
       "un peu",
       "Un peu"
     ],
-    "grammar": "Wörtlich „ein wenig\"; `un` ist hier nicht der Artikel, sondern verstärkt das Mengenwort `peu` („wenig\"). Steht nach dem Verb (`je me repose un peu`) oder vor einem Adjektiv (`un peu fatigué`); vor einem Substantiv braucht es `de`: `un peu de café`. Nicht mit dem bloßen `peu` verwechseln, das „wenig\" im einschränkenden Sinn meint - `un peu` ist die freundliche, bejahende Menge."
+    "grammar": "**Wörtlich** ein wenig\n**Mit Nomen** *un peu de* + Nomen ohne Artikel: *un peu de pain*\n\nSteht nach dem Verb (*je me repose un peu*) oder vor einem Adjektiv (*un peu fatigué*). Nicht verwechseln mit *peu* ohne *un*: Das heißt „wenig“ und klingt negativ (*il mange peu*, er isst kaum).",
+    "entrySchema": 1
   },
   "fr:un:DET": {
     "lemma": "un",
@@ -848,7 +937,8 @@
       "un",
       "Un"
     ],
-    "grammar": "Unbestimmter Artikel: un vor männlichen, une vor weiblichen Wörtern. Man sieht also am Artikel das Geschlecht."
+    "grammar": "**Reihe** un · une · des\n\nKeine Elision. Vor Vokal wird gebunden: *un‿ami* [œ̃nami]. Nicht verwechseln mit der Zahl *un* (eins) und mit *des*, das auch „von den“ bedeuten kann (*de* + *les*).",
+    "entrySchema": 1
   },
   "fr:université:NOUN": {
     "lemma": "université",
@@ -857,16 +947,18 @@
     "forms": [
       "université"
     ],
-    "grammar": "Weiblich: l'université, une université. Vor dem Vokal wird der Artikel elidiert: l'université, à l'université. Der Endung -té sind fast immer weibliche Substantive."
+    "grammar": "**Singulier** l'université · une université\n**Pluriel** les universités\n\nWeiblich, wie alle Nomen auf *-té*. Vor dem Vokal wird *la* zu *l'* verkürzt, daher bleibt das Geschlecht nur an *une* sichtbar. Man sagt *aller à l'université*.",
+    "entrySchema": 1
   },
   "fr:vers:ADP": {
     "lemma": "vers",
     "partOfSpeech": "ADP",
-    "gloss": "zu, in-Richtung, gegen",
+    "gloss": "in-Richtung, zu, gegen",
     "forms": [
       "vers"
     ],
-    "grammar": "Unveränderliche Präposition mit stummem s. Gibt die Richtung an (marcher vers le cinéma) oder eine ungefähre Zeit (vers huit heures). Anders als à bezeichnet vers nicht das erreichte Ziel, sondern die Richtung dorthin."
+    "grammar": "**Richtung** Ils marchent vers le cinéma. – Sie gehen in Richtung Kino.\n**Ungefähre Zeit** Je viens vers huit heures. – Ich komme gegen acht Uhr.\n\nKeine Verschmelzung mit dem Artikel: *vers le*, *vers les* bleiben getrennt. Nicht verwechseln mit dem Nomen *le vers* (Vers) und den gleich klingenden Wörtern *vert* (grün) und *le verre* (Glas).",
+    "entrySchema": 1
   },
   "fr:voir:VERB": {
     "lemma": "voir",
@@ -877,35 +969,39 @@
       "voir",
       "voit"
     ],
-    "grammar": "Unregelmäßig: je vois, tu vois, il voit, nous voyons, vous voyez, ils voient."
+    "grammar": "**Infinitif** voir\n**Présent** je vois · tu vois · il voit · nous voyons · vous voyez · ils voient\n**Passé composé** j'ai vu\n\nUnregelmäßig: *oi* wird zu *oy* in *nous* und *vous* (Imparfait also *je voyais*), das Futur hat den Stamm *verr-* (*je verrai*). *il voit* klingt wie *la voix* (Stimme), *vu* nicht verwechseln mit *vous*.",
+    "entrySchema": 1
   },
   "fr:à la maison:PHRASE": {
     "lemma": "à la maison",
     "partOfSpeech": "PHRASE",
-    "gloss": "nach-Hause, zu-Hause",
+    "gloss": "zu-Hause, nach-Hause",
     "forms": [
       "à la maison"
     ],
-    "grammar": "Wörtlich „zu dem Haus\" – `à` + weiblicher Artikel `la` + `maison`. Weil `maison` weiblich ist, gibt es hier keine Verschmelzung zu `au`. Bezeichnet je nach Verb beides: die Richtung („nach Hause\", mit `rentrer`, `aller`) und den Ort („zu Hause\", mit `être`, `rester`); deutsch unterscheidet man, französisch nicht."
+    "grammar": "**Wörtlich** im Haus\n\nSteht für „zu Hause\" wie für „nach Hause\": Französisch unterscheidet hier nicht zwischen Ort und Richtung (*je suis à la maison* · *je rentre à la maison*). Gleichbedeutend ist *chez moi*, *chez toi* usw.",
+    "entrySchema": 1
   },
   "fr:à:ADP": {
     "lemma": "à",
     "partOfSpeech": "ADP",
-    "gloss": "zu, in, an, bis",
+    "gloss": "zu, in, an, auf, bis",
     "forms": [
       "à",
       "À"
     ],
-    "grammar": "Sehr vielseitig. Mit le verschmilzt es zu au, mit les zu aux."
+    "grammar": "**Ort** Ils s'assoient à une table. – Sie setzen sich an einen Tisch. · Il habite à Paris. – Er wohnt in Paris.\n**Richtung** Je vais à la gare. – Ich gehe zum Bahnhof.\n**Zeit** à huit heures – um acht Uhr · de neuf heures à midi – von neun bis zwölf Uhr\n**Verschmelzung** à + le = au · à + les = aux · à la und à l' bleiben getrennt\n\nWird leicht mit *a* ohne Akzent verwechselt: *il a* (er hat) ist eine Form von *avoir*. Das kleine À am Satzanfang behält im Französischen seinen Akzent.",
+    "entrySchema": 1
   },
   "fr:ça va:PHRASE": {
     "lemma": "ça va",
     "partOfSpeech": "PHRASE",
-    "gloss": "es-geht, gut",
+    "gloss": "es-geht, wie-geht's",
     "forms": [
       "Ça va"
     ],
-    "grammar": "Wörtlich „das geht\". Dient als Frage nach dem Befinden (Ça va ?) und als Antwort darauf (Ça va bien). Aus ça (das) und der Form va von aller (gehen); mit Fragezeichen oder steigender Stimme wird daraus die Frage."
+    "grammar": "Wörtlich „das geht“. Als Frage (*Ça va ?*, *Comment ça va ?*) heißt es „Wie geht's?“, als Antwort (*Ça va bien, merci.*) „Es geht mir gut“. Die Wendung ist alltäglich und eher locker; förmlicher fragt man *Comment allez-vous ?*",
+    "entrySchema": 1
   },
   "fr:ça:PRON": {
     "lemma": "ça",
@@ -915,7 +1011,8 @@
       "ça",
       "Ça"
     ],
-    "grammar": "Umgangssprachliche Kurzform von cela. C'est ça heißt „genau so ist es“."
+    "grammar": "**Reihe** Demonstrativpronomen, die gesprochene Kurzform von *cela*\n**Beispiel** Ça coûte combien ? – Was kostet das?\n\nWird nie elidiert. Man verwechselt es mit *sa* (sein, ihr): *sa chambre* = sein/ihr Zimmer. Nicht zu verwechseln ist es auch mit *ce* bzw. *c'* in *c'est*.",
+    "entrySchema": 1
   },
   "fr:être:AUX": {
     "lemma": "être",
@@ -928,6 +1025,7 @@
       "sont",
       "es"
     ],
-    "grammar": "Das unregelmäßigste Verb: je suis, tu es, il est, nous sommes, vous êtes, ils sont."
+    "grammar": "**Präsens** je suis · tu es · il est · nous sommes · vous êtes · ils sont\n**Partizip** été (j'ai été – mit *avoir*)\n**Futur** ser- (je serai), das Konditional hat denselben Stamm (je serais)\n\nVöllig unregelmäßig. Beim Imparfait ist *être* die einzige Ausnahme, der Stamm lautet *ét-* (j'étais). Man verwechselt *tu es* und *il est* (beide [ɛ] gesprochen) mit *et* (und).",
+    "entrySchema": 1
   }
 }
