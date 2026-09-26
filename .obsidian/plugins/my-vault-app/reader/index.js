@@ -114,6 +114,24 @@ class Reader {
     if (leaf.view instanceof WordCardView) leaf.view.show(card);
   }
 
+  /* Die Wortkarte tauschen, ohne sie hervorzuholen: Ist sie offen, zeigt
+     sie das neue Wort; ist die Seitenleiste zu, steht es darin, sobald
+     man sie aufzieht. Gibt es noch gar keine Wortkarte, entsteht keine -
+     dann hat die Person nicht nach Details gefragt. */
+  async placeCard(card) {
+    const leaf = this.app.workspace.getLeavesOfType(CARD_VIEW_TYPE)[0];
+    if (!leaf) return false;
+
+    /* Eine Leiste, die nie sichtbar war, lädt Obsidian erst beim ersten
+       Blick. Ohne das bliebe dort das alte Wort stehen. */
+    if (leaf.isDeferred && typeof leaf.loadIfDeferred === 'function') {
+      await leaf.loadIfDeferred();
+    }
+    if (!(leaf.view instanceof WordCardView)) return false;
+    leaf.view.show(card);
+    return true;
+  }
+
   /* Nachgereichte Fundstellen in die offene Karte nachtragen, ohne sie
      erneut in den Vordergrund zu holen. */
   updateCard(card) {
@@ -199,8 +217,12 @@ class Reader {
 
   /* Die Wortkarte zu einem Schlüssel, ohne dass ein Text offen sein
      muss. Alles, was sie zeigt, wird aus den Paketen zusammengesucht -
-     die Notiz selbst weiß ja nur, wie weit die Person ist. */
-  async showWord(language, key, file) {
+     die Notiz selbst weiß ja nur, wie weit die Person ist.
+
+     quiet: nur austauschen, nicht hervorholen - für die Lernkartei, die
+     beim Umdrehen mitzieht, ohne der Person die Seitenleiste aufzuzwingen. */
+  async showWord(language, key, file, options) {
+    const quiet = Boolean(options && options.quiet);
     const entry = (await this.dictionary.lookup(language, key)) || {};
     const status = this.library.wordStatusMap(language).get(key) || 'unknown';
 
@@ -221,7 +243,11 @@ class Reader {
       file: file || this.library.wordFileFor(language, key)
     };
 
-    await this.showCard(card);
+    if (quiet) {
+      if (!(await this.placeCard(card))) return;
+    } else {
+      await this.showCard(card);
+    }
 
     card.occurrences = await searchPackages(this.library, language, key, {});
     card.searching = false;

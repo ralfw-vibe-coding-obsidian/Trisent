@@ -1075,6 +1075,22 @@ class DeckView extends ItemView {
     if (this.flipEl) this.flipEl.addClass('is-turned');
     if (this.extrasEl) this.renderExamples(this.extrasEl, this.session.card);
     this.paintAnswers(this.library.languageByCode(this.languageCode));
+    this.followDetails(this.session.card);
+  }
+
+  /* Wer die Auflösung sieht, sieht in der Wortkarte dasselbe Wort - wie
+     nach einem Tipp auf "i", nur ohne die Leiste aufzuklappen. Ist sie
+     zu, bleibt sie zu; auf dem Handy steht das Wort darin, sobald man
+     sie hereinzieht. Erst beim Umdrehen, nicht vorher: Sonst stünde die
+     Lösung schon neben der Frage. */
+  followDetails(card) {
+    const language = this.library.languageByCode(this.languageCode);
+    const reader = this.flashcards.plugin.reader;
+    if (!language || !reader || !card) return;
+
+    reader.showWord(language, card.key, null, { quiet: true }).catch((error) => {
+      console.error('Trisent: could not follow the word card', error);
+    });
   }
 
   stop() {
