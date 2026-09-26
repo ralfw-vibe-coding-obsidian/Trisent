@@ -3,9 +3,9 @@ type: language
 code: fr
 name: French
 flag: 🇫🇷
-streak: 1
-bestStreak: 2
-lastDay: 2026-09-24
+streak: 3
+bestStreak: 3
+lastSeen: 2026-09-26T07:32:17Z
 ---
 
 Learning notes for French go here.

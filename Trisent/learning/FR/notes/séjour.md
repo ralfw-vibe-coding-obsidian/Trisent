@@ -5,6 +5,6 @@ lemma: séjour
 partOfSpeech: NOUN
 key: fr:séjour:NOUN
 status: familiar
-updatedAt: 2026-09-14
+updatedAt: 2026-09-14T09:00:00Z
 ---
 ## My notes

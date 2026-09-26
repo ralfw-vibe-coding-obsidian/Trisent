@@ -6,7 +6,7 @@ title: Paul et Julie au cinéma
 intoForeign: {}
 intoNative:
   s001: 1/1
-updatedAt: 2026-09-19
+updatedAt: 2026-09-19T09:00:00Z
 ---
 
 Wie die Sätze dieses Textes gelaufen sind, je Richtung.

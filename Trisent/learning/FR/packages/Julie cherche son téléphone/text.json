@@ -1,0 +1,556 @@
+{
+  "paragraphs": [
+    {
+      "id": "p001",
+      "sentences": [
+        {
+          "id": "s001",
+          "source": "Le matin, Julie cherche son téléphone.",
+          "fluent": "Am Morgen sucht Julie ihr Telefon.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 3,
+              "end": 8,
+              "surface": "matin",
+              "gloss": "Morgen",
+              "lemma": "matin",
+              "partOfSpeech": "NOUN",
+              "key": "fr:matin:NOUN"
+            },
+            {
+              "start": 10,
+              "end": 15,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 16,
+              "end": 23,
+              "surface": "cherche",
+              "gloss": "suchen",
+              "lemma": "chercher",
+              "partOfSpeech": "VERB",
+              "key": "fr:chercher:VERB"
+            },
+            {
+              "start": 24,
+              "end": 27,
+              "surface": "son",
+              "gloss": "ihr",
+              "lemma": "son",
+              "partOfSpeech": "DET",
+              "key": "fr:son:DET"
+            },
+            {
+              "start": 28,
+              "end": 37,
+              "surface": "téléphone",
+              "gloss": "Telefon",
+              "lemma": "téléphone",
+              "partOfSpeech": "NOUN",
+              "key": "fr:téléphone:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/bf6c91a043eac45d.mp3",
+            "durationMs": 2276,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 151
+              },
+              {
+                "unit": 1,
+                "startMs": 186,
+                "endMs": 464
+              },
+              {
+                "unit": 2,
+                "startMs": 534,
+                "endMs": 824
+              },
+              {
+                "unit": 3,
+                "startMs": 848,
+                "endMs": 1219
+              },
+              {
+                "unit": 4,
+                "startMs": 1277,
+                "endMs": 1416
+              },
+              {
+                "unit": 5,
+                "startMs": 1463,
+                "endMs": 1974
+              }
+            ]
+          }
+        },
+        {
+          "id": "s002",
+          "source": "Elle regarde sur la table et sous le lit.",
+          "fluent": "Sie schaut auf den Tisch und unter das Bett.",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Elle",
+              "gloss": "sie",
+              "lemma": "elle",
+              "partOfSpeech": "PRON",
+              "key": "fr:elle:PRON"
+            },
+            {
+              "start": 5,
+              "end": 12,
+              "surface": "regarde",
+              "gloss": "schauen",
+              "lemma": "regarder",
+              "partOfSpeech": "VERB",
+              "key": "fr:regarder:VERB"
+            },
+            {
+              "start": 13,
+              "end": 16,
+              "surface": "sur",
+              "gloss": "auf",
+              "lemma": "sur",
+              "partOfSpeech": "ADP",
+              "key": "fr:sur:ADP"
+            },
+            {
+              "start": 17,
+              "end": 19,
+              "surface": "la",
+              "gloss": "die",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 20,
+              "end": 25,
+              "surface": "table",
+              "gloss": "Tisch",
+              "lemma": "table",
+              "partOfSpeech": "NOUN",
+              "key": "fr:table:NOUN"
+            },
+            {
+              "start": 26,
+              "end": 28,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 29,
+              "end": 33,
+              "surface": "sous",
+              "gloss": "unter",
+              "lemma": "sous",
+              "partOfSpeech": "ADP",
+              "key": "fr:sous:ADP"
+            },
+            {
+              "start": 34,
+              "end": 36,
+              "surface": "le",
+              "gloss": "der",
+              "lemma": "le",
+              "partOfSpeech": "DET",
+              "key": "fr:le:DET"
+            },
+            {
+              "start": 37,
+              "end": 40,
+              "surface": "lit",
+              "gloss": "Bett",
+              "lemma": "lit",
+              "partOfSpeech": "NOUN",
+              "key": "fr:lit:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/caff7eafcc36f10d.mp3",
+            "durationMs": 2508,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 197
+              },
+              {
+                "unit": 1,
+                "startMs": 232,
+                "endMs": 673
+              },
+              {
+                "unit": 2,
+                "startMs": 708,
+                "endMs": 848
+              },
+              {
+                "unit": 3,
+                "startMs": 882,
+                "endMs": 964
+              },
+              {
+                "unit": 4,
+                "startMs": 1033,
+                "endMs": 1370
+              },
+              {
+                "unit": 5,
+                "startMs": 1486,
+                "endMs": 1660
+              },
+              {
+                "unit": 6,
+                "startMs": 1707,
+                "endMs": 1881
+              },
+              {
+                "unit": 7,
+                "startMs": 1904,
+                "endMs": 1985
+              },
+              {
+                "unit": 8,
+                "startMs": 2032,
+                "endMs": 2229
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p002",
+      "sentences": [
+        {
+          "id": "s003",
+          "source": "Paul arrive et demande : « Tu cherches quelque chose ? »",
+          "fluent": "Paul kommt dazu und fragt: „Suchst du etwas?\"",
+          "units": [
+            {
+              "start": 0,
+              "end": 4,
+              "surface": "Paul",
+              "gloss": "Paul",
+              "lemma": "Paul",
+              "partOfSpeech": "PROPN",
+              "key": "fr:paul:PROPN"
+            },
+            {
+              "start": 5,
+              "end": 11,
+              "surface": "arrive",
+              "gloss": "ankommen",
+              "lemma": "arriver",
+              "partOfSpeech": "VERB",
+              "key": "fr:arriver:VERB"
+            },
+            {
+              "start": 12,
+              "end": 14,
+              "surface": "et",
+              "gloss": "und",
+              "lemma": "et",
+              "partOfSpeech": "CCONJ",
+              "key": "fr:et:CCONJ"
+            },
+            {
+              "start": 15,
+              "end": 22,
+              "surface": "demande",
+              "gloss": "fragen",
+              "lemma": "demander",
+              "partOfSpeech": "VERB",
+              "key": "fr:demander:VERB"
+            },
+            {
+              "start": 27,
+              "end": 29,
+              "surface": "Tu",
+              "gloss": "du",
+              "lemma": "tu",
+              "partOfSpeech": "PRON",
+              "key": "fr:tu:PRON"
+            },
+            {
+              "start": 30,
+              "end": 38,
+              "surface": "cherches",
+              "gloss": "suchen",
+              "lemma": "chercher",
+              "partOfSpeech": "VERB",
+              "key": "fr:chercher:VERB"
+            },
+            {
+              "start": 39,
+              "end": 46,
+              "surface": "quelque",
+              "gloss": "irgendein",
+              "lemma": "quelque",
+              "partOfSpeech": "DET",
+              "key": "fr:quelque:DET"
+            },
+            {
+              "start": 47,
+              "end": 52,
+              "surface": "chose",
+              "gloss": "Sache",
+              "lemma": "chose",
+              "partOfSpeech": "NOUN",
+              "key": "fr:chose:NOUN"
+            }
+          ],
+          "phrases": [
+            {
+              "start": 39,
+              "end": 52,
+              "surface": "quelque chose",
+              "gloss": "etwas",
+              "lemma": "quelque chose",
+              "key": "fr:quelque chose:PHRASE"
+            }
+          ],
+          "audio": {
+            "file": "audio/3bac2f5c99571c2a.mp3",
+            "durationMs": 3158,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 244
+              },
+              {
+                "unit": 1,
+                "startMs": 302,
+                "endMs": 662
+              },
+              {
+                "unit": 2,
+                "startMs": 720,
+                "endMs": 848
+              },
+              {
+                "unit": 3,
+                "startMs": 894,
+                "endMs": 1277
+              },
+              {
+                "unit": 4,
+                "startMs": 1672,
+                "endMs": 1823
+              },
+              {
+                "unit": 5,
+                "startMs": 1881,
+                "endMs": 2159
+              },
+              {
+                "unit": 6,
+                "startMs": 2183,
+                "endMs": 2438
+              },
+              {
+                "unit": 7,
+                "startMs": 2473,
+                "endMs": 2763
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "p003",
+      "sentences": [
+        {
+          "id": "s004",
+          "source": "Julie répond : « Oui, mon téléphone !",
+          "fluent": "Julie antwortet: Ja, mein Telefon!",
+          "units": [
+            {
+              "start": 0,
+              "end": 5,
+              "surface": "Julie",
+              "gloss": "Julie",
+              "lemma": "Julie",
+              "partOfSpeech": "PROPN",
+              "key": "fr:julie:PROPN"
+            },
+            {
+              "start": 6,
+              "end": 12,
+              "surface": "répond",
+              "gloss": "antworten",
+              "lemma": "répondre",
+              "partOfSpeech": "VERB",
+              "key": "fr:répondre:VERB"
+            },
+            {
+              "start": 17,
+              "end": 20,
+              "surface": "Oui",
+              "gloss": "ja",
+              "lemma": "oui",
+              "partOfSpeech": "INTJ",
+              "key": "fr:oui:INTJ"
+            },
+            {
+              "start": 22,
+              "end": 25,
+              "surface": "mon",
+              "gloss": "mein",
+              "lemma": "mon",
+              "partOfSpeech": "DET",
+              "key": "fr:mon:DET"
+            },
+            {
+              "start": 26,
+              "end": 35,
+              "surface": "téléphone",
+              "gloss": "Telefon",
+              "lemma": "téléphone",
+              "partOfSpeech": "NOUN",
+              "key": "fr:téléphone:NOUN"
+            }
+          ],
+          "audio": {
+            "file": "audio/1e9b45094d64c8b7.mp3",
+            "durationMs": 2276,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 325
+              },
+              {
+                "unit": 1,
+                "startMs": 360,
+                "endMs": 685
+              },
+              {
+                "unit": 2,
+                "startMs": 987,
+                "endMs": 1161
+              },
+              {
+                "unit": 3,
+                "startMs": 1207,
+                "endMs": 1324
+              },
+              {
+                "unit": 4,
+                "startMs": 1382,
+                "endMs": 1916
+              }
+            ]
+          }
+        },
+        {
+          "id": "s005",
+          "source": "Je ne le trouve pas. »",
+          "fluent": "Ich finde es nicht.",
+          "units": [
+            {
+              "start": 0,
+              "end": 2,
+              "surface": "Je",
+              "gloss": "ich",
+              "lemma": "je",
+              "partOfSpeech": "PRON",
+              "key": "fr:je:PRON"
+            },
+            {
+              "start": 3,
+              "end": 5,
+              "surface": "ne",
+              "gloss": "nicht",
+              "lemma": "ne",
+              "partOfSpeech": "PART",
+              "key": "fr:ne:PART"
+            },
+            {
+              "start": 6,
+              "end": 8,
+              "surface": "le",
+              "gloss": "ihn",
+              "lemma": "le",
+              "partOfSpeech": "PRON",
+              "key": "fr:le:PRON"
+            },
+            {
+              "start": 9,
+              "end": 15,
+              "surface": "trouve",
+              "gloss": "finden",
+              "lemma": "trouver",
+              "partOfSpeech": "VERB",
+              "key": "fr:trouver:VERB"
+            },
+            {
+              "start": 16,
+              "end": 19,
+              "surface": "pas",
+              "gloss": "nicht",
+              "lemma": "pas",
+              "partOfSpeech": "PART",
+              "key": "fr:pas:PART"
+            }
+          ],
+          "audio": {
+            "file": "audio/b7501826af9f12bf.mp3",
+            "durationMs": 1207,
+            "timings": [
+              {
+                "unit": 0,
+                "startMs": 0,
+                "endMs": 163
+              },
+              {
+                "unit": 1,
+                "startMs": 209,
+                "endMs": 255
+              },
+              {
+                "unit": 2,
+                "startMs": 290,
+                "endMs": 360
+              },
+              {
+                "unit": 3,
+                "startMs": 406,
+                "endMs": 650
+              },
+              {
+                "unit": 4,
+                "startMs": 685,
+                "endMs": 882
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

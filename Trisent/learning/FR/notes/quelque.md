@@ -8,7 +8,7 @@ gloss: irgendein, einige
 forms:
   - quelque
 status: familiar
-updatedAt: 2026-09-15
+updatedAt: 2026-09-15T09:00:00Z
 ---
 
 ## Grammar

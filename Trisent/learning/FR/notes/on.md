@@ -5,6 +5,6 @@ lemma: on
 partOfSpeech: PRON
 key: fr:on:PRON
 status: known
-updatedAt: 2026-09-15
+updatedAt: 2026-09-15T09:00:00Z
 ---
 ## My notes

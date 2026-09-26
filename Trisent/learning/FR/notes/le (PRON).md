@@ -3,11 +3,12 @@ type: word
 language: fr
 lemma: le
 partOfSpeech: PRON
-key: "fr:le:PRON"
-gloss: "ihn, es"
-forms: [le]
+key: fr:le:PRON
+gloss: ihn, es
+forms:
+  - le
 status: learning
-updatedAt: 2026-09-15
+updatedAt: 2026-09-15T09:00:00Z
 ---
 
 ## Grammar

@@ -10,7 +10,7 @@ intoNative:
   s001: 3/4
   s002: 1
   s003: 0/1
-updatedAt: 2026-09-18
+updatedAt: 2026-09-18T09:00:00Z
 ---
 
 Welche Sätze dieses Textes du übersetzen konntest, und wie oft.

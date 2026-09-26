@@ -3,11 +3,12 @@ type: word
 language: fr
 lemma: lit
 partOfSpeech: NOUN
-key: "fr:lit:NOUN"
+key: fr:lit:NOUN
 gloss: das Bett
-forms: [lit]
+forms:
+  - lit
 status: learning
-updatedAt: 2026-09-15
+updatedAt: 2026-09-15T09:00:00Z
 ---
 
 ## Grammar
