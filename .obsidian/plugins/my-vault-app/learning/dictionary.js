@@ -46,13 +46,24 @@ class Dictionary {
     if (cached) return cached;
 
     const entries = await this.read(language);
-    this.cache.set(language.code, entries);
-    return entries;
+    /* Eine Datei, die (noch) nicht da ist, wird nicht als leeres
+       Wörterbuch gemerkt. Auf dem Handy kennt Obsidian beim Start die
+       Vault womöglich noch nicht ganz, und eine Synchronisation legt die
+       Datei erst später hin - ein gemerktes "leer" bliebe dann stehen. */
+    if (entries) this.cache.set(language.code, entries);
+    return entries || new Map();
   }
 
+  /* Ob das Wörterbuch einer Sprache schon gelesen ist - dann weiß peek()
+     alles, sonst nichts. */
+  isLoaded(language) {
+    return this.cache.has(language.code);
+  }
+
+  /* null, wenn es die Datei nicht gibt. */
   async read(language) {
     const file = this.app.vault.getAbstractFileByPath(this.pathFor(language));
-    if (!(file instanceof TFile)) return new Map();
+    if (!(file instanceof TFile)) return null;
 
     try {
       return normalizeAll(JSON.parse(await this.app.vault.read(file)));

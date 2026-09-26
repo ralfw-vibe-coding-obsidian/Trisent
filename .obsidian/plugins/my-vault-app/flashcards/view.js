@@ -364,6 +364,11 @@ class DeckView extends ItemView {
      entfernt), dann die Grundform aus dem Schlüssel. Das Letzte geht
      immer - ein Schlüssel ohne Grundform ist keiner. */
   cardsOf(language) {
+    /* Noch nicht gelesen - oder vergessen, weil die Datei sich geändert
+       hat (auf dem Handy etwa durch die Synchronisation). Dann jetzt
+       lesen und danach neu zeichnen; bis dahin stehen die Grundformen. */
+    if (!this.dict.isLoaded(language)) this.warmDictionary();
+
     return this.deck.all(language).map((card) => {
       const entry = this.dict.peek(language, card.key);
       const lemma = String(card.key || '').split(':')[1] || card.key || '';
@@ -379,14 +384,22 @@ class DeckView extends ItemView {
      ohne Warten, und die Liste kann zeichnen, ohne anzuhalten. */
   async warmDictionary() {
     const language = this.library.languageByCode(this.languageCode);
-    if (!language) return;
+    if (!language || this.warming) return;
 
+    /* Nur einmal zugleich - render() fragt cardsOf(), und cardsOf() ruft
+       hierher, solange nichts gelesen ist. */
+    this.warming = true;
     try {
       await this.dict.entries(language);
     } catch (error) {
       console.error('Trisent: could not read the dictionary', error);
+    } finally {
+      this.warming = false;
     }
-    this.render();
+    /* Mitten in einer Sitzung nicht neu zeichnen - die Karte stünde
+       sonst ohne Bewegung auf der anderen Seite. Die Sitzung holt sich,
+       was sie braucht, beim Start selbst. */
+    if (!this.session && this.dict.isLoaded(language)) this.render();
   }
 
   /* An wie vielen Tagen hintereinander mit dieser Sprache gelernt wurde.
@@ -769,7 +782,22 @@ class DeckView extends ItemView {
     }
   }
 
-  start(stack) {
+  /* Vor dem Start das Wörterbuch abwarten und die Karten frisch
+     beschriften. Der Stapel kann gezogen worden sein, als es gerade nicht
+     gelesen war - auf dem Handy passierte genau das: Die Rückseite war
+     leer, "No translation in this card". */
+  async start(stack) {
+    const language = this.library.languageByCode(this.languageCode);
+    if (language) {
+      try {
+        await this.dict.entries(language);
+        const fresh = new Map(this.cardsOf(language).map((card) => [card.key, card]));
+        stack = stack.map((card) => fresh.get(card.key) || card);
+      } catch (error) {
+        console.error('Trisent: could not read the dictionary', error);
+      }
+    }
+
     this.session = new Session(stack, { ask: this.flashcards.settings.ask });
     this.counted = false;
     /* Einmal gesucht, für die ganze Sitzung gemerkt: Eine Karte, die
