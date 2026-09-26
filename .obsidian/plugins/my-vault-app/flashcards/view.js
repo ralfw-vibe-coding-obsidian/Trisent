@@ -47,6 +47,9 @@ const ORDERS = [
   { id: 'hardest', label: 'Hardest first' }
 ];
 
+/* Wie viele Karten eine Sitzung zieht. */
+const SIZES = [5, 10, 15, 20];
+
 const VIEW_TYPE = 'trisent-deck-view';
 const RIBBON_ICON = 'layers';
 
@@ -715,9 +718,15 @@ class DeckView extends ItemView {
     this.renderChoice(options, 'Draw', SOURCES, settings.source, (value) => {
       settings.source = value;
     });
-    this.renderChoice(options, 'How many', [
-      { id: 10, label: '10' }, { id: 20, label: '20' }, { id: 50, label: '50' }
-    ], settings.size, (value) => {
+    /* Eine gemerkte Größe, die es nicht mehr gibt (früher 50), wird zur
+       nächstkleineren - sonst wäre kein Chip an und die Sitzung trotzdem
+       so groß. */
+    if (!SIZES.includes(settings.size)) {
+      settings.size = SIZES.filter((size) => size <= settings.size).pop() || SIZES[0];
+    }
+    this.renderChoice(options, 'How many',
+      SIZES.map((size) => ({ id: size, label: String(size) })),
+      settings.size, (value) => {
       settings.size = value;
     });
     this.renderChoice(options, 'Show', [
