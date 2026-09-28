@@ -903,6 +903,10 @@
   background: var(--background-modifier-hover);
 }
 
+.trisent-view .trisent-face-more.is-on {
+  color: var(--tri-accent);
+}
+
 .trisent-face-more svg {
   width: 0.85rem;
   height: 0.85rem;
@@ -994,6 +998,29 @@
 
 .trisent-examples:empty {
   display: none;
+}
+
+/* Die Grammatik auf Wunsch, unter den Beispielsätzen und genauso breit.
+   Der Text selbst sieht aus wie in der Wortkarte (.trisent-card-text). */
+
+.trisent-session-grammar {
+  width: 100%;
+  max-width: 26rem;
+  margin: 0 auto 1.5rem;
+  text-align: left;
+}
+
+.trisent-session-grammar:empty {
+  display: none;
+}
+
+.trisent-session-grammar-label {
+  margin-bottom: 0.35rem;
+  font-family: var(--tri-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-faint);
 }
 
 .trisent-examples-wait {

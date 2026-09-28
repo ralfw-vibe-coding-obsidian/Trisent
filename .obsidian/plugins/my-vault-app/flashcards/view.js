@@ -9,7 +9,7 @@
  */
 
 const {
-  ItemView, MarkdownView, Notice, normalizePath, setIcon, setTooltip
+  ItemView, MarkdownRenderer, MarkdownView, Notice, normalizePath, setIcon, setTooltip
 } = require('obsidian');
 const {
   isDue, isNew, today, daysBetween, pick, timeline, barHeight,
@@ -72,6 +72,10 @@ class DeckView extends ItemView {
     /* Der Streak wird je Sitzung einmal angestoßen, nicht je Karte. */
     this.counted = false;
     this.examples = new Map();
+    /* Ob unter den Beispielsätzen die Grammatik steht. Gilt für die
+       ganze Sitzung: Wer sie bei einer Karte sehen wollte, will sie bei
+       der nächsten meist auch. */
+    this.showGrammar = false;
     /* Der gerade laufende Satz. */
     this.sound = null;
     this.soundButton = null;
@@ -888,6 +892,9 @@ class DeckView extends ItemView {
     this.extrasEl = page.createDiv({ cls: 'trisent-examples' });
     if (session.revealed) this.renderExamples(this.extrasEl, card);
 
+    this.grammarEl = page.createDiv({ cls: 'trisent-session-grammar' });
+    if (session.revealed) this.paintGrammar(language, card);
+
     this.answersEl = page.createDiv({ cls: 'trisent-answers' });
     this.paintAnswers(language);
   }
@@ -1023,13 +1030,79 @@ class DeckView extends ItemView {
 
     /* Nachsehen, warum ein Wort nicht sitzt - der häufigste Wunsch genau
        in diesem Moment. Erst nach dem Umdrehen, und als eigenes Zeichen,
-       damit niemand es beim Greifen nach den Knöpfen trifft. */
-    const more = facts.createEl('button', { cls: 'trisent-face-more' });
+       damit niemand es beim Greifen nach den Knöpfen trifft.
+
+       Die Grammatik erscheint unter den Beispielsätzen, nicht in der
+       Seitenleiste: Dort ist Platz, und auf dem Handy legte sich die
+       Leiste über die Karte. Nur die Grammatik - Wort und Übersetzung
+       stehen ja schon auf der Karte. */
+    const more = facts.createEl('button', {
+      cls: 'trisent-face-more' + (this.showGrammar ? ' is-on' : '')
+    });
     setIcon(more.createSpan(), 'info');
-    setTooltip(more, 'Show the details of this word');
+    setTooltip(more, 'Grammar of this word');
     more.addEventListener('click', (event) => {
       event.stopPropagation();
-      this.showDetails(card);
+      this.showGrammar = !this.showGrammar;
+      more.toggleClass('is-on', this.showGrammar);
+      this.paintGrammar(this.library.languageByCode(this.languageCode), card);
+    });
+  }
+
+  /* Die Grammatik aus dem Wörterbuch - dasselbe, was die Wortkarte im
+     Reader zeigt, und genauso gezeichnet. */
+  paintGrammar(language, card) {
+    const slot = this.grammarEl;
+    if (!slot) return;
+    slot.empty();
+    if (!this.showGrammar || !language || !card) return;
+    if (!this.session || !this.session.revealed) return;
+
+    const entry = this.dict.peek(language, card.key);
+    const grammar = entry && entry.grammar ? String(entry.grammar) : '';
+
+    slot.createDiv({ cls: 'trisent-session-grammar-label', text: 'Grammar' });
+    const box = slot.createDiv({ cls: 'trisent-card-text' });
+    if (!grammar.trim()) {
+      box.createEl('p', { cls: 'trisent-muted', text: 'No grammar notes for this word.' });
+      return;
+    }
+    this.renderMarkdown(box, grammar, language, card);
+  }
+
+  /* Wie in der Wortkarte: Obsidian hat den Renderer unterwegs
+     umbenannt, also nehmen wir, was da ist - und zur Not den Text in
+     Absätzen, damit er nicht zu einem Klumpen zusammenläuft. */
+  renderMarkdown(box, text, language, card) {
+    const plain = () => {
+      box.empty();
+      for (const block of text.split(/\n\s*\n/)) {
+        if (block.trim()) box.createEl('p', { text: block.trim() });
+      }
+    };
+
+    const note = this.library.wordFileFor(language, card.key);
+    const path = note ? note.path : '';
+
+    let job = null;
+    try {
+      if (typeof MarkdownRenderer.render === 'function') {
+        job = MarkdownRenderer.render(this.app, text, box, path, this);
+      } else if (typeof MarkdownRenderer.renderMarkdown === 'function') {
+        job = MarkdownRenderer.renderMarkdown(text, box, path, this);
+      }
+    } catch (error) {
+      console.error('Trisent: could not render the grammar note', error);
+      job = null;
+    }
+
+    if (!job) {
+      plain();
+      return;
+    }
+    job.catch((error) => {
+      console.error('Trisent: could not render the grammar note', error);
+      plain();
     });
   }
 
@@ -1102,6 +1175,7 @@ class DeckView extends ItemView {
 
     if (this.flipEl) this.flipEl.addClass('is-turned');
     if (this.extrasEl) this.renderExamples(this.extrasEl, this.session.card);
+    this.paintGrammar(this.library.languageByCode(this.languageCode), this.session.card);
     this.paintAnswers(this.library.languageByCode(this.languageCode));
     this.followDetails(this.session.card);
   }
