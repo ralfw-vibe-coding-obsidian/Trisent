@@ -887,6 +887,12 @@ class DeckView extends ItemView {
     flip.addEventListener('click', () => this.turn());
     this.flipEl = flip;
 
+    /* Die Knöpfe direkt unter der Karte: Dort bleiben sie an derselben
+       Stelle, wie viele Beispielsätze auch darunter kommen - der Daumen
+       muss sie nicht suchen. */
+    this.answersEl = page.createDiv({ cls: 'trisent-answers' });
+    this.paintAnswers(language);
+
     /* Die Beispielsätze stehen unter der Karte, nicht darauf: Eine Karte
        hat eine feste Größe, fünf Sätze haben das nicht. */
     this.extrasEl = page.createDiv({ cls: 'trisent-examples' });
@@ -894,9 +900,6 @@ class DeckView extends ItemView {
 
     this.grammarEl = page.createDiv({ cls: 'trisent-session-grammar' });
     if (session.revealed) this.paintGrammar(language, card);
-
-    this.answersEl = page.createDiv({ cls: 'trisent-answers' });
-    this.paintAnswers(language);
   }
 
   /* Beispielsätze - erst nach dem Umdrehen. Vorher wären sie ein halber
