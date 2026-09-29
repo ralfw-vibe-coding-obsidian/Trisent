@@ -43,6 +43,7 @@ class TagModal extends Modal {
     /* titleEl statt setTitle(): Das eine gibt es in jeder Fassung von
        Obsidian, das andere erst in neueren. */
     this.titleEl.setText('Tags');
+    this.modalEl.addClass('trisent-modal');
     const body = this.contentEl;
     body.addClass('trisent-tagger');
 

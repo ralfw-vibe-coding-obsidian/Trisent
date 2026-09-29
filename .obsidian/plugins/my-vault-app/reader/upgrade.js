@@ -47,6 +47,7 @@ class UpgradeModal extends Modal {
       ? 'A better explanation for one word'
       : 'Better explanations for ' + count + ' words');
 
+    this.modalEl.addClass('trisent-modal');
     const body = this.contentEl;
     body.addClass('trisent-upgrade');
 

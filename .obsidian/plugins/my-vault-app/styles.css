@@ -22,8 +22,12 @@
  * ändern heißt, genau eine Zeile ändern.
  */
 
+/* .trisent-modal: Fenster (Tags, Import-Frage) liegen außerhalb der
+   Ansichten und brauchen dieselben Farben - ohne das stand ein gewählter
+   Tag weiß auf weiß da. */
 .trisent-view,
-.trisent-card-view {
+.trisent-card-view,
+.trisent-modal {
   /* Tintengrün. Der einzige Akzent der App. */
   --tri-accent: #0E7C6B;
 
@@ -47,7 +51,8 @@
 }
 
 .theme-dark .trisent-view,
-.theme-dark .trisent-card-view {
+.theme-dark .trisent-card-view,
+.theme-dark .trisent-modal {
   --tri-accent: #3FBEA4;
   --tri-unknown: #E2685C;
   --tri-learning: #D9A02E;
