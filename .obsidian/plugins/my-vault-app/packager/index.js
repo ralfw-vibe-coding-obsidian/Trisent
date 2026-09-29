@@ -1137,16 +1137,25 @@ class Packager {
         }
       }));
 
-      for (const answer of [].concat.apply([], round)) {
-        const made = this.entryFrom(code, answer, byKey.get(answer.key), number);
-        if (made && store.renew(dictionary, made.key, made.entry, number)) renewed += 1;
-      }
-      await this.saveDictionary(code, dictionary);
+      /* Frisch gelesen, geändert, geschrieben - nicht der Stand vom
+         Anfang des Laufs. Sonst gingen Wörter verloren, die ein Text
+         inzwischen nachgeschlagen hat. */
+      await this.changeDictionary(code, (current) => {
+        let changed = false;
+        for (const answer of [].concat.apply([], round)) {
+          const made = this.entryFrom(code, answer, byKey.get(answer.key), number);
+          if (made && store.renew(current, made.key, made.entry, number)) {
+            renewed += 1;
+            changed = true;
+          }
+        }
+        return changed;
+      });
     }
 
     if (renewed === 0 && problem) throw problem;
 
-    const left = store.outdated(dictionary, number).length;
+    const left = store.outdated(await this.loadDictionary(code), number).length;
     return {
       kind: left === 0 ? 'ok' : 'bad',
       headline: 'Described ' + renewed + ' of ' + keys.length + ' words after recipe version ' + number + '.',
@@ -1629,19 +1638,15 @@ class Packager {
     step('Building…');
     let result = await this.build(text);
 
-    /* Fehlende Wortnotizen sind kein Fehler, sondern der nächste Schritt.
-       Also gehen wir ihn gleich mit. */
-    if (result.kind === 'missing' && this.canPrepare()) {
-      step('Looking up words…');
-      const written = await this.writeWords(text, result.entries, step);
-      if (written === 0) {
-        return {
-          kind: 'bad',
-          headline: 'No dictionary entries could be written.',
-          lines: result.entries.slice(0, 10).map((e) => e.key),
-          more: Math.max(0, result.entries.length - 10)
-        };
-      }
+    /* Fehlende Wörter sind kein Fehler, sondern der nächste Schritt.
+       Also gehen wir ihn gleich mit - und zwar zweimal, wenn nötig: Kommt
+       für ein Wort eine Antwort zurück, die nicht passt (die Grundform
+       führt zu einem anderen Schlüssel), klappt es beim zweiten Fragen
+       meist. Vorher musste die Person dafür ein zweites Mal Ingest
+       drücken und wusste nicht, warum. */
+    for (let round = 0; round < 2 && result.kind === 'missing' && this.canPrepare(); round++) {
+      step(round === 0 ? 'Looking up words…' : 'Looking up the rest once more…');
+      await this.writeWords(text, result.entries, step);
       step('Building…');
       result = await this.build(text);
     }
@@ -1845,21 +1850,52 @@ class Packager {
     }
 
     const byKey = new Map(entries.map((one) => [one.key, one]));
-    const dictionary = await this.loadDictionary(text.code);
-    let written = 0;
+    let settled = 0;
 
-    for (const answer of [].concat.apply([], answers)) {
-      const made = this.entryFrom(text.code, answer, byKey.get(answer.key), number);
-      if (!made) continue;
-      /* Was schon im Wortvorrat steht, bleibt, wie es ist. Ein Wort wird
-         einmal beschrieben, nicht einmal je Text. */
-      if (Object.prototype.hasOwnProperty.call(dictionary, made.key)) continue;
-      dictionary[made.key] = made.entry;
-      written += 1;
-    }
+    await this.changeDictionary(text.code, (dictionary) => {
+      let written = 0;
+      for (const answer of [].concat.apply([], answers)) {
+        const made = this.entryFrom(text.code, answer, byKey.get(answer.key), number);
+        if (!made) continue;
+        /* Was schon im Wortvorrat steht, bleibt, wie es ist. Ein Wort wird
+           einmal beschrieben, nicht einmal je Text. Hat ein anderer Lauf es
+           inzwischen eingetragen, ist es trotzdem erledigt. */
+        if (Object.prototype.hasOwnProperty.call(dictionary, made.key)) {
+          settled += 1;
+          continue;
+        }
+        dictionary[made.key] = made.entry;
+        written += 1;
+        settled += 1;
+      }
+      return written > 0;
+    });
+    return settled;
+  }
 
-    if (written > 0) await this.saveDictionary(text.code, dictionary);
-    return written;
+  /* Den Wortvorrat einer Sprache ändern - einer nach dem anderen.
+
+     Mehrere Läufe schreiben in dieselbe Datei: zwei Texte, die gleichzeitig
+     aufbereitet werden, ein Überarbeiten nebenher. Jeder liest sie, ändert
+     etwas und schreibt sie zurück. Überlappen sich zwei dabei, schreibt der
+     zweite den Stand von vorher zurück, und die frischen Wörter des ersten
+     sind weg - der erste Text sah danach veraltet aus, ohne es zu sein.
+
+     Deshalb stellt sich jede Änderung hier an: frisch lesen, ändern,
+     schreiben, dann die nächste. "change" gibt zurück, ob sich etwas
+     geändert hat; nur dann wird geschrieben. */
+  changeDictionary(code, change) {
+    if (!this.dictionaryQueue) this.dictionaryQueue = new Map();
+    const key = String(code).toLowerCase();
+    const before = this.dictionaryQueue.get(key) || Promise.resolve();
+    const turn = before.catch(() => {}).then(async () => {
+      const dictionary = await this.loadDictionary(key);
+      const changed = await change(dictionary);
+      if (changed) await this.saveDictionary(key, dictionary);
+      return changed;
+    });
+    this.dictionaryQueue.set(key, turn);
+    return turn;
   }
 
   /* Aufgenommen wird nur, was zum Schlüssel passt. Ein Eintrag unter dem
@@ -2203,10 +2239,9 @@ class Packager {
 
     /* Was dieser Text an Formen mitbrachte, kennt ab jetzt auch der
        Wortvorrat - damit das nächste Paket sie ebenfalls trägt. */
-    const vocabulary = await this.loadDictionary(language);
-    if (store.mergeForms(vocabulary, result.data.dictionary) > 0) {
-      await this.saveDictionary(language, vocabulary);
-    }
+    await this.changeDictionary(language, (vocabulary) =>
+      store.mergeForms(vocabulary, result.data.dictionary) > 0
+    );
 
     const stats = result.stats;
     return {
