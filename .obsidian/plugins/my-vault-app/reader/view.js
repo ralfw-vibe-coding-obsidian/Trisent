@@ -12,11 +12,16 @@ const { KNOWN_LANGUAGES } = require('../core/library.js');
 const { Playback, Recorder, SPEEDS } = require('./audio.js');
 const { askForUpgrades } = require('./upgrade.js');
 const { describeImport } = require('../learning/importer.js');
+/* Seitenweise schneiden - dieselbe reine Rechnung wie in der Lernkartei. */
+const { page: pageOf } = require('../flashcards/find.js');
 const {
   matchesIn, occurrenceOf, searchPackages
 } = require('../learning/occurrences.js');
 
 const VIEW_TYPE = 'trisent-view';
+
+/* Wie viele Texte auf eine Seite der Textliste gehen. */
+const SHELF_PAGE = 10;
 const RIBBON_ICON = 'languages';
 
 /* Die drei Darstellungsebenen. Die Kurzzeichen stehen auf den Schaltern. */
@@ -55,6 +60,10 @@ class TrisentView extends ItemView {
     this.packagePath = null;
     this.addingLanguage = false;
     this.importReport = null;
+    /* Welche Seite der Textliste zu sehen ist. Bleibt stehen, wenn man
+       einen Text öffnet und zurückkommt - man will dort weitersuchen,
+       wo man war. Eine andere Sprache fängt vorn an. */
+    this.shelfAt = 0;
   }
 
   getViewType() {
@@ -467,10 +476,45 @@ class TrisentView extends ItemView {
 
       rows.sort(this.comparator());
 
-      for (const row of rows) {
+      /* Seitenweise: Bei vielen Texten ist eine lange Liste keine
+         Übersicht mehr. */
+      const slice = pageOf(rows, this.shelfAt, SHELF_PAGE);
+      this.shelfAt = slice.page;
+
+      for (const row of slice.items) {
         this.renderPackageRow(list, row.entry, statusMap, row.stats);
       }
+      this.renderShelfPager(page, list, slice);
     });
+  }
+
+  /* Blättern - dasselbe Knopfpaar wie in der Lernkartei. Nur da, wenn es
+     mehr als eine Seite gibt. */
+  renderShelfPager(page, list, slice) {
+    if (slice.pages <= 1) return;
+    const bar = page.createDiv({ cls: 'trisent-pager' });
+
+    const step = (to) => {
+      this.shelfAt = to;
+      this.render();
+    };
+
+    const back = bar.createEl('button', { cls: 'trisent-page-step' });
+    setIcon(back.createSpan(), 'chevron-left');
+    back.setAttr('aria-label', 'Previous page');
+    if (slice.page === 0) back.setAttr('disabled', 'true');
+    else back.addEventListener('click', () => step(slice.page - 1));
+
+    bar.createSpan({
+      cls: 'trisent-page-count',
+      text: slice.from + '–' + slice.to + ' of ' + slice.count
+    });
+
+    const next = bar.createEl('button', { cls: 'trisent-page-step' });
+    setIcon(next.createSpan(), 'chevron-right');
+    next.setAttr('aria-label', 'Next page');
+    if (slice.page >= slice.pages - 1) next.setAttr('disabled', 'true');
+    else next.addEventListener('click', () => step(slice.page + 1));
   }
 
   renderPackageRow(list, entry, statusMap, stats) {
@@ -515,12 +559,16 @@ class TrisentView extends ItemView {
       chips.createSpan({ cls: 'trisent-chip', text: topic });
     }
 
+    /* Unten die Zahlen: Prozent und Balken nebeneinander, darunter die
+       Kleinigkeiten. Auf einer schmalen Karte stehen sie unter dem
+       Titel, nicht daneben - sonst bliebe dem Titel kein Platz. */
     const right = row.createDiv({ cls: 'trisent-t-right' });
-    right.createDiv({
+    const measure = right.createDiv({ cls: 'trisent-t-measure' });
+    measure.createDiv({
       cls: 'trisent-t-pct',
       text: Math.round(stats.coverage * 100) + '\u202f%'
     });
-    this.renderSpectrum(right, stats.counts, stats.tokens);
+    this.renderSpectrum(measure, stats.counts, stats.tokens);
 
     const note = right.createDiv({ cls: 'trisent-t-note' });
     const parts = [stats.sentences + ' sentences', stats.tokens + ' words'];
@@ -747,6 +795,9 @@ class TrisentView extends ItemView {
       });
       button.addEventListener('click', async () => {
         if (sort.id === current) return;
+        /* Neue Reihenfolge, neuer Anfang - Seite 3 von vorher ist in der
+           neuen Ordnung eine beliebige Stelle. */
+        this.shelfAt = 0;
         this.reader.settings.sort = sort.id;
         await this.reader.saveSettings();
         this.render();
@@ -1688,6 +1739,7 @@ class TrisentView extends ItemView {
 
   openLanguage(code) {
     this.importReport = null;
+    if (code !== this.languageCode) this.shelfAt = 0;
     this.screen = 'packages';
     this.languageCode = code;
     this.reader.settings.lastLanguage = code;
