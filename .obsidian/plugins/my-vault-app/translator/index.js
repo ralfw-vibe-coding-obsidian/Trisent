@@ -34,7 +34,7 @@ class Translator {
     this.plugin = plugin;
     this.app = plugin.app;
     this.library = plugin.learning.library;
-    this.knowledge = new SentenceKnowledge(plugin.app, this.library);
+    this.knowledge = new SentenceKnowledge(plugin.app, this.library, plugin.learning.texts);
     /* Derselbe Zähler wie im Reader - ein Tag Beschäftigung mit der
        Sprache, egal mit welchem Werkzeug. */
     this.streak = plugin.learning.streak;

@@ -13,10 +13,13 @@
  * Die Antworten selbst werden NICHT aufgehoben. Nur, wie es ausging.
  */
 
-const { TFile, TFolder, normalizePath } = require('obsidian');
 const { now } = require('../core/calendar.js');
 
-const SENTENCES_DIR = 'sentences';
+/* Die Notiz, in der das steht, gehört dem Text, nicht dem Translator -
+   siehe learning/texts.js. Hier wird nur hineingeschrieben, wie die
+   Sätze gelaufen sind. */
+const { TEXTS_DIR } = require('../learning/texts.js');
+const SENTENCES_DIR = TEXTS_DIR;
 
 /* Die beiden Übungsrichtungen. "intoForeign" ist die schwerere: Wer in die
    Fremdsprache schreibt, muss sie wirklich können. */
@@ -39,23 +42,15 @@ function readTally(value) {
 }
 
 class SentenceKnowledge {
-  constructor(app, library) {
+  constructor(app, library, texts) {
     this.app = app;
     this.library = library;
-  }
-
-  folderPath(language) {
-    return normalizePath(language.path + '/' + SENTENCES_DIR);
+    this.texts = texts;
   }
 
   /* Eine Notiz je Text, benannt wie der Paketordner. */
-  filePath(language, packageFolder) {
-    return this.folderPath(language) + '/' + packageFolder.name + '.md';
-  }
-
   fileFor(language, packageFolder) {
-    const file = this.app.vault.getAbstractFileByPath(this.filePath(language, packageFolder));
-    return file instanceof TFile ? file : null;
+    return this.texts.fileFor(language, packageFolder);
   }
 
   /* Wie ein Satz in einer Richtung gelaufen ist: { correct, tries }. */
@@ -88,8 +83,7 @@ class SentenceKnowledge {
   /* Einen Versuch vermerken, richtig oder falsch. Beide Zahlen wachsen nur -
      ein Satz, den man einmal konnte, bleibt gezählt. */
   async record(language, packageFolder, data, direction, sentenceId, correct) {
-    const file = this.fileFor(language, packageFolder)
-      || (await this.create(language, packageFolder, data));
+    const file = await this.texts.ensure(language, packageFolder, data);
 
     let tally;
     await this.app.fileManager.processFrontMatter(file, (fm) => {
@@ -104,28 +98,6 @@ class SentenceKnowledge {
     });
 
     return tally;
-  }
-
-  async create(language, packageFolder, data) {
-    const folder = this.app.vault.getAbstractFileByPath(this.folderPath(language));
-    if (!(folder instanceof TFolder)) await this.library.ensureFolder(this.folderPath(language));
-
-    const lines = [
-      '---',
-      'type: sentences',
-      'language: ' + language.code,
-      'package: ' + (data.id || packageFolder.name),
-      'title: ' + JSON.stringify(data.title || packageFolder.name),
-      'intoForeign: {}',
-      'intoNative: {}',
-      '---',
-      '',
-      'Wie die Sätze dieses Textes gelaufen sind, je Richtung.',
-      'Gelesen wird `richtig/Versuche` - `2/5` heißt: fünfmal versucht,',
-      'zweimal richtig. Die Übersetzungen selbst werden nicht aufgehoben.',
-      ''
-    ];
-    return this.app.vault.create(this.filePath(language, packageFolder), lines.join('\n'));
   }
 }
 

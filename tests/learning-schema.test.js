@@ -214,3 +214,33 @@ test('Text ohne Doppelpunkt ist keine Eigenschaft', () => {
   is(front.type, 'word', 'das Gute ist da');
   is(Object.keys(front).length, 1, 'und sonst nichts');
 });
+
+/* ------------------------------------------------------------------ */
+/* Aus der Satznotiz wird die Notiz des Textes                        */
+/* ------------------------------------------------------------------ */
+
+test('eine Satznotiz wird zur Notiz des Textes, ihr Inhalt bleibt', () => {
+  const before = '---\ntype: sentences\nlanguage: fr\nintoNative:\n  s001: 3/4\n---\n\nWelche Sätze dieses Textes du übersetzen konntest.\n';
+  const after = s.textNoteFrom(before);
+  ok(after.indexOf('type: text\n') >= 0, 'neuer Typ');
+  ok(after.indexOf('type: sentences') < 0, 'alter Typ weg');
+  ok(after.indexOf('  s001: 3/4') >= 0, 'die Zählung bleibt');
+  ok(after.indexOf('Welche Sätze dieses Textes') >= 0, 'der Text bleibt');
+  ok(/## My notes\n$/.test(after), 'Platz für Eigenes');
+});
+
+test('der Umbau des Textes darf beliebig oft laufen', () => {
+  const once = s.textNoteFrom('---\ntype: sentences\n---\n\nEtwas.\n');
+  is(s.textNoteFrom(once), once, 'zweimal ist wie einmal');
+});
+
+test('was die Person unter My notes geschrieben hat, bleibt unberührt', () => {
+  const mine = '---\ntype: sentences\n---\n\n## My notes\n\nMein Eintrag.\n';
+  const after = s.textNoteFrom(mine);
+  ok(after.indexOf('Mein Eintrag.') >= 0, 'Eigenes bleibt');
+  is(after.split('## My notes').length, 2, 'kein zweites My notes');
+});
+
+test('eine Datei ohne Kopf bleibt, wie sie ist', () => {
+  is(s.textNoteFrom('Nur Text.\n'), 'Nur Text.\n', 'unverändert');
+});

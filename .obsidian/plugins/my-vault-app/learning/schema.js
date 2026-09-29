@@ -134,7 +134,25 @@ function frontmatterOf(head) {
   return found;
 }
 
+/* Aus einer Satznotiz wird die Notiz des Textes: Sie heißt jetzt
+   `type: text`, und unten steht "## My notes". Alles andere bleibt -
+   die Zählung der Sätze, die Erklärung darüber, und was die Person
+   selbst hineingeschrieben hat.
+
+   Liefert den neuen Text; ist nichts zu tun, denselben. */
+function textNoteFrom(text) {
+  const source = String(text == null ? '' : text);
+  const match = /^---\n[\s\S]*?\n---\n?/.exec(source);
+  if (!match) return source;
+
+  const head = match[0].replace(/^type:[ \t]*["']?sentences["']?[ \t]*$/m, 'type: text');
+  const body = source.slice(match[0].length);
+  const withNotes = /^##\s+My notes\s*$/m.test(body) ? body : withMyNotes(body);
+  const joined = head.endsWith('\n') ? head : head + '\n';
+  return joined + (withNotes.startsWith('\n') ? withNotes : '\n' + withNotes);
+}
+
 module.exports = {
   sameText, takeSection, withMyNotes, cleanWordNote, cleanFlashcard,
-  pendingSteps, frontmatterOf
+  pendingSteps, frontmatterOf, textNoteFrom
 };

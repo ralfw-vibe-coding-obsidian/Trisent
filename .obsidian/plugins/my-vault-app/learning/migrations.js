@@ -19,8 +19,9 @@
 
 const { TFile, TFolder, normalizePath } = require('obsidian');
 const {
-  cleanWordNote, cleanFlashcard, pendingSteps, frontmatterOf
+  cleanWordNote, cleanFlashcard, pendingSteps, frontmatterOf, textNoteFrom
 } = require('./schema.js');
+const { TEXTS_DIR, LEGACY_TEXTS_DIR } = require('./texts.js');
 const { normalizeAll, mergeLegacy } = require('./entries.js');
 const { NOTES_DIR, LEGACY_NOTES_DIR } = require('../core/library.js');
 const { PACKAGE_FILE, TEXT_FILE, splitPackage } = require('../core/package.js');
@@ -45,6 +46,7 @@ class Migrations {
     this.library = learning.library;
     this.deck = learning.deck;
     this.dictionary = learning.dictionary;
+    this.texts = learning.texts;
   }
 
   /* Die Umbauschritte, in der Reihenfolge ihrer Nummern. Jeder bringt
@@ -58,7 +60,8 @@ class Migrations {
     return [
       { to: 2, run: (report) => this.decoupleNotes(report) },
       { to: 3, run: (report) => this.centralDictionary(report) },
-      { to: 4, run: (report) => this.utcStamps(report) }
+      { to: 4, run: (report) => this.utcStamps(report) },
+      { to: 5, run: (report) => this.textNotes(report) }
     ];
   }
 
@@ -70,7 +73,7 @@ class Migrations {
     const report = {
       from: from, to: from,
       notes: 0, rescued: 0, cards: 0, links: 0, leftAlone: 0,
-      entries: 0, packages: 0, moved: 0, freed: 0, stamps: 0
+      entries: 0, packages: 0, moved: 0, freed: 0, stamps: 0, texts: 0
     };
 
     for (const step of this.steps()) {
@@ -405,6 +408,59 @@ class Migrations {
     return true;
   }
 
+  /* Schritt 5: Jeder Text bekommt seine Notiz, im Ordner `texts`.
+
+     Die Satznotizen des Translators waren schon Notizen je Text - nur
+     entstanden sie erst mit der ersten Übersetzung. Sie ziehen um, heißen
+     jetzt `type: text` und bekommen "## My notes"; ihr Inhalt bleibt.
+     Texte ohne Notiz bekommen eine neue. Dort stehen künftig die Tags. */
+  async textNotes(report) {
+    for (const language of this.library.languages()) {
+      await this.moveTextNotes(language);
+
+      const folder = this.library.childFolder(language.folder, TEXTS_DIR);
+      for (const file of folder ? [...folder.children] : []) {
+        if (!(file instanceof TFile) || file.extension !== 'md') continue;
+        const text = await this.app.vault.read(file);
+        const next = textNoteFrom(text);
+        if (next !== text) {
+          await this.app.vault.modify(file, next);
+          report.texts += 1;
+        }
+      }
+
+      for (const packageFolder of this.library.packagesOf(language)) {
+        if (this.texts.fileFor(language, packageFolder)) continue;
+        const entry = await this.library.loadPackage(packageFolder);
+        await this.texts.ensure(language, packageFolder, entry && entry.ok ? entry.data : null);
+        report.texts += 1;
+      }
+    }
+    return true;
+  }
+
+  /* Wie beim Umzug der Word notes: am liebsten den ganzen Ordner, und
+     liegt am Ziel schon eine gleich benannte Notiz, bleibt die alte, wo
+     sie ist. Nichts wird überschrieben. */
+  async moveTextNotes(language) {
+    const old = this.library.childFolder(language.folder, LEGACY_TEXTS_DIR);
+    if (!old) return;
+
+    const target = normalizePath(language.path + '/' + TEXTS_DIR);
+    if (!this.library.childFolder(language.folder, TEXTS_DIR)) {
+      await this.app.fileManager.renameFile(old, target);
+      return;
+    }
+
+    for (const child of [...old.children]) {
+      if (!(child instanceof TFile)) continue;
+      const to = normalizePath(target + '/' + child.name);
+      if (this.app.vault.getAbstractFileByPath(to)) continue;
+      await this.app.fileManager.renameFile(child, to);
+    }
+    if (old.children.length === 0) await this.app.vault.delete(old);
+  }
+
   /* Ein Feld, das ein bloßes Datum trägt, zum Zeitpunkt machen. Steht dort
      schon ein Zeitpunkt, oder gar nichts, bleibt es, wie es ist. */
   async stampField(file, field, report) {
@@ -501,6 +557,10 @@ function describe(report) {
   if (report.stamps > 0) {
     said.push('Times are now stored in UTC and read in your local time zone ('
       + n(report.stamps, 'entry', 'entries') + ' converted).');
+  }
+
+  if (report.texts > 0) {
+    said.push('Every text now has its own note in the folder "texts" - that is where its tags go.');
   }
 
   if (report.leftAlone > 0) {

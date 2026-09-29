@@ -11,6 +11,7 @@ const { WORD_STATUS } = require('../core/package.js');
 const { KNOWN_LANGUAGES } = require('../core/library.js');
 const { Playback, Recorder, SPEEDS } = require('./audio.js');
 const { askForUpgrades } = require('./upgrade.js');
+const { editTags } = require('./tagger.js');
 const { describeImport } = require('../learning/importer.js');
 /* Seitenweise schneiden - dieselbe reine Rechnung wie in der Lernkartei. */
 const { page: pageOf } = require('../flashcards/find.js');
@@ -559,6 +560,8 @@ class TrisentView extends ItemView {
       chips.createSpan({ cls: 'trisent-chip', text: topic });
     }
 
+    this.renderTextTags(left, entry);
+
     /* Unten die Zahlen: Prozent und Balken nebeneinander, darunter die
        Kleinigkeiten. Auf einer schmalen Karte stehen sie unter dem
        Titel, nicht daneben - sonst bliebe dem Titel kein Platz. */
@@ -584,6 +587,42 @@ class TrisentView extends ItemView {
     }
 
     row.addEventListener('click', () => this.openText(entry.folder.path));
+  }
+
+  /* Die Tags der Person an einem Text, und daneben der Weg, sie zu
+     ändern. Kein Knopf im Knopf - die ganze Karte öffnet den Text; das
+     Zeichen fängt seinen Tipp selbst ab. */
+  renderTextTags(parent, entry) {
+    const language = this.library.languageByCode(this.languageCode);
+    const texts = this.reader.plugin.learning.texts;
+    if (!language || !texts) return;
+
+    const tags = texts.tags(language, entry.folder);
+    const row = parent.createDiv({ cls: 'trisent-t-tags' });
+    for (const tag of tags) row.createSpan({ cls: 'trisent-t-tag', text: '#' + tag });
+
+    const edit = row.createSpan({
+      cls: 'trisent-t-tag-edit',
+      attr: { role: 'button', tabindex: '0', 'aria-label': 'Edit tags', title: 'Edit tags' }
+    });
+    setIcon(edit.createSpan(), 'tag');
+    if (tags.length === 0) edit.createSpan({ text: 'Add tag' });
+
+    const open = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      editTags(this.app, {
+        title: this.library.titleOf(entry),
+        tags: tags,
+        known: texts.allTags(language),
+        save: (next) => texts.setTags(language, entry.folder, entry.data, next),
+        done: () => this.render()
+      });
+    };
+    edit.addEventListener('click', open);
+    edit.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') open(event);
+    });
   }
 
   openText(path) {

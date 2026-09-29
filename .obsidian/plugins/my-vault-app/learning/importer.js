@@ -42,6 +42,7 @@ class Importer {
     this.plugin = learning.plugin;
     this.library = learning.library;
     this.dictionary = learning.dictionary;
+    this.texts = learning.texts;
   }
 
   /* Ein ZIP aus der Inbox.
@@ -158,6 +159,12 @@ class Importer {
       await this.library.writePackageFiles(folder, out);
       result.folder = folder;
     }
+
+    /* Jeder Text hat seine Notiz - auch einer, der in derselben Fassung
+       schon dalag und womöglich noch keine hatte. Eine vorhandene bleibt
+       unberührt: Dort stehen die Tags der Person. */
+    const home = result.folder || (existing && existing.folder);
+    if (home) await this.texts.ensure(language, home, head);
 
     await log(this.plugin, 'Learning', describeImport(result));
     return result;

@@ -19,6 +19,7 @@ const { Library } = require('../core/library.js');
 const { Streak } = require('./streak.js');
 const { Deck } = require('../flashcards/deck.js');
 const { Dictionary } = require('./dictionary.js');
+const { TextNotes } = require('./texts.js');
 const { Importer } = require('./importer.js');
 const { Inbox } = require('./inbox.js');
 const { Migrations, describe } = require('./migrations.js');
@@ -48,6 +49,13 @@ class Learning {
     /* Die Lernkartei. Der Reader legt Karten hinein, die Kartei fragt sie
        ab - also gehört sie keinem von beiden allein. */
     this.deck = new Deck(plugin.app, this.library);
+
+    /* Eine Notiz je Text - dort stehen die Tags der Person und, was sie
+       im Translator mit den Sätzen erlebt hat. */
+    this.texts = new TextNotes(plugin.app, this.library);
+    plugin.registerEvent(
+      plugin.app.metadataCache.on('changed', (file) => this.texts.forget(file && file.path))
+    );
 
     /* Der eine Weg herein: aus der Inbox, durch die Prüfung. */
     this.importer = new Importer(this);

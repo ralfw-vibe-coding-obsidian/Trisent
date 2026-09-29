@@ -149,7 +149,7 @@ Hamburg erst um 2 Uhr nachts. Alles dafür steht in `core/calendar.js`:
 ### Die Begriffe
 
 Vier Dinge, die alle mit „Wort" zu tun haben und deshalb immer wieder
-verwechselt wurden. Die Namen sind abgemacht – benutze sie in der Oberfläche,
+verwechselt wurden – dazu die Notiz eines ganzen Textes. Die Namen sind abgemacht – benutze sie in der Oberfläche,
 in Kommentaren und im Gespräch mit der Person:
 
 | Begriff | Was es ist | Wo es liegt |
@@ -157,6 +157,7 @@ in Kommentaren und im Gespräch mit der Person:
 | **Word card** | die Ansicht rechts im Reader. Virtuell: Sie setzt zusammen, was Wörterbuch, Notiz und Kartei wissen. Keine Datei. | – |
 | **Word entry** | was über ein Wort bekannt ist: Grundform, Wortart, Bedeutung, Formen, Grammatik. Kommt mit den Paketen und wird beim Import eingearbeitet. | `learning/<LANG>/dictionary.json` – **ihr** Wörterbuch, eins je Sprache |
 | **Word note** | die Manifestation eines Wortes für die Person – ihr Knotenpunkt. Lernstand, eigene Notizen, Verweise (z. B. auf die Flashcard). | `learning/<LANG>/notes/` |
+| **Text note** | die Notiz eines Textes für die Person: ihre Tags, wie die Sätze im Translator gelaufen sind, eigene Notizen. Entsteht beim Import. | `learning/<LANG>/texts/` |
 | **Flashcard** | eine Karteikarte: Level, Wiedervorlage, eigene Notizen. Vorder- und Rückseite holt sie über den Schlüssel aus dem Wörterbuch. Verweist auf die Word note. | `learning/<LANG>/flashcards/` |
 
 Zwei Regeln fallen daraus:
@@ -182,7 +183,7 @@ Trisent/                  einstellbar, Vorgabe: Trisent
 │   │   ├── dictionary.json  das Wörterbuch: alle Word entries, gefüllt durch Importe
 │   │   ├── notes/           Word notes - Lernstand und Eigenes, eine je Wort
 │   │   ├── flashcards/      die Lernkartei
-│   │   ├── sentences/       was sie über Sätze weiß, eine Notiz je Text
+│   │   ├── texts/           Text notes - ihre Tags und was sie über die Sätze weiß, eine je Text
 │   │   └── packages/        die Lerntexte: Kopf und Text, ohne Wörterbuch
 │   └── FR/
 ├── packager/             die Seite des Herstellens
