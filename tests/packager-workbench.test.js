@@ -71,4 +71,31 @@ test('eine leere Werkbank: alles ist offen', () => {
   ok(bench.plan(['a', 'b'], split.blocks).every((p) => p.block === null), 'alles offen');
 });
 
+test('eine Überschrift wird ein Absatz aus ihren Worten', () => {
+  is(bench.plainText('# Chapitre 1\n\nMax arrive.'), 'Chapitre 1\n\nMax arrive.', 'Raute weg');
+  is(bench.plainText('### Le départ ###'), 'Le départ', 'auch mit schließenden Rauten');
+});
+
+test('betonte Wörter werden gewöhnliche Wörter', () => {
+  is(bench.plainText('Il part *très* vite.'), 'Il part très vite.', 'kursiv mit Sternchen');
+  is(bench.plainText('Il part _très_ vite.'), 'Il part très vite.', 'kursiv mit Unterstrich');
+  is(bench.plainText('C\'est **important**, dit-il.'), 'C\'est important, dit-il.', 'fett');
+  is(bench.plainText('*Bonjour !* dit Max.'), 'Bonjour ! dit Max.', 'am Satzanfang, mit Satzzeichen');
+});
+
+test('was kein Markdown ist, bleibt, wie es ist', () => {
+  const plain = 'Paul dit : « Salut Julie ! » Il est 5 h, l’heure du thé.';
+  is(bench.plainText(plain), plain, 'unverändert');
+  is(bench.plainText('le mot_de_passe'), 'le mot_de_passe', 'Unterstrich im Wort');
+});
+
+test('ein Verweis wird sein Text, ein Bild verschwindet', () => {
+  is(bench.plainText('Voir [la carte](https://example.org) ici.'), 'Voir la carte ici.', 'Verweis');
+  is(bench.plainText('![Photo](bild.png)Le café.'), 'Le café.', 'Bild');
+});
+
+test('ein Zitat verliert sein Zeichen', () => {
+  is(bench.plainText('> Il pleut.'), 'Il pleut.', 'Zitat');
+});
+
 if (require.main === module) report();

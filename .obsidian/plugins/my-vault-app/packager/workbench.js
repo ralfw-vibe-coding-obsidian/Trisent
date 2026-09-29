@@ -19,6 +19,32 @@
 
 const { parseWork } = require('./build.js');
 
+/* Aus Markdown den Wortlaut machen, so wie er gelesen und gesprochen wird.
+
+   Die Werkstatt verpackt Text, keine Formatierung: Der Reader kennt keine
+   Überschriften und kein Kursiv, und die Stimme soll kein Sternchen
+   vorlesen. Vor allem aber muss jeder Absatz Zeichen für Zeichen dem
+   entsprechen, was Claude zurückgibt - eine Raute, die Claude weglässt,
+   ließe die Prüfung scheitern.
+
+   Also bleibt vom Markdown, was man liest: Eine Überschrift wird ein
+   Absatz aus ihren Worten, betonte Wörter werden gewöhnliche Wörter, ein
+   Verweis wird sein Text. Ein Unterstrich mitten in einem Wort bleibt,
+   was er ist. */
+function plainText(text) {
+  return String(text || '').replace(/\r\n/g, '\n').split('\n').map((line) => line
+    .replace(/^\s{0,3}#{1,6}\s+/, '')
+    .replace(/\s+#+\s*$/, '')
+    .replace(/^\s{0,3}>\s?/, '')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/\*\*(?=\S)([^*]*?\S)\*\*/g, '$1')
+    .replace(/__(?=\S)([^_]*?\S)__/g, '$1')
+    .replace(/\*(?=\S)([^*]*?\S)\*/g, '$1')
+    .replace(/(^|[^\p{L}\p{N}_])_(?=\S)([^_]*?\S)_(?=[^\p{L}\p{N}_]|$)/gu, '$1$2')
+  ).join('\n');
+}
+
 /* Kopf und Absatzblöcke einer Werkbank. Ein Block endet an einer Zeile,
    die nur aus Strichen besteht - so trennt die Werkbank ihre Absätze. */
 function splitWork(text) {
@@ -86,4 +112,4 @@ function joinWork(head, blocks) {
   return top + blocks.join('\n\n---\n\n') + '\n';
 }
 
-module.exports = { splitWork, plan, joinWork, fingerprintOf };
+module.exports = { plainText, splitWork, plan, joinWork, fingerprintOf };

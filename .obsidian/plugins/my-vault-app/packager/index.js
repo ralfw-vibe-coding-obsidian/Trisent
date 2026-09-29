@@ -26,7 +26,7 @@ const { writeZip } = require('../core/zip.js');
 const calendar = require('../core/calendar.js');
 const store = require('./dictionary.js');
 const { Migrations } = require('./migrations.js');
-const { splitWork, plan, joinWork } = require('./workbench.js');
+const { plainText, splitWork, plan, joinWork } = require('./workbench.js');
 const manifests = require('./manifest.js');
 const { log } = require('../core/log.js');
 const { sanitizeFileName, yamlValue, KNOWN_LANGUAGES } = require('../core/library.js');
@@ -954,7 +954,7 @@ class Packager {
 
       const raw = await this.app.vault.cachedRead(child);
       if (isSchemaNote(child, raw)) continue;
-      const body = splitNote(raw).body;
+      const body = plainText(splitNote(raw).body);
       result.push({
         folder: languageFolder,
         loose: child,
@@ -990,7 +990,7 @@ class Packager {
       const front = work ? this.app.metadataCache.getFileCache(work)?.frontmatter : null;
       const source = this.file(child.path + '/' + TEXT_FILE);
       const sourceRaw = source ? await this.app.vault.cachedRead(source) : null;
-      const raw = sourceRaw !== null ? splitNote(sourceRaw).body : '';
+      const raw = sourceRaw !== null ? plainText(splitNote(sourceRaw).body) : '';
       const workText = work ? await this.app.vault.cachedRead(work) : '';
       const paragraphs = paragraphsOf(raw);
       const archive = this.file(child.path + '/' + ARCHIVE_FILE);
@@ -2027,12 +2027,14 @@ class Packager {
     ].join('\n');
   }
 
-  /* Der Ausgangstext ohne einen Kopf, den die Notiz vielleicht trägt -
-     eine in Obsidian geschriebene Notiz hat schnell ein paar
-     Eigenschaften, und die sind kein Absatz. */
+  /* Der Ausgangstext, wie er verpackt wird: ohne einen Kopf, den die
+     Notiz vielleicht trägt, und ohne Markdown-Auszeichnung (siehe
+     plainText in workbench.js). Eine in Obsidian geschriebene Notiz hat
+     schnell ein paar Eigenschaften, eine Überschrift, ein kursives Wort -
+     nichts davon ist Text, den man lesen und hören soll. */
   async sourceOf(file) {
     if (!file) return '';
-    return splitNote(await this.app.vault.read(file)).body;
+    return plainText(splitNote(await this.app.vault.read(file)).body);
   }
 
   /* ---------------------------------------------------------------- */
