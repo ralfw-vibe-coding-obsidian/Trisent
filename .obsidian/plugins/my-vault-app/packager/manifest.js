@@ -52,6 +52,15 @@ function compare(recorded, current) {
   return { added: added, removed: removed, changed: changed };
 }
 
+/* Hat sich nur an den Tonspuren etwas getan? Das ist der Fall, wenn eine
+   Aufnahme mittendrin abbrach: Dann soll Record weitermachen dürfen,
+   statt dass erst Ingest nötig ist. */
+function onlyRecordings(changes) {
+  if (!changes) return false;
+  const all = changes.added.concat(changes.removed, changes.changed);
+  return all.length > 0 && all.every((name) => name.indexOf('audio/') === 0);
+}
+
 function isEmpty(changes) {
   return changes.added.length + changes.removed.length + changes.changed.length === 0;
 }
@@ -92,4 +101,4 @@ function serialize(manifest) {
   return JSON.stringify(manifest, null, 2) + '\n';
 }
 
-module.exports = { hashOf, compare, isEmpty, describe, parse, serialize };
+module.exports = { hashOf, compare, isEmpty, onlyRecordings, describe, parse, serialize };

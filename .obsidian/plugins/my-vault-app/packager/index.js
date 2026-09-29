@@ -327,6 +327,9 @@ function stepsFor(text, can) {
   const built = !!text.built;
   const changed = built && !manifests.isEmpty(text.changes);
   const ready = built && !changed;
+  /* Brach eine Aufnahme ab, haben sich nur Tonspuren geändert. Dann darf
+     Record weitermachen - es baut am Ende ohnehin neu. */
+  const soundOnly = changed && manifests.onlyRecordings(text.changes);
   const prepared = text.total > 0 && text.done >= text.total;
   const silent = Math.max(0, text.sentences - text.spoken);
 
@@ -345,9 +348,9 @@ function stepsFor(text, can) {
     {
       name: 'Record',
       run: 'speak',
-      on: ready && silent > 0 && can.voices,
+      on: (ready || soundOnly) && silent > 0 && can.voices,
       why: !built ? 'Ingest the text first.'
-        : changed ? 'Ingest the changes first.'
+        : changed && !soundOnly ? 'Ingest the changes first.'
         : !can.voices ? 'No voice for this language in the settings.'
         : silent === 0 ? 'Every sentence already has sound.'
         : silent + ' of ' + text.sentences + ' sentences have no sound yet.'
@@ -383,6 +386,10 @@ function stateOf(text) {
     if (text.version > 0) return 'Packaged before there were manifests. Ingest it once to wrap it up.' + sound;
     if (text.done > 0) return text.done + ' of ' + text.total + ' paragraphs prepared. Ingest to go on.';
     return 'Not ingested yet.';
+  }
+  if (manifests.onlyRecordings(text.changes) && text.spoken < text.sentences) {
+    return 'The recording stopped partway: sound for ' + text.spoken + ' of ' + text.sentences +
+      ' sentences. Record goes on from there.';
   }
   if (!manifests.isEmpty(text.changes)) {
     return manifests.describe(text.changes) + ' Ingest it again.' + sound;
@@ -2130,7 +2137,13 @@ class Packager {
     const folder = await this.ensureFolder(text.folder.path + '/' + AUDIO_DIR);
     const marks = await this.ensureFolder(text.folder.path + '/' + TIMING_DIR);
     const have = this.audioFiles(text.folder);
+    const already = sentences.filter((one) => have.has(one.file) && have.get(one.file)).length;
 
+    /* Bricht die Aufnahme ab - das Abo ist erschöpft, der Dienst will nicht
+       mehr -, wird trotzdem gebaut. Dann steckt im Paket, was schon
+       aufgenommen ist, die bezahlten Credits sind nicht vergebens, und
+       Record macht beim nächsten Druck dort weiter. */
+    let stopped = null;
     step('Recording audio…');
     const result = await audio.generate({
       key: this.settings.speechKey,
@@ -2143,10 +2156,25 @@ class Packager {
         await this.putBinary(folder.path + '/' + base + '.mp3', bytes);
         if (timing) await this.put(marks.path + '/' + base + '.json', JSON.stringify(timing));
       }
+    }).catch((error) => {
+      stopped = error;
+      return { written: error.written || 0, credits: error.credits || 0, skipped: already };
     });
 
     step('Building…');
     const built = await this.build(text);
+
+    if (stopped) {
+      const now = already + result.written;
+      return {
+        kind: 'bad',
+        headline: 'The recording stopped: ' + now + ' of ' + sentences.length + ' sentences have sound.',
+        lines: [String(stopped.message || stopped) +
+          (result.credits ? ' ' + result.written + ' sentences were recorded for ' + result.credits + ' credits.' : '') +
+          ' What is recorded is in the package; Record goes on from there.'],
+        more: 0
+      };
+    }
 
     const spoken = result.written + (result.skipped || 0);
     const detail = spoken + ' of ' + sentences.length + ' sentences have sound' +

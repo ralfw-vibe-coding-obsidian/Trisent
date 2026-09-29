@@ -49,4 +49,11 @@ test('ein kaputtes Manifest gilt als nicht da', () => {
   is(manifest.parse('{"version": 3, "inputs": {}}').version, 3, 'ein gutes');
 });
 
+test('nur Tonspuren geändert - dann darf Record weitermachen', () => {
+  const before = { 'text.md': 'a', 'audio/x.mp3': 1 };
+  ok(manifest.onlyRecordings(manifest.compare(before, { 'text.md': 'a', 'audio/x.mp3': 1, 'audio/y.mp3': 2 })), 'neue Tonspur');
+  ok(!manifest.onlyRecordings(manifest.compare(before, { 'text.md': 'b', 'audio/x.mp3': 1, 'audio/y.mp3': 2 })), 'auch der Text');
+  ok(!manifest.onlyRecordings(manifest.compare(before, before)), 'gar nichts');
+});
+
 if (require.main === module) report();
