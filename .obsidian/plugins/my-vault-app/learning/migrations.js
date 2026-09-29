@@ -432,7 +432,7 @@ class Migrations {
       for (const packageFolder of this.library.packagesOf(language)) {
         if (this.texts.fileFor(language, packageFolder)) continue;
         const entry = await this.library.loadPackage(packageFolder);
-        await this.texts.ensure(language, packageFolder, entry && entry.ok ? entry.data : null);
+        await this.texts.ensure(language, packageFolder, entry && entry.data ? entry.data : null);
         report.texts += 1;
       }
     }

@@ -255,7 +255,22 @@ class Library {
         data.paragraphs = Array.isArray(parsed.paragraphs) ? parsed.paragraphs : [];
       }
 
-      value = { ok: true, folder: folder, data: data };
+      /* Der Kopf ist da, der Text noch nicht - auf dem iPhone bringt
+         iCloud die Dateien einzeln, und dazwischen sah so ein Paket aus
+         wie ein gültiges ohne Absätze. Es gilt als noch nicht lesbar;
+         sobald text.json da ist, ändert sich der Stempel oben, und es
+         wird neu gelesen. */
+      if (!Array.isArray(data.paragraphs)) {
+        /* Der Kopf reist mit (data), damit der Titel dastehen kann und
+           ein Import dasselbe Paket wiedererkennt, statt es ein zweites
+           Mal abzulegen. Wer lesen will, prüft ok - wie bisher. */
+        value = {
+          ok: false, pending: true, folder: folder, data: data,
+          error: 'The text of this package has not arrived yet.'
+        };
+      } else {
+        value = { ok: true, folder: folder, data: data };
+      }
     } catch (error) {
       /* Ein kaputtes Paket muss sichtbar sein, nicht stillschweigend fehlen. */
       value = { ok: false, folder: folder, error: String(error.message || error) };
@@ -277,7 +292,7 @@ class Library {
   }
 
   titleOf(entry) {
-    return entry.ok ? entry.data.title || entry.folder.name : entry.folder.name;
+    return entry.data && entry.data.title ? entry.data.title : entry.folder.name;
   }
 
   /* Schlüssel -> Wortnotiz. Grundlage für alles, was den Stand betrifft. */
@@ -454,7 +469,7 @@ class Library {
   async folderForPackageId(language, id) {
     for (const folder of this.packagesOf(language)) {
       const entry = await this.loadPackage(folder);
-      if (entry && entry.ok && entry.data.id === id) {
+      if (entry && (entry.ok || entry.pending) && entry.data.id === id) {
         return { folder: folder, version: entry.data.version };
       }
     }

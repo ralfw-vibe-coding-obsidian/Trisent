@@ -161,6 +161,15 @@ class TranslatorView extends ItemView {
         if (!entry.ok) continue;
         this.renderPackageRow(list, language, entry);
       }
+    }).catch((error) => {
+      /* Nie stumm bei "…" stehen bleiben. */
+      console.error('Trisent: could not show the texts', error);
+      if (!this.contentEl.contains(list)) return;
+      list.empty();
+      list.createEl('p', {
+        cls: 'trisent-muted',
+        text: 'The texts could not be shown: ' + String((error && error.message) || error)
+      });
     });
   }
 

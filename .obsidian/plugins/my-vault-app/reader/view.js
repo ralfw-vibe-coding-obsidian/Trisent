@@ -80,6 +80,13 @@ class TrisentView extends ItemView {
   }
 
   async onOpen() {
+    /* Kommen Paketdateien nach - auf dem Handy bringt die Synchronisation
+       sie einzeln -, die Textliste neu zeichnen. Sonst stünde dort ein
+       halbes Paket, bis man von Hand weiterblättert. */
+    const arrived = (file) => this.onPackageFile(file);
+    this.registerEvent(this.app.vault.on('create', arrived));
+    this.registerEvent(this.app.vault.on('modify', arrived));
+
     /* Beim Öffnen dort landen, wo die Person zuletzt war. */
     const last = this.reader.settings.lastLanguage;
     if (last && this.library.languageByCode(last)) {
@@ -87,6 +94,19 @@ class TrisentView extends ItemView {
       this.languageCode = last;
     }
     this.render();
+  }
+
+  onPackageFile(file) {
+    if (this.screen !== 'packages' || !file || !/\.json$/.test(file.path)) return;
+    const language = this.library.languageByCode(this.languageCode);
+    if (!language || !file.path.startsWith(language.path + '/')) return;
+
+    /* Eine Synchronisation bringt viele Dateien kurz hintereinander -
+       einmal zeichnen, wenn es ruhig geworden ist. */
+    window.clearTimeout(this.arrivalTimer);
+    this.arrivalTimer = window.setTimeout(() => {
+      if (this.screen === 'packages') this.render();
+    }, 400);
   }
 
   playback() {
@@ -112,6 +132,7 @@ class TrisentView extends ItemView {
   }
 
   async onClose() {
+    window.clearTimeout(this.arrivalTimer);
     this.stopAudio();
     this.dropRecordings();
     /* nichts aufzuräumen */
@@ -486,6 +507,19 @@ class TrisentView extends ItemView {
         this.renderPackageRow(list, row.entry, statusMap, row.stats);
       }
       this.renderShelfPager(page, list, slice);
+    }).catch((error) => {
+      /* Nie stumm bei "…" stehen bleiben: Dann weiß niemand, ob noch
+         etwas kommt. Lieber sagen, was klemmt - das hilft auch beim
+         Suchen. */
+      console.error('Trisent: could not show the texts', error);
+      if (!this.contentEl.contains(list)) return;
+      list.empty();
+      const failed = list.createDiv({ cls: 'trisent-empty' });
+      failed.createEl('p', { cls: 'trisent-lead', text: 'The texts could not be shown.' });
+      failed.createEl('p', {
+        cls: 'trisent-muted',
+        text: String((error && error.message) || error)
+      });
     });
   }
 
@@ -520,6 +554,13 @@ class TrisentView extends ItemView {
 
   renderPackageRow(list, entry, statusMap, stats) {
     if (!entry.ok) {
+      /* Noch unterwegs ist kein Fehler - nur Geduld. */
+      if (entry.pending) {
+        const waiting = list.createDiv({ cls: 'trisent-text-row is-pending' });
+        waiting.createDiv({ cls: 'trisent-t-title', text: this.library.titleOf(entry) });
+        waiting.createDiv({ cls: 'trisent-t-sub', text: 'Still arriving…' });
+        return;
+      }
       const broken = list.createDiv({ cls: 'trisent-text-row is-broken' });
       broken.createDiv({ cls: 'trisent-t-title', text: entry.folder.name });
       broken.createDiv({ cls: 'trisent-t-error', text: 'Cannot read this package: ' + entry.error });
