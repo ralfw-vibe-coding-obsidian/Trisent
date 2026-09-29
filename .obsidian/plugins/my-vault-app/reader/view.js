@@ -12,6 +12,7 @@ const { KNOWN_LANGUAGES } = require('../core/library.js');
 const { Playback, Recorder, SPEEDS } = require('./audio.js');
 const { askForUpgrades } = require('./upgrade.js');
 const { editTags } = require('./tagger.js');
+const { matchesText, hasTag, tagKey } = require('../learning/tags.js');
 const { describeImport } = require('../learning/importer.js');
 /* Seitenweise schneiden - dieselbe reine Rechnung wie in der Lernkartei. */
 const { page: pageOf } = require('../flashcards/find.js');
@@ -65,6 +66,11 @@ class TrisentView extends ItemView {
        einen Text öffnet und zurückkommt - man will dort weitersuchen,
        wo man war. Eine andere Sprache fängt vorn an. */
     this.shelfAt = 0;
+    /* Der Filter der Textliste: ein Suchwort und die gewählten Tags.
+       Suchwort UND (Tag ODER Tag). Bleibt wie die Seite stehen, wenn man
+       einen Text öffnet und zurückkommt. */
+    this.shelfQuery = '';
+    this.shelfTags = [];
   }
 
   getViewType() {
@@ -464,10 +470,13 @@ class TrisentView extends ItemView {
 
     /* Die Schalter hängen nicht an den Paketdateien, nur an ihrer Zahl -
        die steht sofort fest, also stehen sie auch sofort da. */
-    if (this.library.packagesOf(language).length > 1) this.renderSortSwitches(page);
+    const several = this.library.packagesOf(language).length > 1;
+    if (several) this.renderSortSwitches(page);
+    if (several) this.renderShelfFilter(page, language);
 
     const list = page.createDiv({ cls: 'trisent-package-list' });
     list.createDiv({ cls: 'trisent-loading', text: '…' });
+    const pager = page.createDiv({ cls: 'trisent-pager' });
 
     /* Die Paketdateien werden von der Platte gelesen, also asynchron.
        Erst der Rahmen, dann die Inhalte. */
@@ -491,22 +500,17 @@ class TrisentView extends ItemView {
          "was kann ich jetzt lesen?". Also steht oben, was sich am
          leichtesten liest - und die Reihenfolge ändert sich beim Lernen
          von selbst mit. */
+      const texts = this.reader.plugin.learning.texts;
       const rows = entries.map((entry) => ({
         entry: entry,
-        stats: entry.ok ? this.library.packageStats(entry.data, statusMap) : null
+        stats: entry.ok ? this.library.packageStats(entry.data, statusMap) : null,
+        tags: texts ? texts.tags(language, entry.folder) : []
       }));
 
       rows.sort(this.comparator());
 
-      /* Seitenweise: Bei vielen Texten ist eine lange Liste keine
-         Übersicht mehr. */
-      const slice = pageOf(rows, this.shelfAt, SHELF_PAGE);
-      this.shelfAt = slice.page;
-
-      for (const row of slice.items) {
-        this.renderPackageRow(list, row.entry, statusMap, row.stats);
-      }
-      this.renderShelfPager(page, list, slice);
+      this.shelf = { rows: rows, statusMap: statusMap, list: list, pager: pager };
+      this.paintShelf();
     }).catch((error) => {
       /* Nie stumm bei "…" stehen bleiben: Dann weiß niemand, ob noch
          etwas kommt. Lieber sagen, was klemmt - das hilft auch beim
@@ -523,15 +527,101 @@ class TrisentView extends ItemView {
     });
   }
 
+  /* Die Liste zeichnen, wie Filter und Seite es wollen - ohne den Rest
+     der Seite. Sonst verlöre das Suchfeld bei jedem Buchstaben den
+     Eingabefokus. */
+  paintShelf() {
+    const shelf = this.shelf;
+    if (!shelf || !this.contentEl.contains(shelf.list)) return;
+    const { list, pager, statusMap } = shelf;
+    list.empty();
+    pager.empty();
+
+    const filter = { query: this.shelfQuery, tags: this.shelfTags };
+    const filtering = Boolean(this.shelfQuery.trim()) || this.shelfTags.length > 0;
+
+    /* Ein kaputtes oder halb angekommenes Paket hat keinen verlässlichen
+       Titel und keine Tags - es steht nur da, solange nicht gefiltert
+       wird. */
+    const found = shelf.rows.filter((row) => row.entry.ok
+      ? matchesText({
+        title: row.entry.data.title || row.entry.folder.name,
+        subtitle: row.entry.data.titleTranslation,
+        tags: row.tags
+      }, filter)
+      : !filtering);
+
+    if (found.length === 0) {
+      list.createDiv({ cls: 'trisent-shelf-none', text: 'No text matches this filter.' });
+      return;
+    }
+
+    /* Seitenweise: Bei vielen Texten ist eine lange Liste keine
+       Übersicht mehr. */
+    const slice = pageOf(found, this.shelfAt, SHELF_PAGE);
+    this.shelfAt = slice.page;
+
+    for (const row of slice.items) {
+      this.renderPackageRow(list, row.entry, statusMap, row.stats);
+    }
+    this.renderShelfPager(pager, slice);
+  }
+
+  /* Suchfeld und Tags über der Liste. Die Tags untereinander mit ODER,
+     zusammen mit dem Suchwort mit UND. */
+  renderShelfFilter(page, language) {
+    const texts = this.reader.plugin.learning.texts;
+    const known = texts ? texts.allTags(language) : [];
+
+    /* Ein gewählter Tag, den es nicht mehr gibt (gelöscht), filtert
+       nicht weiter - sonst stünde eine leere Liste da, ohne dass man
+       sähe, warum. */
+    this.shelfTags = this.shelfTags.filter((tag) => hasTag(known, tag));
+
+    const bar = page.createDiv({ cls: 'trisent-shelf-filter' });
+
+    const search = bar.createDiv({ cls: 'trisent-shelf-search' });
+    setIcon(search.createSpan({ cls: 'trisent-shelf-search-icon' }), 'search');
+    const input = search.createEl('input', {
+      cls: 'trisent-shelf-search-input',
+      attr: { type: 'search', placeholder: 'Search titles', enterkeyhint: 'search' }
+    });
+    input.value = this.shelfQuery;
+    input.addEventListener('input', () => {
+      this.shelfQuery = input.value;
+      this.shelfAt = 0;
+      this.paintShelf();
+    });
+
+    if (known.length === 0) return;
+
+    const chips = bar.createDiv({ cls: 'trisent-shelf-tags' });
+    for (const tag of known) {
+      const chip = chips.createEl('button', {
+        cls: 'trisent-shelf-tag' + (hasTag(this.shelfTags, tag) ? ' is-on' : ''),
+        text: '#' + tag
+      });
+      chip.addEventListener('click', () => {
+        const on = hasTag(this.shelfTags, tag);
+        this.shelfTags = on
+          ? this.shelfTags.filter((own) => tagKey(own) !== tagKey(tag))
+          : this.shelfTags.concat([tag]);
+        chip.toggleClass('is-on', !on);
+        this.shelfAt = 0;
+        this.paintShelf();
+      });
+    }
+  }
+
   /* Blättern - dasselbe Knopfpaar wie in der Lernkartei. Nur da, wenn es
      mehr als eine Seite gibt. */
-  renderShelfPager(page, list, slice) {
+  renderShelfPager(bar, slice) {
     if (slice.pages <= 1) return;
-    const bar = page.createDiv({ cls: 'trisent-pager' });
 
     const step = (to) => {
       this.shelfAt = to;
-      this.render();
+      this.paintShelf();
+      if (this.shelf) this.shelf.list.scrollIntoView({ block: 'start' });
     };
 
     const back = bar.createEl('button', { cls: 'trisent-page-step' });
@@ -1821,7 +1911,11 @@ class TrisentView extends ItemView {
 
   openLanguage(code) {
     this.importReport = null;
-    if (code !== this.languageCode) this.shelfAt = 0;
+    if (code !== this.languageCode) {
+      this.shelfAt = 0;
+      this.shelfQuery = '';
+      this.shelfTags = [];
+    }
     this.screen = 'packages';
     this.languageCode = code;
     this.reader.settings.lastLanguage = code;

@@ -368,6 +368,97 @@
   height: 0.85em;
 }
 
+/* Der Filter über der Liste: Suchwort, darunter die Tags zum Antippen. */
+
+.trisent-shelf-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+
+.trisent-shelf-search {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  align-self: flex-start;
+  width: 16rem;
+  max-width: 100%;
+  padding: 0.12rem 0.6rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: var(--background-primary);
+}
+
+.trisent-shelf-search-icon {
+  display: inline-flex;
+  color: var(--text-faint);
+}
+
+.trisent-shelf-search-icon svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.trisent-view .trisent-shelf-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: auto;
+  line-height: 1.3;
+  padding: 0.12rem 0;
+  border: none;
+  background: transparent;
+  font-family: var(--tri-ui);
+  font-size: 0.78rem;
+  color: var(--text-normal);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-shelf-search-input:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+.trisent-shelf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.trisent-view .trisent-shelf-tag {
+  cursor: pointer;
+  height: auto;
+  line-height: 1.3;
+  font-family: var(--tri-ui);
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 0.16rem 0.6rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-shelf-tag:hover {
+  border-color: var(--tri-accent);
+  color: var(--tri-accent);
+}
+
+.trisent-view .trisent-shelf-tag.is-on {
+  border-color: var(--tri-accent);
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+.trisent-shelf-none {
+  grid-column: 1 / -1;
+  font-family: var(--tri-ui);
+  font-size: 0.85rem;
+  color: var(--text-faint);
+  padding: 0.6rem 0;
+}
+
 /* Die Tags der Person - im Akzent, damit sie sich von den Angaben des
    Pakets (Stufe, Themen) abheben: Die hat sie selbst vergeben. */
 
