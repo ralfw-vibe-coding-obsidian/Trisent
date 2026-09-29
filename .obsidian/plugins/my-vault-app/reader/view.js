@@ -616,6 +616,8 @@ class TrisentView extends ItemView {
         tags: tags,
         known: texts.allTags(language),
         save: (next) => texts.setTags(language, entry.folder, entry.data, next),
+        usage: (tag) => texts.usage(language, tag),
+        remove: (tag) => texts.removeTag(language, tag),
         done: () => this.render()
       });
     };

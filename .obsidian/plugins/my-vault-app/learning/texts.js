@@ -17,7 +17,7 @@
  */
 
 const { TFile, TFolder, normalizePath } = require('obsidian');
-const { tagsOf, allTags } = require('./tags.js');
+const { tagsOf, allTags, tagKey } = require('./tags.js');
 
 const TEXTS_DIR = 'texts';
 const LEGACY_TEXTS_DIR = 'sentences';
@@ -81,9 +81,18 @@ class TextNotes {
   /* Die Tags eines Textes. */
   tags(language, packageFolder) {
     const file = this.fileFor(language, packageFolder);
-    if (!file) return [];
-    if (this.fresh.has(file.path)) return this.fresh.get(file.path);
+    return file ? this.tagsOfFile(file) : [];
+  }
 
+  /* Die Notizen aller Texte einer Sprache. */
+  notesOf(language) {
+    const folder = this.app.vault.getAbstractFileByPath(this.folderPath(language));
+    if (!(folder instanceof TFolder)) return [];
+    return folder.children.filter((child) => child instanceof TFile && child.extension === 'md');
+  }
+
+  tagsOfFile(file) {
+    if (this.fresh.has(file.path)) return this.fresh.get(file.path);
     const fm = this.app.metadataCache.getFileCache(file)?.frontmatter;
     return tagsOf(fm ? fm.tags : null);
   }
@@ -91,20 +100,35 @@ class TextNotes {
   /* Alle Tags, die in einer Sprache vorkommen - die Auswahl im Filter
      und beim Vergeben. */
   allTags(language) {
-    const folder = this.app.vault.getAbstractFileByPath(this.folderPath(language));
-    if (!(folder instanceof TFolder)) return [];
+    return allTags(this.notesOf(language).map((file) => this.tagsOfFile(file)));
+  }
 
-    const lists = [];
-    for (const child of folder.children) {
-      if (!(child instanceof TFile) || child.extension !== 'md') continue;
-      if (this.fresh.has(child.path)) {
-        lists.push(this.fresh.get(child.path));
-        continue;
-      }
-      const fm = this.app.metadataCache.getFileCache(child)?.frontmatter;
-      if (fm) lists.push(fm.tags);
+  /* An wie vielen Texten ein Tag hängt. */
+  usage(language, tag) {
+    const key = tagKey(tag);
+    return this.notesOf(language)
+      .filter((file) => this.tagsOfFile(file).some((own) => tagKey(own) === key))
+      .length;
+  }
+
+  /* Einen Tag aus allen Texten einer Sprache nehmen. Nur der Tag geht -
+     die Notizen und alles andere darin bleiben. Liefert, aus wie vielen
+     Texten er verschwunden ist. */
+  async removeTag(language, tag) {
+    const key = tagKey(tag);
+    let count = 0;
+    for (const file of this.notesOf(language)) {
+      const own = this.tagsOfFile(file);
+      if (!own.some((mine) => tagKey(mine) === key)) continue;
+
+      const rest = own.filter((mine) => tagKey(mine) !== key);
+      this.fresh.set(file.path, rest);
+      await this.app.fileManager.processFrontMatter(file, (fm) => {
+        fm.tags = rest;
+      });
+      count += 1;
     }
-    return allTags(lists);
+    return count;
   }
 
   /* Die Tags eines Textes setzen. Legt die Notiz an, falls nötig. */

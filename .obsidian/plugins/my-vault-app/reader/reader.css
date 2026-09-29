@@ -428,30 +428,94 @@
   color: var(--text-faint);
 }
 
-.modal .trisent-tagger-chip {
+.trisent-tagger-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  overflow: hidden;
+}
+
+.trisent-tagger-chip.is-on {
+  border-color: var(--tri-accent);
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+.modal .trisent-tagger-pick,
+.modal .trisent-tagger-drop,
+.modal .trisent-tagger-yes,
+.modal .trisent-tagger-no {
   cursor: pointer;
   height: auto;
   line-height: 1.3;
   font-family: var(--tri-ui);
   font-size: 0.78rem;
   font-weight: 500;
-  padding: 0.22rem 0.65rem;
-  border: 1px solid var(--background-modifier-border);
-  border-radius: 999px;
+  border: 0;
+  border-radius: 0;
   background: transparent;
-  color: var(--text-muted);
+  color: inherit;
   box-shadow: none;
 }
 
-.modal .trisent-tagger-chip.is-on {
-  border-color: var(--tri-accent);
-  background: var(--tri-accent);
-  color: var(--background-primary);
+.modal .trisent-tagger-pick {
+  padding: 0.22rem 0.2rem 0.22rem 0.65rem;
+}
+
+/* Das "x" ist leiser als der Tag - es ist die seltene Handlung. */
+.modal .trisent-tagger-drop {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.5rem 0.22rem 0.25rem;
+  opacity: 0.55;
+}
+
+.modal .trisent-tagger-drop:hover {
+  opacity: 1;
+}
+
+.trisent-tagger-drop svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Die Rückfrage vor dem Löschen, am Chip selbst. */
+.trisent-tagger-chip.is-asking {
+  border-color: var(--tri-unknown);
+  color: var(--text-normal);
+}
+
+.trisent-tagger-ask {
+  padding: 0.22rem 0.4rem 0.22rem 0.65rem;
+  font-family: var(--tri-ui);
+  font-size: 0.78rem;
+}
+
+.modal .trisent-tagger-yes {
+  padding: 0.22rem 0.5rem;
+  color: var(--tri-unknown);
+  font-weight: 600;
+}
+
+.modal .trisent-tagger-no {
+  padding: 0.22rem 0.65rem 0.22rem 0.4rem;
+  color: var(--text-muted);
+}
+
+/* Das Feld für einen neuen Tag: klein, unter der Liste. */
+.trisent-tagger-add {
+  margin-bottom: 0.4rem;
 }
 
 .modal .trisent-tagger-input {
-  width: 100%;
-  margin-bottom: 0.4rem;
+  width: 12rem;
+  max-width: 100%;
+  height: auto;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  border-radius: 999px;
 }
 
 .trisent-view .trisent-text-row.is-broken,
