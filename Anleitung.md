@@ -48,6 +48,23 @@ Papierkorb, falls du es doch noch brauchst). Was nicht passt, bleibt liegen,
 und du erfährst, warum. Beides steht auch im Logbuch – **Einstellungen →
 Open log**.
 
+## Texte ordnen und finden
+
+Jeder Text kann **Tags** tragen, so viele du willst – etwa `#A1`,
+`#alltag`, `#paul-et-julie`. Auf der Karte eines Textes das kleine
+Tag-Zeichen antippen: Dort stehen alle Tags zum An- und Abwählen, darunter
+ein Feld für einen neuen (mit Enter). Das „x" an einem Tag löscht ihn aus
+allen Texten.
+
+Über der Textliste suchst du im Titel und tippst Tags an. Es gilt:
+**Suchwort UND (ein Tag ODER ein anderer)** – „Paul" mit `#A1` und
+`#alltag` zeigt alle Texte mit „Paul" im Titel, die einen der beiden Tags
+tragen. Mehr als zehn Texte stehen nie auf einer Seite; darunter wird
+geblättert.
+
+Die Tags stehen in der Notiz des Textes im Ordner `texts` – dort kannst du
+sie auch von Hand ändern, und Obsidian kennt sie als ganz normale Tags.
+
 ## Texte selbst verpacken
 
 Die Werkstatt – **Trisent: Packager** – macht aus einem fremdsprachigen Text
