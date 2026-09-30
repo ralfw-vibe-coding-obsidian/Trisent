@@ -29,6 +29,17 @@ class Session {
     this.known = 0;
     this.unknown = 0;
     this.repeats = 0;
+    /* Karten, die schon bewertet sind und nur zum Üben noch einmal
+       kommen. Die Karten selbst, nicht ihre Schlüssel - so bleibt es
+       dieselbe Karte, auch wenn ihr Stand inzwischen gespeichert ist. */
+    this.practising = new Set();
+  }
+
+  /* Liegt gerade eine Karte zum Üben da - schon als "Not yet"
+     festgehalten, nur noch einmal zum Ansehen? */
+  get practice() {
+    const card = this.card;
+    return Boolean(card) && this.practising.has(card);
   }
 
   get card() {
@@ -64,29 +75,43 @@ class Session {
   }
 
   /* Eine Karte bewerten. Liefert, was festzuhalten ist - oder null, wenn
-     nichts festzuhalten ist ("nochmal" ändert keinen Stand).
+     nichts festzuhalten ist.
 
-     "nochmal" legt die Karte ans Ende des Stapels. Sie kommt in dieser
-     Sitzung also wieder, aber nicht sofort - sonst wäre es Raten. */
+     "nochmal" zählt wie "Not yet" - der Stand wird zurückgesetzt - und
+     legt die Karte obendrein ans Ende des Stapels. Sie kommt in dieser
+     Sitzung also wieder, aber nicht sofort, sonst wäre es Raten.
+
+     Kommt sie wieder, ist sie schon festgehalten: Dann gibt es nur noch
+     "nochmal" (wieder ans Ende) oder weiter. Ein "Knew it" fünf Karten
+     später wäre kein Wissen, sondern Gedächtnis für die letzten Minuten -
+     und würde das "Not yet" von eben überschreiben. */
   answer(kind, day) {
     const card = this.card;
     if (!card) return null;
 
     this.revealed = false;
+    this.queue.shift();
 
-    if (kind === 'again') {
-      this.queue.shift();
-      this.queue.push(card);
-      this.repeats++;
+    if (this.practising.has(card)) {
+      if (kind === 'again') {
+        this.queue.push(card);
+        this.repeats++;
+      }
       return null;
     }
 
-    this.queue.shift();
     this.settled++;
     if (kind === 'known') this.known++;
     else this.unknown++;
 
-    return { card: card, state: rate(card, kind, day || today()) };
+    if (kind === 'again') {
+      this.queue.push(card);
+      this.practising.add(card);
+      this.repeats++;
+    }
+
+    const rating = kind === 'again' ? 'unknown' : kind;
+    return { card: card, state: rate(card, rating, day || today()) };
   }
 }
 

@@ -23,7 +23,7 @@ const { filter, page: pageOf, PAGE } = require('./find.js');
    alphabetisch - sonst wechselte die Reihenfolge bei jedem Zeichnen. */
 /* Wie viele Beispielsätze auf der Rückseite stehen. Genug, um zu sehen,
    wie das Wort sich benimmt, wenig genug, um sie noch zu lesen. */
-const EXAMPLES = 5;
+const EXAMPLES = 3;
 
 /* Wie weit der Zeitstrahl nach vorn schaut: heute und 31 Tage. Ein
    Monat - lang genug, dass man einen Berg kommen sieht, kurz genug für
@@ -72,10 +72,6 @@ class DeckView extends ItemView {
     /* Der Streak wird je Sitzung einmal angestoßen, nicht je Karte. */
     this.counted = false;
     this.examples = new Map();
-    /* Ob unter den Beispielsätzen die Grammatik steht. Gilt für die
-       ganze Sitzung: Wer sie bei einer Karte sehen wollte, will sie bei
-       der nächsten meist auch. */
-    this.showGrammar = false;
     /* Der gerade laufende Satz. */
     this.sound = null;
     this.soundButton = null;
@@ -1030,35 +1026,17 @@ class DeckView extends ItemView {
       setIcon(wrong.createSpan(), 'x');
       wrong.createSpan({ text: String(card.wrong) });
     }
-
-    /* Nachsehen, warum ein Wort nicht sitzt - der häufigste Wunsch genau
-       in diesem Moment. Erst nach dem Umdrehen, und als eigenes Zeichen,
-       damit niemand es beim Greifen nach den Knöpfen trifft.
-
-       Die Grammatik erscheint unter den Beispielsätzen, nicht in der
-       Seitenleiste: Dort ist Platz, und auf dem Handy legte sich die
-       Leiste über die Karte. Nur die Grammatik - Wort und Übersetzung
-       stehen ja schon auf der Karte. */
-    const more = facts.createEl('button', {
-      cls: 'trisent-face-more' + (this.showGrammar ? ' is-on' : '')
-    });
-    setIcon(more.createSpan(), 'info');
-    setTooltip(more, 'Grammar of this word');
-    more.addEventListener('click', (event) => {
-      event.stopPropagation();
-      this.showGrammar = !this.showGrammar;
-      more.toggleClass('is-on', this.showGrammar);
-      this.paintGrammar(this.library.languageByCode(this.languageCode), card);
-    });
   }
 
   /* Die Grammatik aus dem Wörterbuch - dasselbe, was die Wortkarte im
-     Reader zeigt, und genauso gezeichnet. */
+     Reader zeigt, und genauso gezeichnet. Nach dem Umdrehen immer, unter
+     den Beispielsätzen: Genau dann will man wissen, warum das Wort so
+     heißt. Wort und Übersetzung stehen schon auf der Karte. */
   paintGrammar(language, card) {
     const slot = this.grammarEl;
     if (!slot) return;
     slot.empty();
-    if (!this.showGrammar || !language || !card) return;
+    if (!language || !card) return;
     if (!this.session || !this.session.revealed) return;
 
     const entry = this.dict.peek(language, card.key);
@@ -1123,11 +1101,19 @@ class DeckView extends ItemView {
       return;
     }
 
-    const buttons = [
-      { kind: 'again', label: 'Again', icon: 'rotate-ccw', cls: 'is-again' },
-      { kind: 'unknown', label: 'Not yet', icon: 'x', cls: 'is-unknown' },
-      { kind: 'known', label: 'Knew it', icon: 'check', cls: 'is-known' }
-    ];
+    /* Eine Karte, die schon als "Not yet" festgehalten ist und nur zum
+       Üben wiederkommt: kein "Knew it" mehr - nur zurücklegen oder
+       weiter. */
+    const buttons = session.practice
+      ? [
+        { kind: 'again', label: 'Again', icon: 'rotate-ccw', cls: 'is-again' },
+        { kind: 'next', label: 'Next', icon: 'arrow-right', cls: 'is-next' }
+      ]
+      : [
+        { kind: 'again', label: 'Again', icon: 'rotate-ccw', cls: 'is-again' },
+        { kind: 'unknown', label: 'Not yet', icon: 'x', cls: 'is-unknown' },
+        { kind: 'known', label: 'Knew it', icon: 'check', cls: 'is-known' }
+      ];
 
     for (const spec of buttons) {
       const button = row.createEl('button', { cls: 'trisent-answer ' + spec.cls });
@@ -1245,7 +1231,9 @@ class DeckView extends ItemView {
       return;
     }
 
-    const keys = { '1': 'again', '2': 'unknown', '3': 'known' };
+    const keys = this.session.practice
+      ? { '1': 'again', '2': 'next', '3': 'next', 'Enter': 'next', ' ': 'next' }
+      : { '1': 'again', '2': 'unknown', '3': 'known' };
     const kind = keys[event.key];
     if (!kind) return;
     event.preventDefault();

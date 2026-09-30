@@ -84,43 +84,58 @@ test('die Bewertung verändert die übergebene Karte nicht', () => {
   is(cards[0].seen, 0, 'Zähler unberührt');
 });
 
-test('nochmal legt die Karte ans Ende, ohne einen Stand zu ändern', () => {
+test('nochmal zählt wie "Not yet" und legt die Karte ans Ende', () => {
   const s = sitzung();
-  is(s.answer('again', HEUTE), null, 'nichts festzuhalten');
+  const erst = s.card;
+  const result = s.answer('again', HEUTE);
+  ok(result !== null, 'es wird festgehalten');
+  is(result.card, erst, 'dieselbe Karte');
+  const wieNichtGewusst = sitzung().answer('unknown', HEUTE);
+  is(JSON.stringify(result.state), JSON.stringify(wieNichtGewusst.state), 'derselbe Stand wie Not yet');
   is(s.card.front, 'deux', 'die nächste kommt zuerst');
-  is(s.settled, 0, 'nichts erledigt');
+  is(s.settled, 1, 'als erledigt gezählt');
+  is(s.unknown, 1, 'als nicht gewusst gezählt');
   is(s.repeats, 1, 'eine Wiederholung');
-  is(s.position, 1, 'der Fortschritt läuft nicht rückwärts');
 
   s.answer('known', HEUTE);
   s.answer('known', HEUTE);
   is(s.card.front, 'un', 'die zurückgelegte kommt wieder');
+  ok(s.practice, 'jetzt nur noch zum Üben');
   ok(!s.done, 'noch nicht fertig');
 });
 
-test('nochmal bei einer einzigen Karte hält die Sitzung offen', () => {
+test('eine Karte zum Üben hält nichts mehr fest', () => {
   const s = sitzung([card('seul')]);
   s.answer('again', HEUTE);
-  is(s.card.front, 'seul', 'dieselbe Karte');
-  ok(!s.done, 'nicht fertig');
-  is(s.total, 1, 'der Umfang wächst nicht');
+  ok(s.practice, 'kommt zum Üben');
+  is(s.answer('known', HEUTE), null, 'ein "Knew it" überschreibt das "Not yet" nicht');
+  ok(s.done, 'danach ist Schluss');
+  is(s.known, 0, 'nicht als gewusst gezählt');
+  is(s.unknown, 1, 'bleibt nicht gewusst');
 });
 
-test('jede Karte kommt genau einmal, auch nach Wiederholungen', () => {
+test('eine Karte zum Üben lässt sich immer wieder zurücklegen', () => {
+  const s = sitzung([card('seul')]);
+  s.answer('again', HEUTE);
+  is(s.answer('again', HEUTE), null, 'nichts festzuhalten');
+  is(s.card.front, 'seul', 'dieselbe Karte');
+  ok(s.practice, 'weiter nur zum Üben');
+  is(s.repeats, 2, 'zweimal zurückgelegt');
+  is(s.settled, 1, 'einmal erledigt');
+  is(s.total, 1, 'der Umfang wächst nicht');
+  is(s.position, 1, 'der Fortschritt läuft nicht über');
+});
+
+test('jede Karte wird genau einmal bewertet, auch nach Wiederholungen', () => {
   const s = sitzung();
-  const gesehen = [];
+  const bewertet = [];
   let schutz = 0;
   while (!s.done && schutz++ < 50) {
     const name = s.card.front;
-    /* "un" einmal zurücklegen, dann beantworten. */
-    if (name === 'un' && s.repeats === 0) {
-      s.answer('again', HEUTE);
-      continue;
-    }
-    gesehen.push(name);
-    s.answer('known', HEUTE);
+    const kind = name === 'un' && !s.practice ? 'again' : 'known';
+    if (s.answer(kind, HEUTE)) bewertet.push(name);
   }
-  is(gesehen.sort(), ['deux', 'drei', 'un'], 'alle genau einmal bewertet');
+  is(bewertet.sort(), ['deux', 'drei', 'un'], 'alle genau einmal festgehalten');
   is(s.settled, 3, 'drei erledigt');
 });
 
