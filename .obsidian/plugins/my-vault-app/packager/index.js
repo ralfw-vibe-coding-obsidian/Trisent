@@ -2627,7 +2627,10 @@ class Packager {
               said.push('Left alone because you changed them: ' + result.kept.join(', ') +
                 ' - the new version is beside them.');
             }
-            if (!said.length) said.push('Nothing to fetch. Add a language first.');
+            if (!said.length) {
+              said.push('The workshop has no languages yet - they are separate from the ones in the reader. ' +
+                'Add one below, or simply start a text: its rules and recipes come along by themselves.');
+            }
             new Notice(said.join(' '), 15000);
             if (result.updated.length || result.kept.length) {
               await log(this.plugin, 'Packager', 'Rules and recipes fetched. ' + said.join(' '));
@@ -2640,7 +2643,86 @@ class Packager {
         })
       );
 
+    this.addLanguageSetting(containerEl);
     this.addVoiceSettings(containerEl);
+  }
+
+  /* Eine Sprache für die Werkstatt vorbereiten, bevor es einen Text gibt.
+
+     Die Werkstatt hat ihre eigenen Sprachen, getrennt von denen der
+     Bibliothek - sie schaut dort nicht hinein. In einer neuen Vault kennt
+     sie also keine, auch wenn die Person im Reader schon welche angelegt
+     hat. Meist ist das egal: Mit dem ersten Text einer Sprache kommen
+     Hausregeln und Bauplan von selbst. Wer sie vorher sehen oder anpassen
+     will, legt die Sprache hier an. */
+  addLanguageSetting(containerEl) {
+    const here = this.workshopLanguages();
+    const offered = KNOWN_LANGUAGES.filter((entry) => here.indexOf(entry.code) < 0);
+    let chosen = offered.length > 0 ? offered[0].code : '';
+
+    const setting = new Setting(containerEl)
+      .setName('Languages in the workshop')
+      .setDesc(this.languagesDesc(here));
+
+    if (offered.length === 0) return;
+
+    let picker = null;
+    setting
+      .addDropdown((dropdown) => {
+        picker = dropdown;
+        for (const entry of offered) dropdown.addOption(entry.code, entry.flag + ' ' + entry.name);
+        dropdown.setValue(chosen);
+        dropdown.onChange((value) => { chosen = value; });
+      })
+      .addButton((button) =>
+        button.setButtonText('Add').onClick(async () => {
+          if (!chosen) return;
+          button.setButtonText('Adding…');
+          try {
+            await this.prepareLanguage(chosen);
+            const name = (KNOWN_LANGUAGES.find((entry) => entry.code === chosen) || {}).name || chosen.toUpperCase();
+            new Notice(name + ' is ready in the workshop, with its house rules and word recipe.', 10000);
+            await log(this.plugin, 'Packager', name + ' added to the workshop, with house rules and word recipe.');
+
+            /* Die Sprache aus der Auswahl nehmen und die Beschreibung
+               nachziehen - ohne die ganze Einstellungsseite neu zu bauen. */
+            const option = Array.from(picker.selectEl.options).find((one) => one.value === chosen);
+            if (option) option.remove();
+            chosen = picker.selectEl.value;
+            setting.setDesc(this.languagesDesc(this.workshopLanguages()));
+          } catch (error) {
+            console.error('Trisent packager', error);
+            new Notice(String(error.message || error), 10000);
+          }
+          button.setButtonText('Add');
+        })
+      );
+  }
+
+  languagesDesc(here) {
+    return (here.length > 0
+      ? 'In the workshop now: ' + here.map((code) => code.toUpperCase()).join(', ') + '. '
+      : 'None yet - the workshop keeps its own, separate from the reader. ') +
+      'A language also appears by itself with its first text.';
+  }
+
+  /* Die Sprachen, die die Werkstatt hat: ihre Sprachordner. */
+  workshopLanguages() {
+    const root = this.folder(this.rootPath);
+    if (!root) return [];
+    return root.children
+      .filter((child) => child instanceof TFolder && /^[a-z]{2,3}$/i.test(child.name))
+      .map((child) => child.name.toLowerCase())
+      .sort();
+  }
+
+  /* Sprachordner anlegen und Hausregeln samt Bauplan holen - dasselbe, was
+     der erste Text einer Sprache sonst nebenbei erledigt. */
+  async prepareLanguage(code) {
+    await this.ensureFolder(this.rootPath);
+    await this.ensureFolder(this.languagePath(code));
+    await this.ensureRules(code);
+    await this.ensureRecipe(code);
   }
 
   /* Ton. Der Schlüssel bleibt hier; die Stimmen sind eine Liste, weil man

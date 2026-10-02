@@ -203,11 +203,13 @@ ElevenLabs. Der Schlüssel bleibt auf dem Rechner und kommt nie in ein Paket.
 Wie viele Aufnahmen das ElevenLabs-Abo gleichzeitig zulässt, merkt der
 Packager selbst.
 
-**6. Hausregeln und Baupläne holen** *(optional)*
-**Rules and recipes → Fetch** holt die aktuellen Fassungen aus diesem
-Repository. Beim ersten Text einer Sprache geschieht das ohnehin von selbst;
-später bringt es Verbesserungen, ohne zu überschreiben, was man selbst
-geändert hat.
+**6. Hausregeln und Baupläne** *(optional)*
+Die Werkstatt hat ihre **eigenen Sprachen**, getrennt von denen im Reader.
+Mit dem ersten Text einer Sprache legt sie die Sprache an und holt Hausregeln
+und Bauplan aus diesem Repository – von selbst. Wer sie vorher ansehen oder
+anpassen will, legt die Sprache unter **Languages in the workshop → Add** an.
+**Rules and recipes → Fetch** holt später die aktuellen Fassungen für alle
+Sprachen der Werkstatt, ohne zu überschreiben, was man selbst geändert hat.
 
 ### Texte in Obsidian erzeugen (optional): Claudian
 
