@@ -49,12 +49,16 @@ class TranslatorView extends ItemView {
   }
 
   async onClose() {
+    window.clearTimeout(this.typingTimer);
     if (this.speech) this.speech.stop();
   }
 
+  /* Jeder Text fängt mit der Muttersprache als Vorlage an - in die
+     Fremdsprache schreiben ist das eigentliche Üben. Umschalten gilt für
+     den Text, den man gerade vor sich hat, und wird nicht gemerkt. */
   get direction() {
-    const stored = this.translator.settings.direction;
-    return DIRECTIONS.some((d) => d.id === stored) ? stored : 'intoForeign';
+    const chosen = this.chosenDirection;
+    return DIRECTIONS.some((d) => d.id === chosen) ? chosen : 'intoForeign';
   }
 
   render() {
@@ -200,6 +204,7 @@ class TranslatorView extends ItemView {
     row.addEventListener('click', () => {
       this.screen = 'text';
       this.packagePath = entry.folder.path;
+      this.chosenDirection = null;
       this.countToday(language);
       this.render();
     });
@@ -240,6 +245,7 @@ class TranslatorView extends ItemView {
      eingezogen, sonst stünde man immer vor einer halb leeren Seite. */
   keepVisible(block, field) {
     field.addEventListener('focus', () => {
+      window.clearTimeout(this.typingTimer);
       if (this.scrollEl) this.scrollEl.addClass('is-typing');
       /* Die Tastatur fährt herein; erst danach stimmen die Maße. */
       window.setTimeout(() => {
@@ -247,9 +253,23 @@ class TranslatorView extends ItemView {
       }, 350);
     });
 
+    /* Den Platz erst etwas später einziehen. Auf dem Handy verlässt der
+       Tipp auf "Check" zuerst das Feld - schrumpfte die Seite sofort,
+       rutschte der Knopf unter dem Finger weg, und der Tipp ginge ins
+       Leere. Man musste zweimal tippen. */
     field.addEventListener('blur', () => {
-      if (this.scrollEl) this.scrollEl.removeClass('is-typing');
+      window.clearTimeout(this.typingTimer);
+      this.typingTimer = window.setTimeout(() => {
+        if (this.scrollEl) this.scrollEl.removeClass('is-typing');
+      }, 400);
     });
+  }
+
+  /* Ein Knopf neben dem Feld soll beim ersten Tipp wirken: Das Feld
+     behält den Fokus, bis der Klick angekommen ist - nichts verschiebt
+     sich vorher. */
+  keepFocus(button) {
+    button.addEventListener('mousedown', (event) => event.preventDefault());
   }
 
   sentencesOf(data) {
@@ -310,10 +330,9 @@ class TranslatorView extends ItemView {
         cls: 'trisent-direction' + (on ? ' is-on' : ''),
         text: this.label(language, direction.id)
       });
-      button.addEventListener('click', async () => {
+      button.addEventListener('click', () => {
         if (on) return;
-        this.translator.settings.direction = direction.id;
-        await this.translator.saveSettings();
+        this.chosenDirection = direction.id;
         this.render();
       });
     }
@@ -343,6 +362,7 @@ class TranslatorView extends ItemView {
 
     const row = block.createDiv({ cls: 'trisent-task-row' });
     const check = row.createEl('button', { cls: 'trisent-check', text: 'Check' });
+    this.keepFocus(check);
 
     /* Einsprechen statt tippen. Eines von beiden - wer redet, tippt nicht,
        und wer getippt hat, redet nicht mehr in dasselbe Feld hinein. */
@@ -424,6 +444,9 @@ class TranslatorView extends ItemView {
         field.focus();
         return;
       }
+
+      /* Jetzt darf die Tastatur gehen - der Tipp ist angekommen. */
+      field.blur();
 
       check.setAttr('disabled', 'true');
       check.setText('Checking…');

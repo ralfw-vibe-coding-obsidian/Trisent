@@ -13,8 +13,6 @@ const { SentenceKnowledge } = require('./sentences.js');
 const { TranslatorView, VIEW_TYPE, RIBBON_ICON } = require('./view.js');
 
 const DEFAULTS = {
-  /* In welche Richtung geübt wird. Die schwerere ist die Vorgabe. */
-  direction: 'intoForeign',
   lastLanguage: null,
   /* Der Schlüssel der Person für die Prüfung - getrennt von dem, mit dem
      der Packager vertont. Der eine bezahlt das Üben, der andere das
