@@ -21,6 +21,10 @@ const { ItemView, Notice, setIcon, setTooltip } = require('obsidian');
 const { SORTS, compareItems, frequencies } = require('../learning/marks.js');
 const { fold } = require('../learning/tags.js');
 const { page: pageOf } = require('../flashcards/find.js');
+/* Die Herkunft eines Wortes trägt das Zeichen des Werkzeugs - dasselbe
+   wie am Rand. Von dort geholt, damit es nie auseinanderläuft. */
+const { RIBBON_ICON: READER_ICON } = require('../reader/view.js');
+const { RIBBON_ICON: TRANSLATOR_ICON } = require('../translator/view.js');
 
 const VIEW_TYPE = 'trisent-index-view';
 const RIBBON_ICON = 'bookmark';
@@ -29,8 +33,8 @@ const RIBBON_ICON = 'bookmark';
 const PAGE = 20;
 
 const ORIGIN = {
-  reader: { icon: 'book-open', label: 'Noticed while reading' },
-  translator: { icon: 'pen-line', label: 'Noticed while translating' }
+  reader: { icon: READER_ICON, label: 'Noticed while reading' },
+  translator: { icon: TRANSLATOR_ICON, label: 'Noticed while translating' }
 };
 
 /* "9 Oct" - in der Zeit des Ortes, an dem man gerade ist. */
