@@ -1,62 +1,80 @@
 "use strict";
 
 /*
- * Die Übersetzung prüfen lassen.
+ * Die Übersetzung prüfen lassen - in zwei Anfragen.
  *
- * Der entscheidende Punkt: Es wird auf SINN verglichen, nicht auf Wortlaut.
- * Zu jedem Satz gibt es eine Musterlösung - aber sie ist eine richtige
- * Antwort, nicht die richtige. Eine Prüfung, die auf ihr besteht, lehnt
- * ständig Gutes ab, und dann übt niemand mehr.
+ * 1. Das URTEIL: bedeutungsgleich oder nicht. Ein einziges Wort als
+ *    Antwort, ohne Nachdenken - das dauert um eine Sekunde. Danach dreht
+ *    sich die Karte.
+ * 2. Die ERKLÄRUNG: was gut war, was fehlt, welche Formen richtig wären.
+ *    Läuft, während die Person schon das Original liest. Sie bekommt das
+ *    Urteil als feststehend mit und erklärt es nur - so können sich die
+ *    beiden nicht widersprechen.
  *
- * Deshalb bekommt das Modell die Musterlösung ausdrücklich als Beispiel
- * und die Anweisung, gleichwertige Formulierungen gelten zu lassen.
+ * Wortgleiche Antworten brauchen keins von beiden; das entscheidet die
+ * Ansicht selbst (practice.js, isExact).
+ *
+ * Geprüft wird auf SINN, nicht auf Wortlaut. Die Musterlösung ist eine
+ * richtige Antwort, nicht die richtige - eine Prüfung, die auf ihr
+ * besteht, lehnt ständig Gutes ab, und dann übt niemand mehr.
+ *
+ * Die Modelle stehen fest und sind keine Einstellung. Ausgesucht im
+ * Oktober 2026 an echten Versuchen der Person, zweimal je 13 Sätze mit
+ * Grenzfällen (Tippfehler, falsche Endung, fehlende Verneinung, andere
+ * Zeit, Synonym):
+ *   - Urteil: qwen3.8-flash - 26 von 26, knapp eine Sekunde. Das zuvor
+ *     eingestellte gemini-flash traf genauso, brauchte aber 3 bis 15
+ *     Sekunden, weil es vor jeder Antwort nachdenkt - für "bedeutet das
+ *     dasselbe?" bei einem Satz braucht es das nicht.
+ *   - Erklärung: gpt-6-luna - nannte die Fehler genauer als qwen (das
+ *     einen fehlenden Buchstaben erfand, wo einer zu viel war), in ein bis
+ *     drei Sekunden.
+ * Beide kosten je Satz Bruchteile eines Hundertstelcents.
  */
 
 const { requestUrl } = require('obsidian');
 
 const ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
+const JUDGE_MODEL = 'qwen/qwen3.8-flash';
+const EXPLAIN_MODEL = 'openai/gpt-6-luna';
 
-const SYSTEM = [
-  'You judge a language learner\'s translation of a single sentence.',
+const JUDGE = [
+  'You judge a language learner\'s translation of one sentence.',
   '',
-  'You are given the sentence they had to translate, one correct reference',
-  'translation, and what they wrote.',
+  'Judge MEANING only. The reference is one correct translation, not the',
+  'only one: accept other word order, synonyms that fit the situation,',
+  'contractions and any phrasing a native speaker would consider equivalent.',
   '',
-  'Judge MEANING, not wording. The reference is ONE correct translation, not',
-  'the only one. Accept different word order, synonyms, a different register,',
-  'a contraction instead of a full form, and any other phrasing a native',
-  'speaker would consider equivalent.',
+  'Ignore capitalisation, accents, punctuation, quotation marks and spelling',
+  'slips. A misspelled word counts as the word the learner clearly meant,',
+  'even if the slip happens to spell a different word ("mois" for "moi").',
+  'A grammar slip that leaves the meaning intact (a wrong adjective ending,',
+  'a wrong article) is not wrong either.',
   '',
-  'Count it as wrong only when the meaning differs, something essential is',
-  'missing, or something was added that is not in the original.',
+  'It is wrong only if the meaning differs: something missing, added, or',
+  'changed - a different tense, number, person, or a negation that changes',
+  'what is said.',
   '',
-  'Spelling slips, missing or wrong accents and capitalisation do NOT make it',
-  'wrong - the learner often speaks the answer, and none of that survives',
-  'dictation. Mention accents and spelling as ISSUE lines. A wrong tense,',
-  'wrong number or wrong gender that changes the meaning DOES make it wrong.',
+  'Answer with exactly one word: correct or wrong.'
+].join('\n');
+
+const EXPLAIN = [
+  'A language learner translated one sentence. Whether it counts as correct',
+  'has already been decided; it is given below. Do not change it - explain it.',
   '',
-  'Say NOTHING about quotation marks, punctuation, capitalisation or other',
-  'typographic conventions - not in NOTE, not as an ISSUE. Different quote',
-  'styles (« » " " „ ") are never worth a remark.',
-  '',
-  'Answer in plain lines, nothing else, exactly in this shape:',
-  '',
-  'VERDICT: correct',
+  'Answer in plain lines, exactly in this shape:',
   'NOTE: one or two short sentences addressed to the learner',
-  'ISSUE: a small flaw that did not make it wrong',
-  'ISSUE: another one',
+  'ISSUE: a concrete flaw, with the right form',
   '',
-  'VERDICT is either "correct" or "wrong". NOTE says what was good, or what',
-  'went wrong and why - never just repeat the reference. ISSUE lines are',
-  'optional; leave them out when there is nothing to mention.',
+  'If it was judged correct: praise briefly and sincerely, then list',
+  'spelling slips, missing accents or small grammar slips as ISSUE lines.',
+  'If it was judged wrong: say what is missing or changes the meaning, and',
+  'keep them going ("almost there", "the hard part is right"). ISSUE lines',
+  'name each problem with the right form.',
   '',
-  'The NOTE is spoken to someone practising on their own. Be warm and',
-  'appreciative, and a little encouraging: praise a good translation briefly',
-  'and sincerely; when it is wrong, name what is missing or off, and say',
-  'something that keeps them going ("almost there", "the hard part is',
-  'right"). Never condescending, never gushing, no exclamation-mark spam.',
-  '',
-  'Do not use JSON, quotes around the values, markdown, or a code fence.'
+  'Say nothing about capitalisation, punctuation or quotation marks.',
+  'Be warm and appreciative, never condescending, never gushing, no',
+  'exclamation-mark spam. No JSON, no markdown, no code fence.'
 ].join('\n');
 
 /* Sprachnamen, damit das Modell weiß, worum es geht. */
@@ -69,28 +87,35 @@ function nameOf(code) {
   }
 }
 
-async function checkTranslation(settings, task, onCost) {
-  const key = (settings.openRouterKey || '').trim();
-  if (!key) {
-    throw new Error('No OpenRouter key yet. Put one in the Trisent settings.');
-  }
-
+function describeTask(task) {
   const from = nameOf(task.fromLanguage);
   const to = nameOf(task.toLanguage);
-
-  const user = [
+  return [
     'Task: translate from ' + from + ' into ' + to + '.',
-    '',
     from + ' sentence: ' + task.prompt,
     'Reference translation in ' + to + ': ' + task.reference,
-    'The learner wrote: ' + task.answer,
-    '',
-    'Write "note" and "issues" in ' + nameOf(task.feedbackLanguage) + '.'
+    'The learner wrote: ' + task.answer
   ].join('\n');
+}
 
-  let response;
-  try {
-    response = await requestUrl({
+/* Eine Anfrage an OpenRouter. Ohne Nachdenken - schaltet ein Anbieter
+   das nicht ab, wird es eben ohne diesen Wunsch noch einmal versucht. */
+async function ask(settings, model, system, user, maxTokens, onCost) {
+  const key = (settings.openRouterKey || '').trim();
+  if (!key) throw new Error('No OpenRouter key yet. Put one in the Trisent settings.');
+
+  const send = (withoutThinking) => {
+    const body = {
+      model: model,
+      temperature: 0,
+      max_tokens: maxTokens,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: user }
+      ]
+    };
+    if (withoutThinking) body.reasoning = { enabled: false };
+    return requestUrl({
       url: ENDPOINT,
       method: 'POST',
       throw: false,
@@ -100,15 +125,16 @@ async function checkTranslation(settings, task, onCost) {
         'HTTP-Referer': 'https://obsidian.md',
         'X-Title': 'Trisent'
       },
-      body: JSON.stringify({
-        model: settings.model,
-        temperature: 0,
-        messages: [
-          { role: 'system', content: SYSTEM },
-          { role: 'user', content: user }
-        ]
-      })
+      body: JSON.stringify(body)
     });
+  };
+
+  let response;
+  try {
+    response = await send(true);
+    if (response.status === 400 && /reasoning/i.test(JSON.stringify(response.json || {}))) {
+      response = await send(false);
+    }
   } catch (error) {
     throw new Error('Could not reach OpenRouter: ' + String(error.message || error));
   }
@@ -120,7 +146,6 @@ async function checkTranslation(settings, task, onCost) {
   }
 
   const body = response.json || {};
-
   /* OpenRouter legt die tatsächlichen Kosten jeder Anfrage bei. */
   if (onCost && body.usage && typeof body.usage.cost === 'number') onCost(body.usage.cost);
 
@@ -128,53 +153,52 @@ async function checkTranslation(settings, task, onCost) {
     ? body.choices[0].message.content
     : '';
   if (!text) throw new Error('OpenRouter sent an empty answer.');
-
-  return readVerdict(text);
+  return String(text);
 }
 
-/* Die Antwort lesen.
+/* Das Urteil: true, wenn die Bedeutung erhalten ist. */
+async function judgeTranslation(settings, task, onCost) {
+  const text = await ask(settings, JUDGE_MODEL, JUDGE, describeTask(task), 10, onCost);
+  const word = text.trim().toLowerCase();
+  if (/^correct\b/.test(word)) return true;
+  if (/^wrong\b/.test(word)) return false;
+  /* Etwas anderes als die beiden Wörter: nicht als richtig zählen, aber
+     auch nicht stumm - dann steht in der Erklärung, was los war. */
+  return /\bcorrect\b/.test(word) && !/\bwrong\b/.test(word);
+}
 
-   Zeilen statt JSON, und zwar aus einem konkreten Grund: Sobald in der
+/* Die Erklärung zu einem feststehenden Urteil. */
+async function explainTranslation(settings, task, correct, onCost) {
+  const user = describeTask(task) + '\n'
+    + 'Judged: ' + (correct ? 'correct' : 'wrong') + '\n'
+    + 'Write NOTE and ISSUE lines in ' + nameOf(task.feedbackLanguage) + '.';
+  const text = await ask(settings, EXPLAIN_MODEL, EXPLAIN, user, 400, onCost);
+  return readExplanation(text);
+}
+
+/* Zeilen statt JSON, und zwar aus einem konkreten Grund: Sobald in der
    Rückmeldung Anführungszeichen vorkommen - und beim Übersetzen kommen sie
-   vor, es geht ja oft genau um « » gegen " " -, schreiben Modelle sie
-   ungeschützt mitten in die Zeichenkette und das JSON ist kaputt. Bei
-   Zeilen gibt es nichts zu schützen.
-
-   Schickt ein Modell trotzdem JSON, wird auch das noch gelesen. */
-function readVerdict(text) {
+   vor -, schreiben Modelle sie ungeschützt mitten in die Zeichenkette,
+   und das JSON ist kaputt. Bei Zeilen gibt es nichts zu schützen. */
+function readExplanation(text) {
   const cleaned = String(text)
     .replace(/^\s*```(?:json|text)?/i, '')
     .replace(/```\s*$/, '')
     .trim();
 
-  const lines = readLines(cleaned);
-  if (lines) return lines;
-
-  const json = readJson(cleaned);
-  if (json) return json;
-
-  /* Immer noch etwas anderes? Dann wenigstens den Text zeigen, statt der
-     Person eine Fehlermeldung vorzusetzen, mit der sie nichts anfangen
-     kann. Als "richtig" gilt es dabei nicht. */
-  return { correct: false, note: cleaned, issues: [], unclear: true };
-}
-
-function readLines(text) {
-  let verdict = null;
   let note = '';
   const issues = [];
   let last = null;
 
-  for (const raw of text.split('\n')) {
+  for (const raw of cleaned.split('\n')) {
     const line = raw.trim();
     if (!line) continue;
 
-    const match = line.match(/^(VERDICT|NOTE|ISSUE)\s*:\s*(.*)$/i);
+    const match = line.match(/^(NOTE|ISSUE)\s*:\s*(.*)$/i);
     if (match) {
       const field = match[1].toUpperCase();
       const value = match[2].trim();
-      if (field === 'VERDICT') verdict = /^correct\b/i.test(value);
-      else if (field === 'NOTE') note = value;
+      if (field === 'NOTE') note = value;
       else if (value) issues.push(value);
       last = field;
       continue;
@@ -182,33 +206,11 @@ function readLines(text) {
 
     /* Eine Fortsetzungszeile gehört zu dem, was davor stand. */
     if (last === 'NOTE') note = note ? note + ' ' + line : line;
-    else if (last === 'ISSUE' && issues.length > 0) {
-      issues[issues.length - 1] += ' ' + line;
-    }
+    else if (last === 'ISSUE' && issues.length > 0) issues[issues.length - 1] += ' ' + line;
+    else note = note ? note + ' ' + line : line;
   }
 
-  if (verdict === null) return null;
-  return { correct: verdict, note: note, issues: issues };
+  return { note: note, issues: issues };
 }
 
-function readJson(text) {
-  const start = text.indexOf('{');
-  const end = text.lastIndexOf('}');
-  if (start < 0 || end <= start) return null;
-
-  let data;
-  try {
-    data = JSON.parse(text.slice(start, end + 1));
-  } catch (error) {
-    return null;
-  }
-  if (typeof data.correct !== 'boolean') return null;
-
-  return {
-    correct: data.correct,
-    note: typeof data.note === 'string' ? data.note : '',
-    issues: Array.isArray(data.issues) ? data.issues.filter((i) => typeof i === 'string') : []
-  };
-}
-
-module.exports = { checkTranslation, readVerdict };
+module.exports = { judgeTranslation, explainTranslation, readExplanation, JUDGE_MODEL, EXPLAIN_MODEL };

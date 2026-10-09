@@ -23,10 +23,10 @@
 const { ItemView, Notice, normalizePath, setIcon, setTooltip } = require('obsidian');
 const { matchesText, hasTag, tagKey } = require('../learning/tags.js');
 const { page: pageOf } = require('../flashcards/find.js');
-const { checkTranslation } = require('./check.js');
+const { judgeTranslation, explainTranslation } = require('./check.js');
 const { Dictation } = require('./speech.js');
 const {
-  SIZES, isArchived, hardness, compareHardness, resultOf, storyItems, Draw, Session, MARK
+  SIZES, isArchived, hardness, compareHardness, isExact, storyItems, Draw, Session, MARK
 } = require('./practice.js');
 
 const VIEW_TYPE = 'trisent-translator-view';
@@ -696,31 +696,46 @@ class TranslatorView extends ItemView {
       check.setText('Checking…');
       result.empty();
 
-      let verdict;
-      try {
-        verdict = await checkTranslation(this.translator.settings, {
-          prompt: item.sentence.fluent,
-          reference: item.sentence.source,
-          answer: answer,
-          fromLanguage: entry.data.fluentLanguage,
-          toLanguage: entry.data.language,
-          feedbackLanguage: entry.data.glossLanguage || entry.data.fluentLanguage
-        }, (cost) => this.translator.addCost(cost));
-      } catch (error) {
-        /* Die Prüfung kam nicht zustande - kein Versuch, noch einmal. */
-        result.createDiv({ cls: 'trisent-tr-error', text: String(error.message || error) });
-        field.removeAttribute('disabled');
-        check.removeAttribute('disabled');
-        exclude.removeAttribute('disabled');
-        lockForTyping();
-        check.setText('Check');
-        return;
+      const settings = this.translator.settings;
+      const pay = (cost) => this.translator.addCost(cost);
+      const task = {
+        prompt: item.sentence.fluent,
+        reference: item.sentence.source,
+        answer: answer,
+        fromLanguage: entry.data.fluentLanguage,
+        toLanguage: entry.data.language,
+        feedbackLanguage: entry.data.glossLanguage || entry.data.fluentLanguage
+      };
+
+      /* Wortgleich mit dem Original: Da gibt es nichts zu fragen - die
+         Karte dreht sich sofort. */
+      let outcome = 'exact';
+      if (!isExact(answer, item.sentence.source)) {
+        try {
+          outcome = (await judgeTranslation(settings, task, pay)) ? 'correct' : 'wrong';
+        } catch (error) {
+          /* Die Prüfung kam nicht zustande - kein Versuch, noch einmal. */
+          result.createDiv({ cls: 'trisent-tr-error', text: String(error.message || error) });
+          field.removeAttribute('disabled');
+          check.removeAttribute('disabled');
+          exclude.removeAttribute('disabled');
+          lockForTyping();
+          check.setText('Check');
+          return;
+        }
       }
 
-      const outcome = resultOf(verdict.correct, answer, item.sentence.source);
       run.session.record(outcome);
-      this.save(language, item, entry, answer, outcome, verdict);
-      this.turn(below, back, flip, item, entry, answer, outcome, verdict);
+      const number = run.session.results.length;
+
+      /* Die Erklärung kommt nach - die Karte wartet nicht auf sie. */
+      const explained = outcome === 'exact'
+        ? Promise.resolve({ note: '', issues: [] })
+        : explainTranslation(settings, task, outcome !== 'wrong', pay)
+          .catch((error) => ({ note: '', issues: [], failed: String(error.message || error) }));
+
+      this.turn(below, back, flip, item, entry, answer, outcome, explained);
+      this.save(run, language, item, entry, answer, outcome, explained, number);
     };
 
     check.addEventListener('click', run_check);
@@ -798,17 +813,24 @@ class TranslatorView extends ItemView {
   }
 
   /* Festhalten: im Text, im Tagebuch, im Streak. Läuft neben dem
-     Umdrehen her - die Person soll nicht auf die Platte warten. */
-  async save(language, item, entry, answer, outcome, verdict) {
-    const run = this.run;
-    try {
-      await this.records.record(language, entry.folder, entry.data, item.sentence.id, outcome);
+     Umdrehen her - die Person soll nicht auf die Platte warten.
 
-      if (run) {
+     Der Stand des Satzes wird sofort geschrieben. Ins Tagebuch kommt der
+     Versuch, sobald die Erklärung da ist. Die Versuche einer Sitzung
+     reihen sich dabei hintereinander ein: Wer schnell weitertippt, darf
+     keine zweite Sitzungsnotiz bekommen und keine vertauschte
+     Reihenfolge. */
+  save(run, language, item, entry, answer, outcome, explained, number) {
+    this.records.record(language, entry.folder, entry.data, item.sentence.id, outcome)
+      .catch((error) => new Notice('Could not save this attempt: ' + String(error.message || error)));
+
+    run.saving = (run.saving || Promise.resolve()).then(async () => {
+      const verdict = await explained;
+      try {
         if (!run.journalFile) {
           run.journalFile = await this.journal.start(language, run.source, run.session.size);
         }
-        await this.journal.add(run.journalFile, run.session.results.length, {
+        await this.journal.add(run.journalFile, number, {
           prompt: item.sentence.fluent,
           answer: answer,
           reference: item.sentence.source,
@@ -821,16 +843,16 @@ class TranslatorView extends ItemView {
           run.counted = true;
           await this.streak.touch(language);
         }
+      } catch (error) {
+        new Notice('Could not save this attempt: ' + String(error.message || error));
       }
-    } catch (error) {
-      new Notice('Could not save this attempt: ' + String(error.message || error));
-    }
+    });
   }
 
   /* Die Karte umdrehen und darunter das Urteil zeigen. Die Seite wird
      dafür NICHT neu gezeichnet - sonst entstünde die Karte neu und stünde
      ohne Bewegung auf der Rückseite. */
-  turn(below, back, flip, item, entry, answer, outcome, verdict) {
+  turn(below, back, flip, item, entry, answer, outcome, explained) {
     this.renderContext(back, item);
     back.createDiv({ cls: 'trisent-tr-prompt-small', text: item.sentence.fluent });
 
@@ -853,10 +875,25 @@ class TranslatorView extends ItemView {
     setIcon(badge.createSpan(), VERDICT[outcome].icon);
     badge.createSpan({ text: VERDICT[outcome].label });
 
-    if (verdict.note) box.createDiv({ cls: 'trisent-tr-note', text: verdict.note });
-    if (verdict.issues && verdict.issues.length > 0) {
-      const issues = box.createEl('ul', { cls: 'trisent-tr-issues' });
-      for (const issue of verdict.issues) issues.createEl('li', { text: issue });
+    /* Die Erklärung läuft nach. Bis dahin ein ruhiger Platzhalter, damit
+       die Knöpfe darunter nicht springen, wenn sie kommt. */
+    const explanation = box.createDiv({ cls: 'trisent-tr-explanation' });
+    if (outcome === 'exact') {
+      explanation.createDiv({ cls: 'trisent-tr-note', text: 'Word for word — just like the original.' });
+    } else {
+      explanation.createDiv({ cls: 'trisent-tr-waiting', text: 'Looking closer…' });
+      explained.then((verdict) => {
+        if (!explanation.isConnected) return;
+        explanation.empty();
+        if (verdict.note) explanation.createDiv({ cls: 'trisent-tr-note', text: verdict.note });
+        if (verdict.issues && verdict.issues.length > 0) {
+          const issues = explanation.createEl('ul', { cls: 'trisent-tr-issues' });
+          for (const issue of verdict.issues) issues.createEl('li', { text: issue });
+        }
+        if (verdict.failed) {
+          explanation.createDiv({ cls: 'trisent-tr-error', text: 'No explanation this time: ' + verdict.failed });
+        }
+      });
     }
 
     const session = this.run.session;

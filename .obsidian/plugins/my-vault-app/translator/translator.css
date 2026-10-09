@@ -556,6 +556,20 @@
 .trisent-tr-verdict.is-right .trisent-tr-badge,
 .trisent-tr-verdict.is-exact .trisent-tr-badge { color: var(--tri-accent); }
 
+.trisent-tr-explanation {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 1.4rem;
+}
+
+.trisent-tr-waiting {
+  font-family: var(--tri-ui);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-faint);
+}
+
 .trisent-tr-note {
   font-size: 0.9rem;
   line-height: 1.5;
