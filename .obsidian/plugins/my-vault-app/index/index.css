@@ -134,11 +134,12 @@
   box-shadow: none;
 }
 
+/* Die Übersetzung immer unter dem Wort - nicht daneben, sobald Platz
+   ist: Sonst steht sie mal hier, mal dort, und das Auge sucht. */
 .trisent-ix-top {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.2rem 0.6rem;
+  flex-direction: column;
+  gap: 0.1rem;
 }
 
 .trisent-ix-lemma {
