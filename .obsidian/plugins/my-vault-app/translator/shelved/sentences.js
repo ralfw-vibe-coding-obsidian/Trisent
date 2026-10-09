@@ -1,6 +1,16 @@
 "use strict";
 
 /*
+ * AUF EIS GELEGT (Oktober 2026).
+ *
+ * Der alte Translator: ein Text von vorn nach hinten, Satz für Satz, in
+ * beiden Richtungen. Ersetzt durch das Üben in Sitzungen (translator/
+ * view.js, practice.js). Diese Datei wird nicht mehr geladen - sie steht
+ * in keiner Liste in main.js - und bleibt nur zum Nachschlagen liegen.
+ * Die Pfade in ihren require() stimmen hier nicht mehr.
+ */
+
+/*
  * Was die Person über Sätze weiß.
  *
  * Gegenstück zum Wörterbuch: Dort steht, welche Wörter sitzen, hier,

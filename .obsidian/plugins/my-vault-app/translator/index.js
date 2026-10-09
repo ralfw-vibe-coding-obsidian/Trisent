@@ -4,16 +4,21 @@
  * Der Translator als Modul.
  *
  * Gehört zur Learning-Seite und arbeitet im selben Datenbereich wie der
- * Reader: dieselben Pakete, daneben sein eigenes Satzwissen.
+ * Reader: dieselben Pakete. Was die Person beim Übersetzen erlebt, steht
+ * in der Notiz des Textes (records.js), jede Sitzung als eigene Notiz
+ * (journal.js).
  */
 
 const { Setting, Notice } = require('obsidian');
 const { now, dayOf } = require('../core/calendar.js');
-const { SentenceKnowledge } = require('./sentences.js');
+const { Records } = require('./records.js');
+const { Journal } = require('./journal.js');
 const { TranslatorView, VIEW_TYPE, RIBBON_ICON } = require('./view.js');
 
 const DEFAULTS = {
   lastLanguage: null,
+  /* Wie viele Sätze eine Sitzung vorlegt: 5, 7 oder 10. */
+  size: 5,
   /* Der Schlüssel der Person für die Prüfung - getrennt von dem, mit dem
      der Packager vertont. Der eine bezahlt das Üben, der andere das
      Herstellen. */
@@ -32,7 +37,11 @@ class Translator {
     this.plugin = plugin;
     this.app = plugin.app;
     this.library = plugin.learning.library;
-    this.knowledge = new SentenceKnowledge(plugin.app, this.library, plugin.learning.texts);
+    this.records = new Records(plugin.app, plugin.learning.texts);
+    plugin.registerEvent(
+      plugin.app.metadataCache.on('changed', (file) => this.records.forget(file && file.path))
+    );
+    this.journal = new Journal(plugin.app, this.library);
     /* Derselbe Zähler wie im Reader - ein Tag Beschäftigung mit der
        Sprache, egal mit welchem Werkzeug. */
     this.streak = plugin.learning.streak;
@@ -95,7 +104,7 @@ class Translator {
 
   refresh() {
     this.app.workspace.getLeavesOfType(VIEW_TYPE).forEach((leaf) => {
-      if (leaf.view instanceof TranslatorView && leaf.view.screen !== 'text') leaf.view.render();
+      if (leaf.view instanceof TranslatorView && leaf.view.screen !== 'session') leaf.view.render();
     });
   }
 

@@ -184,6 +184,7 @@ Trisent/                  einstellbar, Vorgabe: Trisent
 │   │   ├── notes/           Word notes - Lernstand und Eigenes, eine je Wort
 │   │   ├── flashcards/      die Lernkartei
 │   │   ├── texts/           Text notes - ihre Tags und was sie über die Sätze weiß, eine je Text
+│   │   ├── translations/    eine Notiz je Übersetzungssitzung - Historie und jeder Versuch
 │   │   └── packages/        die Lerntexte: Kopf und Text, ohne Wörterbuch
 │   └── FR/
 ├── packager/             die Seite des Herstellens
