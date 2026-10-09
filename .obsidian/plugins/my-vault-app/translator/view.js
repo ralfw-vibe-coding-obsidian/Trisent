@@ -546,7 +546,7 @@ class TranslatorView extends ItemView {
       return;
     }
     row.addEventListener('click', () => {
-      this.begin(language, entry.data.title || entry.folder.name, [story], new Draw(open));
+      this.begin(language, entry.data.title || entry.folder.name, [story], new Draw(open, { size: this.size }));
     });
   }
 

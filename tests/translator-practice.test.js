@@ -93,15 +93,50 @@ test('jeder Satz bringt bis zu zwei Vorgänger als Zusammenhang mit', () => {
 /* Ein Zufall, der die Reihenfolge stehen lässt. */
 const still = () => 0.9999;
 
-test('kein Satz zweimal, und keiner, der schon als Zusammenhang dastand', () => {
-  const items = p.storyItems('t', saetze(10));
-  /* Rückwärts gelegt: s10 zuerst, dann s9 - aber s9 und s8 standen als
-     Zusammenhang über s10. */
-  const draw = new p.Draw(items.slice().reverse(), { random: still });
+/* Ob irgendeine Karte einen Satz abfragt, der auf einer früheren schon
+   als Zusammenhang dastand. */
+function verraten(keys, items) {
+  const byKey = new Map(items.map((x) => [x.key, x]));
+  const gesehen = new Set();
+  for (const key of keys) {
+    if (gesehen.has(key)) return true;
+    for (const c of byKey.get(key).contextKeys) gesehen.add(c);
+  }
+  return false;
+}
+
+function alle(draw) {
   const keys = [];
   let item;
   while ((item = draw.next())) keys.push(item.key);
-  is(keys, ['t#s10', 't#s7', 't#s4', 't#s1'], 'Zusammenhang wird übersprungen');
+  return keys;
+}
+
+test('eine kurze Geschichte kommt ganz dran - der Reihe nach', () => {
+  const items = p.storyItems('t', saetze(5));
+  const keys = alle(new p.Draw(items, { size: 5 }));
+  is(keys, ['t#s1', 't#s2', 't#s3', 't#s4', 't#s5'], 'alle fünf, früherer vor späterem');
+});
+
+test('nie ein Satz, dessen Lösung eben als Zusammenhang dastand', () => {
+  const items = p.storyItems('t', saetze(30));
+  for (let seed = 1; seed <= 40; seed++) {
+    let x = seed;
+    const random = () => ((x = (x * 9301 + 49297) % 233280) / 233280);
+    const keys = alle(new p.Draw(items, { size: 7, random: random }));
+    ok(keys.length >= 7, 'mindestens die gewählte Zahl verfügbar (Lauf ' + seed + ')');
+    ok(!verraten(keys.slice(0, 7), items), 'nichts verraten (Lauf ' + seed + ')');
+    is(new Set(keys).size, keys.length, 'keiner doppelt (Lauf ' + seed + ')');
+  }
+});
+
+test('der Vorrat nimmt nur, was noch nirgends Zusammenhang war', () => {
+  const items = p.storyItems('t', saetze(6));
+  const draw = new p.Draw(items, { size: 1, random: still });
+  /* Ohne Mischen ist s1 vorgemerkt; der Vorrat ist s2..s6. */
+  is(draw.next().key, 't#s1', 'der vorgemerkte');
+  const rest = alle(draw);
+  ok(!verraten(['t#s1'].concat(rest), items), 'auch aus dem Vorrat nichts verraten');
 });
 
 test('die schwersten: die ersten gemischt, dahinter die nächstschweren der Reihe nach', () => {
@@ -120,7 +155,7 @@ test('die schwersten: die ersten gemischt, dahinter die nächstschweren der Reih
 
 const sitzung = (n, size) =>
   new p.Session(new p.Draw(p.storyItems('t', saetze(n)).filter((x) => x.index % 3 === 0),
-    { random: still }), size);
+    { random: still, size: size }), size);
 
 test('eine Sitzung endet nach der gewählten Zahl', () => {
   const s = sitzung(30, 5);

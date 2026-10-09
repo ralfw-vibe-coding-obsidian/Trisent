@@ -169,37 +169,55 @@ function storyItems(textKey, sentences) {
 
 /* Woraus eine Sitzung zieht.
 
-   Zufällig: alles Übrige gemischt.
-   Die schwersten: die `size` schwersten gemischt - dahinter, falls einer
-   ausgeschlossen wird, die nächstschweren der Reihe nach.
+   Vorgemerkt werden so viele Sätze, wie die Sitzung lang ist:
+   zufällig gemischt - oder die schwersten, untereinander gemischt.
+   Dahinter liegt ein Vorrat (der Rest), falls ein Satz ausgeschlossen
+   wird und ein anderer an seine Stelle treten muss.
 
-   Gezogen wird erst, wenn der nächste Satz gebraucht wird. So kann ein
-   ausgeschlossener Satz einfach durch den nächsten ersetzt werden.
+   Die eine Bedingung: Kein Satz darf abgefragt werden, nachdem er auf
+   einer früheren Karte schon als Zusammenhang dastand - sonst hätte die
+   Person die Lösung eben gelesen. Erfüllt wird sie über die REIHENFOLGE,
+   nicht durch Weglassen: Stehen zwei vorgemerkte Sätze nah beieinander,
+   kommt der frühere zuerst. Weglassen fraß bei kurzen Geschichten fast
+   alles - von fünf Sätzen blieben zwei.
 
-   Kein Satz kommt zweimal, und keiner, der auf einer früheren Karte
-   schon als Zusammenhang dastand - sonst hätte die Person die Lösung
-   eben gelesen. */
+   Bei einer kurzen Geschichte, die ganz drankommt, heißt das: der Reihe
+   nach. Bei einer langen bleibt es zufällig. Aus dem Vorrat wird nur
+   genommen, was noch nirgends als Zusammenhang stand. */
 class Draw {
   constructor(items, options) {
     const settings = options || {};
     const random = settings.random;
-    if (settings.mode === 'hardest') {
-      const size = Math.max(Math.trunc(Number(settings.size) || 0), 0);
-      this.queue = shuffle(items.slice(0, size), random).concat(items.slice(size));
-    } else {
-      this.queue = shuffle(items, random);
-    }
+    const size = Math.max(Math.trunc(Number(settings.size) || 0), 0) || items.length;
+
+    const order = settings.mode === 'hardest' ? items.slice() : shuffle(items, random);
+    this.planned = shuffle(order.slice(0, size), random);
+    this.reserve = order.slice(size);
     this.shown = new Set();
   }
 
   next() {
-    const at = this.queue.findIndex((item) => !this.shown.has(item.key));
-    if (at < 0) {
-      this.queue = [];
-      return null;
+    const waiting = new Set(this.planned.map((item) => item.key));
+
+    /* Der erste vorgemerkte, in dessen Zusammenhang kein anderer
+       vorgemerkter mehr wartet. Den gibt es immer: Der früheste in der
+       Geschichte hat keinen wartenden Vorgänger. */
+    let at = this.planned.findIndex((item) =>
+      !(item.contextKeys || []).some((key) => waiting.has(key) && key !== item.key));
+    if (at < 0 && this.planned.length > 0) at = 0;
+
+    let item = null;
+    if (at >= 0) {
+      item = this.planned.splice(at, 1)[0];
+    } else {
+      const from = this.reserve.findIndex((other) => !this.shown.has(other.key));
+      if (from < 0) {
+        this.reserve = [];
+        return null;
+      }
+      item = this.reserve.splice(from, 1)[0];
     }
-    const item = this.queue[at];
-    this.queue.splice(at, 1);
+
     this.shown.add(item.key);
     for (const key of item.contextKeys || []) this.shown.add(key);
     return item;
