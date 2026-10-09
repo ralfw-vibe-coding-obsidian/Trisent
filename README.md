@@ -9,20 +9,20 @@ noch der Text selbst dasteht. Dazu gibt es den Ton, Satz für Satz gesprochen,
 und das Wort, das gerade klingt, leuchtet mit.
 
 Alles, was man dabei lernt, gehört einem selbst: Lernstand, Wörterbuch,
-Karteikarten und eigene Notizen sind gewöhnliche Notizen in der eigenen Vault.
+gemerkte Wörter und eigene Notizen sind gewöhnliche Notizen in der eigenen Vault.
 Man kann sie lesen, durchsuchen und von Hand ändern, und sie funktionieren
 ohne Netz, auf dem Rechner wie auf dem Handy.
 
 Trisent besteht aus zwei Teilen: dem **Lernen** mit Reader, Translator und
-Lernkartei – und dem **Packager**, der aus beliebigen Texten Lernpakete
-schnürt.
+Index – und dem **Packager**, der aus beliebigen Texten Lernpakete schnürt.
 
 ---
 
 ## Lernen
 
-Drei Werkzeuge, ein gemeinsamer Lernstand. Ein Wort, das man im Reader als
-bekannt markiert, ist auch in der Lernkartei bekannt.
+Drei Werkzeuge, ein gemeinsamer Lernstand und ein gemeinsames Wörterbuch. Ein
+Wort, das man beim Übersetzen auffällig findet, steht danach auch im Reader
+markiert.
 
 ### Reader – lesen und hören
 
@@ -35,6 +35,8 @@ bekannt markiert, ist auch in der Lernkartei bekannt.
 - Jedes Wort hat einen Lernstand: unbekannt, lerne ich, vertraut, bekannt.
   Was bekannt ist, braucht keine Hilfe mehr.
 - Der Ton spielt Satz für Satz, auf Wunsch langsamer.
+- Ein Wort, das einem auffällt, nimmt man mit dem **Lesezeichen** auf der
+  Wortkarte in seinen **Index**; im Text trägt es dann einen kleinen Ring.
 - Texte lassen sich mit **Tags** ordnen und durchsuchen.
 - Neue Texte kommen über **Import** in die Bibliothek (siehe unten).
 
@@ -42,20 +44,31 @@ bekannt markiert, ist auch in der Lernkartei bekannt.
 
 *Befehl: **Trisent: Translation***
 
-- Sätze aus den eigenen Texten übersetzen, in beide Richtungen.
-- Tippend oder gesprochen.
-- Eine KI prüft die Übersetzung und sagt, was nicht stimmt. Dafür braucht der
-  Translator einen Schlüssel von [OpenRouter](https://openrouter.ai); was das
-  kostet, steht in den Einstellungen.
+- Übersetzen üben in **Sitzungen** von 5, 7 oder 10 Sätzen – zufällig aus einer
+  Geschichte oder die schwierigsten aus allen.
+- Jeder Satz kommt mit den zwei Sätzen davor als Zusammenhang. Man schreibt
+  oder spricht ihn **in der Sprache, die man lernt**.
+- Nach **Check** dreht sich die Karte: das Original zum Anhören, die eigene
+  Antwort und das Urteil. Getippt zählt auch die Grammatik, gesprochen nur der
+  Sinn.
+- Keine Wiedervorlage, kein Berg, der sich auftürmt. Jede Sitzung bleibt mit
+  ihren richtigen und falschen Sätzen in der Historie.
+- Wörter im Original lassen sich antippen und in den Index nehmen.
+- Das Urteil kommt von einer KI über [OpenRouter](https://openrouter.ai); dafür
+  braucht der Translator einen Schlüssel. Was das kostet, steht in den
+  Einstellungen.
 
-### Flashcards – die Lernkartei
+### Index – Wörter, die einem auffallen
 
-*Befehl: **Trisent: Flashcards***
+*Befehl: **Trisent: Index***
 
-- Karten entstehen aus Wörtern, die man im Reader lernen will.
-- Wiedervorlage in wachsenden Abständen; der Rhythmus ist einstellbar.
-- Jede Karte zeigt die Grammatik des Wortes und Beispielsätze aus den eigenen
-  Texten.
+- Alle Wörter, die man beim Lesen oder Übersetzen aufgenommen hat, an einem
+  Ort – jedes nur einmal, mit einem Zähler, wie oft man darüber gestolpert ist.
+- Ordnen nach *zuletzt aufgenommen*, *A–Z*, *am häufigsten aufgenommen* oder
+  *am häufigsten in den eigenen Texten*. Ein Tipp zeigt die Wortkarte.
+- Archivieren blendet ein Wort aus, ohne es zu vergessen.
+- Nichts wird fällig, nichts türmt sich – der Index ersetzt die frühere
+  Lernkartei.
 
 ---
 
@@ -256,7 +269,7 @@ Open log**.
 ```text
 Trisent/
 ├── learning/        deine Bibliothek: Texte, Wörterbuch, Wortnotizen,
-│                    Karteikarten, Textnotizen - eine Sprache je Ordner
+│                    Textnotizen, Übersetzungssitzungen - eine Sprache je Ordner
 ├── packager/        die Werkstatt: Ausgangstexte, Wortvorrat, Hausregeln
 ├── inbox/           Pakete als ZIP, die auf den Import warten
 └── log.md           was die App getan hat
