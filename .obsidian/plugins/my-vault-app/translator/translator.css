@@ -140,15 +140,17 @@
   padding-bottom: 2rem;
 }
 
+/* In Spalten, so viele nebeneinander passen - auf dem Handy eine. */
 .trisent-tr-history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.45rem;
 }
 
 .trisent-view .trisent-tr-session {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  min-width: 0;
   gap: 1rem;
   width: 100%;
   height: auto;

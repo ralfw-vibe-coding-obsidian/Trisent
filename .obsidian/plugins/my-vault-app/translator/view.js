@@ -35,8 +35,9 @@ const HARDEST = 'The hardest';
 /* Wie viele Geschichten auf eine Seite gehen - wie im Reader. */
 const STORY_PAGE = 10;
 
-/* Wie viele Sitzungen auf eine Seite der Historie gehen. */
-const HISTORY_PAGE = 10;
+/* Wie viele Sitzungen auf eine Seite der Historie gehen - durch zwei
+   und drei teilbar, damit die Spalten aufgehen. */
+const HISTORY_PAGE = 12;
 
 const VERDICT = {
   wrong: { label: 'Not yet', icon: 'x', cls: 'is-wrong' },
