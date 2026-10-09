@@ -14,6 +14,14 @@
  * Wortgleiche Antworten brauchen keins von beiden; das entscheidet die
  * Ansicht selbst (practice.js, isExact).
  *
+ * Gesprochen oder getippt: Wer spricht, dem gehen Akzente, Endungen
+ * und Schreibung im Erkenner verloren - "habit" und "habite" klingen
+ * gleich. Wer tippt, zeigt, was er schreiben kann. Deshalb zwei Regeln:
+ * gesprochen zählt nur der Sinn, getippt auch die Grammatik (falsche
+ * Endung, Angleichung, Artikel, Präposition). Akzente, Groß und klein
+ * und Satzzeichen zählen in beiden Fällen nicht; ein bloßer Vertipper
+ * auch nicht.
+ *
  * Geprüft wird auf SINN, nicht auf Wortlaut. Die Musterlösung ist eine
  * richtige Antwort, nicht die richtige - eine Prüfung, die auf ihr
  * besteht, lehnt ständig Gutes ab, und dann übt niemand mehr.
@@ -38,8 +46,11 @@ const ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
 const JUDGE_MODEL = 'qwen/qwen3.8-flash';
 const EXPLAIN_MODEL = 'openai/gpt-6-luna';
 
-const JUDGE = [
-  'You judge a language learner\'s translation of one sentence.',
+/* Gesprochen: nur der Sinn. */
+const JUDGE_SPOKEN = [
+  'You judge a language learner\'s translation of one sentence. The',
+  'learner SPOKE it and speech recognition wrote it down, so spelling,',
+  'endings and accents may be lost - only the meaning counts.',
   '',
   'Judge MEANING only. The reference is one correct translation, not the',
   'only one: accept other word order, synonyms that fit the situation,',
@@ -58,16 +69,47 @@ const JUDGE = [
   'Answer with exactly one word: correct or wrong.'
 ].join('\n');
 
+/* Getippt: Sinn UND Grammatik. Ausgesucht an echten Versuchen - qwen
+   traf mit dieser Fassung 20 von 20, auch "j'habit" (falsch) gegen
+   "aves" für "avec" (Vertipper, richtig). */
+const JUDGE_TYPED = [
+  'You judge a language learner\'s translation of one sentence. The',
+  'learner TYPED it, so grammar counts.',
+  '',
+  'It is correct only if the meaning is the same AND the grammar is right.',
+  'The reference is one correct translation, not the only one: accept other',
+  'word order, synonyms that fit the situation, contractions and any',
+  'phrasing a native speaker would consider equivalent.',
+  '',
+  'Always ignore capitalisation, accents, punctuation and quotation marks.',
+  'Tolerate a plain typing slip: a letter swapped, doubled or missing in a',
+  'word that is otherwise clearly right and where the slip is not itself a',
+  'grammar mistake ("aves" for "avec").',
+  '',
+  'It is wrong if the meaning differs (something missing, added, changed;',
+  'another tense, number, person; a negation) OR if there is a grammar',
+  'mistake: a wrong or missing verb ending ("j\'habit" for "j\'habite"),',
+  'wrong agreement of adjective or participle ("elle est content"), wrong',
+  'gender or number of an article, a wrong preposition.',
+  '',
+  'Answer with exactly one word: correct or wrong.'
+].join('\n');
+
 const EXPLAIN = [
   'A language learner translated one sentence. Whether it counts as correct',
   'has already been decided; it is given below. Do not change it - explain it.',
   '',
   'Answer in plain lines, exactly in this shape:',
   'NOTE: one or two short sentences addressed to the learner',
-  'ISSUE: a concrete flaw, with the right form',
+  'ISSUE: one concrete flaw, with the right form',
+  'ISSUE: the next flaw',
   '',
-  'If it was judged correct: praise briefly and sincerely, then list',
-  'spelling slips, missing accents or small grammar slips as ISSUE lines.',
+  'Exactly ONE flaw per ISSUE line - never several in one line. For a',
+  'grammar mistake add a few words on why ("j\'habite: with je the verb',
+  'ends in -e"). Spelling slips and accents need no explanation.',
+  '',
+  'If it was judged correct: praise briefly and sincerely. If there are',
+  'flaws, do not gloss over them - say they are worth a look.',
   'If it was judged wrong: say what is missing or changes the meaning, and',
   'keep them going ("almost there", "the hard part is right"). ISSUE lines',
   'name each problem with the right form.',
@@ -158,7 +200,8 @@ async function ask(settings, model, system, user, maxTokens, onCost) {
 
 /* Das Urteil: true, wenn die Bedeutung erhalten ist. */
 async function judgeTranslation(settings, task, onCost) {
-  const text = await ask(settings, JUDGE_MODEL, JUDGE, describeTask(task), 10, onCost);
+  const rule = task.spoken ? JUDGE_SPOKEN : JUDGE_TYPED;
+  const text = await ask(settings, JUDGE_MODEL, rule, describeTask(task), 10, onCost);
   const word = text.trim().toLowerCase();
   if (/^correct\b/.test(word)) return true;
   if (/^wrong\b/.test(word)) return false;
@@ -170,6 +213,7 @@ async function judgeTranslation(settings, task, onCost) {
 /* Die Erklärung zu einem feststehenden Urteil. */
 async function explainTranslation(settings, task, correct, onCost) {
   const user = describeTask(task) + '\n'
+    + 'The learner ' + (task.spoken ? 'spoke it (speech recognition wrote it down)' : 'typed it') + '.\n'
     + 'Judged: ' + (correct ? 'correct' : 'wrong') + '\n'
     + 'Write NOTE and ISSUE lines in ' + nameOf(task.feedbackLanguage) + '.';
   const text = await ask(settings, EXPLAIN_MODEL, EXPLAIN, user, 400, onCost);

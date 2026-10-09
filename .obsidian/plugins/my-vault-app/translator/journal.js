@@ -93,7 +93,8 @@ class Journal {
       '- **You wrote:** ' + entry.answer,
       '- **Original:** ' + entry.reference,
       '- **Verdict:** ' + (ICON[entry.result] || '') + ' ' + (VERDICT[entry.result] || entry.result),
-      '- **From:** ' + entry.title
+      '- **From:** ' + entry.title,
+      '- **Input:** ' + (entry.spoken ? 'spoken' : 'typed')
     ];
     if (entry.note) lines.push('', entry.note);
     for (const issue of entry.issues || []) lines.push('- ' + issue);

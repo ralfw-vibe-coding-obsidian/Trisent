@@ -449,6 +449,10 @@
   box-shadow: inset 2px 0 0 var(--tri-accent);
 }
 
+.trisent-tr-mine.is-slips {
+  box-shadow: inset 2px 0 0 var(--tri-learning);
+}
+
 /* ------------------------------------------------------------------ */
 /* Unter der Karte                                                    */
 /* ------------------------------------------------------------------ */
@@ -586,6 +590,9 @@
 }
 
 .trisent-tr-verdict.is-wrong .trisent-tr-badge { color: var(--tri-unknown); }
+/* Richtig mit Fehlern: die Farbe des Lernens - kein Rot, aber auch kein
+   Grün, das zum Überlesen einlädt. */
+.trisent-tr-verdict.is-slips .trisent-tr-badge { color: var(--tri-learning); }
 .trisent-tr-verdict.is-right .trisent-tr-badge,
 .trisent-tr-verdict.is-exact .trisent-tr-badge { color: var(--tri-accent); }
 

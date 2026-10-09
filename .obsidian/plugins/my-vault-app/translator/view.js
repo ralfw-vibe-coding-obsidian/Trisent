@@ -40,6 +40,9 @@ const HISTORY_PAGE = 10;
 
 const VERDICT = {
   wrong: { label: 'Not yet', icon: 'x', cls: 'is-wrong' },
+  /* Richtig, aber mit Fehlern, die einen zweiten Blick lohnen - erst
+     bekannt, wenn die Erklärung da ist. Zählt wie richtig. */
+  slips: { label: 'Correct', icon: 'check', cls: 'is-slips' },
   correct: { label: 'Correct', icon: 'check', cls: 'is-right' },
   exact: { label: 'Correct — word for word', icon: 'star', cls: 'is-exact' }
 };
@@ -672,6 +675,10 @@ class TranslatorView extends ItemView {
 
     const result = below.createDiv({ cls: 'trisent-tr-result' });
 
+    /* Was zuletzt eingesprochen wurde. Steht genau das noch im Feld, gilt
+       die Antwort als gesprochen - wer daran getippt hat, hat getippt. */
+    let spoken = null;
+
     const lockForTyping = () => {
       const typed = field.value.trim().length > 0;
       if (typed) mic.setAttr('disabled', 'true');
@@ -697,6 +704,7 @@ class TranslatorView extends ItemView {
       const settings = this.translator.settings;
       const pay = (cost) => this.translator.addCost(cost);
       const task = {
+        spoken: spoken !== null && spoken.trim() === answer,
         prompt: item.sentence.fluent,
         reference: item.sentence.source,
         answer: answer,
@@ -732,8 +740,8 @@ class TranslatorView extends ItemView {
         : explainTranslation(settings, task, outcome !== 'wrong', pay)
           .catch((error) => ({ note: '', issues: [], failed: String(error.message || error) }));
 
-      this.turn(below, back, flip, item, entry, answer, outcome, explained);
-      this.save(run, language, item, entry, answer, outcome, explained, number);
+      this.turn(below, back, flip, item, entry, answer, outcome, explained, task.spoken);
+      this.save(run, language, item, entry, answer, outcome, explained, number, task.spoken);
     };
 
     check.addEventListener('click', run_check);
@@ -793,7 +801,10 @@ class TranslatorView extends ItemView {
           setIcon(mic, 'square');
           status.setText('Listening… tap again when you are done');
         });
-        if (text) field.value = text;
+        if (text) {
+          field.value = text;
+          spoken = text;
+        }
       } catch (error) {
         result.createDiv({ cls: 'trisent-tr-error', text: String(error.message || error) });
       }
@@ -818,7 +829,7 @@ class TranslatorView extends ItemView {
      reihen sich dabei hintereinander ein: Wer schnell weitertippt, darf
      keine zweite Sitzungsnotiz bekommen und keine vertauschte
      Reihenfolge. */
-  save(run, language, item, entry, answer, outcome, explained, number) {
+  save(run, language, item, entry, answer, outcome, explained, number, spoken) {
     this.records.record(language, entry.folder, entry.data, item.sentence.id, outcome)
       .catch((error) => new Notice('Could not save this attempt: ' + String(error.message || error)));
 
@@ -835,7 +846,8 @@ class TranslatorView extends ItemView {
           result: outcome,
           note: verdict.note,
           issues: verdict.issues,
-          title: entry.data.title || entry.folder.name
+          title: entry.data.title || entry.folder.name,
+          spoken: spoken
         });
         if (!run.counted) {
           run.counted = true;
@@ -850,7 +862,7 @@ class TranslatorView extends ItemView {
   /* Die Karte umdrehen und darunter das Urteil zeigen. Die Seite wird
      dafür NICHT neu gezeichnet - sonst entstünde die Karte neu und stünde
      ohne Bewegung auf der Rückseite. */
-  turn(below, back, flip, item, entry, answer, outcome, explained) {
+  turn(below, back, flip, item, entry, answer, outcome, explained, spoken) {
     this.renderContext(back, item);
     back.createDiv({ cls: 'trisent-tr-prompt-small', text: item.sentence.fluent });
 
@@ -862,7 +874,7 @@ class TranslatorView extends ItemView {
     this.renderOriginal(original.createSpan({ cls: 'trisent-tr-original-text' }), item.sentence, entry);
 
     const mine = back.createDiv({ cls: 'trisent-tr-mine ' + VERDICT[outcome].cls });
-    mine.createSpan({ cls: 'trisent-tr-mine-label', text: 'You wrote' });
+    mine.createSpan({ cls: 'trisent-tr-mine-label', text: spoken ? 'You said' : 'You wrote' });
     mine.createSpan({ cls: 'trisent-tr-mine-text', text: answer });
 
     flip.addClass('is-turned');
@@ -871,7 +883,7 @@ class TranslatorView extends ItemView {
     const box = below.createDiv({ cls: 'trisent-tr-verdict ' + VERDICT[outcome].cls });
     const badge = box.createDiv({ cls: 'trisent-tr-badge' });
     setIcon(badge.createSpan(), VERDICT[outcome].icon);
-    badge.createSpan({ text: VERDICT[outcome].label });
+    const badgeText = badge.createSpan({ text: VERDICT[outcome].label });
 
     /* Die Erklärung läuft nach. Bis dahin ein ruhiger Platzhalter, damit
        die Knöpfe darunter nicht springen, wenn sie kommt. */
@@ -883,6 +895,17 @@ class TranslatorView extends ItemView {
       explained.then((verdict) => {
         if (!explanation.isConnected) return;
         explanation.empty();
+
+        /* Richtig, aber nicht fehlerfrei: Das soll man sehen, statt es
+           unter einem grünen Haken zu überlesen. */
+        const slips = (verdict.issues || []).length;
+        if (outcome === 'correct' && slips > 0) {
+          box.removeClass(VERDICT.correct.cls);
+          box.addClass(VERDICT.slips.cls);
+          badgeText.setText('Correct — ' + slips + (slips === 1 ? ' slip' : ' slips'));
+          mine.removeClass(VERDICT.correct.cls);
+          mine.addClass(VERDICT.slips.cls);
+        }
         if (verdict.note) explanation.createDiv({ cls: 'trisent-tr-note', text: verdict.note });
         if (verdict.issues && verdict.issues.length > 0) {
           const issues = explanation.createEl('ul', { cls: 'trisent-tr-issues' });
