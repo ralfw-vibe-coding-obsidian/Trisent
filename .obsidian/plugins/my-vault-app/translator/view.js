@@ -413,6 +413,15 @@ class TranslatorView extends ItemView {
     });
     this.keepVisible(field);
 
+    /* Gleich weiterschreiben können: Jede neue Karte entsteht aus einem
+       Tipp oder Enter (Start, Next, Exclude), und der Cursor steht schon
+       im Feld. Noch innerhalb dieses Tipps - nur dann holt das iPhone
+       die Tastatur hervor. */
+    window.requestAnimationFrame(() => {
+      if (field.isConnected) field.focus({ preventScroll: true });
+    });
+    field.focus({ preventScroll: true });
+
     const row = below.createDiv({ cls: 'trisent-tr-row' });
     const check = row.createEl('button', { cls: 'trisent-tr-check', text: 'Check' });
     this.keepFocus(check);
@@ -625,9 +634,17 @@ class TranslatorView extends ItemView {
     const next = row.createEl('button', { cls: 'trisent-tr-next' });
     next.createSpan({ text: last ? 'Finish' : 'Next' });
     setIcon(next.createSpan(), last ? 'flag' : 'arrow-right');
-    next.addEventListener('click', () => {
+    const go = () => {
       session.next();
       this.render();
+    };
+    next.addEventListener('click', go);
+    /* Enter selbst abfangen: Sonst landete derselbe Tastendruck nach dem
+       Umschalten als Zeilenumbruch im neuen Feld. */
+    next.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      go();
     });
     window.setTimeout(() => next.focus({ preventScroll: true }), 50);
   }
