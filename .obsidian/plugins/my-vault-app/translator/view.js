@@ -859,7 +859,7 @@ class TranslatorView extends ItemView {
       ? entry.folder.path + '/' + item.sentence.audio.file
       : null;
     if (audio) this.renderSpeaker(original, audio);
-    original.createSpan({ cls: 'trisent-tr-original-text', text: item.sentence.source });
+    this.renderOriginal(original.createSpan({ cls: 'trisent-tr-original-text' }), item.sentence, entry);
 
     const mine = back.createDiv({ cls: 'trisent-tr-mine ' + VERDICT[outcome].cls });
     mine.createSpan({ cls: 'trisent-tr-mine-label', text: 'You wrote' });
@@ -913,6 +913,60 @@ class TranslatorView extends ItemView {
       go();
     });
     window.setTimeout(() => next.focus({ preventScroll: true }), 50);
+  }
+
+  /* Das Original mit antippbaren Wörtern: Wer hier über ein Wort
+     stolpert, öffnet seine Word card und kann es in den Index nehmen -
+     als "beim Übersetzen aufgefallen". Wörter, die schon im Index
+     stehen, tragen den kleinen Ring wie im Reader (dort an- und
+     abschaltbar, hier gilt dieselbe Einstellung). */
+  renderOriginal(slot, sentence, entry) {
+    const text = String(sentence.source || '');
+    const language = this.run ? this.run.language : null;
+    const units = (sentence.units || [])
+      .filter((unit) => unit && unit.key && Number.isInteger(unit.start) && Number.isInteger(unit.end)
+        && unit.end > unit.start && unit.end <= text.length)
+      .sort((a, b) => a.start - b.start);
+
+    if (!language || units.length === 0) {
+      slot.setText(text);
+      return;
+    }
+
+    const marksOn = this.translator.plugin.settings.reader.indexMarks !== false;
+    const inIndex = marksOn ? this.translator.plugin.learning.wordIndex.activeKeys(language) : new Set();
+
+    let at = 0;
+    for (const unit of units) {
+      if (unit.start < at) continue;
+      if (unit.start > at) slot.appendText(text.slice(at, unit.start));
+      const word = slot.createSpan({
+        cls: 'trisent-tr-word' + (inIndex.has(unit.key) ? ' is-indexed' : ''),
+        text: text.slice(unit.start, unit.end),
+        attr: { role: 'button', tabindex: '0' }
+      });
+      const open = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.showWord(language, unit.key);
+      };
+      word.addEventListener('click', open);
+      word.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') open(event);
+      });
+      at = unit.end;
+    }
+    if (at < text.length) slot.appendText(text.slice(at));
+  }
+
+  async showWord(language, key) {
+    const reader = this.translator.plugin.reader;
+    if (!reader) return;
+    try {
+      await reader.showWord(language, key, null, { origin: 'translator' });
+    } catch (error) {
+      new Notice('Could not show this word: ' + String(error.message || error));
+    }
   }
 
   renderSummary(page, language) {

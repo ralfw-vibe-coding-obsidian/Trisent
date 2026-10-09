@@ -242,7 +242,9 @@ class Reader {
       phrases: [],
       occurrences: [],
       searching: true,
-      file: file || this.library.wordFileFor(language, key)
+      file: file || this.library.wordFileFor(language, key),
+      /* Wo das Wort aufgefallen ist, falls es in den Index kommt. */
+      origin: (options && options.origin) || 'reader'
     };
 
     if (quiet) {

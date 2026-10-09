@@ -355,6 +355,39 @@
   color: var(--text-normal);
 }
 
+/* Die Wörter des Originals lassen sich antippen - leise unterstrichen,
+   damit man es sieht, ohne dass der Satz unruhig wird. */
+.trisent-tr-word {
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-decoration-color: var(--text-faint);
+  text-underline-offset: 0.2em;
+}
+
+.trisent-tr-word:hover,
+.trisent-tr-word:focus-visible {
+  color: var(--tri-accent);
+  text-decoration-color: var(--tri-accent);
+  outline: none;
+}
+
+/* Steht im Index: derselbe kleine Ring wie im Reader. */
+.trisent-tr-word.is-indexed {
+  position: relative;
+}
+
+.trisent-tr-word.is-indexed::after {
+  content: "";
+  position: absolute;
+  top: -0.15em;
+  right: -0.3em;
+  width: 5px;
+  height: 5px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  border: 1.5px solid var(--tri-accent);
+}
+
 /* Abspielen wie im Reader: kein Rahmen, nur das Zeichen. */
 .trisent-view .trisent-tr-play {
   flex: 0 0 auto;

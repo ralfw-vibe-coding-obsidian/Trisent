@@ -83,15 +83,23 @@
 /* Die Wörter. Eine Zeile je Wort: links das Wort zum Antippen, rechts
    leise archivieren und löschen. */
 
+/* In Spalten: so viele, wie nebeneinander passen - auf dem Desktop
+   zwei oder drei, auf dem Handy eine. */
 .trisent-ix-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.45rem;
+}
+
+.trisent-ix-list > .trisent-muted,
+.trisent-ix-list > .trisent-loading {
+  grid-column: 1 / -1;
 }
 
 .trisent-ix-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  min-width: 0;
   gap: 0.5rem;
   padding: 0 0.4rem 0 0;
   border: 1px solid var(--background-modifier-border);
@@ -176,7 +184,21 @@
 .trisent-ix-actions {
   flex: 0 0 auto;
   display: flex;
-  gap: 0.1rem;
+  flex-direction: column;
+  gap: 0.05rem;
+  padding-top: 0.3rem;
+}
+
+.trisent-ix-row.is-asking {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.trisent-ix-row.is-asking .trisent-ix-actions {
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-top: 0;
 }
 
 .trisent-view .trisent-ix-action {
