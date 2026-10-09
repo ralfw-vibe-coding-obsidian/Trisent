@@ -21,6 +21,8 @@
  */
 
 const { ItemView, Notice, normalizePath, setIcon, setTooltip } = require('obsidian');
+const { matchesText, hasTag, tagKey } = require('../learning/tags.js');
+const { page: pageOf } = require('../flashcards/find.js');
 const { checkTranslation } = require('./check.js');
 const { Dictation } = require('./speech.js');
 const {
@@ -32,11 +34,30 @@ const RIBBON_ICON = 'pen-line';
 
 const HARDEST = 'The hardest';
 
+/* Wie viele Geschichten auf eine Seite gehen - wie im Reader. */
+const STORY_PAGE = 10;
+
+/* Wie viele Sitzungen die Historie zeigt, bevor man "älter" antippt. */
+const HISTORY_PAGE = 10;
+
 const VERDICT = {
   wrong: { label: 'Not yet', icon: 'x', cls: 'is-wrong' },
   correct: { label: 'Correct', icon: 'check', cls: 'is-right' },
   exact: { label: 'Correct — word for word', icon: 'star', cls: 'is-exact' }
 };
+
+/* "9 Oct, 14:32" - in der Zeit des Ortes, an dem man gerade ist. */
+function whenText(stamp) {
+  const at = new Date(stamp);
+  if (isNaN(at.getTime())) return '';
+  try {
+    return at.toLocaleString(undefined, {
+      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+    });
+  } catch (error) {
+    return at.toISOString().slice(0, 16).replace('T', ' ');
+  }
+}
 
 class TranslatorView extends ItemView {
   constructor(leaf, translator) {
@@ -51,6 +72,12 @@ class TranslatorView extends ItemView {
     /* Die laufende Sitzung - siehe begin(). */
     this.run = null;
     this.sound = null;
+    /* Der Filter der Geschichten, wie im Reader: Suchwort UND (Tag ODER
+       Tag). Bleibt stehen, wenn man aus einer Sitzung zurückkommt. */
+    this.storyQuery = '';
+    this.storyTags = [];
+    this.storyAt = 0;
+    this.historyShown = HISTORY_PAGE;
   }
 
   getViewType() {
@@ -66,6 +93,17 @@ class TranslatorView extends ItemView {
   }
 
   async onOpen() {
+    /* Eine Sitzung schreibt ihre Zahlen in ihre Notiz; Obsidian liest sie
+       einen Moment später ein. Dann die Historie nachziehen - nur sie,
+       damit ein Suchfeld nicht den Fokus verliert. */
+    this.registerEvent(this.app.metadataCache.on('changed', (file) => {
+      if (this.screen !== 'start' || !file) return;
+      const language = this.library.languageByCode(this.languageCode);
+      if (!language || !file.path.startsWith(this.journal.folderPath(language) + '/')) return;
+      window.clearTimeout(this.historyTimer);
+      this.historyTimer = window.setTimeout(() => this.paintHistory(), 300);
+    }));
+
     const last = this.translator.settings.lastLanguage;
     if (last && this.library.languageByCode(last)) {
       this.screen = 'start';
@@ -76,6 +114,7 @@ class TranslatorView extends ItemView {
 
   async onClose() {
     window.clearTimeout(this.typingTimer);
+    window.clearTimeout(this.historyTimer);
     if (this.speech) this.speech.stop();
     this.stopSound();
   }
@@ -168,6 +207,12 @@ class TranslatorView extends ItemView {
       top.createSpan({ cls: 'trisent-tile-name', text: language.name });
       this.renderStreak(top, language);
       card.addEventListener('click', () => {
+        if (language.code !== this.languageCode) {
+          this.storyQuery = '';
+          this.storyTags = [];
+          this.storyAt = 0;
+          this.historyShown = HISTORY_PAGE;
+        }
         this.languageCode = language.code;
         this.screen = 'start';
         this.translator.settings.lastLanguage = language.code;
@@ -225,8 +270,16 @@ class TranslatorView extends ItemView {
     }
 
     const hardest = page.createDiv({ cls: 'trisent-tr-hardest' });
+
+    page.createDiv({ cls: 'trisent-section-label trisent-tr-section', text: 'Stories' });
+    if (this.library.packagesOf(language).length > 1) this.renderStoryFilter(page, language);
     const list = page.createDiv({ cls: 'trisent-package-list' });
     list.createDiv({ cls: 'trisent-loading', text: '…' });
+    const pager = page.createDiv({ cls: 'trisent-pager' });
+
+    page.createDiv({ cls: 'trisent-section-label trisent-tr-section', text: 'Sessions' });
+    this.historyEl = page.createDiv({ cls: 'trisent-tr-history' });
+    this.paintHistory();
 
     this.stories(language).then((stories) => {
       if (!this.contentEl.contains(list)) return;
@@ -239,8 +292,13 @@ class TranslatorView extends ItemView {
         return;
       }
 
+      const texts = this.translator.plugin.learning.texts;
+      for (const story of stories) {
+        story.tags = texts ? texts.tags(language, story.entry.folder) : [];
+      }
       stories.sort((a, b) => this.library.titleOf(a.entry).localeCompare(this.library.titleOf(b.entry)));
-      for (const story of stories) this.renderStory(list, language, story);
+      this.shelf = { language: language, stories: stories, list: list, pager: pager };
+      this.paintStories();
     }).catch((error) => {
       console.error('Trisent: could not show the texts', error);
       if (!this.contentEl.contains(list)) return;
@@ -250,6 +308,134 @@ class TranslatorView extends ItemView {
         text: 'The texts could not be shown: ' + String((error && error.message) || error)
       });
     });
+  }
+
+  /* Suchfeld und Tags über den Geschichten - dieselben Tags wie im
+     Reader, dieselbe Regel: Suchwort UND (Tag ODER Tag). */
+  renderStoryFilter(page, language) {
+    const texts = this.translator.plugin.learning.texts;
+    const known = texts ? texts.allTags(language) : [];
+    this.storyTags = this.storyTags.filter((tag) => hasTag(known, tag));
+
+    const bar = page.createDiv({ cls: 'trisent-shelf-filter' });
+    const search = bar.createDiv({ cls: 'trisent-shelf-search' });
+    setIcon(search.createSpan({ cls: 'trisent-shelf-search-icon' }), 'search');
+    const input = search.createEl('input', {
+      cls: 'trisent-shelf-search-input',
+      attr: { type: 'search', placeholder: 'Search titles', enterkeyhint: 'search' }
+    });
+    input.value = this.storyQuery;
+    input.addEventListener('input', () => {
+      this.storyQuery = input.value;
+      this.storyAt = 0;
+      this.paintStories();
+    });
+
+    if (known.length === 0) return;
+    const chips = bar.createDiv({ cls: 'trisent-shelf-tags' });
+    for (const tag of known) {
+      const chip = chips.createEl('button', {
+        cls: 'trisent-shelf-tag' + (hasTag(this.storyTags, tag) ? ' is-on' : ''),
+        text: '#' + tag
+      });
+      chip.addEventListener('click', () => {
+        const on = hasTag(this.storyTags, tag);
+        this.storyTags = on
+          ? this.storyTags.filter((own) => tagKey(own) !== tagKey(tag))
+          : this.storyTags.concat([tag]);
+        chip.toggleClass('is-on', !on);
+        this.storyAt = 0;
+        this.paintStories();
+      });
+    }
+  }
+
+  /* Die Geschichten zeichnen, wie Filter und Seite es wollen - ohne den
+     Rest der Seite, sonst verlöre das Suchfeld den Fokus. */
+  paintStories() {
+    const shelf = this.shelf;
+    if (!shelf || !this.contentEl.contains(shelf.list)) return;
+    const { list, pager, language } = shelf;
+    list.empty();
+    pager.empty();
+
+    const filter = { query: this.storyQuery, tags: this.storyTags };
+    const found = shelf.stories.filter((story) => matchesText({
+      title: story.entry.data.title || story.entry.folder.name,
+      subtitle: story.entry.data.titleTranslation,
+      tags: story.tags
+    }, filter));
+
+    if (found.length === 0) {
+      list.createDiv({ cls: 'trisent-shelf-none', text: 'No story matches this filter.' });
+      return;
+    }
+
+    const slice = pageOf(found, this.storyAt, STORY_PAGE);
+    this.storyAt = slice.page;
+    for (const story of slice.items) this.renderStory(list, language, story);
+    if (slice.pages <= 1) return;
+
+    const step = (to) => {
+      this.storyAt = to;
+      this.paintStories();
+      list.scrollIntoView({ block: 'start' });
+    };
+    const back = pager.createEl('button', { cls: 'trisent-page-step' });
+    setIcon(back.createSpan(), 'chevron-left');
+    back.setAttr('aria-label', 'Previous page');
+    if (slice.page === 0) back.setAttr('disabled', 'true');
+    else back.addEventListener('click', () => step(slice.page - 1));
+    pager.createSpan({ cls: 'trisent-page-count', text: slice.from + '–' + slice.to + ' of ' + slice.count });
+    const next = pager.createEl('button', { cls: 'trisent-page-step' });
+    setIcon(next.createSpan(), 'chevron-right');
+    next.setAttr('aria-label', 'Next page');
+    if (slice.page >= slice.pages - 1) next.setAttr('disabled', 'true');
+    else next.addEventListener('click', () => step(slice.page + 1));
+  }
+
+  /* Die Historie: jede Sitzung mit Quelle, Datum und Ergebnis, die
+     neueste oben. Ein Tipp öffnet ihre Notiz - dort steht jeder Versuch. */
+  paintHistory() {
+    const slot = this.historyEl;
+    const language = this.library.languageByCode(this.languageCode);
+    if (!slot || !language || !this.contentEl.contains(slot)) return;
+    slot.empty();
+
+    const sessions = this.journal.sessions(language).filter((entry) => entry.done > 0);
+    if (sessions.length === 0) {
+      slot.createDiv({ cls: 'trisent-muted', text: 'Your sessions will show up here.' });
+      return;
+    }
+
+    for (const entry of sessions.slice(0, this.historyShown)) {
+      const row = slot.createEl('button', { cls: 'trisent-tr-session' });
+      const left = row.createDiv({ cls: 'trisent-tr-session-left' });
+      left.createDiv({ cls: 'trisent-tr-session-source', text: entry.source || 'Session' });
+      const meta = [whenText(entry.startedAt)];
+      meta.push(entry.done === entry.planned
+        ? entry.done + (entry.done === 1 ? ' sentence' : ' sentences')
+        : entry.done + ' of ' + entry.planned + ' sentences');
+      left.createDiv({ cls: 'trisent-tr-session-meta', text: meta.filter(Boolean).join(' · ') });
+
+      const share = Math.round((entry.right / entry.done) * 100);
+      const score = row.createDiv({
+        cls: 'trisent-tr-session-score' + (share >= 70 ? ' is-good' : share < 50 ? ' is-low' : '')
+      });
+      score.setText(share + ' %');
+
+      row.addEventListener('click', () => {
+        this.app.workspace.getLeaf('tab').openFile(entry.file);
+      });
+    }
+
+    if (sessions.length > this.historyShown) {
+      const more = slot.createEl('button', { cls: 'trisent-tr-more', text: 'Show older sessions' });
+      more.addEventListener('click', () => {
+        this.historyShown += HISTORY_PAGE;
+        this.paintHistory();
+      });
+    }
   }
 
   /* Die schwierigsten Sätze über alle Geschichten. */
@@ -434,6 +620,7 @@ class TranslatorView extends ItemView {
     });
     setIcon(mic, 'mic');
     setTooltip(mic, 'Say your translation');
+    this.keepFocus(mic);
 
     const status = row.createSpan({ cls: 'trisent-task-status' });
 
@@ -443,6 +630,7 @@ class TranslatorView extends ItemView {
     setIcon(exclude.createSpan(), 'archive-x');
     exclude.createSpan({ text: 'Exclude' });
     setTooltip(exclude, 'Never show this sentence again');
+    this.keepFocus(exclude);
 
     const result = below.createDiv({ cls: 'trisent-tr-result' });
 
@@ -538,6 +726,9 @@ class TranslatorView extends ItemView {
       }
 
       dictation.language = entry.data.language;
+      /* Wer spricht, braucht die Tastatur nicht - erst jetzt, wo der Tipp
+         angekommen ist, darf sie gehen. */
+      field.blur();
       field.setAttr('disabled', 'true');
       check.setAttr('disabled', 'true');
       result.empty();
@@ -562,7 +753,7 @@ class TranslatorView extends ItemView {
 
       /* Wer eingesprochen hat, will das Urteil - nicht noch einen Knopf. */
       if (text) run_check();
-      else field.focus();
+      else if (!result.hasChildNodes()) field.focus();
     });
   }
 
