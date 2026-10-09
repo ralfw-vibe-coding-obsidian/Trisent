@@ -16,8 +16,6 @@
  * Das Feld liegt UNTER der Karte, nicht auf ihr: Eine Karte mit offenem
  * Eingabefeld und Tastatur zu drehen, macht auf dem iPhone Ärger. So
  * dreht sich nur Text.
- *
- * Der alte Translator (von vorn nach hinten) liegt in shelved/.
  */
 
 const { ItemView, Notice, normalizePath, setIcon, setTooltip } = require('obsidian');
