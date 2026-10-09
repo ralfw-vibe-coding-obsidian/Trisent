@@ -37,7 +37,7 @@ const HARDEST = 'The hardest';
 /* Wie viele Geschichten auf eine Seite gehen - wie im Reader. */
 const STORY_PAGE = 10;
 
-/* Wie viele Sitzungen die Historie zeigt, bevor man "älter" antippt. */
+/* Wie viele Sitzungen auf eine Seite der Historie gehen. */
 const HISTORY_PAGE = 10;
 
 const VERDICT = {
@@ -77,7 +77,10 @@ class TranslatorView extends ItemView {
     this.storyQuery = '';
     this.storyTags = [];
     this.storyAt = 0;
-    this.historyShown = HISTORY_PAGE;
+    this.historyAt = 0;
+    /* Welcher Reiter offen ist: 'stories' oder 'sessions'. Bleibt stehen,
+       wenn man aus einer Sitzung zurückkommt. */
+    this.tab = 'stories';
   }
 
   getViewType() {
@@ -211,7 +214,7 @@ class TranslatorView extends ItemView {
           this.storyQuery = '';
           this.storyTags = [];
           this.storyAt = 0;
-          this.historyShown = HISTORY_PAGE;
+          this.historyAt = 0;
         }
         this.languageCode = language.code;
         this.screen = 'start';
@@ -254,6 +257,30 @@ class TranslatorView extends ItemView {
     }, 'Languages');
     this.renderStreak(head, language);
 
+    /* Zwei Reiter: Geschichten (hier fängt man an) und Sitzungen (was
+       man getan hat). Beides wird mit der Zeit lang - nebeneinander
+       untereinander gestapelt, müsste man am einen vorbeirollen, um zum
+       anderen zu kommen. */
+    const tabs = page.createDiv({ cls: 'trisent-tr-tabs' });
+    for (const tab of [{ id: 'stories', label: 'Stories' }, { id: 'sessions', label: 'Sessions' }]) {
+      const button = tabs.createEl('button', {
+        cls: 'trisent-tr-tab' + (tab.id === this.tab ? ' is-on' : ''),
+        text: tab.label
+      });
+      button.addEventListener('click', () => {
+        if (tab.id === this.tab) return;
+        this.tab = tab.id;
+        this.render();
+      });
+    }
+
+    if (this.tab === 'sessions') {
+      this.historyEl = page.createDiv({ cls: 'trisent-tr-history' });
+      this.paintHistory();
+      return;
+    }
+    this.historyEl = null;
+
     /* Wie viele Sätze - steht oben, gilt für beide Wege darunter. */
     const sizes = page.createDiv({ cls: 'trisent-tr-sizes' });
     sizes.createSpan({ cls: 'trisent-tr-label', text: 'Sentences' });
@@ -271,15 +298,10 @@ class TranslatorView extends ItemView {
 
     const hardest = page.createDiv({ cls: 'trisent-tr-hardest' });
 
-    page.createDiv({ cls: 'trisent-section-label trisent-tr-section', text: 'Stories' });
     if (this.library.packagesOf(language).length > 1) this.renderStoryFilter(page, language);
     const list = page.createDiv({ cls: 'trisent-package-list' });
     list.createDiv({ cls: 'trisent-loading', text: '…' });
     const pager = page.createDiv({ cls: 'trisent-pager' });
-
-    page.createDiv({ cls: 'trisent-section-label trisent-tr-section', text: 'Sessions' });
-    this.historyEl = page.createDiv({ cls: 'trisent-tr-history' });
-    this.paintHistory();
 
     this.stories(language).then((stories) => {
       if (!this.contentEl.contains(list)) return;
@@ -374,20 +396,24 @@ class TranslatorView extends ItemView {
     const slice = pageOf(found, this.storyAt, STORY_PAGE);
     this.storyAt = slice.page;
     for (const story of slice.items) this.renderStory(list, language, story);
-    if (slice.pages <= 1) return;
-
-    const step = (to) => {
+    this.renderPager(pager, slice, (to) => {
       this.storyAt = to;
       this.paintStories();
       list.scrollIntoView({ block: 'start' });
-    };
-    const back = pager.createEl('button', { cls: 'trisent-page-step' });
+    });
+  }
+
+  /* Blättern - dasselbe Knopfpaar wie im Reader und in der Lernkartei.
+     Nur da, wenn es mehr als eine Seite gibt. */
+  renderPager(bar, slice, step) {
+    if (slice.pages <= 1) return;
+    const back = bar.createEl('button', { cls: 'trisent-page-step' });
     setIcon(back.createSpan(), 'chevron-left');
     back.setAttr('aria-label', 'Previous page');
     if (slice.page === 0) back.setAttr('disabled', 'true');
     else back.addEventListener('click', () => step(slice.page - 1));
-    pager.createSpan({ cls: 'trisent-page-count', text: slice.from + '–' + slice.to + ' of ' + slice.count });
-    const next = pager.createEl('button', { cls: 'trisent-page-step' });
+    bar.createSpan({ cls: 'trisent-page-count', text: slice.from + '–' + slice.to + ' of ' + slice.count });
+    const next = bar.createEl('button', { cls: 'trisent-page-step' });
     setIcon(next.createSpan(), 'chevron-right');
     next.setAttr('aria-label', 'Next page');
     if (slice.page >= slice.pages - 1) next.setAttr('disabled', 'true');
@@ -408,8 +434,12 @@ class TranslatorView extends ItemView {
       return;
     }
 
-    for (const entry of sessions.slice(0, this.historyShown)) {
-      const row = slot.createEl('button', { cls: 'trisent-tr-session' });
+    const slice = pageOf(sessions, this.historyAt, HISTORY_PAGE);
+    this.historyAt = slice.page;
+    const list = slot.createDiv({ cls: 'trisent-tr-history-list' });
+
+    for (const entry of slice.items) {
+      const row = list.createEl('button', { cls: 'trisent-tr-session' });
       const left = row.createDiv({ cls: 'trisent-tr-session-left' });
       left.createDiv({ cls: 'trisent-tr-session-source', text: entry.source || 'Session' });
       const meta = [whenText(entry.startedAt)];
@@ -429,13 +459,11 @@ class TranslatorView extends ItemView {
       });
     }
 
-    if (sessions.length > this.historyShown) {
-      const more = slot.createEl('button', { cls: 'trisent-tr-more', text: 'Show older sessions' });
-      more.addEventListener('click', () => {
-        this.historyShown += HISTORY_PAGE;
-        this.paintHistory();
-      });
-    }
+    this.renderPager(slot.createDiv({ cls: 'trisent-pager' }), slice, (to) => {
+      this.historyAt = to;
+      this.paintHistory();
+      slot.scrollIntoView({ block: 'start' });
+    });
   }
 
   /* Die schwierigsten Sätze über alle Geschichten. */

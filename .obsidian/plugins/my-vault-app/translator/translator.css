@@ -100,19 +100,50 @@
   color: var(--text-muted);
 }
 
-/* Überschriften der beiden Abschnitte: Geschichten, Sitzungen. Der
-   Filter selbst kommt aus dem Reader (.trisent-shelf-*). */
-.trisent-tr-section {
-  margin: 1.6rem 0 0.7rem;
+/* Zwei Reiter: Geschichten und Sitzungen. Der Filter der Geschichten
+   kommt aus dem Reader (.trisent-shelf-*). */
+.trisent-tr-tabs {
+  display: flex;
+  gap: 1.2rem;
+  margin: 0 0 1.2rem;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.trisent-view .trisent-tr-tab {
+  cursor: pointer;
+  height: auto;
+  margin-bottom: -1px;
+  padding: 0.35rem 0.1rem 0.5rem;
+  font-family: var(--tri-ui);
+  font-size: 0.88rem;
+  font-weight: 500;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-tr-tab:hover {
+  color: var(--text-normal);
+}
+
+.trisent-view .trisent-tr-tab.is-on {
+  border-bottom-color: var(--tri-accent);
+  color: var(--text-normal);
 }
 
 /* Die Historie: eine Zeile je Sitzung, die neueste oben. */
 
 .trisent-tr-history {
+  padding-bottom: 2rem;
+}
+
+.trisent-tr-history-list {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  padding-bottom: 2rem;
 }
 
 .trisent-view .trisent-tr-session {
@@ -163,21 +194,6 @@
 
 .trisent-tr-session-score.is-good { color: var(--tri-accent); }
 .trisent-tr-session-score.is-low { color: var(--tri-unknown); }
-
-.trisent-view .trisent-tr-more {
-  align-self: center;
-  margin-top: 0.4rem;
-  cursor: pointer;
-  height: auto;
-  font-family: var(--tri-ui);
-  font-size: 0.76rem;
-  padding: 0.25rem 0.8rem;
-  border: 1px solid var(--background-modifier-border);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text-muted);
-  box-shadow: none;
-}
 
 .trisent-view .trisent-text-row.is-finished {
   cursor: default;
