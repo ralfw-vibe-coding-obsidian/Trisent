@@ -1,0 +1,241 @@
+/*
+ * Der Index.
+ *
+ * Gehört der Learning-Seite. Farben, Schriften, Knöpfe und das Gerüst
+ * stehen in ../styles.css; das Suchfeld (.trisent-shelf-search) kommt aus
+ * dem Reader, das Blättern (.trisent-pager) aus der Lernkartei.
+ */
+
+/* Zwei Reiter: im Index, archiviert. */
+.trisent-ix-tabs {
+  display: flex;
+  gap: 1.2rem;
+  margin: 0 0 1.1rem;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.trisent-view .trisent-ix-tab {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  cursor: pointer;
+  height: auto;
+  margin-bottom: -1px;
+  padding: 0.35rem 0.1rem 0.5rem;
+  font-family: var(--tri-ui);
+  font-size: 0.88rem;
+  font-weight: 500;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ix-tab.is-on {
+  border-bottom-color: var(--tri-accent);
+  color: var(--text-normal);
+}
+
+.trisent-ix-tab-count {
+  font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+}
+
+/* Suchen und ordnen. */
+.trisent-ix-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.trisent-ix-sorts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.trisent-view .trisent-ix-sort {
+  cursor: pointer;
+  height: auto;
+  line-height: 1.3;
+  font-family: var(--tri-ui);
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 0.16rem 0.6rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ix-sort.is-on {
+  border-color: var(--tri-accent);
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+/* Die Wörter. Eine Zeile je Wort: links das Wort zum Antippen, rechts
+   leise archivieren und löschen. */
+
+.trisent-ix-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.trisent-ix-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.4rem 0 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  background: var(--background-primary);
+}
+
+.trisent-ix-row:hover {
+  border-color: var(--tri-accent);
+}
+
+/* Das zuletzt geöffnete Wort - damit man weiß, wo man war. */
+.trisent-ix-row.is-visited {
+  border-color: var(--tri-accent);
+  box-shadow: inset 3px 0 0 var(--tri-accent);
+}
+
+.trisent-view .trisent-ix-open {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  height: auto;
+  padding: 0.55rem 0.8rem;
+  text-align: left;
+  white-space: normal;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.trisent-ix-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.6rem;
+}
+
+.trisent-ix-lemma {
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+  font-weight: var(--tri-read-weight);
+  color: var(--text-normal);
+}
+
+.trisent-ix-gloss {
+  font-family: var(--tri-ui);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.trisent-ix-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.55rem;
+  font-family: var(--tri-ui);
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.trisent-ix-origin {
+  display: inline-flex;
+  color: var(--tri-accent);
+}
+
+.trisent-ix-origin svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+/* Wie oft aufgenommen - eine Feststellung, keine Wertung. */
+.trisent-ix-count {
+  font-weight: 600;
+  color: var(--tri-learning);
+}
+
+.trisent-ix-actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0.1rem;
+}
+
+.trisent-view .trisent-ix-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  padding: 0;
+  cursor: pointer;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-faint);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ix-action:hover {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+.trisent-ix-action svg {
+  width: 0.9rem;
+  height: 0.9rem;
+}
+
+/* Die Rückfrage vor dem Löschen, an der Zeile selbst. */
+.trisent-ix-row.is-asking {
+  padding: 0.55rem 0.5rem 0.55rem 0.8rem;
+  border-color: var(--tri-unknown);
+}
+
+.trisent-ix-ask {
+  flex: 1 1 auto;
+  font-family: var(--tri-ui);
+  font-size: 0.85rem;
+  color: var(--text-normal);
+}
+
+.trisent-view .trisent-ix-yes,
+.trisent-view .trisent-ix-no {
+  cursor: pointer;
+  height: auto;
+  font-family: var(--tri-ui);
+  font-size: 0.78rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ix-yes {
+  border: 1px solid var(--tri-unknown);
+  background: transparent;
+  color: var(--tri-unknown);
+}
+
+.trisent-view .trisent-ix-no {
+  border: 1px solid var(--background-modifier-border);
+  background: transparent;
+  color: var(--text-muted);
+}

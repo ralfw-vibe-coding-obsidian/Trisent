@@ -1075,9 +1075,11 @@ class TrisentView extends ItemView {
       this.dictionary = dictionary || data.dictionary || {};
       this.packageData = data;
       this.statusMap = this.library.wordStatusMap(language);
-      /* Einmal je Text nachsehen, welche Wörter in der Kartei liegen -
-         nicht einmal je Wort. */
-      this.inDeck = this.deck.byKey(language);
+      /* Einmal je Text nachsehen, welche Wörter im Index stehen - nicht
+         einmal je Wort. Abgeschaltet: eine leere Menge. */
+      this.inIndex = this.reader.settings.indexMarks === false
+        ? new Set()
+        : this.reader.plugin.learning.wordIndex.activeKeys(language);
       /* Register aller gezeichneten Vorkommen je Schlüssel. Damit kann ein
          Klick alle Stellen sofort umfärben, ohne den Text neu zu zeichnen -
          die Leseposition bleibt, wo sie ist. */
@@ -1187,6 +1189,23 @@ class TrisentView extends ItemView {
     paint.addEventListener('click', async () => {
       const next = HIGHLIGHTS[(HIGHLIGHTS.indexOf(mark) + 1) % HIGHLIGHTS.length];
       this.reader.settings.highlight = next.id;
+      await this.reader.saveSettings();
+      this.render();
+    });
+
+    /* Das Zeichen für Wörter im Index - an und aus. Manchmal will man
+       lesen, ohne an das Gesammelte erinnert zu werden. */
+    const marksOn = this.reader.settings.indexMarks !== false;
+    const marks = switches.createEl('button', {
+      cls: 'trisent-switch trisent-switch-icon' + (marksOn ? ' is-on' : ''),
+      attr: {
+        'aria-label': marksOn ? 'Index marks shown' : 'Index marks hidden',
+        title: marksOn ? 'Index marks shown' : 'Index marks hidden'
+      }
+    });
+    setIcon(marks, marksOn ? 'bookmark' : 'bookmark-x');
+    marks.addEventListener('click', async () => {
+      this.reader.settings.indexMarks = !marksOn;
       await this.reader.saveSettings();
       this.render();
     });
@@ -1462,7 +1481,7 @@ class TrisentView extends ItemView {
            auf dem Wort selbst, nicht auf der Spalte, damit sie den
            Wortabstand nicht mit einfärbt. */
         wordEl = f.createSpan({
-          cls: 'trisent-word' + (this.inDeck.has(column.unit.key) ? ' is-carded' : ''),
+          cls: 'trisent-word' + (this.inIndex.has(column.unit.key) ? ' is-indexed' : ''),
           text: column.f
         });
         wordEl.dataset.key = column.unit.key;
@@ -1729,26 +1748,21 @@ class TrisentView extends ItemView {
     this.openText(path);
   }
 
-  /* Ein Wort ist in die Kartei gewandert - die Ecke sofort setzen, an
-     allen Vorkommen, ohne den Text neu zu zeichnen. */
-  markDeck(key) {
-    this.setDeckMark(key, true);
-  }
+  /* Die Lernkartei ist abgeschaltet; wer sie noch ruft, bewirkt nichts. */
+  markDeck() {}
+  unmarkDeck() {}
 
-  /* Und wieder weg, wenn die Karte aus der Kartei verschwindet. */
-  unmarkDeck(key) {
-    this.setDeckMark(key, false);
-  }
-
-  setDeckMark(key, on) {
-    if (!this.scrollEl || !this.inDeck) return;
-    if (on) this.inDeck.set(key, true);
-    else this.inDeck.delete(key);
+  /* Ein Wort ist in den Index gekommen (oder hinaus) - das Zeichen sofort
+     setzen, an allen Vorkommen, ohne den Text neu zu zeichnen. */
+  setIndexMark(key, on) {
+    if (!this.scrollEl || !this.inIndex) return;
+    if (this.reader.settings.indexMarks === false) return;
+    if (on) this.inIndex.add(key);
+    else this.inIndex.delete(key);
 
     for (const el of this.scrollEl.querySelectorAll('.trisent-word')) {
       if (el.dataset.key !== key) continue;
-      if (on) el.addClass('is-carded');
-      else el.removeClass('is-carded');
+      el.toggleClass('is-indexed', on);
     }
   }
 

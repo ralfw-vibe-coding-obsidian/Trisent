@@ -24,7 +24,7 @@ tippe **`trisent`**, und du siehst alle vier:
 |---|---|
 | **Trisent: Reading** | Texte lesen und hören |
 | **Trisent: Translation** | Sätze übersetzen, tippend oder gesprochen |
-| **Trisent: Flashcards** | die Lernkartei |
+| **Trisent: Index** | die Wörter, die dir aufgefallen sind |
 | **Trisent: Packager** | Texte zu Paketen schnüren |
 
 Auf dem Handy ist das der bequemere Weg – dort ist die Symbolleiste schmal
@@ -64,6 +64,25 @@ geblättert.
 
 Die Tags stehen in der Notiz des Textes im Ordner `texts` – dort kannst du
 sie auch von Hand ändern, und Obsidian kennt sie als ganz normale Tags.
+
+## Wörter, die dir auffallen: der Index
+
+Fällt dir ein Wort auf – beim Lesen oder beim Übersetzen –, öffne seine
+Word card und tippe oben auf das **Lesezeichen**. Damit steht es in deinem
+**Index**. Nimmst du es später noch einmal auf, steht es trotzdem nur einmal
+da, aber mit einem Zähler: so oft bist du darüber gestolpert.
+
+Den Index öffnest du mit **Trisent: Index**. Dort kannst du ordnen nach
+*zuletzt aufgenommen*, *A–Z*, *am häufigsten aufgenommen* und *am häufigsten
+in deinen Texten* – die letzten lohnen das Merken am meisten. Ein Tipp auf
+ein Wort zeigt seine Word card. Rechts an jedem Wort: **archivieren**
+(ausblenden, aber behalten) oder **löschen** (ganz heraus).
+
+Im Reader tragen Wörter aus deinem Index einen kleinen Ring. Das Lesezeichen
+oben in der Leseleiste schaltet ihn ein und aus.
+
+Eine Lernkartei mit fälligen Karten gibt es nicht mehr – nichts wird fällig,
+nichts türmt sich.
 
 ## Texte selbst verpacken
 

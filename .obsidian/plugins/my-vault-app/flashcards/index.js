@@ -13,6 +13,13 @@ const {
   SOURCES, DEFAULT_RHYTHM, rhythm, parseRhythm, formatRhythm, configure
 } = require('./schedule.js');
 
+/* Abgeschaltet im Oktober 2026: Die Person fand das Abarbeiten
+   fälliger Karten zäh und lernt jetzt im Zusammenhang - lesen, hören,
+   übersetzen - und sammelt Auffälliges im Index (index/). Code und Daten
+   bleiben; ohne Knopf, Befehl, Ansicht und Einstellungen. Wieder
+   einschalten heißt: hier true. */
+const ENABLED = false;
+
 const DEFAULTS = {
   lastLanguage: null,
   /* Was eine Sitzung zieht und wie groß sie ist. */
@@ -38,6 +45,15 @@ class Flashcards {
 
     /* Der eingestellte Rhythmus gilt ab jetzt für alles, was rechnet. */
     if (!configure(this.settings.rhythm)) configure(DEFAULT_RHYTHM);
+
+    if (!ENABLED) {
+      /* Eine Ansicht, die beim letzten Mal offen war, schließen - sonst
+         stünde dort ein leerer Reiter "Plugin nicht mehr aktiv". */
+      plugin.app.workspace.onLayoutReady(() => {
+        plugin.app.workspace.detachLeavesOfType(VIEW_TYPE);
+      });
+      return;
+    }
 
     plugin.registerView(VIEW_TYPE, (leaf) => new DeckView(leaf, this));
     plugin.addRibbonIcon(RIBBON_ICON, 'Trisent: Flashcards', () => this.open());
@@ -71,12 +87,14 @@ class Flashcards {
   }
 
   refresh() {
+    if (!ENABLED) return;
     this.app.workspace.getLeavesOfType(VIEW_TYPE).forEach((leaf) => {
       if (leaf.view instanceof DeckView) leaf.view.render();
     });
   }
 
   addSettings(containerEl) {
+    if (!ENABLED) return;
     /* Der Rhythmus als eine Liste, nicht als zehn Felder: Man will ihn
        im Ganzen sehen, weil erst die Folge etwas bedeutet. */
     let field = null;

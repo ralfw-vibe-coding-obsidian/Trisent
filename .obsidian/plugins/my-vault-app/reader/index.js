@@ -25,7 +25,9 @@ const DEFAULTS = {
   lastLanguage: null,
   lastPackage: null,
   reading: {},
-  levels: { source: true, gloss: true, fluent: true }
+  levels: { source: true, gloss: true, fluent: true },
+  /* Ob Wörter aus dem Index im Text ein kleines Zeichen tragen. */
+  indexMarks: true
 };
 
 class Reader {
@@ -259,6 +261,26 @@ class Reader {
       if (leaf.view instanceof TrisentView && leaf.view.screen === 'text') return leaf.view;
     }
     return null;
+  }
+
+  /* Ein Wort in den Index aufnehmen - auch erneut, dann zählt es hoch.
+     card.origin sagt, wo es aufgefallen ist; ohne Angabe beim Lesen. */
+  async addToIndex(card) {
+    let mark;
+    try {
+      mark = await this.plugin.learning.wordIndex.add(
+        card.language, card.key, card.origin || 'reader', card.status, card.entry
+      );
+    } catch (error) {
+      new Notice('Could not add this word to your index: ' + String(error.message || error));
+      return null;
+    }
+    if (!card.file) card.file = this.library.wordFileFor(card.language, card.key);
+
+    const view = this.readerView();
+    if (view) view.setIndexMark(card.key, true);
+    if (this.plugin.index) this.plugin.index.refresh();
+    return mark;
   }
 
   /* Ein Wort in die Lernkartei legen. Mehrfach drücken schadet nicht -

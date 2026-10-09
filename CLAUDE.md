@@ -156,9 +156,10 @@ in Kommentaren und im Gespräch mit der Person:
 |---|---|---|
 | **Word card** | die Ansicht rechts im Reader. Virtuell: Sie setzt zusammen, was Wörterbuch, Notiz und Kartei wissen. Keine Datei. | – |
 | **Word entry** | was über ein Wort bekannt ist: Grundform, Wortart, Bedeutung, Formen, Grammatik. Kommt mit den Paketen und wird beim Import eingearbeitet. | `learning/<LANG>/dictionary.json` – **ihr** Wörterbuch, eins je Sprache |
-| **Word note** | die Manifestation eines Wortes für die Person – ihr Knotenpunkt. Lernstand, eigene Notizen, Verweise (z. B. auf die Flashcard). | `learning/<LANG>/notes/` |
+| **Word note** | die Manifestation eines Wortes für die Person – ihr Knotenpunkt. Lernstand, eigene Notizen, ob und wie oft das Wort in ihrem **Index** steht (`indexCount`, `indexFrom`, …, siehe `learning/marks.js`). | `learning/<LANG>/notes/` |
 | **Text note** | die Notiz eines Textes für die Person: ihre Tags, wie die Sätze im Translator gelaufen sind, eigene Notizen. Entsteht beim Import. | `learning/<LANG>/texts/` |
-| **Flashcard** | eine Karteikarte: Level, Wiedervorlage, eigene Notizen. Vorder- und Rückseite holt sie über den Schlüssel aus dem Wörterbuch. Verweist auf die Word note. | `learning/<LANG>/flashcards/` |
+| **Index** | die Sammlung der Wörter, die der Person beim Lesen oder Übersetzen aufgefallen sind – ohne Wiedervorlage. Keine Datei: steht in den Word notes, gezeigt von `index/`. | – |
+| **Flashcard** | eine Karteikarte: Level, Wiedervorlage, eigene Notizen. **Abgeschaltet** (Oktober 2026) – Code und Daten bleiben, die Oberfläche nicht. | `learning/<LANG>/flashcards/` |
 
 Zwei Regeln fallen daraus:
 
@@ -182,7 +183,7 @@ Trisent/                  einstellbar, Vorgabe: Trisent
 │   │   ├── language.md
 │   │   ├── dictionary.json  das Wörterbuch: alle Word entries, gefüllt durch Importe
 │   │   ├── notes/           Word notes - Lernstand und Eigenes, eine je Wort
-│   │   ├── flashcards/      die Lernkartei
+│   │   ├── flashcards/      die Lernkartei (abgeschaltet, Daten bleiben)
 │   │   ├── texts/           Text notes - ihre Tags und was sie über die Sätze weiß, eine je Text
 │   │   ├── translations/    eine Notiz je Übersetzungssitzung - Historie und jeder Versuch
 │   │   └── packages/        die Lerntexte: Kopf und Text, ohne Wörterbuch
@@ -237,7 +238,8 @@ Die Aufteilung ist keine Empfehlung, sondern eine Abmachung.
 ├── learning/            LEARNING - was die Lernwerkzeuge teilen
 ├── reader/              LEARNING - lesen und hören
 ├── translator/          LEARNING - übersetzen, tippend oder sprechend
-├── flashcards/          LEARNING - Lernkartei und Wiedervorlage
+├── flashcards/          LEARNING - Lernkartei (abgeschaltet: ENABLED in index.js)
+├── index/               LEARNING - der Index: Wörter, die auffielen
 └── packager/            PREPARING - Texte zu Paketen schnüren
 ```
 
@@ -270,6 +272,7 @@ liegt. Ob seines veraltet ist, liest er aus seinem eigenen Manifest.
 | `reader/` | nur die Reader-Sitzung |
 | `translator/` | nur die Translator-Sitzung |
 | `flashcards/` | nur die Flashcard-Sitzung |
+| `index/` | die Learning-Seite (Reader und Translator) |
 | `learning/` | Reader und Translator - im Einvernehmen |
 | `packager/` | nur die Packager-Sitzung |
 | `core/`, `main.js`, `styles.css`, `konzept/paketformat.md` | **alle - nur im Einvernehmen** |

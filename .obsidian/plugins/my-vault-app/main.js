@@ -36,6 +36,8 @@ const MODULES = [
   'learning/dictionary.js',
   'learning/tags.js',
   'learning/texts.js',
+  'learning/marks.js',
+  'learning/wordindex.js',
   'learning/schema.js',
   'learning/migrations.js',
   'learning/layout.js',
@@ -61,6 +63,8 @@ const MODULES = [
   'translator/index.js',
   'flashcards/view.js',
   'flashcards/index.js',
+  'index/view.js',
+  'index/index.js',
   'packager/ai.js',
   'packager/audio.js',
   'packager/build.js',
@@ -89,6 +93,7 @@ const MODULE_STYLES = [
   'reader/reader.css',
   'translator/translator.css',
   'flashcards/flashcards.css',
+  'index/index.css',
   'packager/packager.css'
 ];
 
@@ -208,6 +213,9 @@ module.exports = class TrisentPlugin extends Plugin {
     this.reader = new reader.Reader(this);
     this.translator = new translator.Translator(this);
     this.flashcards = new flashcards.Flashcards(this);
+    /* Der Index - die Wörter, die beim Lesen und Übersetzen auffielen.
+       Ersetzt in der Oberfläche die Lernkartei. */
+    this.index = new modules['index/index.js'].Index(this);
     this.packager = new packager.Packager(this);
 
     this.addSettingTab(new TrisentSettingTab(this.app, this));
@@ -260,6 +268,7 @@ module.exports = class TrisentPlugin extends Plugin {
       this.reader.refresh();
       this.translator.refresh();
       this.flashcards.refresh();
+      this.index.refresh();
     }, 200);
   }
 
@@ -404,7 +413,9 @@ module.exports = class TrisentPlugin extends Plugin {
       reader: Object.assign({}, readerDefaults, stored.reader || {}),
       translator: Object.assign({}, translatorDefaults, stored.translator || {}),
       flashcards: Object.assign({}, flashcardDefaults, stored.flashcards || {}),
-      packager: Object.assign({}, packagerDefaults, stored.packager || {})
+      packager: Object.assign({}, packagerDefaults, stored.packager || {}),
+      /* Der Index ergänzt seine Vorgaben selbst - siehe index/index.js. */
+      index: Object.assign({}, stored.index || {})
     };
 
     /* Frühere Fassungen hatten alles flach nebeneinander. Was von dort

@@ -58,11 +58,11 @@ class WordCardView extends ItemView {
     const page = root.createDiv({ cls: 'trisent-card' });
 
     /* Kopf: die Grundform, nicht die Form aus dem Satz. Rechts daneben
-       die Lernkartei - sie gehört nach oben, weil man sie im Moment des
-       Lesens braucht und nicht erst hinter den Vorkommen suchen will. */
+       der Index - er gehört nach oben, weil einem ein Wort im Moment des
+       Lesens auffällt und nicht erst hinter den Vorkommen. */
     const head = page.createDiv({ cls: 'trisent-card-head' });
     const naming = head.createDiv({ cls: 'trisent-card-naming' });
-    this.renderDeckState(head.createDiv({ cls: 'trisent-card-deck' }), card);
+    this.renderIndexState(head.createDiv({ cls: 'trisent-card-index' }), card);
 
     naming.createDiv({ cls: 'trisent-card-lemma', text: card.lemma });
     const tags = naming.createDiv({ cls: 'trisent-card-tags' });
@@ -237,7 +237,46 @@ class WordCardView extends ItemView {
   }
 
   /* Ein Zeichen, kein Satz - es sitzt neben der Grundform und muss dort
-     schmal bleiben. Was es bedeutet, sagt der Hinweis beim Darüberfahren. */
+     schmal bleiben. Was es bedeutet, sagt der Hinweis beim Darüberfahren.
+
+     Steht das Wort schon im Index, nimmt ein Tipp es noch einmal auf:
+     Es bleibt ein Eintrag, aber der Zähler wächst - "darüber bin ich
+     schon wieder gestolpert". */
+  renderIndexState(parent, card, known) {
+    parent.empty();
+    const index = this.reader.plugin.learning.wordIndex;
+    const mark = known || (card.language ? index.markFor(card.language, card.key) : null);
+    const inside = Boolean(mark) && !mark.archived;
+
+    const button = parent.createEl('button', {
+      cls: 'trisent-index-mark' + (inside ? ' is-in' : '')
+    });
+    setIcon(button.createSpan({ cls: 'trisent-index-mark-icon' }), inside ? 'bookmark-check' : 'bookmark-plus');
+    if (inside && mark.count > 1) {
+      button.createSpan({ cls: 'trisent-index-mark-count', text: '×' + mark.count });
+    }
+
+    const hint = !mark
+      ? 'Add to your index'
+      : mark.archived
+        ? 'Archived in your index — add it again'
+        : 'In your index' + (mark.count > 1 ? ' · added ' + mark.count + ' times' : '') + ' — add it again';
+    setTooltip(button, hint);
+    button.setAttr('aria-label', hint);
+
+    button.addEventListener('click', async () => {
+      button.setAttr('disabled', 'true');
+      const added = await this.reader.addToIndex(card);
+      if (!added) {
+        button.removeAttribute('disabled');
+        return;
+      }
+      this.renderIndexState(parent, card, added);
+    });
+  }
+
+  /* Die Lernkartei ist abgeschaltet (Oktober 2026) - ihr Knopf steht
+     nicht mehr auf der Karte. Bleibt für den Fall, dass sie wiederkommt. */
   renderDeckState(parent, card, known) {
     parent.empty();
     /* Nach dem Hinzufuegen kennen wir die Karte schon - dann nicht noch

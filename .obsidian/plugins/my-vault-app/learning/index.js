@@ -20,6 +20,7 @@ const { Streak } = require('./streak.js');
 const { Deck } = require('../flashcards/deck.js');
 const { Dictionary } = require('./dictionary.js');
 const { TextNotes } = require('./texts.js');
+const { WordIndex } = require('./wordindex.js');
 const { Importer } = require('./importer.js');
 const { Inbox } = require('./inbox.js');
 const { Migrations, describe } = require('./migrations.js');
@@ -55,6 +56,13 @@ class Learning {
     this.texts = new TextNotes(plugin.app, this.library);
     plugin.registerEvent(
       plugin.app.metadataCache.on('changed', (file) => this.texts.forget(file && file.path))
+    );
+
+    /* Der Index: Wörter, die der Person aufgefallen sind - beim Lesen
+       oder beim Übersetzen. Steht in den Word notes. */
+    this.wordIndex = new WordIndex(plugin.app, this.library);
+    plugin.registerEvent(
+      plugin.app.metadataCache.on('changed', (file) => this.wordIndex.forget(file && file.path))
     );
 
     /* Der eine Weg herein: aus der Inbox, durch die Prüfung. */

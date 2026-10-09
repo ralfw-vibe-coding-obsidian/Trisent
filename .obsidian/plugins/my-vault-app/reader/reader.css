@@ -1568,19 +1568,24 @@
    ein dritter Kanal neben dem Strich unter dem Wort und der Klammer
    darunter, und damit mit keinem von beiden zu verwechseln. */
 
-.trisent-word.is-carded {
+/* Steht im Index: ein kleiner Ring oben am Wort. Ein Ring statt des
+   gefüllten Quadrats der früheren Lernkartei - es ist etwas anderes,
+   und es soll nur dezent sagen: "das hast du dir schon gemerkt". */
+.trisent-word.is-indexed {
   position: relative;
 }
 
-.trisent-word.is-carded::after {
+.trisent-word.is-indexed::after {
   content: "";
   position: absolute;
-  top: -0.1em;
-  right: -0.25em;
-  width: 4px;
-  height: 4px;
-  border-radius: 1px;
-  background: var(--tri-accent);
+  top: -0.15em;
+  right: -0.3em;
+  width: 5px;
+  height: 5px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  border: 1.5px solid var(--tri-accent);
+  background: transparent;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1726,4 +1731,61 @@
 /* Ein schon bekannter Text im Importbericht - es war nichts zu tun. */
 .trisent-report-line.is-same .trisent-report-icon {
   color: var(--text-faint);
+}
+
+/* ------------------------------------------------------------------ */
+/* Der Index auf der Word card                                        */
+/* ------------------------------------------------------------------ */
+
+/* Oben neben der Grundform. Ein Zeichen statt eines Knopfes mit Text -
+   dort ist nur Platz für ein Zeichen. */
+
+.trisent-card-index {
+  flex: 0 0 auto;
+  padding-top: 0.3rem;
+}
+
+.trisent-card-view .trisent-index-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  height: 1.85rem;
+  min-width: 1.85rem;
+  padding: 0 0.45rem;
+  cursor: pointer;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  font-family: var(--tri-ui);
+  font-size: 0.76rem;
+  line-height: 1;
+  box-shadow: none;
+}
+
+.trisent-card-view .trisent-index-mark:hover {
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+/* Schon drin: gefüllt, ruhig. Antippen nimmt es noch einmal auf. */
+.trisent-card-view .trisent-index-mark.is-in {
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+.trisent-card-view .trisent-index-mark[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.trisent-index-mark-icon svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.trisent-index-mark-count {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
