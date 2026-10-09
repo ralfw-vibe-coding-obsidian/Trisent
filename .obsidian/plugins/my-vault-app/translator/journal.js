@@ -18,14 +18,20 @@
 
 const { TFile, TFolder, normalizePath } = require('obsidian');
 const { now } = require('../core/calendar.js');
-const { MARK } = require('./practice.js');
+const { MARK, readMarks } = require('./practice.js');
 
 const JOURNAL_DIR = 'translations';
 
+/* Farbige Zeichen statt der schlichten aus der Textnotiz: Beim
+   Überfliegen einer Sitzung soll man auf einen Blick sehen, was saß -
+   Grün gegen Rot. Die Zeichenfolge je Satz (✗✓★) bleibt, wie sie ist;
+   die wird gelesen, diese hier nur angesehen. */
+const ICON = { wrong: '❌', correct: '✅', exact: '✅⭐' };
+
 const VERDICT = {
-  wrong: MARK.wrong + ' Not yet',
-  correct: MARK.correct + ' Correct',
-  exact: MARK.exact + ' Correct, word for word'
+  wrong: 'Not yet',
+  correct: 'Correct',
+  exact: 'Correct, word for word'
 };
 
 function pad(n) {
@@ -71,6 +77,7 @@ class Journal {
       'planned: ' + planned,
       'done: 0',
       'right: 0',
+      'results: ""',
       '---',
       ''
     ];
@@ -81,11 +88,11 @@ class Journal {
   async add(file, number, entry) {
     const lines = [
       '',
-      '## ' + number + '. ' + entry.prompt,
+      '## ' + (ICON[entry.result] || '') + ' ' + number + '. ' + entry.prompt,
       '',
       '- **You wrote:** ' + entry.answer,
       '- **Original:** ' + entry.reference,
-      '- **Verdict:** ' + (VERDICT[entry.result] || entry.result),
+      '- **Verdict:** ' + (ICON[entry.result] || '') + ' ' + (VERDICT[entry.result] || entry.result),
       '- **From:** ' + entry.title
     ];
     if (entry.note) lines.push('', entry.note);
@@ -95,6 +102,9 @@ class Journal {
     await this.app.vault.process(file, (text) => text.replace(/\s*$/, '\n') + lines.join('\n'));
     await this.app.fileManager.processFrontMatter(file, (fm) => {
       fm.done = (Number(fm.done) || 0) + 1;
+      /* Die Versuche der Reihe nach, wie in der Notiz des Textes - daraus
+         zeichnet die Historie ihre grünen und roten Zeichen. */
+      fm.results = String(fm.results || '') + (MARK[entry.result] || '');
       if (entry.result !== 'wrong') fm.right = (Number(fm.right) || 0) + 1;
     });
   }
@@ -115,7 +125,8 @@ class Journal {
         startedAt: String(fm.startedAt || ''),
         planned: Number(fm.planned) || 0,
         done: Number(fm.done) || 0,
-        right: Number(fm.right) || 0
+        right: Number(fm.right) || 0,
+        results: readMarks(fm.results)
       });
     }
     out.sort((a, b) => b.startedAt.localeCompare(a.startedAt));

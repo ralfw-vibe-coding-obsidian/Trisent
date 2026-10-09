@@ -184,6 +184,30 @@
   color: var(--text-faint);
 }
 
+.trisent-tr-session-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.3rem;
+}
+
+.trisent-tr-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--tri-unknown);
+}
+
+.trisent-tr-dot.is-right,
+.trisent-tr-dot.is-exact {
+  background: var(--tri-accent);
+}
+
+/* Wortgleich: derselbe grüne Punkt, mit Ring. */
+.trisent-tr-dot.is-exact {
+  box-shadow: 0 0 0 1.5px var(--background-primary), 0 0 0 2.5px var(--tri-accent);
+}
+
 .trisent-tr-session-score {
   flex: 0 0 auto;
   font-family: var(--tri-read);

@@ -448,6 +448,18 @@ class TranslatorView extends ItemView {
         : entry.done + ' of ' + entry.planned + ' sentences');
       left.createDiv({ cls: 'trisent-tr-session-meta', text: meta.filter(Boolean).join(' · ') });
 
+      /* Jeder Versuch als Punkt, grün oder rot - auf einen Blick, wie es
+         lief. */
+      if (entry.results.length > 0) {
+        const dots = left.createDiv({ cls: 'trisent-tr-session-dots' });
+        for (const result of entry.results) {
+          dots.createSpan({
+            cls: 'trisent-tr-dot ' + VERDICT[result].cls,
+            attr: { title: VERDICT[result].label }
+          });
+        }
+      }
+
       const share = Math.round((entry.right / entry.done) * 100);
       const score = row.createDiv({
         cls: 'trisent-tr-session-score' + (share >= 70 ? ' is-good' : share < 50 ? ' is-low' : '')
