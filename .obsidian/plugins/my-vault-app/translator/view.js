@@ -1052,12 +1052,14 @@ class TranslatorView extends ItemView {
     back.addEventListener('click', () => this.stop());
   }
 
-  /* Eine zweite Runde mit den falsch übersetzten Sätzen, gemischt.
-     Zählt nicht. */
+  /* Noch eine Runde mit den falsch übersetzten Sätzen, gemischt - so
+     oft, wie noch welche falsch sind. Zählt nicht. */
   retry(items) {
     const first = this.run;
     this.run = Object.assign({}, first, {
       retry: true,
+      /* Die wievielte Runde: 2 ist die erste Wiederholung. */
+      round: (first.round || 1) + 1,
       session: new Session(new Draw(items, { mode: 'hardest', size: items.length }), items.length),
       journalFile: first.journalFile
     });
@@ -1067,7 +1069,7 @@ class TranslatorView extends ItemView {
   renderRetrySummary(page, run) {
     const session = run.session;
     const done = session.results.length;
-    page.createEl('h1', { text: 'Second try' });
+    page.createEl('h1', { text: run.round === 2 ? 'Second try' : 'Try ' + run.round });
     if (done > 0) {
       page.createEl('p', {
         cls: 'trisent-lead',
@@ -1084,6 +1086,18 @@ class TranslatorView extends ItemView {
     });
 
     const row = page.createDiv({ cls: 'trisent-tr-row is-next' });
+
+    /* Solange noch etwas falsch ist, geht noch eine Runde. */
+    const wrong = session.results.filter((entry) => entry.result === 'wrong').map((entry) => entry.item);
+    if (wrong.length > 0) {
+      const again = row.createEl('button', { cls: 'trisent-tr-again' });
+      setIcon(again.createSpan(), 'rotate-ccw');
+      again.createSpan({
+        text: wrong.length === 1 ? 'Try the wrong one again' : 'Try the ' + wrong.length + ' wrong ones again'
+      });
+      again.addEventListener('click', () => this.retry(wrong));
+    }
+
     const back = row.createEl('button', { cls: 'trisent-tr-next' });
     back.createSpan({ text: 'Back to the stories' });
     back.addEventListener('click', () => this.stop());
