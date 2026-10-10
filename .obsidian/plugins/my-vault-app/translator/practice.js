@@ -131,6 +131,40 @@ function resultOf(correct, answer, reference) {
   return isExact(answer, reference) ? 'exact' : 'correct';
 }
 
+/* Was eine Geschichte über das Üben verrät - für ihre Karte in der
+   Auswahl.
+
+   items:  die übbaren Sätze der Geschichte (storyItems)
+   record: { marks: { id: '✗✓' }, excluded: Set }
+
+   total      wie viele Sätze es zu üben gibt
+   practised  wie viele davon schon mindestens einmal vorgelegt wurden
+   attempts   wie viele Versuche es insgesamt gab
+   archived   wie viele nicht mehr kommen (sitzen oder ausgeschlossen)
+   open       die, die noch kommen können */
+function storyStats(items, record) {
+  const marks = (record && record.marks) || {};
+  const excluded = (record && record.excluded) || new Set();
+  let practised = 0;
+  let attempts = 0;
+  const open = [];
+  for (const item of items || []) {
+    const id = item.sentence.id;
+    const seen = readMarks(marks[id]).length;
+    if (seen > 0) practised++;
+    attempts += seen;
+    if (!isArchived(marks[id], excluded.has(id))) open.push(item);
+  }
+  const total = (items || []).length;
+  return {
+    total: total,
+    practised: practised,
+    attempts: attempts,
+    archived: total - open.length,
+    open: open
+  };
+}
+
 /* Fisher-Yates mit hereingereichtem Zufall, damit es sich prüfen lässt. */
 function shuffle(items, random) {
   const rnd = typeof random === 'function' ? random : Math.random;
@@ -277,5 +311,5 @@ module.exports = {
   MARK, SIZES, CONTEXT, STREAK_TO_ARCHIVE,
   readMarks, writeMarks, addMark, isRight, statsOf, isArchived,
   hardness, compareHardness, plain, isExact, resultOf, shuffle,
-  storyItems, Draw, Session
+  storyItems, storyStats, Draw, Session
 };

@@ -24,7 +24,7 @@ const { page: pageOf } = require('../flashcards/find.js');
 const { judgeTranslation, explainTranslation } = require('./check.js');
 const { Dictation } = require('./speech.js');
 const {
-  SIZES, isArchived, hardness, compareHardness, isExact, storyItems, Draw, Session, MARK
+  SIZES, hardness, compareHardness, isExact, storyItems, storyStats, Draw, Session, MARK
 } = require('./practice.js');
 
 const VIEW_TYPE = 'trisent-translator-view';
@@ -520,10 +520,9 @@ class TranslatorView extends ItemView {
 
   renderStory(list, language, story) {
     const entry = story.entry;
-    const total = story.items.length;
-    const open = story.items.filter((item) => !isArchived(
-      story.record.marks[item.sentence.id], story.record.excluded.has(item.sentence.id)
-    ));
+    const stats = storyStats(story.items, story.record);
+    const total = stats.total;
+    const open = stats.open;
 
     const row = list.createEl('button', {
       cls: 'trisent-text-row' + (open.length === 0 ? ' is-finished' : '')
@@ -534,14 +533,18 @@ class TranslatorView extends ItemView {
       left.createDiv({ cls: 'trisent-t-sub', text: entry.data.titleTranslation });
     }
 
+    /* Wie weit diese Geschichte geübt ist: wie viele ihrer Sätze schon
+       vorgelegt wurden, wie viele Versuche es gab, was nicht mehr kommt. */
     const note = row.createDiv({ cls: 'trisent-t-note' });
-    const archived = total - open.length;
     note.createDiv({
-      text: open.length === 0
-        ? 'All ' + total + ' sentences archived'
-        : open.length + ' of ' + total + ' to practise'
+      text: stats.practised + ' of ' + total + ' sentences practised'
     });
-    if (archived > 0 && open.length > 0) note.createDiv({ text: archived + ' archived' });
+    const more = [];
+    if (stats.attempts > 0) more.push(stats.attempts + (stats.attempts === 1 ? ' attempt' : ' attempts'));
+    if (stats.archived > 0) {
+      more.push(open.length === 0 ? 'all archived' : stats.archived + ' archived');
+    }
+    if (more.length > 0) note.createDiv({ text: more.join(' · ') });
 
     if (open.length === 0) {
       row.setAttr('disabled', 'true');
@@ -586,7 +589,7 @@ class TranslatorView extends ItemView {
     const entry = run.byText.get(item.text);
 
     const bar = this.useBar();
-    const head = this.header(bar, run.source, () => this.stop(), 'Stop');
+    const head = this.header(bar, run.retry ? run.source + ' · again' : run.source, () => this.stop(), 'Stop');
     head.createDiv({
       cls: 'trisent-tr-count',
       text: session.position + ' / ' + session.size
@@ -742,7 +745,9 @@ class TranslatorView extends ItemView {
           .catch((error) => ({ note: '', issues: [], failed: String(error.message || error) }));
 
       this.turn(below, back, flip, item, entry, answer, outcome, explained, task.spoken);
-      this.save(run, language, item, entry, answer, outcome, explained, number, task.spoken);
+      /* Die zweite Runde zählt nicht: kein Stand am Satz, kein Eintrag
+         in der Sitzung. Nur üben. */
+      if (!run.retry) this.save(run, language, item, entry, answer, outcome, explained, number, task.spoken);
     };
 
     check.addEventListener('click', run_check);
@@ -998,7 +1003,12 @@ class TranslatorView extends ItemView {
     const session = run.session;
     const done = session.results.length;
 
-    this.header(this.useBar(), run.source, () => this.stop(), 'Back');
+    this.header(this.useBar(), run.retry ? run.source + ' · again' : run.source, () => this.stop(), 'Back');
+
+    if (run.retry) {
+      this.renderRetrySummary(page, run);
+      return;
+    }
 
     page.createEl('h1', { text: 'Done' });
     if (done === 0) {
@@ -1021,6 +1031,57 @@ class TranslatorView extends ItemView {
     if (days > 0) {
       page.createEl('p', { cls: 'trisent-muted', text: days === 1 ? 'Day one.' : days + ' days in a row.' });
     }
+
+    const row = page.createDiv({ cls: 'trisent-tr-row is-next' });
+
+    /* Die falschen noch einmal - auf Wunsch, und ohne dass es etwas
+       ändert: Das Ergebnis der Sitzung und der Stand der Sätze bleiben,
+       wie sie sind. */
+    const wrong = session.results.filter((entry) => entry.result === 'wrong').map((entry) => entry.item);
+    if (wrong.length > 0) {
+      const again = row.createEl('button', { cls: 'trisent-tr-again' });
+      setIcon(again.createSpan(), 'rotate-ccw');
+      again.createSpan({
+        text: wrong.length === 1 ? 'Try the wrong one again' : 'Try the ' + wrong.length + ' wrong ones again'
+      });
+      again.addEventListener('click', () => this.retry(wrong));
+    }
+
+    const back = row.createEl('button', { cls: 'trisent-tr-next' });
+    back.createSpan({ text: 'Back to the stories' });
+    back.addEventListener('click', () => this.stop());
+  }
+
+  /* Eine zweite Runde mit den falsch übersetzten Sätzen, gemischt.
+     Zählt nicht. */
+  retry(items) {
+    const first = this.run;
+    this.run = Object.assign({}, first, {
+      retry: true,
+      session: new Session(new Draw(items, { mode: 'hardest', size: items.length }), items.length),
+      journalFile: first.journalFile
+    });
+    this.render();
+  }
+
+  renderRetrySummary(page, run) {
+    const session = run.session;
+    const done = session.results.length;
+    page.createEl('h1', { text: 'Second try' });
+    if (done > 0) {
+      page.createEl('p', {
+        cls: 'trisent-lead',
+        text: session.right + ' of ' + done + (done === 1 ? ' sentence' : ' sentences') + ' right this time.'
+      });
+      const marks = page.createDiv({ cls: 'trisent-tr-marks' });
+      for (const entry of session.results) {
+        marks.createSpan({ cls: 'trisent-tr-mark ' + VERDICT[entry.result].cls, text: MARK[entry.result] });
+      }
+    }
+    page.createEl('p', {
+      cls: 'trisent-muted',
+      text: 'Just practice — your session result and the sentences\' records stay as they were.'
+    });
 
     const row = page.createDiv({ cls: 'trisent-tr-row is-next' });
     const back = row.createEl('button', { cls: 'trisent-tr-next' });

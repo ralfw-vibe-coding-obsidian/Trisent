@@ -189,3 +189,26 @@ test('gehen die Sätze aus, endet die Sitzung früher', () => {
   ok(s.done, 'trotzdem fertig');
   is(s.right, 0, 'nichts richtig');
 });
+
+/* ------------------------------------------------------------------ */
+/* Was eine Geschichte über das Üben verrät                           */
+/* ------------------------------------------------------------------ */
+
+test('wie viele Sätze schon vorgelegt wurden, wie viele Versuche es gab', () => {
+  const items = p.storyItems('t', saetze(6));
+  const record = {
+    marks: { s1: '✗✓', s2: '✓✓✓', s3: '★', s9: '✗✗' },
+    excluded: new Set(['s4'])
+  };
+  const st = p.storyStats(items, record);
+  is(st.total, 6, 'sechs Sätze');
+  is(st.practised, 3, 's1, s2, s3 - s9 gehört nicht zur Geschichte');
+  is(st.attempts, 6, '2 + 3 + 1');
+  is(st.archived, 2, 's2 sitzt, s4 ist ausgeschlossen');
+  is(st.open.map((x) => x.key), ['t#s1', 't#s3', 't#s5', 't#s6'], 'der Rest kann kommen');
+});
+
+test('eine Geschichte ohne Versuche', () => {
+  const st = p.storyStats(p.storyItems('t', saetze(3)), { marks: {}, excluded: new Set() });
+  is([st.practised, st.attempts, st.archived, st.open.length], [0, 0, 0, 3], 'alles offen');
+});

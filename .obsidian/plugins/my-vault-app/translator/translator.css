@@ -487,6 +487,7 @@
 
 .trisent-tr-row.is-next {
   justify-content: center;
+  flex-wrap: wrap;
   margin-top: 1.1rem;
 }
 
@@ -519,6 +520,29 @@
   filter: none;
 }
 
+/* Die falschen noch einmal: ein zweiter Weg neben "zurück", leiser. */
+.trisent-view .trisent-tr-again {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  height: auto;
+  font-family: var(--tri-ui);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-tr-again:hover {
+  background: var(--background-modifier-hover);
+}
+
+.trisent-tr-again svg,
 .trisent-tr-next svg {
   width: 0.95em;
   height: 0.95em;
