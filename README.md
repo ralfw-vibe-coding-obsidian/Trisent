@@ -51,8 +51,11 @@ markiert.
 - Nach **Check** dreht sich die Karte: das Original zum Anhören, die eigene
   Antwort und das Urteil. Getippt zählt auch die Grammatik, gesprochen nur der
   Sinn.
+- Was falsch war, kommt am Ende der Sitzung noch einmal – Runde um Runde, bis
+  alles sitzt. Diese Wiederholungen zählen nicht mehr fürs Urteil.
 - Keine Wiedervorlage, kein Berg, der sich auftürmt. Jede Sitzung bleibt mit
-  ihren richtigen und falschen Sätzen in der Historie.
+  ihren richtigen und falschen Sätzen in der Historie, und je Geschichte sieht
+  man, wie weit man sie geübt hat.
 - Wörter im Original lassen sich antippen und in den Index nehmen.
 - Das Urteil kommt von einer KI über [OpenRouter](https://openrouter.ai); dafür
   braucht der Translator einen Schlüssel. Was das kostet, steht in den
