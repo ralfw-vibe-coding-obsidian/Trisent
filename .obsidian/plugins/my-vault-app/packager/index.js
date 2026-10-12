@@ -313,8 +313,15 @@ function audioNamesOf(data) {
    Die Notiz wird ja gleich zu Beginn in ihren Ordner einsortiert - würde
    sie danach anders heißen, fände die Ansicht den laufenden Vorgang nicht
    mehr, zeichnete den Knopf wieder anklickbar, und ein zweiter Klick
-   startete einen zweiten Lauf neben dem ersten. */
+   startete einen zweiten Lauf neben dem ersten.
+
+   Deshalb gilt die Kennung, die beim Auflisten als Text festgehalten
+   wurde ("key"), nicht der Pfad der Notiz selbst: Obsidian schreibt beim
+   Verschieben den Pfad des Notiz-Objekts um. Genau so ist es passiert -
+   die Ansicht verlor ihren Lauf, zeigte wieder Ingest, und zwei Läufe
+   arbeiteten am selben Text. */
 function keyOf(text) {
+  if (text.key) return text.key;
   return text.loose ? text.loose.path : text.folder.path;
 }
 
@@ -963,6 +970,7 @@ class Packager {
       if (isSchemaNote(child, raw)) continue;
       const body = plainText(splitNote(raw).body);
       result.push({
+        key: child.path,
         folder: languageFolder,
         loose: child,
         work: null,
@@ -1020,6 +1028,7 @@ class Packager {
       }
 
       result.push({
+        key: child.path,
         folder: child,
         work: work,
         text: source,
@@ -1625,6 +1634,23 @@ class Packager {
      die geänderten Absätze. Dann gebaut, fehlende Wörter nachgeschlagen,
      noch einmal gebaut und verschnürt. */
   async makePackage(text, step) {
+    /* Zweite Sicherung neben dem Knopf: An einem Text läuft höchstens ein
+       Ingest. Zwei nebeneinander bereiten dieselben Absätze zweimal auf,
+       schlagen dieselben Wörter zweimal nach und bauen zwei Fassungen. */
+    if (!this.ingesting) this.ingesting = new Set();
+    const key = keyOf(text);
+    if (this.ingesting.has(key)) {
+      throw new Error('This text is already being ingested. Wait until that run is done.');
+    }
+    this.ingesting.add(key);
+    try {
+      return await this.ingest(text, step);
+    } finally {
+      this.ingesting.delete(key);
+    }
+  }
+
+  async ingest(text, step) {
     if (text.loose && !text.filed) {
       step('Filing it away…');
       await this.fileAway(text);
