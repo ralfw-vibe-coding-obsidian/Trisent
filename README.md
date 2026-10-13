@@ -37,6 +37,10 @@ markiert.
 - Der Ton spielt Satz für Satz, auf Wunsch langsamer.
 - Ein Wort, das einem auffällt, nimmt man mit dem **Lesezeichen** auf der
   Wortkarte in seinen **Index**; im Text trägt es dann einen kleinen Ring.
+- Der Reiter **Words** zeigt alle Wörter eines Textes als Tabelle – jedes
+  einmal, mit Übersetzung, Lernstand, den Formen im Text und wie oft es
+  vorkommt. Filtern nach Lernstand, ordnen nach Fremdsprache oder Übersetzung;
+  ein Tipp öffnet die Wortkarte.
 - Texte lassen sich mit **Tags** ordnen und durchsuchen.
 - Neue Texte kommen über **Import** in die Bibliothek (siehe unten).
 
