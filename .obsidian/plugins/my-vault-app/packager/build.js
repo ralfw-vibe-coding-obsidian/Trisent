@@ -504,8 +504,24 @@ function skeleton(text) {
     .replace(/['\u2019\u2018\u02bc\s-]/g, '');
 }
 
+/* Wie ein Wort im Text geschrieben dasteht - ohne Groß und Klein und
+   ohne die Sorte des Apostrophs, aber MIT seinen Akzenten. Der Akzent
+   unterscheidet oft zwei Wörter derselben Wortart: spanisch "que" und
+   "qué", "como" und "cómo", "quien" und "quién". Wer ihn hier wegließe,
+   hielte sie für ein Wort in zwei Schreibweisen und lehnte den Text ab. */
+function written(text) {
+  return String(text)
+    .normalize('NFC')
+    .toLowerCase()
+    .replace(/[\u2019\u2018\u02bc]/g, "'");
+}
+
+/* Dasselbe geschriebene Wort, dieselbe Wortart - und zwei Grundformen, die
+   sich nur in der Schreibweise unterscheiden ("être" und "etre")? Das ist
+   der Fehler, den die Prüfung fangen soll. Verschieden geschriebene Wörter
+   im Text sind dagegen verschiedene Wörter. */
 function rememberSpelling(map, surface, partOfSpeech, lemma) {
-  const id = skeleton(surface) + '|' + partOfSpeech + '|' + skeleton(lemma);
+  const id = written(surface) + '|' + partOfSpeech + '|' + skeleton(lemma);
   let entry = map.get(id);
   if (!entry) {
     entry = { surface: surface, partOfSpeech: partOfSpeech, lemmas: [] };

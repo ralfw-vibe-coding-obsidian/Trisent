@@ -46,6 +46,13 @@ are written in **{{yourLanguage}}**. This list grows.
 
 15. The **written accent is part of the word**: `si` and `sí`, `el` and
     `él`, `tu` and `tú` are different words with different keys.
+16. The same holds where both words share a part of speech. The question
+    and exclamation words carry the accent, the relative words and
+    conjunctions do not: `qué`/`que`, `cómo`/`como`, `dónde`/`donde`,
+    `cuándo`/`cuando`, `quién`/`quien`, `cuál`/`cual`, `cuánto`/`cuanto`.
+    The base form keeps the accent exactly as the word has it in the
+    sentence - `¿Qué quieres?` is `qué`, `el hotel que reservé` is `que`.
+    Never add or drop an accent to make two of them look alike.
 
 ---
 
