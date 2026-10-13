@@ -27,7 +27,11 @@ const DEFAULTS = {
   reading: {},
   levels: { source: true, gloss: true, fluent: true },
   /* Ob Wörter aus dem Index im Text ein kleines Zeichen tragen. */
-  indexMarks: true
+  indexMarks: true,
+  /* Die Wörterliste eines Textes: welche Spalte vorn steht ('foreign'
+     oder 'native') und welche Lernstände sie zeigt (leer: alle). */
+  wordsFirst: 'foreign',
+  wordsLevels: []
 };
 
 class Reader {

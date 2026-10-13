@@ -51,6 +51,7 @@ const MODULES = [
   'reader/audio.js',
   'reader/upgrade.js',
   'reader/tagger.js',
+  'reader/words.js',
   'reader/view.js',
   'reader/card.js',
   'reader/index.js',

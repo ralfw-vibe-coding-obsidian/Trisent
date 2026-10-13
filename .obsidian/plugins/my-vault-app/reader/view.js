@@ -7,7 +7,8 @@
  */
 
 const { ItemView, TFolder, Notice, setIcon } = require('obsidian');
-const { WORD_STATUS } = require('../core/package.js');
+const { WORD_STATUS, readablePos } = require('../core/package.js');
+const { STATUSES, collectWords, filterWords, sortWords } = require('./words.js');
 const { KNOWN_LANGUAGES } = require('../core/library.js');
 const { Playback, Recorder, SPEEDS } = require('./audio.js');
 const { askForUpgrades } = require('./upgrade.js');
@@ -71,6 +72,9 @@ class TrisentView extends ItemView {
        einen Text öffnet und zurückkommt. */
     this.shelfQuery = '';
     this.shelfTags = [];
+    /* Welcher Reiter eines Textes offen ist: 'text' oder 'words'. Ein
+       anderer Text fängt beim Text an. */
+    this.textTab = 'text';
   }
 
   getViewType() {
@@ -759,6 +763,7 @@ class TrisentView extends ItemView {
   }
 
   openText(path) {
+    if (path !== this.packagePath) this.textTab = 'text';
     this.screen = 'text';
     this.packagePath = path;
     this.countToday();
@@ -1089,6 +1094,14 @@ class TrisentView extends ItemView {
          Weg zurück weg, sobald man ein Stück gelesen hat. */
       const bar = this.useBar();
       this.renderHeader(bar, data.title || folder.name, () => this.backToPackages(), language.name);
+      this.renderTextTabs(bar);
+
+      /* Der zweite Reiter: die Wörter dieses Textes als Tabelle. */
+      if (this.textTab === 'words') {
+        this.renderWords(page, language, data);
+        return;
+      }
+
       /* Satz-IDs in Lesereihenfolge - daraus wird der Fortschritt. */
       this.sentenceIds = [];
       /* Und die Sätze, zu denen Ton im Paket liegt. Hat ein Paket keinen,
@@ -1152,6 +1165,158 @@ class TrisentView extends ItemView {
         cls: 'trisent-footnote',
         text: 'Tap a word to set what you know about it. Long press — or right click — opens its card.'
       });
+    }
+  }
+
+  /* Zwei Reiter eines Textes: der Text selbst und seine Wörter. */
+  renderTextTabs(bar) {
+    const tabs = bar.createDiv({ cls: 'trisent-text-tabs' });
+    for (const tab of [{ id: 'text', label: 'Text' }, { id: 'words', label: 'Words' }]) {
+      const button = tabs.createEl('button', {
+        cls: 'trisent-text-tab' + (tab.id === this.textTab ? ' is-on' : ''),
+        text: tab.label
+      });
+      button.addEventListener('click', () => {
+        if (tab.id === this.textTab) return;
+        this.textTab = tab.id;
+        this.render();
+      });
+    }
+  }
+
+  /* Das Wörterbuch dieses Textes: jedes Wort einmal, mit Übersetzung,
+     Lernstand, den Formen, in denen es hier steht, und wie oft. Wörter
+     aus dem Index stehen als Gruppe zuerst, sonst alphabetisch. Ein Tipp
+     öffnet die Word card mit allen Details. */
+  renderWords(page, language, data) {
+    const settings = this.reader.settings;
+    const first = settings.wordsFirst === 'native' ? 'native' : 'foreign';
+    const levels = Array.isArray(settings.wordsLevels) ? settings.wordsLevels : [];
+    const indexed = this.reader.plugin.learning.wordIndex.activeKeys(language);
+    const rows = collectWords(
+      data, this.dictionary, (key) => this.statusMap.get(key) || 'unknown', indexed
+    );
+
+    const controls = page.createDiv({ cls: 'trisent-words-controls' });
+
+    /* Welche Spalte vorn steht - danach wird auch geordnet. */
+    const order = controls.createDiv({ cls: 'trisent-words-group' });
+    for (const option of [
+      { id: 'foreign', label: language.name + ' first' },
+      { id: 'native', label: 'Translation first' }
+    ]) {
+      const chip = order.createEl('button', {
+        cls: 'trisent-words-chip' + (option.id === first ? ' is-on' : ''),
+        text: option.label
+      });
+      chip.addEventListener('click', async () => {
+        if (option.id === first) return;
+        settings.wordsFirst = option.id;
+        await this.reader.saveSettings();
+        this.render();
+      });
+    }
+
+    /* Welche Lernstände - mehrere zugleich, keiner heißt alle. */
+    const filter = controls.createDiv({ cls: 'trisent-words-group' });
+    const labels = { unknown: 'unknown', learning: 'learning', familiar: 'familiar', known: 'known' };
+    for (const status of STATUSES) {
+      const on = levels.includes(status);
+      const chip = filter.createEl('button', {
+        cls: 'trisent-words-chip is-level' + (on ? ' is-on' : '')
+      });
+      chip.createSpan({ cls: 'trisent-legend-dot is-' + status });
+      chip.createSpan({ text: labels[status] });
+      chip.addEventListener('click', async () => {
+        settings.wordsLevels = on ? levels.filter((s) => s !== status) : levels.concat([status]);
+        await this.reader.saveSettings();
+        this.render();
+      });
+    }
+
+    const shown = sortWords(filterWords(rows, levels), first);
+    page.createDiv({
+      cls: 'trisent-words-count',
+      text: shown.length === rows.length
+        ? rows.length + (rows.length === 1 ? ' word' : ' words')
+        : shown.length + ' of ' + rows.length + ' words'
+    });
+
+    if (shown.length === 0) {
+      page.createEl('p', { cls: 'trisent-muted', text: 'No word in this text has the chosen level.' });
+      return;
+    }
+
+    const table = page.createEl('table', { cls: 'trisent-words' });
+    const head = table.createEl('thead').createEl('tr');
+    const foreignHead = language.name;
+    const columns = first === 'native' ? ['Translation', foreignHead] : [foreignHead, 'Translation'];
+    for (const title of columns) head.createEl('th', { text: title });
+    head.createEl('th', { cls: 'is-count', text: '×' });
+
+    const body = table.createEl('tbody');
+    /* Stehen Wörter aus dem Index darunter, bekommen beide Gruppen eine
+       Überschrift - sonst wäre die Ordnung ein Rätsel. */
+    const grouped = shown.some((row) => row.indexed);
+    let group = null;
+    for (const row of shown) {
+      const now = row.indexed ? 'index' : 'rest';
+      if (grouped && now !== group) {
+        group = now;
+        body.createEl('tr', { cls: 'trisent-words-divider' }).createEl('td', {
+          attr: { colspan: '3' },
+          text: now === 'index' ? 'In your index' : 'Other words'
+        });
+      }
+
+      const tr = body.createEl('tr', { cls: 'trisent-words-row is-' + row.status });
+      tr.dataset.key = row.key;
+      const foreign = createForeignCell(row);
+      const native = createNativeCell(row);
+      if (first === 'native') {
+        tr.appendChild(native);
+        tr.appendChild(foreign);
+      } else {
+        tr.appendChild(foreign);
+        tr.appendChild(native);
+      }
+      tr.createEl('td', { cls: 'is-count', text: String(row.count) });
+
+      tr.addEventListener('click', () => {
+        for (const other of body.querySelectorAll('.trisent-words-row.is-visited')) other.removeClass('is-visited');
+        tr.addClass('is-visited');
+        this.reader.showWord(language, row.key).catch((error) => {
+          console.error('Trisent: could not show this word', error);
+        });
+      });
+    }
+
+    page.createDiv({
+      cls: 'trisent-footnote',
+      text: 'Tap a word to see everything about it.'
+    });
+
+    function createForeignCell(row) {
+      const cell = document.createElement('td');
+      cell.className = 'trisent-words-foreign';
+      const line = cell.createDiv({ cls: 'trisent-words-lemma-line' });
+      line.createSpan({ cls: 'trisent-legend-dot is-' + row.status });
+      line.createSpan({ cls: 'trisent-words-lemma' + (row.indexed ? ' is-indexed' : ''), text: row.lemma });
+      if (row.partOfSpeech) {
+        line.createSpan({ cls: 'trisent-words-pos', text: readablePos(row.partOfSpeech) });
+      }
+      /* Die Formen, in denen es hier steht - nur, wenn sie anders
+         aussehen als die Grundform. */
+      const other = row.forms.filter((form) => form.toLowerCase() !== String(row.lemma).toLowerCase());
+      if (other.length > 0) cell.createDiv({ cls: 'trisent-words-forms', text: other.join(', ') });
+      return cell;
+    }
+
+    function createNativeCell(row) {
+      const cell = document.createElement('td');
+      cell.className = 'trisent-words-native';
+      cell.setText(row.gloss || '—');
+      return cell;
     }
   }
 
@@ -1784,6 +1949,17 @@ class TrisentView extends ItemView {
     if (!this.statusMap) return;
     this.statusMap.set(key, status);
     this.paint(key, status, this.occurrences.get(key) || []);
+
+    /* In der Wörterliste den farbigen Punkt mitziehen. */
+    if (this.scrollEl) {
+      for (const tr of this.scrollEl.querySelectorAll('.trisent-words-row')) {
+        if (tr.dataset.key !== key) continue;
+        for (const name of WORD_STATUS) tr.removeClass('is-' + name);
+        tr.addClass('is-' + status);
+        const dot = tr.querySelector('.trisent-legend-dot');
+        if (dot) dot.className = 'trisent-legend-dot is-' + status;
+      }
+    }
 
     /* Das Schreiben läuft nebenher; die Anzeige wartet nicht darauf. */
     this.library.setWordStatus(this.language, key, status, entry).catch((error) => {
