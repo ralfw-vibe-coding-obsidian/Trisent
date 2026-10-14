@@ -13,8 +13,9 @@ gemerkte Wörter und eigene Notizen sind gewöhnliche Notizen in der eigenen Vau
 Man kann sie lesen, durchsuchen und von Hand ändern, und sie funktionieren
 ohne Netz, auf dem Rechner wie auf dem Handy.
 
-Trisent besteht aus zwei Teilen: dem **Lernen** mit Reader, Translator und
-Index – und dem **Packager**, der aus beliebigen Texten Lernpakete schnürt.
+Trisent besteht aus zwei Teilen: dem **Lernen** mit Reader, Translator,
+Index und Exercises – und dem **Packager**, der aus beliebigen Texten
+Lernpakete schnürt.
 
 ---
 
@@ -76,6 +77,24 @@ markiert.
 - Archivieren blendet ein Wort aus, ohne es zu vergessen.
 - Nichts wird fällig, nichts türmt sich – der Index ersetzt die frühere
   Lernkartei.
+
+### Exercises – Schritte zum Übersetzen
+
+*Befehl: **Trisent: Exercises***
+
+Vom Deutschen in die Fremdsprache zu übersetzen ist schwer. Jede Übung nimmt
+einen Teil davon ab, damit der andere geübt werden kann:
+
+- **Puzzle** – die Wörter des Originals gemischt in die richtige Reihenfolge legen.
+- **Puzzle ×3** – drei Sätze einer Szene, ein gemeinsamer Haufen Wörter.
+- **Gaps** – Lücken im Satz, die Angebote in einem gemeinsamen Topf.
+- **Forms** – die Grundform steht da, die richtige Form wird getippt.
+- **Build** – den ganzen Satz aus gemischten Grundformen schreiben.
+- **Dictation** – hören (auch langsamer) und aufschreiben.
+
+Ablauf wie im Translator: eine Geschichte oder die schwierigsten Sätze, 5, 7
+oder 10 Aufgaben, am Ende die falschen noch einmal. Es wird nichts
+mitgezählt – hier wird nur geübt.
 
 ---
 
