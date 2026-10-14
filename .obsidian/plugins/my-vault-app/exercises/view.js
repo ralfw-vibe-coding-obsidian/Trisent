@@ -23,6 +23,7 @@ const {
 const { tilesOf, shuffleTiles, checkOrder } = require('./puzzle.js');
 const { buildGaps, checkGaps } = require('./gaps.js');
 const { buildForms, checkForm } = require('./forms.js');
+const { blocksOf, compareSentence } = require('./build.js');
 
 const VIEW_TYPE = 'trisent-exercises-view';
 const RIBBON_ICON = 'puzzle';
@@ -35,7 +36,8 @@ const STORY_PAGE = 10;
 const TYPES = [
   { id: 'puzzle', label: 'Puzzle', icon: 'puzzle', hint: 'Put the words in order' },
   { id: 'gaps', label: 'Gaps', icon: 'text-cursor-input', hint: 'Fill in the missing words' },
-  { id: 'forms', label: 'Forms', icon: 'spell-check', hint: 'Write the right form' }
+  { id: 'forms', label: 'Forms', icon: 'spell-check', hint: 'Write the right form' },
+  { id: 'build', label: 'Build', icon: 'blocks', hint: 'Write the sentence from its base forms' }
 ];
 
 class ExercisesView extends ItemView {
@@ -494,6 +496,7 @@ class ExercisesView extends ItemView {
 
     if (run.type === 'gaps') this.renderGaps(page, card, item, entry);
     else if (run.type === 'forms') this.renderForms(page, card, item, entry);
+    else if (run.type === 'build') this.renderBuild(page, card, item, entry);
     else this.renderPuzzle(page, card, item, entry);
   }
 
@@ -755,6 +758,101 @@ class ExercisesView extends ItemView {
     check.addEventListener('click', checkNow);
     this.keyAction = null;
     fields[0].focus({ preventScroll: true });
+  }
+
+  /* Aus Grundformen bauen: unter dem deutschen Satz die Bausteine, darunter
+     ein Feld für den ganzen Satz. Die Bausteine lassen sich ausblenden -
+     dann ist es Übersetzen aus dem Gedächtnis. */
+  renderBuild(page, card, item, entry) {
+    const words = this.run.words;
+    const blocks = blocksOf(item.sentence, words.dictionary);
+    const shown = this.settings.buildBlocks !== false;
+
+    const toggle = card.createEl('button', { cls: 'trisent-ex-blocks-toggle' + (shown ? ' is-on' : '') });
+    setIcon(toggle.createSpan(), shown ? 'eye' : 'eye-off');
+    toggle.createSpan({ text: shown ? 'Building blocks' : 'Show building blocks' });
+    const row = card.createDiv({ cls: 'trisent-ex-blocks' + (shown ? '' : ' is-hidden') });
+    for (const block of blocks) row.createSpan({ cls: 'trisent-ex-block', text: block });
+    toggle.addEventListener('click', () => {
+      const on = !(this.settings.buildBlocks !== false);
+      this.settings.buildBlocks = on;
+      this.exercises.saveSettings();
+      row.toggleClass('is-hidden', !on);
+      toggle.toggleClass('is-on', on);
+      toggle.empty();
+      setIcon(toggle.createSpan(), on ? 'eye' : 'eye-off');
+      toggle.createSpan({ text: on ? 'Building blocks' : 'Show building blocks' });
+    });
+
+    const field = page.createEl('textarea', {
+      cls: 'trisent-ex-build-input',
+      attr: {
+        rows: '2',
+        placeholder: 'The whole sentence…',
+        enterkeyhint: 'done',
+        autocapitalize: 'sentences',
+        autocorrect: 'off',
+        spellcheck: 'false'
+      }
+    });
+    const actions = page.createDiv({ cls: 'trisent-ex-row' });
+    const check = actions.createEl('button', { cls: 'trisent-ex-check', text: 'Check' });
+    check.addEventListener('mousedown', (event) => event.preventDefault());
+    const result = page.createDiv({ cls: 'trisent-ex-result' });
+
+    const checkNow = () => {
+      const typed = field.value.trim();
+      if (!typed) {
+        field.focus();
+        return;
+      }
+      field.blur();
+      const verdict = compareSentence(typed, item.sentence.source);
+      this.run.session.record(verdict.correct ? 'correct' : 'wrong');
+
+      field.remove();
+      actions.remove();
+      card.addClass(verdict.correct ? 'is-right' : 'is-wrong');
+
+      /* Was die Person schrieb - falsche Wörter rot. */
+      const mine = result.createDiv({ cls: 'trisent-ex-mine' });
+      mine.createSpan({ cls: 'trisent-ex-mine-label', text: 'You wrote' });
+      const line = mine.createDiv({ cls: 'trisent-ex-words' });
+      for (const word of verdict.typed) {
+        line.createSpan({ cls: 'trisent-ex-word' + (word.ok ? '' : ' is-wrong'), text: word.word });
+      }
+
+      this.renderVerdict(result, verdict.correct, item, entry);
+      const box = result.querySelector('.trisent-ex-verdict');
+
+      /* Im Original, was verpasst wurde - in der Schreibung des Originals. */
+      if (!verdict.correct) {
+        const spelled = String(item.sentence.source).replace(/’/g, "'").match(/[\p{L}\p{N}]+'?/gu) || [];
+        const missed = box.createDiv({ cls: 'trisent-ex-words is-original' });
+        missed.createSpan({ cls: 'trisent-ex-mine-label', text: 'Missed' });
+        verdict.original.forEach((word, index) => {
+          missed.createSpan({
+            cls: 'trisent-ex-word' + (word.ok ? ' is-quiet' : ' is-missed'),
+            text: spelled[index] || word.word
+          });
+        });
+      }
+      if (verdict.accent) box.createDiv({ cls: 'trisent-ex-note', text: 'Right — mind the accents.' });
+      this.renderNext(result);
+    };
+
+    field.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+      event.preventDefault();
+      event.stopPropagation();
+      checkNow();
+    });
+    field.addEventListener('focus', () => {
+      window.setTimeout(() => field.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
+    });
+    check.addEventListener('click', checkNow);
+    this.keyAction = null;
+    field.focus({ preventScroll: true });
   }
 
   /* Urteil und Original zum Lesen und Hören - für jede Übung gleich. */

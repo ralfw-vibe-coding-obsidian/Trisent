@@ -343,6 +343,114 @@
   color: var(--text-muted);
 }
 
+/* Aus Grundformen bauen: die Bausteine auf der Karte, ein- und
+   ausblendbar. */
+.trisent-view .trisent-ex-blocks-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.8rem;
+  cursor: pointer;
+  height: auto;
+  padding: 0.15rem 0.5rem;
+  font-family: var(--tri-ui);
+  font-size: 0.72rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-faint);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ex-blocks-toggle:hover {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+.trisent-ex-blocks-toggle svg {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+.trisent-ex-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.trisent-ex-blocks.is-hidden {
+  display: none;
+}
+
+.trisent-ex-block {
+  padding: 0.15rem 0.55rem;
+  font-family: var(--tri-read);
+  font-size: 0.98rem;
+  font-style: italic;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: 6px;
+  color: var(--text-muted);
+}
+
+.trisent-view textarea.trisent-ex-build-input {
+  display: block;
+  width: 100%;
+  max-width: 34rem;
+  margin: 0.4rem auto 0;
+  resize: vertical;
+  font-family: var(--tri-read);
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.trisent-ex-mine {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-top: 0.4rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: var(--background-modifier-hover);
+}
+
+.trisent-ex-mine-label {
+  font-family: var(--tri-ui);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.trisent-ex-words {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.1rem 0.4rem;
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+}
+
+.trisent-ex-words.is-original {
+  margin-top: 0.2rem;
+}
+
+.trisent-ex-word.is-wrong {
+  color: var(--tri-unknown);
+  text-decoration: line-through;
+}
+
+.trisent-ex-word.is-missed {
+  color: var(--tri-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.trisent-ex-word.is-quiet {
+  color: var(--text-faint);
+}
+
 /* Die gelegten Kärtchen: eine Zeile wie ein Satz, mit Platz zum Wachsen. */
 .trisent-ex-answer,
 .trisent-ex-pool,

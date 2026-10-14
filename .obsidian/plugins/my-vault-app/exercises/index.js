@@ -17,7 +17,9 @@ const { ExercisesView, VIEW_TYPE, RIBBON_ICON } = require('./view.js');
 const DEFAULTS = {
   lastLanguage: null,
   type: 'puzzle',
-  size: 5
+  size: 5,
+  /* Bei "Build": ob die Bausteine zu sehen sind. */
+  buildBlocks: true
 };
 
 class Exercises {
