@@ -24,6 +24,8 @@ const { tilesOf, shuffleTiles, checkOrder } = require('./puzzle.js');
 const { buildGaps, checkGaps } = require('./gaps.js');
 const { buildForms, checkForm } = require('./forms.js');
 const { blocksOf, compareSentence } = require('./build.js');
+const { sceneItems, sceneTiles, checkScene } = require('./scene.js');
+const { SPEEDS } = require('../reader/audio.js');
 
 const VIEW_TYPE = 'trisent-exercises-view';
 const RIBBON_ICON = 'puzzle';
@@ -35,6 +37,7 @@ const STORY_PAGE = 10;
    richtige Form, aus Grundformen bauen, hören und schreiben. */
 const TYPES = [
   { id: 'puzzle', label: 'Puzzle', icon: 'puzzle', hint: 'Put the words in order' },
+  { id: 'scene', label: 'Puzzle ×3', icon: 'layers', hint: 'Three sentences, one pile of words' },
   { id: 'gaps', label: 'Gaps', icon: 'text-cursor-input', hint: 'Fill in the missing words' },
   { id: 'forms', label: 'Forms', icon: 'spell-check', hint: 'Write the right form' },
   { id: 'build', label: 'Build', icon: 'blocks', hint: 'Write the sentence from its base forms' },
@@ -79,6 +82,11 @@ class ExercisesView extends ItemView {
   get size() {
     const stored = Number(this.settings.size);
     return SIZES.includes(stored) ? stored : SIZES[0];
+  }
+
+  get speed() {
+    const stored = Number(this.settings.speed);
+    return SPEEDS.includes(stored) ? stored : 1;
   }
 
   get type() {
@@ -218,6 +226,7 @@ class ExercisesView extends ItemView {
   }
 
   renderStart(page, language) {
+    this.sceneOffset = Math.floor(Math.random() * 3);
     this.header(this.useBar(), language.flag + ' ' + language.name, () => {
       this.screen = 'languages';
       this.render();
@@ -298,7 +307,9 @@ class ExercisesView extends ItemView {
       }
     }
     found.sort((a, b) => compareHardness(a.h, b.h));
-    const items = this.usable(found.map((entry) => entry.item));
+    /* Szenen gehören zu einer Geschichte - die schwersten Sätze stehen
+       verstreut und bilden keine. */
+    const items = this.type === 'scene' ? [] : this.usable(found.map((entry) => entry.item));
 
     const button = slot.createEl('button', { cls: 'trisent-ex-hard' + (items.length ? '' : ' is-empty') });
     setIcon(button.createSpan({ cls: 'trisent-ex-hard-icon' }), 'flame');
@@ -306,7 +317,9 @@ class ExercisesView extends ItemView {
     text.createDiv({ cls: 'trisent-ex-hard-title', text: HARDEST });
     text.createDiv({
       cls: 'trisent-ex-hard-sub',
-      text: items.length === 0
+      text: this.type === 'scene'
+        ? 'Scenes come from one story — choose one below.'
+        : items.length === 0
         ? 'Sentences you got wrong in the translator will gather here.'
         : items.length + (items.length === 1 ? ' sentence' : ' sentences') + ' you found hard when translating'
     });
@@ -399,7 +412,11 @@ class ExercisesView extends ItemView {
   /* Welche Sätze für die gewählte Übung taugen: fürs Diktat nur die mit
      Ton, sonst alle. */
   usable(items) {
-    return this.type === 'dictation' ? items.filter(hasAudio) : items;
+    if (this.type === 'dictation') return items.filter(hasAudio);
+    /* Szenen aus drei aufeinanderfolgenden Sätzen, mit einem Versatz, der
+       von Sitzung zu Sitzung wechselt. */
+    if (this.type === 'scene') return sceneItems(items, this.sceneOffset || 0);
+    return items;
   }
 
   renderStory(list, language, story) {
@@ -409,12 +426,14 @@ class ExercisesView extends ItemView {
     const left = row.createDiv({ cls: 'trisent-t-left' });
     left.createDiv({ cls: 'trisent-t-title', text: entry.data.title || entry.folder.name });
     if (entry.data.titleTranslation) left.createDiv({ cls: 'trisent-t-sub', text: entry.data.titleTranslation });
-    row.createDiv({
-      cls: 'trisent-t-note',
-      text: items.length === 0 && this.type === 'dictation'
-        ? 'No audio in this story'
-        : items.length + ' sentences'
-    });
+    const note = items.length === 0 && this.type === 'dictation'
+      ? 'No audio in this story'
+      : items.length === 0 && this.type === 'scene'
+        ? 'Too short for scenes'
+        : this.type === 'scene'
+          ? items.length + (items.length === 1 ? ' scene' : ' scenes')
+          : items.length + ' sentences';
+    row.createDiv({ cls: 'trisent-t-note', text: note });
 
     if (items.length === 0) {
       row.setAttr('disabled', 'true');
@@ -508,7 +527,9 @@ class ExercisesView extends ItemView {
 
     const card = page.createDiv({ cls: 'trisent-ex-card' });
     /* Beim Diktat ist der Satz die Aufgabe - er steht nicht da. */
-    if (run.type !== 'dictation') card.createDiv({ cls: 'trisent-ex-prompt', text: item.sentence.fluent });
+    if (run.type !== 'dictation' && run.type !== 'scene') {
+      card.createDiv({ cls: 'trisent-ex-prompt', text: item.sentence.fluent });
+    }
     if (run.source === HARDEST && entry) {
       card.createDiv({ cls: 'trisent-ex-from', text: entry.data.title || entry.folder.name });
     }
@@ -517,6 +538,7 @@ class ExercisesView extends ItemView {
     else if (run.type === 'forms') this.renderForms(page, card, item, entry);
     else if (run.type === 'build') this.renderBuild(page, card, item, entry);
     else if (run.type === 'dictation') this.renderDictation(page, card, item, entry);
+    else if (run.type === 'scene') this.renderScene(page, card, item, entry);
     else this.renderPuzzle(page, card, item, entry);
   }
 
@@ -853,6 +875,108 @@ class ExercisesView extends ItemView {
     field.focus({ preventScroll: true });
   }
 
+  /* Das Puzzle über eine Szene: drei deutsche Sätze, je mit einer
+     Antwortzeile, und ein gemeinsamer Haufen. Ein Tipp auf eine Zeile
+     wählt sie; ein Kärtchen aus dem Haufen landet in der gewählten. Ist
+     eine Zeile so lang wie ihr Satz, geht es mit der nächsten weiter. */
+  renderScene(page, card, item, entry) {
+    const scene = item.scene;
+    const tilesByRow = sceneTiles(scene);
+    const pile = shuffleTiles(tilesByRow.flat());
+    const placed = scene.map(() => []);
+    let selected = 0;
+
+    const rowsEl = card.createDiv({ cls: 'trisent-ex-scene' });
+    const rest = page.createDiv({ cls: 'trisent-ex-pool' });
+    const actions = page.createDiv({ cls: 'trisent-ex-row' });
+    const check = actions.createEl('button', { cls: 'trisent-ex-check', text: 'Check' });
+    const result = page.createDiv({ cls: 'trisent-ex-result' });
+
+    const paint = () => {
+      rowsEl.empty();
+      rest.empty();
+      scene.forEach((sceneItem, row) => {
+        const block = rowsEl.createDiv({ cls: 'trisent-ex-scene-row' + (row === selected ? ' is-selected' : '') });
+        block.createDiv({ cls: 'trisent-ex-scene-prompt', text: sceneItem.sentence.fluent });
+        const answer = block.createDiv({ cls: 'trisent-ex-answer is-scene' });
+        if (placed[row].length === 0) {
+          answer.createSpan({ cls: 'trisent-ex-placeholder', text: row === selected ? 'Tap words for this sentence' : '' });
+        }
+        placed[row].forEach((tile, index) => {
+          const chip = answer.createEl('button', { cls: 'trisent-ex-tile is-placed', text: tile.text });
+          chip.addEventListener('click', (event) => {
+            event.stopPropagation();
+            placed[row].splice(index, 1);
+            pile.push(tile);
+            selected = row;
+            paint();
+          });
+        });
+        block.addEventListener('click', () => {
+          selected = row;
+          paint();
+        });
+      });
+
+      pile.forEach((tile, index) => {
+        const chip = rest.createEl('button', { cls: 'trisent-ex-tile', text: tile.text });
+        chip.addEventListener('click', () => {
+          pile.splice(index, 1);
+          placed[selected].push(tile);
+          /* Voll? Dann weiter zur nächsten Zeile, die noch Platz hat. */
+          if (placed[selected].length >= tilesByRow[selected].length) {
+            const next = scene.findIndex((_, row) => placed[row].length < tilesByRow[row].length);
+            if (next >= 0) selected = next;
+          }
+          paint();
+        });
+      });
+
+      const complete = pile.length === 0;
+      check.toggleAttribute('disabled', !complete);
+      this.keyAction = complete ? checkNow : null;
+    };
+
+    const checkNow = () => {
+      const verdict = checkScene(placed, tilesByRow);
+      this.run.session.record(verdict.correct ? 'correct' : 'wrong');
+
+      rowsEl.empty();
+      rest.remove();
+      actions.remove();
+      scene.forEach((sceneItem, row) => {
+        const block = rowsEl.createDiv({ cls: 'trisent-ex-scene-row is-done' });
+        block.createDiv({ cls: 'trisent-ex-scene-prompt', text: sceneItem.sentence.fluent });
+        const answer = block.createDiv({ cls: 'trisent-ex-answer is-scene' });
+        placed[row].forEach((tile, index) => {
+          answer.createSpan({
+            cls: 'trisent-ex-tile is-placed is-done' + (verdict.rows[row].wrong.includes(index) ? ' is-wrong' : ''),
+            text: tile.text
+          });
+        });
+      });
+      card.addClass(verdict.correct ? 'is-right' : 'is-wrong');
+
+      /* Urteil, dann die drei Originale zum Lesen und Hören. */
+      const box = result.createDiv({ cls: 'trisent-ex-verdict ' + (verdict.correct ? 'is-right' : 'is-wrong') });
+      const badge = box.createDiv({ cls: 'trisent-ex-badge' });
+      setIcon(badge.createSpan(), verdict.correct ? 'check' : 'x');
+      badge.createSpan({ text: verdict.correct ? 'Correct' : 'Not yet' });
+      scene.forEach((sceneItem, row) => {
+        const original = box.createDiv({ cls: 'trisent-ex-original' + (verdict.rows[row].correct ? '' : ' is-missed') });
+        const audio = sceneItem.sentence.audio && sceneItem.sentence.audio.file && entry
+          ? entry.folder.path + '/' + sceneItem.sentence.audio.file
+          : null;
+        if (audio) this.renderSpeaker(original, audio);
+        original.createSpan({ cls: 'trisent-ex-original-text', text: sceneItem.sentence.source });
+      });
+      this.renderNext(result);
+    };
+
+    check.addEventListener('click', checkNow);
+    paint();
+  }
+
   /* Das Ergebnis, wenn ein ganzer Satz geschrieben wurde (Build, Diktat):
      was die Person schrieb, falsche Wörter rot; im Original, was sie
      verpasst hat. */
@@ -897,13 +1021,24 @@ class ExercisesView extends ItemView {
     const playIcon = play.createSpan();
     setIcon(playIcon, 'play');
     play.createSpan({ text: 'Listen' });
-    play.addEventListener('click', () => this.toggleSound(play, playIcon, path, 1));
+    play.addEventListener('click', () => this.toggleSound(play, playIcon, path, this.speed));
 
-    const slow = listen.createEl('button', { cls: 'trisent-ex-listen-slow' });
-    const slowIcon = slow.createSpan();
-    setIcon(slowIcon, 'play');
-    slow.createSpan({ text: 'Slower' });
-    slow.addEventListener('click', () => this.toggleSound(slow, slowIcon, path, 0.7));
+    /* Die Geschwindigkeit wie im Reader: ein Knopf, der bei jedem Tipp
+       eine Stufe weiterschaltet, und es gilt sofort. */
+    const label = (value) => (value === 1 ? '1×' : String(value).replace('0.', '.') + '×');
+    const pace = listen.createEl('button', {
+      cls: 'trisent-speed' + (this.speed === 1 ? '' : ' is-on'),
+      text: label(this.speed),
+      attr: { 'aria-label': 'Playback speed', title: 'Playback speed' }
+    });
+    pace.addEventListener('click', () => {
+      const next = SPEEDS[(SPEEDS.indexOf(this.speed) + 1) % SPEEDS.length];
+      this.settings.speed = next;
+      this.exercises.saveSettings();
+      if (this.sound) this.sound.playbackRate = next;
+      pace.setText(label(next));
+      pace.toggleClass('is-on', next !== 1);
+    });
 
     /* Die Hilfe ist verdeckt - wer sie braucht, deckt sie auf. */
     const hint = card.createEl('button', { cls: 'trisent-ex-hint' });
@@ -959,7 +1094,7 @@ class ExercisesView extends ItemView {
     field.focus({ preventScroll: true });
 
     /* Gleich einmal vorspielen - die Karte kam ja aus einem Tipp. */
-    this.toggleSound(play, playIcon, path, 1);
+    this.toggleSound(play, playIcon, path, this.speed);
   }
 
   /* Urteil und Original zum Lesen und Hören - für jede Übung gleich. */
@@ -1055,11 +1190,9 @@ class ExercisesView extends ItemView {
       return;
     }
     const sound = new Audio(url);
-    if (rate && rate !== 1) {
-      sound.playbackRate = rate;
-      /* Langsamer, aber nicht tiefer - sonst klingt es nach Kassette. */
-      if ('preservesPitch' in sound) sound.preservesPitch = true;
-    }
+    /* Langsamer, aber nicht tiefer - sonst klingt es nach Kassette. */
+    if ('preservesPitch' in sound) sound.preservesPitch = true;
+    if (rate && rate !== 1) sound.playbackRate = rate;
     this.sound = sound;
     this.soundButton = button;
     this.soundIcon = icon;

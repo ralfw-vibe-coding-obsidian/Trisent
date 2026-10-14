@@ -520,6 +520,47 @@
   color: var(--text-muted);
 }
 
+/* Das Puzzle über eine Szene: drei Zeilen auf der Karte, die gewählte
+   hervorgehoben. */
+.trisent-ex-scene {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.trisent-ex-scene-row {
+  padding: 0.5rem 0.6rem 0.2rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.trisent-ex-scene-row.is-selected {
+  border-color: var(--tri-accent);
+  background: color-mix(in srgb, var(--tri-accent) 5%, transparent);
+}
+
+.trisent-ex-scene-row.is-done {
+  cursor: default;
+}
+
+.trisent-ex-scene-prompt {
+  font-family: var(--tri-ui);
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--text-normal);
+}
+
+.trisent-ex-answer.is-scene {
+  min-height: 2.3rem;
+  padding: 0.4rem 0 0.4rem;
+  border-bottom: 0;
+}
+
+.trisent-ex-original.is-missed .trisent-ex-original-text {
+  color: var(--tri-unknown);
+}
+
 /* Die gelegten Kärtchen: eine Zeile wie ein Satz, mit Platz zum Wachsen. */
 .trisent-ex-answer,
 .trisent-ex-pool,

@@ -19,7 +19,10 @@ const DEFAULTS = {
   type: 'puzzle',
   size: 5,
   /* Bei "Build": ob die Bausteine zu sehen sind. */
-  buildBlocks: true
+  buildBlocks: true,
+  /* Beim Diktat: wie schnell vorgespielt wird - dieselben Stufen wie im
+     Reader. */
+  speed: 1
 };
 
 class Exercises {
