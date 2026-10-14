@@ -1,0 +1,428 @@
+/*
+ * Exercises - Übungen, die zum Übersetzen hinführen.
+ *
+ * Farben, Schriften, Knöpfe und das Gerüst stehen in ../styles.css; die
+ * Textkarten (.trisent-text-row) und der Filter (.trisent-shelf-*) kommen
+ * aus dem Reader, das Blättern (.trisent-pager) aus der Lernkartei.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Auswahl                                                            */
+/* ------------------------------------------------------------------ */
+
+.trisent-ex-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.25rem 0 1rem;
+}
+
+.trisent-view .trisent-ex-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: auto;
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-primary);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ex-type.is-on {
+  border-color: var(--tri-accent);
+  box-shadow: inset 0 0 0 1px var(--tri-accent);
+}
+
+.trisent-ex-type-icon {
+  display: inline-flex;
+  color: var(--tri-accent);
+}
+
+.trisent-ex-type-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.trisent-ex-type-label {
+  font-family: var(--tri-ui);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.trisent-ex-type-hint {
+  font-family: var(--tri-ui);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.trisent-ex-sizes {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.trisent-ex-label {
+  margin-right: 0.45rem;
+  font-family: var(--tri-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.trisent-view .trisent-ex-size {
+  cursor: pointer;
+  height: auto;
+  line-height: 1.3;
+  font-family: var(--tri-ui);
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 0.18rem 0.65rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 999px;
+  background: var(--background-primary);
+  color: var(--text-muted);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ex-size.is-on {
+  border-color: var(--tri-accent);
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+.trisent-ex-hardest {
+  margin-bottom: 1rem;
+}
+
+.trisent-view .trisent-ex-hard {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  height: auto;
+  padding: 0.9rem 1rem;
+  text-align: left;
+  white-space: normal;
+  cursor: pointer;
+  border: 1px solid var(--tri-unknown);
+  border-radius: 12px;
+  background: var(--background-primary);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ex-hard.is-empty {
+  cursor: default;
+  border-color: var(--background-modifier-border);
+}
+
+.trisent-ex-hard-icon {
+  display: inline-flex;
+  color: var(--tri-unknown);
+}
+
+.trisent-ex-hard.is-empty .trisent-ex-hard-icon {
+  color: var(--text-faint);
+}
+
+.trisent-ex-hard-title {
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+  color: var(--text-normal);
+}
+
+.trisent-ex-hard-sub {
+  font-family: var(--tri-ui);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Die Sitzung                                                        */
+/* ------------------------------------------------------------------ */
+
+.trisent-ex-count {
+  flex: 0 0 auto;
+  margin-left: auto;
+  font-family: var(--tri-ui);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.trisent-ex-progress {
+  height: 2px;
+  margin-top: 0.6rem;
+  background: var(--background-modifier-border);
+}
+
+.trisent-ex-progress-fill {
+  height: 100%;
+  background: var(--tri-accent);
+  transition: width 160ms ease-out;
+}
+
+.trisent-ex-card {
+  max-width: 34rem;
+  margin: 1.5rem auto 1rem;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 14px;
+  background: var(--background-primary);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.07);
+}
+
+.trisent-ex-card.is-right {
+  border-color: var(--tri-accent);
+}
+
+.trisent-ex-card.is-wrong {
+  border-color: var(--tri-unknown);
+}
+
+.trisent-ex-prompt {
+  font-family: var(--tri-ui);
+  font-size: 1.12rem;
+  line-height: 1.45;
+  color: var(--text-normal);
+}
+
+.trisent-ex-from {
+  margin-top: 0.6rem;
+  font-family: var(--tri-ui);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* Die gelegten Kärtchen: eine Zeile wie ein Satz, mit Platz zum Wachsen. */
+.trisent-ex-answer,
+.trisent-ex-pool,
+.trisent-ex-row,
+.trisent-ex-result {
+  max-width: 34rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.trisent-ex-answer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-height: 2.6rem;
+  padding: 0.5rem 0.2rem 0.7rem;
+  border-bottom: 1px dashed var(--background-modifier-border);
+}
+
+.trisent-ex-placeholder {
+  align-self: center;
+  font-family: var(--tri-ui);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-faint);
+}
+
+.trisent-ex-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.9rem 0.2rem 0.4rem;
+}
+
+/* Ein Kärtchen: in der Leseschrift, denn es ist Sprache. */
+.trisent-view .trisent-ex-tile {
+  cursor: pointer;
+  height: auto;
+  line-height: 1.3;
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.trisent-view .trisent-ex-tile:hover {
+  border-color: var(--tri-accent);
+}
+
+.trisent-view .trisent-ex-tile.is-placed {
+  border-color: var(--tri-accent);
+  background: var(--background-modifier-hover);
+}
+
+/* Nach dem Prüfen: nicht mehr anfassbar, falsche Stellen rot. */
+.trisent-ex-tile.is-done {
+  display: inline-block;
+  line-height: 1.3;
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--tri-accent);
+  border-radius: 8px;
+  background: var(--background-modifier-hover);
+  cursor: default;
+}
+
+.trisent-ex-tile.is-done.is-wrong {
+  border-color: var(--tri-unknown);
+  color: var(--tri-unknown);
+}
+
+.trisent-ex-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.trisent-ex-row.is-next {
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.1rem;
+  padding-bottom: 2rem;
+}
+
+.trisent-view .trisent-ex-check,
+.trisent-view .trisent-ex-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  height: auto;
+  font-family: var(--tri-ui);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.45rem 1.2rem;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: var(--tri-accent);
+  color: var(--background-primary);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ex-check[disabled] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.trisent-view .trisent-ex-again {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  height: auto;
+  font-family: var(--tri-ui);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  box-shadow: none;
+}
+
+.trisent-ex-next svg,
+.trisent-ex-again svg {
+  width: 0.95em;
+  height: 0.95em;
+}
+
+.trisent-ex-verdict {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.trisent-ex-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--tri-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.trisent-ex-badge svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.trisent-ex-verdict.is-right .trisent-ex-badge { color: var(--tri-accent); }
+.trisent-ex-verdict.is-wrong .trisent-ex-badge { color: var(--tri-unknown); }
+
+.trisent-ex-original {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.trisent-ex-original-text {
+  font-family: var(--tri-read);
+  font-size: 1.15rem;
+  line-height: 1.45;
+  color: var(--text-normal);
+}
+
+/* Abspielen wie im Reader: kein Rahmen, nur das Zeichen. */
+.trisent-view .trisent-ex-play {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  padding: 0;
+  cursor: pointer;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ex-play:hover,
+.trisent-view .trisent-ex-play.is-playing {
+  background: var(--background-modifier-hover);
+}
+
+.trisent-ex-play svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+/* Zusammenfassung: ein Punkt je Satz, grün oder rot. */
+.trisent-ex-marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.4rem 0 1rem;
+}
+
+.trisent-ex-mark {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: var(--tri-unknown);
+}
+
+.trisent-ex-mark.is-right {
+  background: var(--tri-accent);
+}
+
+@media (max-width: 600px) {
+  .trisent-ex-card {
+    margin-top: 1rem;
+    padding: 1rem 1.05rem;
+  }
+}

@@ -240,6 +240,7 @@ Die Aufteilung ist keine Empfehlung, sondern eine Abmachung.
 ├── translator/          LEARNING - übersetzen, tippend oder sprechend
 ├── flashcards/          LEARNING - Lernkartei (abgeschaltet: ENABLED in index.js)
 ├── index/               LEARNING - der Index: Wörter, die auffielen
+├── exercises/           LEARNING - Übungen, die zum Übersetzen hinführen (ohne Buchführung)
 └── packager/            PREPARING - Texte zu Paketen schnüren
 ```
 
@@ -273,6 +274,7 @@ liegt. Ob seines veraltet ist, liest er aus seinem eigenen Manifest.
 | `translator/` | nur die Translator-Sitzung |
 | `flashcards/` | nur die Flashcard-Sitzung |
 | `index/` | die Learning-Seite (Reader und Translator) |
+| `exercises/` | die Learning-Seite (Reader und Translator) |
 | `learning/` | Reader und Translator - im Einvernehmen |
 | `packager/` | nur die Packager-Sitzung |
 | `core/`, `main.js`, `styles.css`, `konzept/paketformat.md` | **alle - nur im Einvernehmen** |

@@ -16,15 +16,16 @@ Wenn du mit der Maus darauf zeigst, steht der Name deiner App daneben.
 
 ### Über die Befehlspalette – vor allem auf dem iPhone
 
-Trisent hat vier Bereiche, und jeder hat seinen eigenen Befehl. Öffne die
+Trisent hat fünf Bereiche, und jeder hat seinen eigenen Befehl. Öffne die
 **Befehlspalette** (Symbol links am Rand, oder **Strg+P** bzw. **Cmd+P**),
-tippe **`trisent`**, und du siehst alle vier:
+tippe **`trisent`**, und du siehst alle fünf:
 
 | Befehl | Was er öffnet |
 |---|---|
 | **Trisent: Reading** | Texte lesen und hören |
 | **Trisent: Translation** | Sätze übersetzen, tippend oder gesprochen |
 | **Trisent: Index** | die Wörter, die dir aufgefallen sind |
+| **Trisent: Exercises** | Übungen, die zum Übersetzen hinführen |
 | **Trisent: Packager** | Texte zu Paketen schnüren |
 
 Auf dem Handy ist das der bequemere Weg – dort ist die Symbolleiste schmal

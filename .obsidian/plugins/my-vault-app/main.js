@@ -66,6 +66,9 @@ const MODULES = [
   'flashcards/index.js',
   'index/view.js',
   'index/index.js',
+  'exercises/puzzle.js',
+  'exercises/view.js',
+  'exercises/index.js',
   'packager/ai.js',
   'packager/audio.js',
   'packager/build.js',
@@ -95,6 +98,7 @@ const MODULE_STYLES = [
   'translator/translator.css',
   'flashcards/flashcards.css',
   'index/index.css',
+  'exercises/exercises.css',
   'packager/packager.css'
 ];
 
@@ -217,6 +221,8 @@ module.exports = class TrisentPlugin extends Plugin {
     /* Der Index - die Wörter, die beim Lesen und Übersetzen auffielen.
        Ersetzt in der Oberfläche die Lernkartei. */
     this.index = new modules['index/index.js'].Index(this);
+    /* Übungen, die zum Übersetzen hinführen. */
+    this.exercises = new modules['exercises/index.js'].Exercises(this);
     this.packager = new packager.Packager(this);
 
     this.addSettingTab(new TrisentSettingTab(this.app, this));
@@ -270,6 +276,7 @@ module.exports = class TrisentPlugin extends Plugin {
       this.translator.refresh();
       this.flashcards.refresh();
       this.index.refresh();
+      this.exercises.refresh();
     }, 200);
   }
 
@@ -416,7 +423,8 @@ module.exports = class TrisentPlugin extends Plugin {
       flashcards: Object.assign({}, flashcardDefaults, stored.flashcards || {}),
       packager: Object.assign({}, packagerDefaults, stored.packager || {}),
       /* Der Index ergänzt seine Vorgaben selbst - siehe index/index.js. */
-      index: Object.assign({}, stored.index || {})
+      index: Object.assign({}, stored.index || {}),
+      exercises: Object.assign({}, stored.exercises || {})
     };
 
     /* Frühere Fassungen hatten alles flach nebeneinander. Was von dort
