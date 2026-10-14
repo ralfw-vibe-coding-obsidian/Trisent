@@ -451,6 +451,75 @@
   color: var(--text-faint);
 }
 
+/* Das Diktat: zwei Knöpfe zum Hören, darunter die verdeckte Hilfe. */
+.trisent-ex-listen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.trisent-view .trisent-ex-listen-play,
+.trisent-view .trisent-ex-listen-slow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  height: auto;
+  font-family: var(--tri-ui);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  border: 1px solid var(--tri-accent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tri-accent);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ex-listen-play {
+  background: var(--tri-accent);
+  color: var(--background-primary);
+}
+
+.trisent-view .trisent-ex-listen-play.is-playing,
+.trisent-view .trisent-ex-listen-slow.is-playing {
+  filter: brightness(1.1);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tri-accent) 25%, transparent);
+}
+
+.trisent-ex-listen svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.trisent-view .trisent-ex-hint {
+  display: block;
+  margin: 0.9rem auto 0;
+  cursor: pointer;
+  height: auto;
+  padding: 0.2rem 0.7rem;
+  font-family: var(--tri-ui);
+  font-size: 0.76rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-faint);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ex-hint:hover {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+.trisent-ex-prompt.is-hint {
+  margin-top: 0.9rem;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
 /* Die gelegten Kärtchen: eine Zeile wie ein Satz, mit Platz zum Wachsen. */
 .trisent-ex-answer,
 .trisent-ex-pool,

@@ -37,8 +37,14 @@ const TYPES = [
   { id: 'puzzle', label: 'Puzzle', icon: 'puzzle', hint: 'Put the words in order' },
   { id: 'gaps', label: 'Gaps', icon: 'text-cursor-input', hint: 'Fill in the missing words' },
   { id: 'forms', label: 'Forms', icon: 'spell-check', hint: 'Write the right form' },
-  { id: 'build', label: 'Build', icon: 'blocks', hint: 'Write the sentence from its base forms' }
+  { id: 'build', label: 'Build', icon: 'blocks', hint: 'Write the sentence from its base forms' },
+  { id: 'dictation', label: 'Dictation', icon: 'ear', hint: 'Write what you hear' }
 ];
+
+/* Hat ein Satz Ton? Fürs Diktat zählen nur solche. */
+function hasAudio(item) {
+  return Boolean(item.sentence.audio && item.sentence.audio.file);
+}
 
 class ExercisesView extends ItemView {
   constructor(leaf, exercises) {
@@ -292,7 +298,7 @@ class ExercisesView extends ItemView {
       }
     }
     found.sort((a, b) => compareHardness(a.h, b.h));
-    const items = found.map((entry) => entry.item);
+    const items = this.usable(found.map((entry) => entry.item));
 
     const button = slot.createEl('button', { cls: 'trisent-ex-hard' + (items.length ? '' : ' is-empty') });
     setIcon(button.createSpan({ cls: 'trisent-ex-hard-icon' }), 'flame');
@@ -390,21 +396,33 @@ class ExercisesView extends ItemView {
     else next.addEventListener('click', () => step(slice.page + 1));
   }
 
+  /* Welche Sätze für die gewählte Übung taugen: fürs Diktat nur die mit
+     Ton, sonst alle. */
+  usable(items) {
+    return this.type === 'dictation' ? items.filter(hasAudio) : items;
+  }
+
   renderStory(list, language, story) {
     const entry = story.entry;
+    const items = this.usable(story.items);
     const row = list.createEl('button', { cls: 'trisent-text-row' });
     const left = row.createDiv({ cls: 'trisent-t-left' });
     left.createDiv({ cls: 'trisent-t-title', text: entry.data.title || entry.folder.name });
     if (entry.data.titleTranslation) left.createDiv({ cls: 'trisent-t-sub', text: entry.data.titleTranslation });
-    row.createDiv({ cls: 'trisent-t-note', text: story.items.length + ' sentences' });
+    row.createDiv({
+      cls: 'trisent-t-note',
+      text: items.length === 0 && this.type === 'dictation'
+        ? 'No audio in this story'
+        : items.length + ' sentences'
+    });
 
-    if (story.items.length === 0) {
+    if (items.length === 0) {
       row.setAttr('disabled', 'true');
       return;
     }
     /* Alle Sätze - archiviert heißt hier nichts; Üben schadet keinem. */
     row.addEventListener('click', () => {
-      this.begin(language, entry.data.title || entry.folder.name, [story], new Draw(story.items, { size: this.size }));
+      this.begin(language, entry.data.title || entry.folder.name, [story], new Draw(items, { size: this.size }));
     });
   }
 
@@ -489,7 +507,8 @@ class ExercisesView extends ItemView {
       Math.round((session.results.length / session.size) * 100) + '%';
 
     const card = page.createDiv({ cls: 'trisent-ex-card' });
-    card.createDiv({ cls: 'trisent-ex-prompt', text: item.sentence.fluent });
+    /* Beim Diktat ist der Satz die Aufgabe - er steht nicht da. */
+    if (run.type !== 'dictation') card.createDiv({ cls: 'trisent-ex-prompt', text: item.sentence.fluent });
     if (run.source === HARDEST && entry) {
       card.createDiv({ cls: 'trisent-ex-from', text: entry.data.title || entry.folder.name });
     }
@@ -497,6 +516,7 @@ class ExercisesView extends ItemView {
     if (run.type === 'gaps') this.renderGaps(page, card, item, entry);
     else if (run.type === 'forms') this.renderForms(page, card, item, entry);
     else if (run.type === 'build') this.renderBuild(page, card, item, entry);
+    else if (run.type === 'dictation') this.renderDictation(page, card, item, entry);
     else this.renderPuzzle(page, card, item, entry);
   }
 
@@ -816,33 +836,7 @@ class ExercisesView extends ItemView {
 
       field.remove();
       actions.remove();
-      card.addClass(verdict.correct ? 'is-right' : 'is-wrong');
-
-      /* Was die Person schrieb - falsche Wörter rot. */
-      const mine = result.createDiv({ cls: 'trisent-ex-mine' });
-      mine.createSpan({ cls: 'trisent-ex-mine-label', text: 'You wrote' });
-      const line = mine.createDiv({ cls: 'trisent-ex-words' });
-      for (const word of verdict.typed) {
-        line.createSpan({ cls: 'trisent-ex-word' + (word.ok ? '' : ' is-wrong'), text: word.word });
-      }
-
-      this.renderVerdict(result, verdict.correct, item, entry);
-      const box = result.querySelector('.trisent-ex-verdict');
-
-      /* Im Original, was verpasst wurde - in der Schreibung des Originals. */
-      if (!verdict.correct) {
-        const spelled = String(item.sentence.source).replace(/’/g, "'").match(/[\p{L}\p{N}]+'?/gu) || [];
-        const missed = box.createDiv({ cls: 'trisent-ex-words is-original' });
-        missed.createSpan({ cls: 'trisent-ex-mine-label', text: 'Missed' });
-        verdict.original.forEach((word, index) => {
-          missed.createSpan({
-            cls: 'trisent-ex-word' + (word.ok ? ' is-quiet' : ' is-missed'),
-            text: spelled[index] || word.word
-          });
-        });
-      }
-      if (verdict.accent) box.createDiv({ cls: 'trisent-ex-note', text: 'Right — mind the accents.' });
-      this.renderNext(result);
+      this.showSentenceResult(result, card, verdict, item, entry);
     };
 
     field.addEventListener('keydown', (event) => {
@@ -857,6 +851,115 @@ class ExercisesView extends ItemView {
     check.addEventListener('click', checkNow);
     this.keyAction = null;
     field.focus({ preventScroll: true });
+  }
+
+  /* Das Ergebnis, wenn ein ganzer Satz geschrieben wurde (Build, Diktat):
+     was die Person schrieb, falsche Wörter rot; im Original, was sie
+     verpasst hat. */
+  showSentenceResult(result, card, verdict, item, entry) {
+    card.addClass(verdict.correct ? 'is-right' : 'is-wrong');
+
+    const mine = result.createDiv({ cls: 'trisent-ex-mine' });
+    mine.createSpan({ cls: 'trisent-ex-mine-label', text: 'You wrote' });
+    const line = mine.createDiv({ cls: 'trisent-ex-words' });
+    for (const word of verdict.typed) {
+      line.createSpan({ cls: 'trisent-ex-word' + (word.ok ? '' : ' is-wrong'), text: word.word });
+    }
+
+    this.renderVerdict(result, verdict.correct, item, entry);
+    const box = result.querySelector('.trisent-ex-verdict');
+
+    /* In der Schreibung des Originals. */
+    if (!verdict.correct) {
+      const spelled = String(item.sentence.source).replace(/’/g, "'").match(/[\p{L}\p{N}]+'?/gu) || [];
+      const missed = box.createDiv({ cls: 'trisent-ex-words is-original' });
+      missed.createSpan({ cls: 'trisent-ex-mine-label', text: 'Missed' });
+      verdict.original.forEach((word, index) => {
+        missed.createSpan({
+          cls: 'trisent-ex-word' + (word.ok ? ' is-quiet' : ' is-missed'),
+          text: spelled[index] || word.word
+        });
+      });
+    }
+    if (verdict.accent) box.createDiv({ cls: 'trisent-ex-note', text: 'Right — mind the accents.' });
+    this.renderNext(result);
+  }
+
+  /* Das Diktat: hören, so oft man will - auch langsamer -, und den Satz
+     auf Französisch schreiben. Der deutsche Satz ist verdeckt und lässt
+     sich aufdecken. */
+  renderDictation(page, card, item, entry) {
+    const path = entry.folder.path + '/' + item.sentence.audio.file;
+
+    card.addClass('is-dictation');
+    const listen = card.createDiv({ cls: 'trisent-ex-listen' });
+    const play = listen.createEl('button', { cls: 'trisent-ex-listen-play' });
+    const playIcon = play.createSpan();
+    setIcon(playIcon, 'play');
+    play.createSpan({ text: 'Listen' });
+    play.addEventListener('click', () => this.toggleSound(play, playIcon, path, 1));
+
+    const slow = listen.createEl('button', { cls: 'trisent-ex-listen-slow' });
+    const slowIcon = slow.createSpan();
+    setIcon(slowIcon, 'play');
+    slow.createSpan({ text: 'Slower' });
+    slow.addEventListener('click', () => this.toggleSound(slow, slowIcon, path, 0.7));
+
+    /* Die Hilfe ist verdeckt - wer sie braucht, deckt sie auf. */
+    const hint = card.createEl('button', { cls: 'trisent-ex-hint' });
+    hint.setText('Show the translation');
+    hint.addEventListener('click', () => {
+      hint.replaceWith(createDiv({ cls: 'trisent-ex-prompt is-hint', text: item.sentence.fluent }));
+    });
+
+    const field = page.createEl('textarea', {
+      cls: 'trisent-ex-build-input',
+      attr: {
+        rows: '2',
+        placeholder: 'What you hear…',
+        enterkeyhint: 'done',
+        autocapitalize: 'sentences',
+        autocorrect: 'off',
+        spellcheck: 'false'
+      }
+    });
+    const actions = page.createDiv({ cls: 'trisent-ex-row' });
+    const check = actions.createEl('button', { cls: 'trisent-ex-check', text: 'Check' });
+    check.addEventListener('mousedown', (event) => event.preventDefault());
+    const result = page.createDiv({ cls: 'trisent-ex-result' });
+
+    const checkNow = () => {
+      const typed = field.value.trim();
+      if (!typed) {
+        field.focus();
+        return;
+      }
+      field.blur();
+      this.stopSound();
+      const verdict = compareSentence(typed, item.sentence.source);
+      this.run.session.record(verdict.correct ? 'correct' : 'wrong');
+      field.remove();
+      actions.remove();
+      /* Jetzt darf man sehen, was gemeint war. */
+      if (hint.isConnected) hint.replaceWith(createDiv({ cls: 'trisent-ex-prompt is-hint', text: item.sentence.fluent }));
+      this.showSentenceResult(result, card, verdict, item, entry);
+    };
+
+    field.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+      event.preventDefault();
+      event.stopPropagation();
+      checkNow();
+    });
+    field.addEventListener('focus', () => {
+      window.setTimeout(() => field.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
+    });
+    check.addEventListener('click', checkNow);
+    this.keyAction = null;
+    field.focus({ preventScroll: true });
+
+    /* Gleich einmal vorspielen - die Karte kam ja aus einem Tipp. */
+    this.toggleSound(play, playIcon, path, 1);
   }
 
   /* Urteil und Original zum Lesen und Hören - für jede Übung gleich. */
@@ -938,7 +1041,7 @@ class ExercisesView extends ItemView {
     button.addEventListener('click', () => this.toggleSound(button, icon, path));
   }
 
-  toggleSound(button, icon, path) {
+  toggleSound(button, icon, path, rate) {
     if (this.soundButton === button) {
       this.stopSound();
       return;
@@ -952,6 +1055,11 @@ class ExercisesView extends ItemView {
       return;
     }
     const sound = new Audio(url);
+    if (rate && rate !== 1) {
+      sound.playbackRate = rate;
+      /* Langsamer, aber nicht tiefer - sonst klingt es nach Kassette. */
+      if ('preservesPitch' in sound) sound.preservesPitch = true;
+    }
     this.sound = sound;
     this.soundButton = button;
     this.soundIcon = icon;
