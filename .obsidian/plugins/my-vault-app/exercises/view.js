@@ -22,6 +22,7 @@ const {
 } = require('../translator/practice.js');
 const { tilesOf, shuffleTiles, checkOrder } = require('./puzzle.js');
 const { buildGaps, checkGaps } = require('./gaps.js');
+const { buildForms, checkForm } = require('./forms.js');
 
 const VIEW_TYPE = 'trisent-exercises-view';
 const RIBBON_ICON = 'puzzle';
@@ -33,7 +34,8 @@ const STORY_PAGE = 10;
    richtige Form, aus Grundformen bauen, hören und schreiben. */
 const TYPES = [
   { id: 'puzzle', label: 'Puzzle', icon: 'puzzle', hint: 'Put the words in order' },
-  { id: 'gaps', label: 'Gaps', icon: 'text-cursor-input', hint: 'Fill in the missing words' }
+  { id: 'gaps', label: 'Gaps', icon: 'text-cursor-input', hint: 'Fill in the missing words' },
+  { id: 'forms', label: 'Forms', icon: 'spell-check', hint: 'Write the right form' }
 ];
 
 class ExercisesView extends ItemView {
@@ -491,6 +493,7 @@ class ExercisesView extends ItemView {
     }
 
     if (run.type === 'gaps') this.renderGaps(page, card, item, entry);
+    else if (run.type === 'forms') this.renderForms(page, card, item, entry);
     else this.renderPuzzle(page, card, item, entry);
   }
 
@@ -660,6 +663,98 @@ class ExercisesView extends ItemView {
 
     check.addEventListener('click', checkNow);
     paint();
+  }
+
+  /* Die richtige Form: Im Satz stehen Eingabefelder, dahinter die
+     Grundform. Enter springt ins nächste Feld, im letzten wird geprüft. */
+  renderForms(page, card, item, entry) {
+    const words = this.run.words;
+    const task = buildForms(item.sentence, words.dictionary, words.statusOf, words.indexed);
+    /* Nichts zu beugen in diesem Satz - der nächste, ohne dass es zählt. */
+    if (task.gaps.length === 0) {
+      this.run.session.exclude();
+      this.render();
+      return;
+    }
+
+    const sentence = page.createDiv({ cls: 'trisent-ex-sentence is-forms' });
+    const fields = [];
+    for (const part of task.parts) {
+      if (part.text !== undefined) {
+        sentence.appendText(part.text);
+        continue;
+      }
+      const gap = task.gaps[part.gap];
+      const slot = sentence.createSpan({ cls: 'trisent-ex-form' });
+      const field = slot.createEl('input', {
+        cls: 'trisent-ex-form-input',
+        attr: {
+          type: 'text',
+          autocapitalize: 'off',
+          autocomplete: 'off',
+          autocorrect: 'off',
+          spellcheck: 'false',
+          enterkeyhint: 'next',
+          size: String(Math.max(gap.answer.length + 2, 5))
+        }
+      });
+      slot.createSpan({ cls: 'trisent-ex-form-lemma', text: '(' + gap.lemma + ')' });
+      fields.push(field);
+    }
+    if (fields.length > 0) fields[fields.length - 1].setAttr('enterkeyhint', 'done');
+
+    const row = page.createDiv({ cls: 'trisent-ex-row' });
+    const check = row.createEl('button', { cls: 'trisent-ex-check', text: 'Check' });
+    /* Das Feld behält den Fokus, bis der Tipp angekommen ist - sonst
+       rutscht der Knopf auf dem iPhone weg, wenn die Tastatur geht. */
+    check.addEventListener('mousedown', (event) => event.preventDefault());
+    const result = page.createDiv({ cls: 'trisent-ex-result' });
+
+    const checkNow = () => {
+      for (const field of fields) field.blur();
+      const verdicts = task.gaps.map((gap, index) => checkForm(fields[index].value, gap.answer));
+      const correct = verdicts.every((verdict) => verdict.right);
+      this.run.session.record(correct ? 'correct' : 'wrong');
+
+      /* Jede Lücke zeigt, was hineingehört - grün, oder rot mit der
+         richtigen Form darunter. */
+      task.gaps.forEach((gap, index) => {
+        const slot = fields[index].parentElement;
+        const verdict = verdicts[index];
+        const typed = fields[index].value.trim();
+        slot.empty();
+        slot.addClass('is-done');
+        slot.addClass(verdict.right ? 'is-right' : 'is-wrong');
+        slot.createSpan({ cls: 'trisent-ex-gap-text', text: typed || '—' });
+        if (!verdict.right || verdict.accent) slot.createSpan({ cls: 'trisent-ex-gap-fix', text: gap.answer });
+      });
+      row.remove();
+      card.addClass(correct ? 'is-right' : 'is-wrong');
+      this.renderVerdict(result, correct, item, entry);
+      if (correct && verdicts.some((verdict) => verdict.accent)) {
+        result.querySelector('.trisent-ex-verdict')
+          .createDiv({ cls: 'trisent-ex-note', text: 'Right — mind the accents.' });
+      }
+      this.renderNext(result);
+    };
+
+    fields.forEach((field, index) => {
+      field.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' || event.isComposing) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const next = fields.slice(index + 1).find((other) => !other.value.trim())
+          || fields.find((other) => !other.value.trim());
+        if (next) next.focus();
+        else checkNow();
+      });
+      field.addEventListener('focus', () => {
+        window.setTimeout(() => field.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
+      });
+    });
+    check.addEventListener('click', checkNow);
+    this.keyAction = null;
+    fields[0].focus({ preventScroll: true });
   }
 
   /* Urteil und Original zum Lesen und Hören - für jede Übung gleich. */

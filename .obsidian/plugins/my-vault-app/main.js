@@ -68,6 +68,7 @@ const MODULES = [
   'index/index.js',
   'exercises/puzzle.js',
   'exercises/gaps.js',
+  'exercises/forms.js',
   'exercises/view.js',
   'exercises/index.js',
   'packager/ai.js',
