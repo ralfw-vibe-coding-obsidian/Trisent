@@ -760,12 +760,16 @@ class ExercisesView extends ItemView {
     fields[0].focus({ preventScroll: true });
   }
 
-  /* Aus Grundformen bauen: unter dem deutschen Satz die Bausteine, darunter
+  /* Aus Grundformen bauen: unter dem deutschen Satz die Bausteine,
+     gemischt, darunter
      ein Feld für den ganzen Satz. Die Bausteine lassen sich ausblenden -
      dann ist es Übersetzen aus dem Gedächtnis. */
   renderBuild(page, card, item, entry) {
     const words = this.run.words;
-    const blocks = blocksOf(item.sentence, words.dictionary);
+    /* Gemischt, nie in der Reihenfolge des Satzes - so muss man genau
+       lesen und den Satz selbst ordnen. */
+    const blocks = shuffleTiles(blocksOf(item.sentence, words.dictionary).map((text) => ({ text: text })))
+      .map((block) => block.text);
     const shown = this.settings.buildBlocks !== false;
 
     const toggle = card.createEl('button', { cls: 'trisent-ex-blocks-toggle' + (shown ? ' is-on' : '') });

@@ -4,9 +4,10 @@
  * Aus Grundformen bauen - die Regeln, ohne Obsidian.
  *
  * Die Person sieht den Satz in ihrer Muttersprache und darunter die
- * Wörter des Originals in ihrer Grundform, in der Reihenfolge des Satzes:
+ * Wörter des Originals in ihrer Grundform - gemischt, damit sie genau
+ * lesen und den Satz selbst ordnen muss:
  *
- *   Ich wohne in Paris.     je · habiter · à · Paris
+ *   Ich wohne in Paris.     à · Paris · habiter · je
  *
  * Sie schreibt den ganzen Satz: "J'habite à Paris." Finden muss sie
  * nichts mehr, nur beugen und zusammensetzen - die letzte Stufe vor dem
