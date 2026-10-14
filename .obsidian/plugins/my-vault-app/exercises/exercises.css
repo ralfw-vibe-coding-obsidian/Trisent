@@ -201,6 +201,79 @@
   color: var(--text-faint);
 }
 
+/* Der Lückensatz: in der Leseschrift, die Lücken als Kästchen im Fluss. */
+.trisent-ex-sentence {
+  max-width: 34rem;
+  margin: 0.4rem auto 0;
+  padding: 0.3rem 0.2rem 0.8rem;
+  font-family: var(--tri-read);
+  font-size: 1.2rem;
+  line-height: 2.1;
+  color: var(--text-normal);
+  border-bottom: 1px dashed var(--background-modifier-border);
+}
+
+.trisent-view .trisent-ex-gap {
+  display: inline-block;
+  min-width: 4.5rem;
+  height: auto;
+  margin: 0 0.15rem;
+  padding: 0.05rem 0.5rem;
+  vertical-align: baseline;
+  cursor: pointer;
+  font-family: var(--tri-read);
+  font-size: 1.1rem;
+  line-height: 1.4;
+  border: 0;
+  border-bottom: 2px solid var(--text-faint);
+  border-radius: 4px 4px 0 0;
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+  box-shadow: none;
+}
+
+.trisent-view .trisent-ex-gap.is-selected {
+  border-bottom-color: var(--tri-accent);
+  box-shadow: inset 0 -1px 0 var(--tri-accent);
+}
+
+.trisent-view .trisent-ex-gap.is-filled {
+  color: var(--tri-accent);
+}
+
+/* Nach dem Prüfen: grün oder rot; bei rot darunter, was hingehört. */
+.trisent-ex-gap.is-done {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.25;
+  min-width: 3rem;
+  margin: 0 0.15rem;
+  padding: 0.05rem 0.5rem;
+  vertical-align: top;
+  border-radius: 4px 4px 0 0;
+  background: var(--background-modifier-hover);
+}
+
+.trisent-ex-gap.is-done.is-right {
+  border-bottom: 2px solid var(--tri-accent);
+  color: var(--tri-accent);
+}
+
+.trisent-ex-gap.is-done.is-wrong {
+  border-bottom: 2px solid var(--tri-unknown);
+}
+
+.trisent-ex-gap.is-wrong .trisent-ex-gap-text {
+  color: var(--tri-unknown);
+  text-decoration: line-through;
+}
+
+.trisent-ex-gap-fix {
+  font-size: 0.85em;
+  color: var(--tri-accent);
+}
+
 /* Die gelegten Kärtchen: eine Zeile wie ein Satz, mit Platz zum Wachsen. */
 .trisent-ex-answer,
 .trisent-ex-pool,

@@ -21,6 +21,7 @@ const {
   SIZES, hardness, compareHardness, storyItems, Draw, Session
 } = require('../translator/practice.js');
 const { tilesOf, shuffleTiles, checkOrder } = require('./puzzle.js');
+const { buildGaps, checkGaps } = require('./gaps.js');
 
 const VIEW_TYPE = 'trisent-exercises-view';
 const RIBBON_ICON = 'puzzle';
@@ -31,7 +32,8 @@ const STORY_PAGE = 10;
 /* Die Übungsarten. Weitere kommen hinzu: Lücken mit Auswahl, die
    richtige Form, aus Grundformen bauen, hören und schreiben. */
 const TYPES = [
-  { id: 'puzzle', label: 'Puzzle', icon: 'puzzle', hint: 'Put the words in order' }
+  { id: 'puzzle', label: 'Puzzle', icon: 'puzzle', hint: 'Put the words in order' },
+  { id: 'gaps', label: 'Gaps', icon: 'text-cursor-input', hint: 'Fill in the missing words' }
 ];
 
 class ExercisesView extends ItemView {
@@ -406,17 +408,45 @@ class ExercisesView extends ItemView {
   /* Die Sitzung                                                       */
   /* ---------------------------------------------------------------- */
 
-  begin(language, source, stories, draw) {
+  async begin(language, source, stories, draw) {
     this.run = {
       language: language,
       source: source,
       type: this.type,
       byText: new Map(stories.map((story) => [story.entry.folder.path, story.entry])),
       session: new Session(draw, this.size),
-      round: 1
+      round: 1,
+      words: await this.wordsFor(language)
     };
     this.screen = 'session';
     this.render();
+  }
+
+  /* Was die Lücken brauchen: das Wörterbuch (für Formen und Grundform),
+     den Lernstand, den Index, und einen Vorrat an Wörtern, aus dem die
+     falschen Angebote aufgefüllt werden. Einmal je Sitzung. */
+  async wordsFor(language) {
+    const learning = this.exercises.plugin.learning;
+    let entries = new Map();
+    try {
+      entries = await learning.dictionary.entries(language);
+    } catch (error) {
+      console.error('Trisent: could not read the dictionary', error);
+    }
+    const dictionary = {};
+    const others = [];
+    for (const [key, entry] of entries) {
+      dictionary[key] = entry;
+      const form = (entry.forms && entry.forms[0]) || entry.lemma;
+      if (form && entry.partOfSpeech !== 'PROPN') others.push({ text: form, partOfSpeech: entry.partOfSpeech });
+    }
+    const status = this.library.wordStatusMap(language);
+    return {
+      dictionary: dictionary,
+      others: others,
+      statusOf: (key) => status.get(key) || 'unknown',
+      indexed: learning.wordIndex.activeKeys(language)
+    };
   }
 
   /* Noch eine Runde mit den falschen - so oft, wie noch welche falsch
@@ -460,7 +490,8 @@ class ExercisesView extends ItemView {
       card.createDiv({ cls: 'trisent-ex-from', text: entry.data.title || entry.folder.name });
     }
 
-    this.renderPuzzle(page, card, item, entry);
+    if (run.type === 'gaps') this.renderGaps(page, card, item, entry);
+    else this.renderPuzzle(page, card, item, entry);
   }
 
   /* Das Puzzle: oben die gelegten Kärtchen, darunter die übrigen. Ein
@@ -521,18 +552,7 @@ class ExercisesView extends ItemView {
       });
       card.addClass(verdict.correct ? 'is-right' : 'is-wrong');
 
-      const box = result.createDiv({ cls: 'trisent-ex-verdict ' + (verdict.correct ? 'is-right' : 'is-wrong') });
-      const badge = box.createDiv({ cls: 'trisent-ex-badge' });
-      setIcon(badge.createSpan(), verdict.correct ? 'check' : 'x');
-      badge.createSpan({ text: verdict.correct ? 'Correct' : 'Not yet' });
-
-      const original = box.createDiv({ cls: 'trisent-ex-original' });
-      const audio = item.sentence.audio && item.sentence.audio.file
-        ? entry.folder.path + '/' + item.sentence.audio.file
-        : null;
-      if (audio) this.renderSpeaker(original, audio);
-      original.createSpan({ cls: 'trisent-ex-original-text', text: item.sentence.source });
-
+      this.renderVerdict(result, verdict.correct, item, entry);
       this.renderNext(result);
     };
 
@@ -544,6 +564,117 @@ class ExercisesView extends ItemView {
       placed.push(pool.pop());
       paint();
     }
+  }
+
+  /* Die Lücken: der Satz mit Platzhaltern, darunter alle Angebote in
+     einem Topf. Ein Tipp auf ein Angebot füllt die gewählte Lücke (die
+     erste freie, wenn keine gewählt ist); ein Tipp auf eine gefüllte
+     Lücke leert sie wieder. */
+  renderGaps(page, card, item, entry) {
+    const words = this.run.words;
+    const task = buildGaps(item.sentence, words.dictionary, words.statusOf, words.indexed, words.others);
+    /* Ein Satz nur aus Namen gibt keine Lücke her - dann der nächste,
+       ohne dass es zählt. */
+    if (task.gaps.length === 0) {
+      this.run.session.exclude();
+      this.render();
+      return;
+    }
+    const filled = task.gaps.map(() => null);
+    let selected = 0;
+
+    const sentence = page.createDiv({ cls: 'trisent-ex-sentence' });
+    const rest = page.createDiv({ cls: 'trisent-ex-pool' });
+    const row = page.createDiv({ cls: 'trisent-ex-row' });
+    const check = row.createEl('button', { cls: 'trisent-ex-check', text: 'Check' });
+    const result = page.createDiv({ cls: 'trisent-ex-result' });
+
+    const firstEmpty = () => filled.findIndex((option) => option === null);
+
+    const paint = () => {
+      sentence.empty();
+      rest.empty();
+      for (const part of task.parts) {
+        if (part.text !== undefined) {
+          sentence.appendText(part.text);
+          continue;
+        }
+        const index = part.gap;
+        const option = filled[index];
+        const slot = sentence.createEl('button', {
+          cls: 'trisent-ex-gap' + (option ? ' is-filled' : '') + (index === selected ? ' is-selected' : ''),
+          text: option ? option.text : '\u00a0'
+        });
+        slot.addEventListener('click', () => {
+          if (option) {
+            filled[index] = null;
+          }
+          selected = index;
+          paint();
+        });
+      }
+
+      const used = new Set(filled.filter(Boolean).map((option) => option.id));
+      for (const option of task.options) {
+        if (used.has(option.id)) continue;
+        const chip = rest.createEl('button', { cls: 'trisent-ex-tile', text: option.text });
+        chip.addEventListener('click', () => {
+          const target = filled[selected] === null ? selected : firstEmpty();
+          if (target < 0) return;
+          filled[target] = option;
+          const next = firstEmpty();
+          selected = next < 0 ? target : next;
+          paint();
+        });
+      }
+
+      const complete = firstEmpty() < 0;
+      check.toggleAttribute('disabled', !complete);
+      this.keyAction = complete ? checkNow : null;
+    };
+
+    const checkNow = () => {
+      const verdict = checkGaps(filled.map((option) => (option ? option.text : null)), task.gaps);
+      this.run.session.record(verdict.correct ? 'correct' : 'wrong');
+
+      /* Das Ergebnis: jede Lücke grün oder rot, bei roten darunter, was
+         hingehört hätte. */
+      sentence.empty();
+      rest.remove();
+      row.remove();
+      for (const part of task.parts) {
+        if (part.text !== undefined) {
+          sentence.appendText(part.text);
+          continue;
+        }
+        const index = part.gap;
+        const right = verdict.right[index];
+        const slot = sentence.createSpan({ cls: 'trisent-ex-gap is-done ' + (right ? 'is-right' : 'is-wrong') });
+        slot.createSpan({ cls: 'trisent-ex-gap-text', text: filled[index] ? filled[index].text : '' });
+        if (!right) slot.createSpan({ cls: 'trisent-ex-gap-fix', text: task.gaps[index].answer });
+      }
+      card.addClass(verdict.correct ? 'is-right' : 'is-wrong');
+      this.renderVerdict(result, verdict.correct, item, entry);
+      this.renderNext(result);
+    };
+
+    check.addEventListener('click', checkNow);
+    paint();
+  }
+
+  /* Urteil und Original zum Lesen und Hören - für jede Übung gleich. */
+  renderVerdict(slot, correct, item, entry) {
+    const box = slot.createDiv({ cls: 'trisent-ex-verdict ' + (correct ? 'is-right' : 'is-wrong') });
+    const badge = box.createDiv({ cls: 'trisent-ex-badge' });
+    setIcon(badge.createSpan(), correct ? 'check' : 'x');
+    badge.createSpan({ text: correct ? 'Correct' : 'Not yet' });
+
+    const original = box.createDiv({ cls: 'trisent-ex-original' });
+    const audio = item.sentence.audio && item.sentence.audio.file && entry
+      ? entry.folder.path + '/' + item.sentence.audio.file
+      : null;
+    if (audio) this.renderSpeaker(original, audio);
+    original.createSpan({ cls: 'trisent-ex-original-text', text: item.sentence.source });
   }
 
   renderNext(slot) {
