@@ -44,6 +44,8 @@ markiert.
   ein Tipp öffnet die Wortkarte.
 - Texte lassen sich mit **Tags** ordnen und durchsuchen.
 - Neue Texte kommen über **Import** in die Bibliothek (siehe unten).
+- Die Startseite zeigt je Sprache die **Lerntage**: Tage in Folge, längster
+  Streak, Tage insgesamt – ein Punkt je Tag und die Kurve der Tage insgesamt.
 
 ### Translator – übersetzen
 
