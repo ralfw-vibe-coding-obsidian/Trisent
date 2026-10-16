@@ -214,6 +214,9 @@ async function judgeTranslation(settings, task, onCost) {
 async function explainTranslation(settings, task, correct, onCost) {
   const user = describeTask(task) + '\n'
     + 'The learner ' + (task.spoken ? 'spoke it (speech recognition wrote it down)' : 'typed it') + '.\n'
+    /* Eine Übung kann sagen, worum es ihr geht - etwa, dass genau der
+       Originalsatz gemeint war. */
+    + (task.exercise ? task.exercise + '\n' : '')
     + 'Judged: ' + (correct ? 'correct' : 'wrong') + '\n'
     + 'Write NOTE and ISSUE lines in ' + nameOf(task.feedbackLanguage) + '.';
   const text = await ask(settings, EXPLAIN_MODEL, EXPLAIN, user, 400, onCost);

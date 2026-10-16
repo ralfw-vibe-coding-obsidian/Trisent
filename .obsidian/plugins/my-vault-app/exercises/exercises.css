@@ -786,3 +786,32 @@
     padding: 1rem 1.05rem;
   }
 }
+
+/* Die Erklärung der KI bei Fehlern - wie im Translator. */
+.trisent-ex-explanation {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+.trisent-ex-waiting {
+  font-family: var(--tri-ui);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-faint);
+}
+
+.trisent-ex-note.is-explained {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-normal);
+}
+
+.trisent-ex-issues {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}

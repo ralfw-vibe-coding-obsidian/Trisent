@@ -26,6 +26,7 @@ const { buildForms, checkForm } = require('./forms.js');
 const { blocksOf, compareSentence } = require('./build.js');
 const { sceneItems, sceneTiles, checkScene } = require('./scene.js');
 const { SPEEDS } = require('../reader/audio.js');
+const { explainTranslation } = require('../translator/check.js');
 
 const VIEW_TYPE = 'trisent-exercises-view';
 const RIBBON_ICON = 'puzzle';
@@ -859,6 +860,7 @@ class ExercisesView extends ItemView {
       field.remove();
       actions.remove();
       this.showSentenceResult(result, card, verdict, item, entry);
+      if (!verdict.correct) this.explain(result, typed, item, entry);
     };
 
     field.addEventListener('keydown', (event) => {
@@ -975,6 +977,45 @@ class ExercisesView extends ItemView {
 
     check.addEventListener('click', checkNow);
     paint();
+  }
+
+  /* Warum es falsch war - dieselbe Erklärung wie im Translator, von der
+     KI. Sie weiß, dass hier genau der Originalsatz gemeint war, und
+     erklärt die Abweichungen. Gibt es keinen Schlüssel für OpenRouter,
+     bleibt es beim Wort-für-Wort-Vergleich. */
+  explain(result, typed, item, entry) {
+    const translator = this.exercises.plugin.translator;
+    if (!translator || !(translator.settings.openRouterKey || '').trim()) return;
+
+    const box = result.querySelector('.trisent-ex-verdict');
+    if (!box) return;
+    const slot = box.createDiv({ cls: 'trisent-ex-explanation' });
+    slot.createDiv({ cls: 'trisent-ex-waiting', text: 'Looking closer…' });
+
+    explainTranslation(translator.settings, {
+      prompt: item.sentence.fluent,
+      reference: item.sentence.source,
+      answer: typed,
+      fromLanguage: entry.data.fluentLanguage,
+      toLanguage: entry.data.language,
+      feedbackLanguage: entry.data.glossLanguage || entry.data.fluentLanguage,
+      spoken: false,
+      exercise: 'This is an exercise: the learner was given the base forms of the reference words and had '
+        + 'to write exactly the reference sentence. Explain each difference from the reference - wrong '
+        + 'forms, endings, agreement, elision (je → j'), word order, missing or extra words.'
+    }, false, (cost) => translator.addCost(cost)).then((verdict) => {
+      if (!slot.isConnected) return;
+      slot.empty();
+      if (verdict.note) slot.createDiv({ cls: 'trisent-ex-note is-explained', text: verdict.note });
+      if (verdict.issues && verdict.issues.length > 0) {
+        const list = slot.createEl('ul', { cls: 'trisent-ex-issues' });
+        for (const issue of verdict.issues) list.createEl('li', { text: issue });
+      }
+    }).catch((error) => {
+      if (!slot.isConnected) return;
+      slot.empty();
+      slot.createDiv({ cls: 'trisent-ex-note', text: 'No explanation this time: ' + String(error.message || error) });
+    });
   }
 
   /* Das Ergebnis, wenn ein ganzer Satz geschrieben wurde (Build, Diktat):
