@@ -89,7 +89,8 @@ einen Teil davon ab, damit der andere geübt werden kann:
 - **Puzzle ×3** – drei Sätze einer Szene, ein gemeinsamer Haufen Wörter.
 - **Gaps** – Lücken im Satz, die Angebote in einem gemeinsamen Topf.
 - **Forms** – die Grundform steht da, die richtige Form wird getippt.
-- **Build** – den ganzen Satz aus gemischten Grundformen schreiben.
+- **Build** – den ganzen Satz aus gemischten Grundformen schreiben; bei Fehlern
+  erklärt die KI, warum.
 - **Dictation** – hören (auch langsamer) und aufschreiben.
 
 Ablauf wie im Translator: eine Geschichte oder die schwierigsten Sätze, 5, 7
