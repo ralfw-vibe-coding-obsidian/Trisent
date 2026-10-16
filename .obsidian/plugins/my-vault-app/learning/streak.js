@@ -22,7 +22,8 @@ const LANGUAGE_NOTE = 'language.md';
    core/calendar.js. Mit dem Datum der Weltzeit wechselte der Tag in
    Hamburg erst um 2 Uhr nachts, und wer nach Mitternacht las, überbrückte
    damit einen ausgelassenen Tag: Der Streak riss nicht ab. */
-const { today, dayBefore, now: stampNow, dayOf } = require('../core/calendar.js');
+const { today, dayBefore, now: stampNow, dayOf, addDays } = require('../core/calendar.js');
+const { readDays, writeDays, statsOf } = require('./days.js');
 
 /* Was im Kopf der Sprachnotiz steht, als Text. Sollte Obsidian einen
    Zeitpunkt einmal als Datum-Objekt liefern statt als Text, wird er
@@ -59,10 +60,31 @@ class Streak {
 
     const fm = this.app.metadataCache.getFileCache(file)?.frontmatter || {};
     const seen = stamp(fm.lastSeen) || stamp(fm.lastDay);
+    const lastDay = dayOf(seen);
+    const streak = Number(fm.streak) || 0;
     return {
-      days: Number(fm.streak) || 0,
+      days: streak,
       best: Number(fm.bestStreak) || 0,
-      lastDay: dayOf(seen)
+      lastDay: lastDay,
+      /* Die Lerntage. Fehlen sie noch (eine Vault vor dem Umbau), wenigstens
+         die laufende Serie - die lässt sich aus Zähler und letztem Tag
+         ablesen. */
+      active: fm.days !== undefined
+        ? readDays(fm.days)
+        : seriesOf(lastDay, streak)
+    };
+  }
+
+  /* Die Zahlen für die Startseite: laufender Streak, längster bisher,
+     Tage insgesamt - und die Lerntage selbst, für die Grafik. */
+  stats(language) {
+    const state = this.read(language);
+    const numbers = statsOf(state.active, today());
+    return {
+      current: numbers.current,
+      longest: Math.max(numbers.longest, state.best),
+      total: numbers.total,
+      active: state.active
     };
   }
 
@@ -95,6 +117,10 @@ class Streak {
       fm.streak = days;
       fm.bestStreak = best;
       fm.lastSeen = stampNow();
+      /* Den Tag in die Liste der Lerntage. Was dort schon steht, bleibt -
+         sonst die laufende Serie als Anfang. */
+      const before = fm.days !== undefined ? readDays(fm.days) : state.active;
+      fm.days = writeDays(before.concat([now]));
       delete fm.lastDay;
     });
 
@@ -102,4 +128,12 @@ class Streak {
   }
 }
 
-module.exports = { Streak, today, dayBefore };
+/* Die Tage einer Serie, die an lastDay endet und count Tage lang ist. */
+function seriesOf(lastDay, count) {
+  if (!lastDay || !(count > 0)) return [];
+  const out = [];
+  for (let n = count - 1; n >= 0; n--) out.push(addDays(lastDay, -n));
+  return out;
+}
+
+module.exports = { Streak, today, dayBefore, seriesOf };

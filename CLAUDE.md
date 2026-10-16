@@ -180,7 +180,7 @@ getrennt:
 Trisent/                  einstellbar, Vorgabe: Trisent
 ├── learning/             die Seite der Lernenden
 │   ├── BG/
-│   │   ├── language.md
+│   │   ├── language.md      die Sprache: Streak und Lerntage (`days`, siehe learning/days.js)
 │   │   ├── dictionary.json  das Wörterbuch: alle Word entries, gefüllt durch Importe
 │   │   ├── notes/           Word notes - Lernstand und Eigenes, eine je Wort
 │   │   ├── flashcards/      die Lernkartei (abgeschaltet, Daten bleiben)

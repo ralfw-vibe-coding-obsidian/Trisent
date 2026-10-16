@@ -1981,3 +1981,127 @@
 .trisent-words-native {
   color: var(--text-muted);
 }
+
+/* ------------------------------------------------------------------ */
+/* Die Lerntage auf der Startseite                                    */
+/* ------------------------------------------------------------------ */
+
+.trisent-days-label {
+  margin-top: 2rem;
+}
+
+.trisent-days {
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem 0.8rem;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  background: var(--background-primary);
+}
+
+.trisent-days-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+  margin-bottom: 0.7rem;
+}
+
+.trisent-days-name {
+  font-family: var(--tri-read);
+  font-size: 1.05rem;
+  color: var(--text-normal);
+}
+
+.trisent-days-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+}
+
+.trisent-days-number {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.trisent-days-value {
+  font-family: var(--tri-read);
+  font-size: 1.35rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.trisent-days-number.is-strong .trisent-days-value {
+  color: var(--tri-accent);
+}
+
+.trisent-days-unit {
+  font-family: var(--tri-ui);
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+/* Ein Punkt je Tag, Wochen als Spalten. Wird es breiter als die Seite,
+   lässt es sich seitlich schieben - die jüngsten Tage stehen rechts. */
+.trisent-days-dots {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 9px);
+  grid-auto-columns: 9px;
+  gap: 3px;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.trisent-days-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--background-modifier-border);
+}
+
+.trisent-days-dot.is-blank {
+  background: transparent;
+}
+
+.trisent-days-dot.is-on {
+  background: var(--tri-accent);
+}
+
+.trisent-days-dot.is-today {
+  box-shadow: 0 0 0 1.5px var(--background-primary), 0 0 0 2.5px var(--tri-accent);
+}
+
+.trisent-days-curve-wrap {
+  margin-top: 0.7rem;
+}
+
+.trisent-days-curve {
+  display: block;
+  width: 100%;
+  height: 48px;
+}
+
+.trisent-days-area {
+  fill: color-mix(in srgb, var(--tri-accent) 12%, transparent);
+  stroke: none;
+}
+
+.trisent-days-line {
+  fill: none;
+  stroke: var(--tri-accent);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.trisent-days-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.2rem;
+  font-family: var(--tri-ui);
+  font-size: 0.68rem;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}

@@ -9,6 +9,8 @@
 const { ItemView, TFolder, Notice, setIcon } = require('obsidian');
 const { WORD_STATUS, readablePos } = require('../core/package.js');
 const { STATUSES, collectWords, filterWords, sortWords } = require('./words.js');
+const { timeline } = require('../learning/days.js');
+const { today: todayOf, addDays } = require('../core/calendar.js');
 const { KNOWN_LANGUAGES } = require('../core/library.js');
 const { Playback, Recorder, SPEEDS } = require('./audio.js');
 const { askForUpgrades } = require('./upgrade.js');
@@ -243,9 +245,105 @@ class TrisentView extends ItemView {
         this.renderLanguageCard(grid, language);
       }
       this.renderLegend(page);
+      this.renderDays(page, languages);
     }
 
     this.renderAddLanguage(page);
+  }
+
+  /* Die Lerntage je Sprache: drei Zahlen, ein Punkt je Tag, und darunter
+     die Kurve der Tage insgesamt. Nur für Sprachen, mit denen schon
+     gelernt wurde. */
+  renderDays(page, languages) {
+    const learned = languages
+      .map((language) => ({ language: language, stats: this.streak.stats(language) }))
+      .filter((entry) => entry.stats.total > 0);
+    if (learned.length === 0) return;
+
+    page.createDiv({ cls: 'trisent-section-label trisent-days-label', text: 'Your days' });
+    const now = todayOf();
+
+    for (const { language, stats } of learned) {
+      const panel = page.createDiv({ cls: 'trisent-days' });
+      const head = panel.createDiv({ cls: 'trisent-days-head' });
+      head.createSpan({ cls: 'trisent-days-name', text: (language.flag || '🏳️') + ' ' + language.name });
+
+      const numbers = head.createDiv({ cls: 'trisent-days-numbers' });
+      const number = (value, label, strong) => {
+        const item = numbers.createDiv({ cls: 'trisent-days-number' + (strong ? ' is-strong' : '') });
+        item.createSpan({ cls: 'trisent-days-value', text: String(value) });
+        item.createSpan({ cls: 'trisent-days-unit', text: label });
+      };
+      number(stats.current, 'in a row', stats.current > 0);
+      number(stats.longest, 'longest');
+      number(stats.total, stats.total === 1 ? 'day in all' : 'days in all');
+
+      /* Höchstens ein halbes Jahr zurück - darüber hinaus würde die Reihe
+         der Punkte zu lang, und die Kurve sagt das Ganze ohnehin. */
+      const first = stats.active[0];
+      const from = first && first > addDays(now, -181) ? first : addDays(now, -181);
+      const line = timeline(stats.active, from, now);
+      this.renderDayDots(panel, line, now);
+      this.renderDayCurve(panel, timeline(stats.active, first, now));
+    }
+  }
+
+  /* Ein Punkt je Tag, in Wochen-Spalten wie ein Kalender: oben Montag,
+     unten Sonntag. Gefüllt, wo gelernt wurde; heute umrandet. */
+  renderDayDots(panel, line, now) {
+    const grid = panel.createDiv({ cls: 'trisent-days-dots' });
+    if (line.length === 0) return;
+    /* Montag = 0. Vor dem ersten Tag leere Felder, damit die Wochentage
+       in ihren Zeilen stehen. */
+    const weekday = (new Date(line[0].day + 'T12:00:00Z').getUTCDay() + 6) % 7;
+    for (let n = 0; n < weekday; n++) grid.createSpan({ cls: 'trisent-days-dot is-blank' });
+    for (const entry of line) {
+      grid.createSpan({
+        cls: 'trisent-days-dot' + (entry.active ? ' is-on' : '') + (entry.day === now ? ' is-today' : ''),
+        attr: { title: entry.day }
+      });
+    }
+    /* Die jüngsten Tage stehen rechts - dorthin schieben, falls die Reihe
+       breiter ist als die Seite. */
+    window.requestAnimationFrame(() => {
+      grid.scrollLeft = grid.scrollWidth;
+    });
+  }
+
+  /* Die Kurve der Tage insgesamt, vom ersten Lerntag bis heute. Sie kann
+     nur steigen oder gerade weiterlaufen - und zeigt, wann es voranging. */
+  renderDayCurve(panel, line) {
+    if (line.length < 2) return;
+    const total = line[line.length - 1].total;
+    const width = 300;
+    const height = 48;
+    const x = (index) => (index / (line.length - 1)) * width;
+    const y = (value) => height - 2 - (value / Math.max(total, 1)) * (height - 4);
+
+    const points = line.map((entry, index) => x(index).toFixed(1) + ',' + y(entry.total).toFixed(1));
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    svg.setAttribute('class', 'trisent-days-curve');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', total + ' days in all since ' + line[0].day);
+
+    const area = document.createElementNS(ns, 'polygon');
+    area.setAttribute('points', '0,' + height + ' ' + points.join(' ') + ' ' + width + ',' + height);
+    area.setAttribute('class', 'trisent-days-area');
+    svg.appendChild(area);
+
+    const stroke = document.createElementNS(ns, 'polyline');
+    stroke.setAttribute('points', points.join(' '));
+    stroke.setAttribute('class', 'trisent-days-line');
+    svg.appendChild(stroke);
+
+    const wrap = panel.createDiv({ cls: 'trisent-days-curve-wrap' });
+    wrap.appendChild(svg);
+    const axis = wrap.createDiv({ cls: 'trisent-days-axis' });
+    axis.createSpan({ text: line[0].day });
+    axis.createSpan({ text: total + (total === 1 ? ' day' : ' days') });
   }
 
   /* An wie vielen Tagen hintereinander. Steht im Reader und im Translator,

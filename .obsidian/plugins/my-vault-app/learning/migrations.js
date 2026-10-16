@@ -25,7 +25,9 @@ const { TEXTS_DIR, LEGACY_TEXTS_DIR } = require('./texts.js');
 const { normalizeAll, mergeLegacy } = require('./entries.js');
 const { NOTES_DIR, LEGACY_NOTES_DIR } = require('../core/library.js');
 const { PACKAGE_FILE, TEXT_FILE, splitPackage } = require('../core/package.js');
-const { instantOfDay, isInstant } = require('../core/calendar.js');
+const { instantOfDay, isInstant, dayOf } = require('../core/calendar.js');
+const { readDays, writeDays } = require('./days.js');
+const { seriesOf } = require('./streak.js');
 
 /* Frontmatter und Rumpf trennen. Die Eigenschaften ändert Obsidian
    selbst (processFrontMatter); hier geht es nur um den Text darunter. */
@@ -61,7 +63,8 @@ class Migrations {
       { to: 2, run: (report) => this.decoupleNotes(report) },
       { to: 3, run: (report) => this.centralDictionary(report) },
       { to: 4, run: (report) => this.utcStamps(report) },
-      { to: 5, run: (report) => this.textNotes(report) }
+      { to: 5, run: (report) => this.textNotes(report) },
+      { to: 6, run: (report) => this.learningDays(report) }
     ];
   }
 
@@ -73,7 +76,7 @@ class Migrations {
     const report = {
       from: from, to: from,
       notes: 0, rescued: 0, cards: 0, links: 0, leftAlone: 0,
-      entries: 0, packages: 0, moved: 0, freed: 0, stamps: 0, texts: 0
+      entries: 0, packages: 0, moved: 0, freed: 0, stamps: 0, texts: 0, days: 0
     };
 
     for (const step of this.steps()) {
@@ -478,6 +481,68 @@ class Migrations {
   }
 
   /* Der Streak: `lastDay` (ein Tag) wird zu `lastSeen` (ein Zeitpunkt). */
+  /* Schritt 6: die Lerntage. Bisher kannte die Sprachnotiz nur den
+     letzten Tag und die laufende Serie. Jetzt steht dort, an welchen
+     Tagen gelernt wurde - für den längsten Streak, die Tage insgesamt und
+     die Grafik.
+
+     Die Vergangenheit lässt sich aus dem ablesen, was in der Vault
+     ohnehin Spuren hinterlassen hat: wann ein Wort zuletzt einen
+     Lernstand bekam oder in den Index kam, wann eine Satznotiz zuletzt
+     geändert wurde, wann eine Übersetzungssitzung begann, wann eine
+     Karteikarte angelegt wurde - und die laufende Serie. Ein Tag, an dem
+     nur gelesen und nichts angetippt wurde, hinterließ keine Spur; der
+     fehlt dann eben. Lieber ein Tag zu wenig als einer erfunden.
+
+     Vereinigt mit dem, was schon dasteht - der Schritt darf beliebig oft
+     laufen. */
+  async learningDays(report) {
+    for (const language of this.library.languages()) {
+      const note = language.folder.children.find(
+        (child) => child instanceof TFile && child.name === 'language.md'
+      );
+      if (!note) continue;
+
+      const found = new Set();
+      const take = (value) => {
+        const day = dayOf(typeof value === 'string' ? value : null);
+        if (day) found.add(day);
+      };
+
+      for (const file of this.library.wordsOf(language)) {
+        const head = await this.headOf(file);
+        take(head.front.updatedAt);
+        take(head.front.indexFirst);
+        take(head.front.indexLast);
+      }
+      for (const name of [TEXTS_DIR, LEGACY_TEXTS_DIR, 'translations']) {
+        const folder = this.library.childFolder(language.folder, name);
+        for (const file of folder ? folder.children : []) {
+          if (!(file instanceof TFile) || file.extension !== 'md') continue;
+          const head = await this.headOf(file);
+          take(head.front.updatedAt);
+          take(head.front.startedAt);
+        }
+      }
+      for (const file of this.cardFiles(language)) {
+        const head = await this.headOf(file);
+        take(head.front.added);
+      }
+
+      const own = await this.headOf(note);
+      const lastDay = dayOf(own.front.lastSeen || own.front.lastDay || null);
+      for (const day of seriesOf(lastDay, Number(own.front.streak) || 0)) found.add(day);
+
+      await this.app.fileManager.processFrontMatter(note, (fm) => {
+        const before = readDays(fm.days);
+        const after = writeDays(before.concat([...found]));
+        fm.days = after;
+        report.days += readDays(after).length - before.length;
+      });
+    }
+    return true;
+  }
+
   async stampLanguage(file, report) {
     const head = await this.headOf(file);
     const day = head.front.lastDay;
@@ -557,6 +622,11 @@ function describe(report) {
   if (report.stamps > 0) {
     said.push('Times are now stored in UTC and read in your local time zone ('
       + n(report.stamps, 'entry', 'entries') + ' converted).');
+  }
+
+  if (report.days > 0) {
+    said.push('Trisent now keeps a list of the days you learned - '
+      + n(report.days, 'day was', 'days were') + ' found in your notes.');
   }
 
   if (report.texts > 0) {

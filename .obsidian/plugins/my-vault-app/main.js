@@ -30,6 +30,7 @@ const MODULES = [
   'core/package.js',
   'core/log.js',
   'core/library.js',
+  'learning/days.js',
   'learning/streak.js',
   'learning/occurrences.js',
   'learning/entries.js',
