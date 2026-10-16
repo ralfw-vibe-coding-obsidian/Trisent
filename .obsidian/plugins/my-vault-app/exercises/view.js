@@ -1002,7 +1002,7 @@ class ExercisesView extends ItemView {
       spoken: false,
       exercise: 'This is an exercise: the learner was given the base forms of the reference words and had '
         + 'to write exactly the reference sentence. Explain each difference from the reference - wrong '
-        + 'forms, endings, agreement, elision (je → j'), word order, missing or extra words.'
+        + 'forms, endings, agreement, elision (je → j\u2019), word order, missing or extra words.'
     }, false, (cost) => translator.addCost(cost)).then((verdict) => {
       if (!slot.isConnected) return;
       slot.empty();
