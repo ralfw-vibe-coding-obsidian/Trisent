@@ -105,7 +105,31 @@ class ExercisesView extends ItemView {
   }
 
   async onClose() {
+    window.clearTimeout(this.typingTimer);
     this.stopSound();
+  }
+
+  /* Auf dem Handy schiebt sich die Tastatur über das Feld. Solange in ein
+     Feld getippt wird, unten Platz schaffen und das Feld in die Mitte
+     holen - sonst bleibt es unter der Tastatur und einem leeren Streifen
+     verborgen. Wie im Translator. Den Platz erst etwas später wieder
+     einziehen: Sonst rutscht ein Knopf unter dem Finger weg. */
+  keepFieldsVisible(scroll) {
+    const isField = (target) => target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA');
+    scroll.addEventListener('focusin', (event) => {
+      if (!isField(event.target)) return;
+      window.clearTimeout(this.typingTimer);
+      scroll.addClass('is-typing');
+      const field = event.target;
+      window.setTimeout(() => {
+        if (field.isConnected) field.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }, 350);
+    });
+    scroll.addEventListener('focusout', (event) => {
+      if (!isField(event.target)) return;
+      window.clearTimeout(this.typingTimer);
+      this.typingTimer = window.setTimeout(() => scroll.removeClass('is-typing'), 400);
+    });
   }
 
   render() {
@@ -118,6 +142,7 @@ class ExercisesView extends ItemView {
     this.barEl = root.createDiv({ cls: 'trisent-topbar is-hidden' });
     this.barInner = this.barEl.createDiv({ cls: 'trisent-page' });
     this.scrollEl = root.createDiv({ cls: 'trisent-scroll' });
+    this.keepFieldsVisible(this.scrollEl);
     const page = this.scrollEl.createDiv({ cls: 'trisent-page' });
 
     const language = this.library.languageByCode(this.languageCode);

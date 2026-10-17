@@ -815,3 +815,15 @@
   line-height: 1.45;
   color: var(--text-muted);
 }
+
+/* Platz unter dem Feld, solange getippt wird - sonst lässt es sich auf dem
+   Handy nicht über die Tastatur hinaufrollen. */
+.trisent-exercises .trisent-scroll.is-typing {
+  padding-bottom: 75vh;
+}
+
+@media (min-width: 601px) {
+  .trisent-exercises .trisent-scroll.is-typing {
+    padding-bottom: 5rem;
+  }
+}
