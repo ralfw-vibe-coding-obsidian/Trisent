@@ -134,6 +134,9 @@ class ExercisesView extends ItemView {
 
   render() {
     this.stopSound();
+    /* Je Karte wird nur ein Satz vorgeladen - der erste, der einen
+       Abspielknopf bekommt. */
+    this.preloaded = false;
     const root = this.contentEl;
     root.empty();
     root.addClass('trisent-view');
@@ -1240,6 +1243,48 @@ class ExercisesView extends ItemView {
     setIcon(icon, 'play');
     setTooltip(button, 'Hear this sentence');
     button.addEventListener('click', () => this.toggleSound(button, icon, path));
+    /* Schon einmal laden, solange nichts spielt - dann beginnt der Ton
+       beim ersten Tipp sofort und vollständig. */
+    this.preload(path);
+  }
+
+  /* EIN Abspieler für die ganze Ansicht, wie im Reader. Ein frischer je
+     Satz brauchte auf dem iPhone beim allerersten Mal einen Moment, bis
+     der Ton lief - der Anfang des Satzes ging verloren, man musste
+     zweimal tippen. */
+  audio() {
+    if (!this.player) {
+      const player = new Audio();
+      player.preload = 'auto';
+      /* Langsamer, aber nicht tiefer - sonst klingt es nach Kassette. */
+      if ('preservesPitch' in player) player.preservesPitch = true;
+      player.addEventListener('ended', () => this.stopSound());
+      player.addEventListener('error', () => {
+        if (!this.sound) return;
+        new Notice('Could not play this sentence.');
+        this.stopSound();
+      });
+      this.player = player;
+    }
+    return this.player;
+  }
+
+  urlFor(path) {
+    try {
+      return this.app.vault.adapter.getResourcePath(normalizePath(path));
+    } catch (error) {
+      return null;
+    }
+  }
+
+  preload(path) {
+    if (this.sound || this.preloaded) return;
+    this.preloaded = true;
+    const url = this.urlFor(path);
+    const player = this.audio();
+    if (!url || player.src === url) return;
+    player.src = url;
+    player.load();
   }
 
   toggleSound(button, icon, path, rate) {
@@ -1248,28 +1293,21 @@ class ExercisesView extends ItemView {
       return;
     }
     this.stopSound();
-    let url;
-    try {
-      url = this.app.vault.adapter.getResourcePath(normalizePath(path));
-    } catch (error) {
+    const url = this.urlFor(path);
+    if (!url) {
       new Notice('Could not find the sound for this sentence.');
       return;
     }
-    const sound = new Audio(url);
-    /* Langsamer, aber nicht tiefer - sonst klingt es nach Kassette. */
-    if ('preservesPitch' in sound) sound.preservesPitch = true;
-    if (rate && rate !== 1) sound.playbackRate = rate;
-    this.sound = sound;
+    const player = this.audio();
+    if (player.src !== url) player.src = url;
+    else player.currentTime = 0;
+    player.playbackRate = rate || 1;
+    this.sound = player;
     this.soundButton = button;
     this.soundIcon = icon;
     button.addClass('is-playing');
     setIcon(icon, 'square');
-    sound.addEventListener('ended', () => this.stopSound());
-    sound.addEventListener('error', () => {
-      new Notice('Could not play this sentence.');
-      this.stopSound();
-    });
-    sound.play().catch(() => this.stopSound());
+    player.play().catch(() => this.stopSound());
   }
 
   stopSound() {
